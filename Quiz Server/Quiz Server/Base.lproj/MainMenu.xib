@@ -11,7 +11,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="QuizServer" customModuleProvider="target">
+        <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
@@ -326,12 +326,23 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
+                        <rect key="frame" x="155" y="438" width="213" height="32"/>
+                        <buttonCell key="cell" type="push" title="Capture Secondary Screens" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8TC-aM-0ia">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="captureScreens:" target="9BG-lO-pnL" id="GV6-k0-ywt"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <point key="canvasLocation" x="187.5" y="212"/>
         </window>
-        <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="QuizServer" customModuleProvider="target">
+        <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="captureButton" destination="3ly-hv-dYY" id="JxO-QS-DLa"/>
                 <outlet property="screensLabel" destination="jM2-3B-RMC" id="PlU-2V-xUp"/>
                 <outlet property="view" destination="EiT-Mj-1SZ" id="nHa-hc-OfF"/>
             </connections>
