@@ -24,7 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidChangeScreenParameters(notification: NSNotification) {
         // Screens changed - figure out how the changes affect us
-        NSLog("Screens changed!")
+        println("Screens changed!")
     }
 
 }

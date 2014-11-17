@@ -11,7 +11,11 @@ import Cocoa
 class StartupView: NSViewController {
     
     @IBOutlet weak var screensLabel: NSTextField!
-    @IBOutlet weak var captureButton: NSButton!
+    @IBOutlet weak var screenSelector: NSPopUpButton!
+    @IBOutlet weak var startButton: NSButton!
+    
+    var tempViews = [(NSScreen, NSView)]()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,14 +25,32 @@ class StartupView: NSViewController {
         if let screens = allScreens as? [NSScreen] {
             let numScreens = screens.count
             println("Found \(numScreens) screens:")
-            for screen in screens {
+
+            for (index, screen) in enumerate(screens) {
                 println("  \(screen.frame)")
+                if index > 0 {
+                    let screenRect = screen.frame
+                    let view = ColorView(frame: screenRect, color: NSColor.redColor())
+                    let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
+                    label.editable = false
+                    label.stringValue = "Screen \(index)"
+                    view.subviews.append(label)
+                    let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
+                    view.enterFullScreenMode(screen, withOptions: fullScreenOptions)
+                    tempViews.append((screen, view))
+                }
             }
             
             screensLabel.stringValue = "\(numScreens - 1) screens available"
             
             if numScreens > 1 {
-                captureButton.enabled = true
+                screenSelector.removeAllItems()
+                for i in 1...numScreens-1 {
+                    screenSelector.addItemWithTitle("Screen \(i)")
+                }
+                
+                startButton.enabled = true
+                screenSelector.enabled = true
             }
         }
         else {
@@ -37,44 +59,23 @@ class StartupView: NSViewController {
         
     }
     
-    @IBAction func captureScreens(sender: AnyObject) {
-        let allScreens = NSScreen.screens()
+    @IBAction func startQuiz(sender: AnyObject) {
+        for (screen, view) in tempViews {
+            let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
+            view.exitFullScreenModeWithOptions(fullScreenOptions)
+        }
         
-        if let screens = allScreens as? [NSScreen] {
-            for (index, screen) in enumerate(screens) {
-                if index > 0 {
-                    let screenRect = screen.frame
-                    let view = ColourView(frame: screenRect, color: NSColor.greenColor())
-                    let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
-                    label.editable = false
-                    label.stringValue = "Screen \(index)"
-                    view.subviews.append(label)
-                    let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-                    view.enterFullScreenMode(screen, withOptions: fullScreenOptions)
-                }
-            }
-        }
-        else {
-            println("Error capturing screens");
-        }
-    }
-}
-
-class ColourView: NSView {
-    var color = NSColor.blackColor()
-    
-    init(frame frameRect: NSRect, color: NSColor) {
-        super.init(frame: frameRect)
-        self.color = color
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
-    override func drawRect(dirtyRect: NSRect) {
-        self.color.setFill()
-        NSRectFill(dirtyRect)
-        super.drawRect(dirtyRect)
+        let screen = tempViews[screenSelector.indexOfSelectedItem].0
+        
+        tempViews = []
+        
+        let screenRect = screen.frame
+        let view = ColorView(frame: screenRect, color: NSColor.greenColor())
+        let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
+        label.editable = false
+        label.stringValue = "Quiz screen!"
+        view.subviews.append(label)
+        let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
+        view.enterFullScreenMode(screen, withOptions: fullScreenOptions)
     }
 }
