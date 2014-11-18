@@ -7,15 +7,17 @@
 //
 
 import Cocoa
+import DDHidLib
 
 class StartupView: NSViewController {
     
-    @IBOutlet weak var screensLabel: NSTextField!
     @IBOutlet weak var screenSelector: NSPopUpButton!
+    @IBOutlet weak var controllerSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     
     var tempViews = [(NSScreen, NSView)]()
-    
+    var controllers: [DDHidJoystick]?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +26,7 @@ class StartupView: NSViewController {
         
         if let screens = allScreens as? [NSScreen] {
             let numScreens = screens.count
-            println("Found \(numScreens) screens:")
+            println("Found \(numScreens) screen(s):")
 
             for (index, screen) in enumerate(screens) {
                 println("  \(screen.frame)")
@@ -41,15 +43,12 @@ class StartupView: NSViewController {
                 }
             }
             
-            screensLabel.stringValue = "\(numScreens - 1) screens available"
-            
             if numScreens > 1 {
                 screenSelector.removeAllItems()
                 for i in 1...numScreens-1 {
                     screenSelector.addItemWithTitle("Screen \(i)")
                 }
                 
-                startButton.enabled = true
                 screenSelector.enabled = true
             }
         }
@@ -57,25 +56,38 @@ class StartupView: NSViewController {
             println("Error enumerating screens");
         }
         
+        
+        controllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
+        
+        println("Found \(controllers!.count) game controller(s):")
+        
+        if controllers!.count > 0 {
+            controllerSelector.removeAllItems()
+            
+            for controller in controllers! {
+                println("  \(controller.manufacturer()) - \(controller.productName())")
+                controllerSelector.addItemWithTitle(controller.productName())
+            }
+            
+            controllerSelector.enabled = true
+        }
+        
+        
+        startButton.enabled = screenSelector.enabled && controllerSelector.enabled // || true
     }
+    
     
     @IBAction func startQuiz(sender: AnyObject) {
         for (screen, view) in tempViews {
             let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
             view.exitFullScreenModeWithOptions(fullScreenOptions)
         }
-        
+
         let screen = tempViews[screenSelector.indexOfSelectedItem].0
         
         tempViews = []
         
-        let screenRect = screen.frame
-        let view = ColorView(frame: screenRect, color: NSColor.greenColor())
-        let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
-        label.editable = false
-        label.stringValue = "Quiz screen!"
-        view.subviews.append(label)
-        let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-        view.enterFullScreenMode(screen, withOptions: fullScreenOptions)
+        let delegate = NSApplication.sharedApplication().delegate as AppDelegate
+        delegate.startQuiz(screen, quizController: controllers![controllerSelector.indexOfSelectedItem])
     }
 }
