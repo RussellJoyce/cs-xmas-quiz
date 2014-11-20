@@ -10,17 +10,27 @@
 
 boolean led = false;
 
+boolean buttons[] = {false};
+boolean buttonsPersistent[] = {false};
+boolean reset = false;
+
 void setup() {
-  pinMode(0, INPUT_PULLUP);
-  pinMode(1, INPUT_PULLUP);
-  pinMode(2, INPUT_PULLUP);
-  pinMode(3, INPUT_PULLUP);
-  pinMode(4, INPUT_PULLUP);
-  pinMode(5, INPUT_PULLUP);
-  pinMode(6, INPUT_PULLUP);
-  pinMode(7, INPUT_PULLUP);
-  pinMode(8, INPUT_PULLUP);
-  pinMode(9, INPUT_PULLUP);
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
+  pinMode(6, INPUT);
+  pinMode(7, INPUT);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+
+  pinMode(23, INPUT_PULLUP);
+
+  pinMode(10, OUTPUT);
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
 
   pinMode(13, OUTPUT);
 
@@ -30,23 +40,33 @@ void setup() {
 }
 
 void loop() {
-  // read the digital inputs and set the buttons
-  Quiz.button(1, !digitalRead(0));
-  Quiz.button(2, !digitalRead(1));
-  Quiz.button(3, !digitalRead(2));
-  Quiz.button(4, !digitalRead(3));
-  Quiz.button(5, !digitalRead(4));
-  Quiz.button(6, !digitalRead(5));
-  Quiz.button(7, !digitalRead(6));
-  Quiz.button(8, !digitalRead(7));
-  Quiz.button(9, !digitalRead(8));
-  Quiz.button(10, !digitalRead(9));
+  buttons[0] = digitalRead(0);
+
+
+  Quiz.button(1, buttons[0]);
+  // Quiz.button(2, digitalRead(1));
+  // Quiz.button(3, digitalRead(2));
+  // Quiz.button(4, digitalRead(3));
+  // Quiz.button(5, digitalRead(4));
+  // Quiz.button(6, digitalRead(5));
+  // Quiz.button(7, digitalRead(6));
+  // Quiz.button(8, digitalRead(7));
+  // Quiz.button(9, digitalRead(8));
+  // Quiz.button(10, digitalRead(9));
   Quiz.send_now();
 
-  Serial.println("Hello!");
+  reset = digitalRead(23);
+
+  buttonsPersistent[0] = buttons[0] || (buttonsPersistent[0] && !reset);
+
+  digitalWrite(10, !buttonsPersistent[0]);
+  // digitalWrite(11, !digitalRead(1));
+  // digitalWrite(12, !digitalRead(2));
+
+  //Serial.println("Hello!");
 
   led = !led;
   digitalWrite(13, led);
 
-  delay(200);
+  delay(100);
 }
