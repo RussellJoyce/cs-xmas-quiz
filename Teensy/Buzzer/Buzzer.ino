@@ -5,25 +5,25 @@
    (Copy 'hardware' folder into Arduino installation folder to overwrite default Teensy types)
 */
 
-#define BTN1  0
-#define BTN2  1
-#define BTN3  2
-#define BTN4  3
-#define BTN5  4
-#define BTN6  5
-#define BTN7  6
-#define BTN8  7
-#define BTN9  8
-#define BTN10 9
-#define LED1 10
-#define LED2 11
-#define LED3 12
-#define LED4 14
-#define LED5 15
-#define LED6 16
-#define LED7 17
-#define LED8 18
-#define LEDB 13
+#define BTN1  11
+#define BTN2  15
+#define BTN3  17
+#define BTN4  10
+#define BTN5   6
+#define BTN6   2
+#define BTN7  18
+#define BTN8  20
+#define BTN9  22
+#define BTN10 23
+#define LED1  14
+#define LED2  16
+#define LED3  12
+#define LED4   8
+#define LED5   4
+#define LED6   0
+#define LED7  19
+#define LED8  21
+#define LEDB  13
 
 boolean led = false;
 
