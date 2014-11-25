@@ -310,14 +310,15 @@ static uint8_t quiz_report_desc[] = {
         0x35, 0x00,                     //   Physical Minimum (0)
         0x45, 0x01,                     //   Physical Maximum (1)
         0x75, 0x01,                     //   Report Size (1)
-        0x95, 0x0A,                     //   Report Count (10)
+        0x95, 0x08,                     //   Report Count (8)
         0x05, 0x09,                     //   Usage Page (Button)
         0x19, 0x01,                     //   Usage Minimum (Button #1)
-        0x29, 0x0A,                     //   Usage Maximum (Button #10)
+        0x29, 0x08,                     //   Usage Maximum (Button #8)
         0x81, 0x02,                     //   Input (variable,absolute)
 
         0xC0                            // End Collection
 };
+#define MAX_POWER 250 // Set USB power to be up to 500mA
 #endif
 
 
@@ -338,7 +339,11 @@ static uint8_t config_descriptor[CONFIG_DESC_SIZE] = {
         1,                                      // bConfigurationValue
         0,                                      // iConfiguration
         0xC0,                                   // bmAttributes
+#ifdef MAX_POWER
+        MAX_POWER,                              // bMaxPower
+#else
         50,                                     // bMaxPower
+#endif
 
 #ifdef CDC_IAD_DESCRIPTOR
         // interface association descriptor, USB ECN, Table 9-Z
