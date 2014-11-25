@@ -13,8 +13,8 @@
 #define BTN6   2
 #define BTN7  18
 #define BTN8  20
-#define BTN9  22
-#define BTN10 23
+// #define BTN9  22
+// #define BTN10 23
 #define LED1  14
 #define LED2  16
 #define LED3  12
@@ -27,7 +27,7 @@
 
 int ledCount = 0;
 
-boolean buttons[10];
+boolean buttons[8];
 boolean leds[8];
 boolean reset = false;
 
@@ -41,8 +41,8 @@ void setup() {
     pinMode(BTN6, INPUT);
     pinMode(BTN7, INPUT);
     pinMode(BTN8, INPUT);
-    pinMode(BTN9, INPUT_PULLUP);
-    pinMode(BTN10, INPUT_PULLUP);
+    // pinMode(BTN9, INPUT_PULLUP);
+    // pinMode(BTN10, INPUT_PULLUP);
     pinMode(LED1, OUTPUT);
     pinMode(LED2, OUTPUT);
     pinMode(LED3, OUTPUT);
@@ -58,6 +58,16 @@ void setup() {
 
     // Make game controller use manual event sending
     Quiz.useManualSend(true);
+
+    Quiz.button(1, false);
+    Quiz.button(2, false);
+    Quiz.button(3, false);
+    Quiz.button(4, false);
+    Quiz.button(5, false);
+    Quiz.button(6, false);
+    Quiz.button(7, false);
+    Quiz.button(8, false);
+    Quiz.send_now();
 }
 
 void loop() {
@@ -69,8 +79,6 @@ void loop() {
     buttons[5] = digitalRead(BTN6);
     buttons[6] = digitalRead(BTN7);
     buttons[7] = digitalRead(BTN8);
-    buttons[8] = digitalRead(BTN9);
-    buttons[9] = digitalRead(BTN10);
 
     Quiz.button(1, buttons[0]);
     Quiz.button(2, buttons[1]);
@@ -80,23 +88,31 @@ void loop() {
     Quiz.button(6, buttons[5]);
     Quiz.button(7, buttons[6]);
     Quiz.button(8, buttons[7]);
-    Quiz.button(9, buttons[8]);
-    Quiz.button(10, buttons[9]);
     Quiz.send_now();
 
-    reset = digitalRead(23);
+    leds[0] = buttons[0];
+    leds[1] = buttons[1];
+    leds[2] = buttons[2];
+    leds[3] = buttons[3];
+    leds[4] = buttons[4];
+    leds[5] = buttons[5];
+    leds[6] = buttons[6];
+    leds[7] = buttons[7];
 
-    leds[0] = buttons[0] || (leds[0] && !reset);
-
-    digitalWrite(10, !leds[0]);
-    // digitalWrite(11, !digitalRead(1));
-    // digitalWrite(12, !digitalRead(2));
+    digitalWrite(LED1, !leds[0]);
+    digitalWrite(LED2, !leds[1]);
+    digitalWrite(LED3, !leds[2]);
+    digitalWrite(LED4, !leds[3]);
+    digitalWrite(LED5, !leds[4]);
+    digitalWrite(LED6, !leds[5]);
+    digitalWrite(LED7, !leds[6]);
+    digitalWrite(LED8, !leds[7]);
 
     //Serial.println("Hello!");
 
     // Blink the board LED
     ledCount ++;
-    if (ledCount == 980) {
+    if (ledCount == 800) {
         digitalWrite(LEDB, true);
     }
     else if (ledCount == 1000) {
