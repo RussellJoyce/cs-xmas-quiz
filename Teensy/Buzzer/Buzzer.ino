@@ -3,7 +3,11 @@
 
     You must select 'Quiz Buzzer System' from the "Tools > USB Type" menu
     (Copy 'hardware' folder into Arduino installation folder to overwrite default Teensy types)
+
+    If not using Arduino IDE, add "-DTEENSYDUINO=120" to compiler flags
 */
+
+#include "FastLED.h"
 
 #define BTN1  11
 #define BTN2  15
