@@ -38,8 +38,8 @@ const int ledPins[] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8};
 IntervalTimer updateTimer;
 volatile uint8_t serialData;
 volatile uint8_t serialData2;
-volatile uint8_t serialDataHigh;
-volatile uint8_t serialDataLow;
+volatile uint8_t serialCommand;
+volatile uint8_t serialParam;
 
 
 inline void outputBuzzerLeds() {
@@ -98,14 +98,14 @@ void updateTick() {
     // Handle any data on serial port
     if (Serial.available()) {
         serialData = Serial.read();
-        serialDataHigh = serialData & 0xF0;
-        serialDataLow = serialData & 0x07;
+        serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0 to F)
+        serialParam = serialData & 0x07;   // Set parameter to be low 3 bits (0 to 7)
 
-        if (serialDataHigh == LED_ON) {
-            setBuzzerLedOn(serialDataLow);
+        if (serialCommand == LED_ON) {
+            setBuzzerLedOn(serialParam);
         }
-        else if (serialDataHigh == LED_OFF) {
-            setBuzzerLedOff(serialDataLow);
+        else if (serialCommand == LED_OFF) {
+            setBuzzerLedOff(serialParam);
         }
         else if (serialData == LED_SET) {
             while (!Serial.available());
