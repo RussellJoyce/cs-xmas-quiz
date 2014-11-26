@@ -1,10 +1,9 @@
 /* Quiz LEDs Test
-    Teensy 3.1 becomes a USB game controller with ten buttons, plus a serial device
-
+    Teensy 3.1 becomes a USB game controller with eight buttons, plus a serial device
     You must select 'Quiz Buzzer System' from the "Tools > USB Type" menu
     (Copy 'hardware' folder into Arduino installation folder to overwrite default Teensy types)
 
-    If not using Arduino IDE, add "-DTEENSYDUINO=120" to compiler flags
+    If not using Arduino IDE, add "-DTEENSYDUINO=120" to compiler flags to fix FastLED ARM compile error
 */
 
 #include <FastLED.h>

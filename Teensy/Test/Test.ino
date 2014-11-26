@@ -1,6 +1,5 @@
 /* Basic USB Game Controller Test
-   Teensy becomes a USB game controller with ten buttons, plus a serial device
-
+   Teensy becomes a USB game controller with eight buttons, plus a serial device
    You must select 'Quiz Buzzer System' from the "Tools > USB Type" menu
    (Copy 'hardware' folder into Arduino installation folder to overwrite default Teensy types)
 
