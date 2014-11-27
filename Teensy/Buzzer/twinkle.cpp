@@ -3,10 +3,10 @@
 Twinkle *twinkle = new Twinkle();
 
 //							Min 	Max		Step	Start
-Parameter speed(			0, 		100, 	10, 	10);	//Every speed frames change a target colour
-Parameter hue(				0, 		255, 	10, 	0);		//The hue of the leds
-Parameter saturation(		0, 		255, 	30, 	0);		//The saturation of the leds
-Parameter twinkleamount(	0, 		255, 	10, 	60);	//The amount to twiddle the value of the leds
+Parameter speed(			0, 		100, 	10, 	0);	//Every speed frames change a target colour
+Parameter hue(				0, 		255, 	10, 	60);		//The hue of the leds
+Parameter saturation(		0, 		255, 	30, 	200);		//The saturation of the leds
+Parameter twinkleamount(	0, 		255, 	10, 	255);	//The amount to twiddle the value of the leds
 
 #define FADEFRAMES 2
 

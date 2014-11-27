@@ -49,7 +49,7 @@ volatile uint8_t serialCommand;
 volatile uint8_t serialParam;
 volatile boolean serialSecond = false;
 
-Animation *animations[] = {NULL, twinkle, NULL, NULL, NULL, NULL, NULL, NULL};
+Animation *animations[8];
 
 
 inline void outputBuzzerLeds() {
@@ -129,7 +129,7 @@ void updateTick() {
             else if (serialCommand == LEDS_TEAM) {
                 play_buzz_anim(serialParam);
             }
-            else if (serialCommand == LEDS_TEAMR) {
+            else if (serialCommand == LEDS_TEAMG) {
                 set_team_colour(serialParam, CRGB::Green);
             }
             else if (serialCommand == LEDS_TEAMR) {
@@ -197,6 +197,9 @@ void setup() {
     pinMode(LED7, OUTPUT);
     pinMode(LED8, OUTPUT);
     pinMode(LEDB, OUTPUT);
+
+    // Initialise animation array
+    animations[1] = twinkle;
 
     // Set up serial (Teensy implicity uses full USB bandwidth of 12Mb/s)
     Serial.begin(0);
