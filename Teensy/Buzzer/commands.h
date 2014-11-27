@@ -6,9 +6,7 @@
 #define STATUS       0x00
 #define RESET        0x01
 
-#define LEDS_OFF     0x10
-#define LEDS_TWINKLE 0x11
-
+#define LEDS_ANIM    0x10
 #define LEDS_TEAM    0x20
 #define LEDS_TEAMR   0x30
 #define LEDS_TEAMG   0x40
