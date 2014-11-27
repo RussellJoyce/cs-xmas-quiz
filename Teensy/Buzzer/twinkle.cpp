@@ -27,7 +27,7 @@ void Twinkle::start() {
 		target[i] = CHSV(hue.get(), saturation.get(), 255);
 		current[i] = CHSV(hue.get(), saturation.get(), 255);
 	}
-	FastLED.show();
+	//FastLED.show();
 }
 
 void Twinkle::tick() {

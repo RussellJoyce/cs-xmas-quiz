@@ -103,14 +103,15 @@ inline void setBuzzerLeds(uint8_t mask) {
     }
 }
 
-void ledsOff() {
-    clearLEDs();
-    currentAnim = NULL;
-}
-
 void switchAnimation(Animation *arg) {
     currentAnim = arg;
-    currentAnim->start();
+
+    if (currentAnim != NULL) {
+        currentAnim->start();
+    }
+    else {
+        clearLEDs();
+    }
 }
 
 
