@@ -43,11 +43,16 @@ volatile uint8_t buzzerLeds = 0;
 const int ledPins[] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8};
 
 IntervalTimer updateTimer;
+
 volatile uint8_t serialData;
 volatile uint8_t serialData2;
 volatile uint8_t serialCommand;
 volatile uint8_t serialParam;
 volatile boolean serialSecond = false;
+
+volatile int buzzerAnimationTeam = -1;
+volatile int buzzerColourTeam = -1;
+CRGB buzzerColour = CRGB::White;
 
 Animation *animations[8];
 
@@ -103,7 +108,7 @@ inline void setBuzzerLeds(uint8_t mask) {
     }
 }
 
-void switchAnimation(Animation *arg) {
+inline void switchAnimation(Animation *arg) {
     currentAnim = arg;
 
     if (currentAnim != NULL) {
@@ -112,6 +117,19 @@ void switchAnimation(Animation *arg) {
     else {
         clearLEDs();
     }
+}
+
+inline void playBuzzerAnimation(int team) {
+    currentAnim = NULL;
+    buzzerColourTeam = -1;
+    buzzerAnimationTeam = team;
+}
+
+inline void setTeamColour(int team, CRGB colour) {
+    currentAnim = NULL;
+    buzzerAnimationTeam = -1;
+    buzzerColourTeam = team;
+    buzzerColour = colour;
 }
 
 
@@ -123,26 +141,28 @@ void updateTick() {
             serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0 to F)
             serialParam = serialData & 0x07;   // Set parameter to be low 3 bits (0 to 7)
 
-            if (serialCommand == LEDS_ANIM) {
-                switchAnimation(animations[serialParam]);
-            }
-            else if (serialCommand == LEDS_TEAM) {
-                play_buzz_anim(serialParam);
-            }
-            else if (serialCommand == LEDS_TEAMG) {
-                set_team_colour(serialParam, CRGB::Green);
-            }
-            else if (serialCommand == LEDS_TEAMR) {
-                set_team_colour(serialParam, CRGB::Red);
-            }
-            else if (serialCommand == LED_ON) {
-                setBuzzerLedOn(serialParam);
-            }
-            else if (serialCommand == LED_OFF) {
-                setBuzzerLedOff(serialParam);
-            }
-            else if (serialCommand == LED_SET) {
-                serialSecond = true;
+            switch (serialCommand) {
+                case LEDS_ANIM:
+                    switchAnimation(animations[serialParam]);
+                    break;
+                case LEDS_TEAM:
+                    playBuzzerAnimation(serialParam);
+                    break;
+                case LEDS_TEAMG:
+                    setTeamColour(serialParam, CRGB::Green);
+                    break;
+                case LEDS_TEAMR:
+                    setTeamColour(serialParam, CRGB::Red);
+                    break;
+                case LED_ON:
+                    setBuzzerLedOn(serialParam);
+                    break;
+                case LED_OFF:
+                    setBuzzerLedOff(serialParam);
+                    break;
+                case LED_SET:
+                    serialSecond = true;
+                    break;
             }
         }
         else {
@@ -224,6 +244,14 @@ void setup() {
 void loop() {
     if (currentAnim != NULL) {
         currentAnim->tick();
+    }
+    else if (buzzerAnimationTeam != -1) {
+        play_buzz_anim(buzzerAnimationTeam);
+        buzzerAnimationTeam = -1;
+    }
+    else if (buzzerColourTeam != -1) {
+        set_team_colour(buzzerColourTeam, buzzerColour);
+        buzzerColourTeam = -1;
     }
 }
 
