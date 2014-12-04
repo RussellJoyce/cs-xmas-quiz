@@ -36,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         controllerWindow.quizScreen = screen
         controllerWindow.quizController = controller
-        controllerWindow.quizSerial = serial
+        controllerWindow.quizLeds = QuizLeds(serialPort: serial)
         
         controllerWindow.showWindow(self)
     }

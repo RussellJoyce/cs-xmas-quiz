@@ -57,6 +57,7 @@
 		46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */; };
 		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
 		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
+		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +141,7 @@
 		46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
 		46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
 		46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
+		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +201,7 @@
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
 				3CD1DF5C1A30687F003DEA9F /* Pointless.swift */,
 				3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */,
+				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -429,6 +432,7 @@
 				46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
+				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
