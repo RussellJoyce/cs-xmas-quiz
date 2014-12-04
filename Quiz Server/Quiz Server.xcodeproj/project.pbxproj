@@ -45,7 +45,10 @@
 		46B025AD1A1BF8140088294B /* NSXReturnThrowError.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025AB1A1BF8140088294B /* NSXReturnThrowError.h */; };
 		46B025AE1A1BF8140088294B /* NSXReturnThrowError.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */; };
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
-		46B025BB1A1C0FE10088294B /* ControllerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindowController.xib */; };
+		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
+		46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */; };
+		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
+		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,7 +116,14 @@
 		46B025AB1A1BF8140088294B /* NSXReturnThrowError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSXReturnThrowError.h; sourceTree = "<group>"; };
 		46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSXReturnThrowError.m; sourceTree = "<group>"; };
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
-		46B025B91A1C0FE10088294B /* ControllerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindowController.xib; sourceTree = "<group>"; };
+		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
+		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
+		46DAD06D1A2F690C00A7D9AF /* ORSSerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPort.h; path = ../ORSSerialPort/Source/ORSSerialPort.h; sourceTree = "<group>"; };
+		46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPort.m; path = ../ORSSerialPort/Source/ORSSerialPort.m; sourceTree = "<group>"; };
+		46DAD06F1A2F690C00A7D9AF /* ORSSerialPortManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPortManager.h; path = ../ORSSerialPort/Source/ORSSerialPortManager.h; sourceTree = "<group>"; };
+		46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
+		46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
+		46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +150,7 @@
 		46056EAB1A19624E00C37628 = {
 			isa = PBXGroup;
 			children = (
+				46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */,
 				46B025551A1BF4EC0088294B /* DDHidLib */,
 				46B0254C1A1BF0590088294B /* Frameworks */,
 				46056ED41A196EF100C37628 /* TestPlayground.playground */,
@@ -167,7 +178,7 @@
 				46056ED51A1974A800C37628 /* StartupView.swift */,
 				460CB5001A1A431F0065E540 /* ColorView.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
-				46B025B91A1C0FE10088294B /* ControllerWindowController.xib */,
+				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -238,6 +249,20 @@
 			children = (
 			);
 			name = DDHidLib;
+			sourceTree = "<group>";
+		};
+		46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */ = {
+			isa = PBXGroup;
+			children = (
+				46DAD06D1A2F690C00A7D9AF /* ORSSerialPort.h */,
+				46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */,
+				46DAD06F1A2F690C00A7D9AF /* ORSSerialPortManager.h */,
+				46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */,
+				46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */,
+				46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */,
+				46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */,
+			);
+			name = ORSSerialPort;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -345,7 +370,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46B025BB1A1C0FE10088294B /* ControllerWindowController.xib in Resources */,
+				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 			);
@@ -367,7 +392,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				460CB5011A1A431F0065E540 /* ColorView.swift in Sources */,
+				46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */,
+				46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
+				46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 			);
@@ -496,6 +524,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -505,6 +534,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "Quiz Server";
+				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -512,6 +543,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -521,6 +553,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "Quiz Server";
+				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
 			};
 			name = Release;
 		};
@@ -598,6 +631,7 @@
 				46B0256F1A1BF4ED0088294B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

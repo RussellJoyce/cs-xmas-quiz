@@ -13,18 +13,20 @@ class StartupView: NSViewController {
     
     @IBOutlet weak var screenSelector: NSPopUpButton!
     @IBOutlet weak var controllerSelector: NSPopUpButton!
+    @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     
     var tempViews = [(NSScreen, NSView)]()
-    var controllers: [DDHidJoystick]?
-
+    var allControllers: [DDHidJoystick]?
+    var allPorts: [ORSSerialPort]?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let allScreens = NSScreen.screens()
+        let allScreens = NSScreen.screens() as [NSScreen]?
         
-        if let screens = allScreens as? [NSScreen] {
+        if let screens = allScreens {
             let numScreens = screens.count
             println("Found \(numScreens) screen(s):")
 
@@ -57,19 +59,40 @@ class StartupView: NSViewController {
         }
         
         
-        controllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
+        allControllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
         
-        println("Found \(controllers!.count) game controller(s):")
-        
-        if controllers!.count > 0 {
-            controllerSelector.removeAllItems()
+        if let controllers = allControllers {
+            println("Found \(controllers.count) game controller(s):")
             
-            for controller in controllers! {
-                println("  \(controller.manufacturer()) - \(controller.productName())")
-                controllerSelector.addItemWithTitle(controller.productName())
+            if controllers.count > 0 {
+                controllerSelector.removeAllItems()
+                
+                for controller in controllers {
+                    println("  \(controller.manufacturer()) - \(controller.productName())")
+                    controllerSelector.addItemWithTitle(controller.productName())
+                }
+                
+                controllerSelector.enabled = true
             }
+        }
+        
+        
+        let serialPortManager = ORSSerialPortManager.sharedSerialPortManager()
+        allPorts = serialPortManager.availablePorts as? [ORSSerialPort]
+        
+        if let ports = allPorts {
+            println("Found \(ports.count) serial port(s):")
             
-            controllerSelector.enabled = true
+            if ports.count > 0 {
+                serialSelector.removeAllItems()
+                
+                for port in ports {
+                    println("  \(port.name)")
+                    serialSelector.addItemWithTitle(port.name)
+                }
+                
+                serialSelector.enabled = true
+            }
         }
         
         
@@ -88,6 +111,6 @@ class StartupView: NSViewController {
         tempViews = []
         
         let delegate = NSApplication.sharedApplication().delegate as AppDelegate
-        delegate.startQuiz(screen, quizController: controllers![controllerSelector.indexOfSelectedItem])
+        delegate.startQuiz(screen, controller: allControllers![controllerSelector.indexOfSelectedItem], serial: allPorts![serialSelector.indexOfSelectedItem])
     }
 }

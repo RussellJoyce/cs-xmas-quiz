@@ -14,8 +14,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
     
-    var controllerWindow : ControllerWindowController?
-
+    let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
+    
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
@@ -31,19 +31,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     
-    func startQuiz(quizScreen: NSScreen, quizController: DDHidJoystick) {
+    func startQuiz(screen: NSScreen, controller: DDHidJoystick, serial: ORSSerialPort) {
         window.close()
-        controllerWindow = ControllerWindowController(windowNibName: "ControllerWindowController")
-        controllerWindow!.showWindow(self)
         
-        let screenRect = quizScreen.frame
-        let view = ColorView(frame: screenRect, color: NSColor.greenColor())
-        let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
-        label.editable = false
-        label.stringValue = "Quiz screen!"
-        view.subviews.append(label)
-        let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-        view.enterFullScreenMode(quizScreen, withOptions: fullScreenOptions)
+        controllerWindow.quizScreen = screen
+        controllerWindow.quizController = controller
+        controllerWindow.quizSerial = serial
+        
+        controllerWindow.showWindow(self)
     }
 
 }
