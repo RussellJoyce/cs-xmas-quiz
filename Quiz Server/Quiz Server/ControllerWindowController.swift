@@ -29,7 +29,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
         quizController?.setDelegate(self)
         quizController?.startListening()
         
-        // Show quiz view on selected screen
+        // Show quiz view on selected screen (resized to fit)
+        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+            attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
+            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            multiplier: 1, constant: quizScreen!.frame.width))
+        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+            attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
+            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            multiplier: 1, constant: quizScreen!.frame.height))
         quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
     }
     
@@ -43,7 +51,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
         quizController?.stopListening()
     }
     
-    @IBAction func pressed1(sender: NSButton) {
+    @IBAction func pressedNumber(sender: NSButton) {
+        if (sender.state == NSOnState) {
+            quizLeds?.ledOn(Byte(sender.tag - 1))
+        }
+        else {
+            quizLeds?.ledOff(Byte(sender.tag - 1))
+        }
+    }
+    
+    @IBAction func pressedButton(sender: NSButton) {
         if led1 {
             quizLeds?.ledOff(0)
             usleep(100000)
