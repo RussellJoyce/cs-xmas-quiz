@@ -124,7 +124,7 @@
 
 - (unsigned) numberOfButtons;
 {
-    return [mButtonElements count];
+    return (unsigned)[mButtonElements count];
 }
 
 - (void) addElementsToQueue: (DDHidQueue *) queue;
@@ -224,7 +224,7 @@
 - (void) ddhidQueueHasEvents: (DDHidQueue *) hidQueue;
 {
     DDHidEvent * event;
-    while (event = [hidQueue nextEvent])
+    while ((event = [hidQueue nextEvent]))
     {
         IOHIDElementCookie cookie = [event elementCookie];
         SInt32 value = [event value];

@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
+		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
+		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
+		3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF571A306820003DEA9F /* counter_sting.wav */; };
+		3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5C1A30687F003DEA9F /* Pointless.swift */; };
+		3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */; };
+		3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF601A3068DA003DEA9F /* Tests.storyboard */; };
+		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
@@ -76,6 +84,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
+		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
+		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
+		3CD1DF571A306820003DEA9F /* counter_sting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_sting.wav; sourceTree = "<group>"; };
+		3CD1DF5C1A30687F003DEA9F /* Pointless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointless.swift; sourceTree = "<group>"; };
+		3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessStackView.xib; sourceTree = "<group>"; };
+		3CD1DF601A3068DA003DEA9F /* Tests.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Tests.storyboard; sourceTree = "<group>"; };
+		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46056EB81A19624E00C37628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46056EB91A19624E00C37628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -131,6 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */,
 				46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */,
 				46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */,
 			);
@@ -172,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
+				3CD1DF601A3068DA003DEA9F /* Tests.storyboard */,
 				46056EBB1A19624E00C37628 /* Images.xcassets */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46056EB71A19624E00C37628 /* Supporting Files */,
@@ -179,6 +197,8 @@
 				460CB5001A1A431F0065E540 /* ColorView.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
+				3CD1DF5C1A30687F003DEA9F /* Pointless.swift */,
+				3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -186,6 +206,10 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3CD1DF541A306820003DEA9F /* counter_wrong.wav */,
+				3CD1DF551A306820003DEA9F /* counter_score100.wav */,
+				3CD1DF561A306820003DEA9F /* counter_soft_end.wav */,
+				3CD1DF571A306820003DEA9F /* counter_sting.wav */,
 				46056EB81A19624E00C37628 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -194,6 +218,7 @@
 		46B0254C1A1BF0590088294B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */,
 				46B0254A1A1BF04D0088294B /* IOKit.framework */,
 			);
 			name = Frameworks;
@@ -371,6 +396,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
+				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
+				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
+				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
+				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
+				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
+				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 			);
@@ -396,6 +427,7 @@
 				46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */,
+				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 			);
