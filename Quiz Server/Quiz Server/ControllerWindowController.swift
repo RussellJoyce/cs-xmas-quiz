@@ -15,11 +15,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
     var quizController: DDHidJoystick?
     var quizLeds: QuizLeds?
     
+    let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
+    
     var led1 = false
     
     override func windowDidLoad() {
         super.windowDidLoad()
-        println("test")
         
         // Open serial port
         quizLeds?.openSerial()
@@ -29,14 +30,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
         quizController?.startListening()
         
         // Show quiz view on selected screen
-        let screenRect = quizScreen!.frame
-        let view = ColorView(frame: screenRect, color: NSColor.greenColor())
-        let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
-        label.editable = false
-        label.stringValue = "Quiz screen!"
-        view.subviews.append(label)
-        let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-        view.enterFullScreenMode(quizScreen!, withOptions: fullScreenOptions)
+        quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
     }
     
     func windowWillClose(notification: NSNotification) {
@@ -92,6 +86,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         println("Button \(buttonNumber) down")
         quizLeds?.ledOn(Byte(buttonNumber))
+        quizView.titleLabel.stringValue = "Button \(buttonNumber + 1) buzzed"
     }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
