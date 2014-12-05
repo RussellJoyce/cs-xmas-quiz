@@ -15,8 +15,9 @@ class StartupView: NSViewController {
     @IBOutlet weak var controllerSelector: NSPopUpButton!
     @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
+    @IBOutlet weak var testMode: NSButton!
     
-    var tempViews = [(NSScreen, NSView)]()
+    var allScreens: [NSScreen]?
     var allControllers: [DDHidJoystick]?
     var allPorts: [ORSSerialPort]?
     
@@ -24,34 +25,20 @@ class StartupView: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let allScreens = NSScreen.screens() as [NSScreen]?
+        allScreens = NSScreen.screens() as [NSScreen]?
         
         if let screens = allScreens {
             let numScreens = screens.count
             println("Found \(numScreens) screen(s):")
-
-            for (index, screen) in enumerate(screens) {
-                println("  \(screen.frame)")
-                if index > 0 {
-                    let screenRect = screen.frame
-                    let view = ColorView(frame: screenRect, color: NSColor.redColor())
-                    let label = NSTextField(frame: CGRectMake(20, 20, screenRect.width - 40, screenRect.height - 40))
-                    label.editable = false
-                    label.stringValue = "Screen \(index)"
-                    view.subviews.append(label)
-                    let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-                    view.enterFullScreenMode(screen, withOptions: fullScreenOptions)
-                    tempViews.append((screen, view))
-                }
-            }
             
-            if numScreens > 1 {
+            if numScreens > 0 {
                 screenSelector.removeAllItems()
-                for i in 1...numScreens-1 {
-                    screenSelector.addItemWithTitle("Screen \(i)")
-                }
-                
                 screenSelector.enabled = true
+
+                for (index, screen) in enumerate(screens) {
+                    println("  \(screen.frame)")
+                    screenSelector.addItemWithTitle("Screen \(index) - \(screen.frame)")
+                }
             }
         }
         else {
@@ -94,23 +81,24 @@ class StartupView: NSViewController {
                 serialSelector.enabled = true
             }
         }
+
         
-        
-        startButton.enabled = screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled // || true
+        startButton.enabled = (screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled) || (testMode.state == NSOnState)
+    }
+    
+    
+    @IBAction func testModeChanged(sender: AnyObject) {
+        startButton.enabled = (screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled) || (testMode.state == NSOnState)
     }
     
     
     @IBAction func startQuiz(sender: AnyObject) {
-        for (screen, view) in tempViews {
-            let fullScreenOptions = [NSFullScreenModeAllScreens: 0]
-            view.exitFullScreenModeWithOptions(fullScreenOptions)
-        }
-
-        let screen = tempViews[screenSelector.indexOfSelectedItem].0
-        
-        tempViews = []
+        let screen = (allScreens?.count > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
+        let controller = (allControllers?.count > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
+        let serial = (allPorts?.count > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
+        let test = testMode.state == NSOnState;
         
         let delegate = NSApplication.sharedApplication().delegate as AppDelegate
-        delegate.startQuiz(screen, controller: allControllers![controllerSelector.indexOfSelectedItem], serial: allPorts![serialSelector.indexOfSelectedItem])
+        delegate.startQuiz(screen, controller: controller, serial: serial, testMode: test)
     }
 }

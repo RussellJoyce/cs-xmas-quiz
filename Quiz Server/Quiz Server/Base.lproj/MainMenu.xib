@@ -311,14 +311,14 @@
         </menu>
         <window title="Quiz Server" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES"/>
-            <rect key="contentRect" x="335" y="390" width="437" height="170"/>
+            <rect key="contentRect" x="335" y="390" width="566" height="170"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="437" height="170"/>
+                <rect key="frame" x="0.0" y="0.0" width="566" height="170"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
-                        <rect key="frame" x="165" y="126" width="199" height="26"/>
+                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
+                        <rect key="frame" x="165" y="126" width="384" height="26"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Z2K-FA-4W8">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -337,8 +337,8 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-Ch-lHI">
-                        <rect key="frame" x="165" y="100" width="199" height="26"/>
+                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-Ch-lHI">
+                        <rect key="frame" x="165" y="100" width="384" height="26"/>
                         <popUpButtonCell key="cell" type="push" title="No game controllers" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rBd-JD-XOy" id="ZJH-pF-0XG">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -357,8 +357,8 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
-                        <rect key="frame" x="165" y="72" width="199" height="26"/>
+                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
+                        <rect key="frame" x="165" y="72" width="384" height="26"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="p3n-5t-awL">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -377,8 +377,18 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BzV-d4-VFP">
+                        <rect key="frame" x="18" y="22" width="93" height="18"/>
+                        <buttonCell key="cell" type="check" title="Test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cK3-Iy-Rsk">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="testModeChanged:" target="9BG-lO-pnL" id="R7e-YB-xgW"/>
+                        </connections>
+                    </button>
                     <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
-                        <rect key="frame" x="318" y="13" width="105" height="32"/>
+                        <rect key="frame" x="447" y="13" width="105" height="32"/>
                         <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8TC-aM-0ia">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -389,11 +399,15 @@
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="trailing" secondItem="9Zo-H4-VCv" secondAttribute="trailing" constant="20" id="CRs-J3-gXG"/>
                     <constraint firstAttribute="trailing" secondItem="3ly-hv-dYY" secondAttribute="trailing" constant="20" id="YSP-5p-LDj"/>
+                    <constraint firstAttribute="bottom" secondItem="BzV-d4-VFP" secondAttribute="bottom" constant="24" id="gyW-3V-YhD"/>
                     <constraint firstAttribute="bottom" secondItem="3ly-hv-dYY" secondAttribute="bottom" constant="20" id="qah-Lp-lwz"/>
+                    <constraint firstAttribute="trailing" secondItem="7Fx-Ch-lHI" secondAttribute="trailing" constant="20" id="rw5-d0-va2"/>
+                    <constraint firstAttribute="trailing" secondItem="AUn-q1-hZ0" secondAttribute="trailing" constant="20" id="yPn-gU-oeL"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="65.5" y="55"/>
+            <point key="canvasLocation" x="130" y="55"/>
         </window>
         <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
@@ -401,6 +415,7 @@
                 <outlet property="screenSelector" destination="9Zo-H4-VCv" id="g6C-QK-QJa"/>
                 <outlet property="serialSelector" destination="AUn-q1-hZ0" id="sYk-9V-eVQ"/>
                 <outlet property="startButton" destination="3ly-hv-dYY" id="LeE-DQ-bWy"/>
+                <outlet property="testMode" destination="BzV-d4-VFP" id="hd1-4Q-fNA"/>
                 <outlet property="view" destination="EiT-Mj-1SZ" id="nHa-hc-OfF"/>
             </connections>
         </viewController>

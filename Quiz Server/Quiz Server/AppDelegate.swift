@@ -46,12 +46,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     
-    func startQuiz(screen: NSScreen, controller: DDHidJoystick, serial: ORSSerialPort) {
+    func startQuiz(screen: NSScreen?, controller: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
         window.close()
         
         controllerWindow.quizScreen = screen
         controllerWindow.quizController = controller
-        controllerWindow.quizLeds = QuizLeds(serialPort: serial)
+        if let optSerial = serial {
+            controllerWindow.quizLeds = QuizLeds(serialPort: optSerial)
+        }
         
         controllerWindow.showWindow(self)
     }

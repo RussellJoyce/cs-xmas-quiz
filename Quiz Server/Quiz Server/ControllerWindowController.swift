@@ -14,6 +14,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
     var quizScreen: NSScreen?
     var quizController: DDHidJoystick?
     var quizLeds: QuizLeds?
+    var testMode: Bool = true
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
     
