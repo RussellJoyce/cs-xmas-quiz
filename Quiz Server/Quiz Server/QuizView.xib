@@ -13,11 +13,11 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="385"/>
+            <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MZk-E8-rHg">
-                    <rect key="frame" x="18" y="192" width="564" height="87"/>
+                    <rect key="frame" x="18" y="362" width="764" height="87"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Quiz!" id="BzJ-GP-j4r">
                         <font key="font" size="72" name="Helvetica-Bold"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -25,25 +25,17 @@
                     </textFieldCell>
                 </textField>
                 <imageView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37T-mP-P3d">
-                    <rect key="frame" x="0.0" y="287" width="600" height="98"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageAlignment="left" image="christmaslights" id="MSe-2Y-aGe"/>
-                </imageView>
-                <imageView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7wa-9N-75Y">
-                    <rect key="frame" x="0.0" y="0.0" width="600" height="98"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageAlignment="right" image="christmaslights" id="fmL-bg-4FJ"/>
+                    <rect key="frame" x="0.0" y="502" width="800" height="98"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" image="christmaslights" id="MSe-2Y-aGe"/>
                 </imageView>
             </subviews>
             <constraints>
                 <constraint firstItem="MZk-E8-rHg" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="0eX-TQ-OoG"/>
                 <constraint firstAttribute="trailing" secondItem="MZk-E8-rHg" secondAttribute="trailing" constant="20" id="DPe-KT-TM2"/>
                 <constraint firstItem="37T-mP-P3d" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="EsW-K9-mid"/>
-                <constraint firstItem="37T-mP-P3d" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="Jo5-zc-nta"/>
-                <constraint firstAttribute="trailing" secondItem="7wa-9N-75Y" secondAttribute="trailing" id="NCB-EO-u44"/>
                 <constraint firstAttribute="trailing" secondItem="37T-mP-P3d" secondAttribute="trailing" id="g21-N0-fQ7"/>
-                <constraint firstAttribute="bottom" secondItem="7wa-9N-75Y" secondAttribute="bottom" id="kuT-Xf-0Cu"/>
-                <constraint firstItem="7wa-9N-75Y" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="yzQ-27-zsC"/>
             </constraints>
-            <point key="canvasLocation" x="1323" y="474.5"/>
+            <point key="canvasLocation" x="3103" y="759.5"/>
         </customView>
     </objects>
     <resources>

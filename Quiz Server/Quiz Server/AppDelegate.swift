@@ -19,6 +19,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
+        
+        // Code to test quiz screen layout, with no controller view
+        /*
+        let quizScreen = NSScreen.screens()![0] as NSScreen
+        let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
+        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+            attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
+            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            multiplier: 1, constant: quizScreen.frame.width))
+        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+            attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
+            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            multiplier: 1, constant: quizScreen.frame.height))
+        quizView.view.enterFullScreenMode(quizScreen, withOptions: [NSFullScreenModeAllScreens: 0])
+        */
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
