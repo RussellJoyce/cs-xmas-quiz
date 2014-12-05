@@ -96,7 +96,7 @@ class StartupView: NSViewController {
         }
         
         
-        startButton.enabled = screenSelector.enabled && controllerSelector.enabled // || true
+        startButton.enabled = screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled // || true
     }
     
     
