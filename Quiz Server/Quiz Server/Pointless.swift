@@ -110,7 +110,7 @@ class PointlessStackViewController: NSViewController {
 		super.viewDidLoad()
 		
 		//Add the bars
-		for i in 0...numBars-1 {
+		for i in 0..<numBars {
 			let container = PointlessBarContainer()
 			stack.addView(container, inGravity: NSStackViewGravity.Bottom)
 			
