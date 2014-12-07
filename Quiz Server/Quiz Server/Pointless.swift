@@ -13,7 +13,7 @@ let numBars = 100
 let sleepTimeInterval = 0.002
 let barAnimationTime = 1.5
 let barAlphaStart = 1
-let moveRandomAmount = 10
+let moveRandomAmount = 8
 
 
 ///The top-level view for creating a Pointless score display
@@ -22,7 +22,7 @@ class PointlessView: NSView {
 	
 	let imgView = PointlessBackgroundImage()
 	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
-
+	
 	let counterSound = AVAudioPlayer(
 		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_soft_end", ofType: "wav")!),
 		error: nil)
@@ -83,6 +83,13 @@ class PointlessView: NSView {
 		}
 	}
 	
+	func wrong() {
+		wrongSound.stop()
+		wrongSound.currentTime = 0
+		wrongSound.play()
+		self.imgView.wrongpulse()
+	}
+	
 	func reset() {
 		self.pvc!.resetBars()
 		self.pvc!.mainLabel.stringValue = String(100)
@@ -95,13 +102,13 @@ class PointlessStackViewController: NSViewController {
 	
 	@IBOutlet weak var stack: NSStackView!
 	@IBOutlet weak var mainLabel: NSTextField!
-
+	
 	var bars = [PointlessBar]()
 	var barContainers = [PointlessBarContainer]()
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
+		
 		//Add the bars
 		for i in 0...numBars-1 {
 			let container = PointlessBarContainer()
@@ -187,7 +194,7 @@ class PointlessBar: NSImageView {
 	required init?(coder: NSCoder) {super.init(coder: coder)}
 }
 
-///Containers are needed because if we applied the filters to the PointlessBars themselves the 
+///Containers are needed because if we applied the filters to the PointlessBars themselves the
 ///results could not render outside of the bounds of the bar
 class PointlessBarContainer: NSView {
 	override init() {
@@ -224,7 +231,13 @@ class PointlessBackgroundImage: NSImageView {
 		pulse.setDefaults()
 		pulse.setValue(1, forKey: "inputEV")
 		pulse.name = "pulse"
-		self.layer?.filters = [pulse]
+		
+		let wp = CIFilter(name: "CIWhitePointAdjust")
+		wp.setDefaults()
+		wp.setValue(CIColor(red: 1, green: 1, blue: 1), forKey: "inputColor")
+		wp.name = "wp"
+		
+		self.layer?.filters = [pulse, wp]
 	}
 	
 	override func drawRect(dirtyRect: NSRect) {
@@ -267,6 +280,50 @@ class PointlessBackgroundImage: NSImageView {
 		
 		self.layer?.addAnimation(pulseup, forKey: "pulseup")
 		self.layer?.addAnimation(pulsedn, forKey: "pulsedn")
+	}
+	
+	func wrongpulse() {
+		let rampUpTime = 0.1
+		var ev: Float = 0.2
+		var fadeTime: CFTimeInterval = 2.5
+		var col = CIColor(red: 1, green: 0, blue: 0)
+		
+		let pulseup = CABasicAnimation()
+		pulseup.keyPath = "filters.pulse.inputEV"
+		pulseup.fromValue = 1
+		pulseup.toValue = ev
+		pulseup.duration = rampUpTime
+		pulseup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		
+		let pulsedn = CABasicAnimation()
+		pulsedn.keyPath = "filters.pulse.inputEV"
+		pulsedn.fromValue = ev
+		pulsedn.toValue = 1
+		pulsedn.duration = fadeTime
+		pulsedn.beginTime = CACurrentMediaTime() + rampUpTime
+		pulsedn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		
+		
+		let wpup = CABasicAnimation()
+		wpup.keyPath = "filters.wp.inputColor"
+		wpup.fromValue = CIColor(red: 1, green: 1, blue: 1)
+		wpup.toValue = col
+		wpup.duration = rampUpTime * 2
+		wpup.beginTime = CACurrentMediaTime()
+		wpup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		
+		let wpdn = CABasicAnimation()
+		wpdn.keyPath = "filters.wp.inputColor"
+		wpdn.fromValue = col
+		wpdn.toValue = CIColor(red: 1, green: 1, blue: 1)
+		wpdn.duration = fadeTime
+		wpdn.beginTime = CACurrentMediaTime() + rampUpTime * 2
+		wpdn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		
+		self.layer?.addAnimation(pulseup, forKey: "pulseup")
+		self.layer?.addAnimation(pulsedn, forKey: "pulsedn")
+		self.layer?.addAnimation(wpup, forKey: "wpup")
+		self.layer?.addAnimation(wpdn, forKey: "wpdn")
 	}
 	
 	override init(frame frameRect: NSRect) {super.init(frame: frameRect)}
