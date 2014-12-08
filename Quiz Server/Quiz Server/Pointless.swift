@@ -263,18 +263,19 @@ class PointlessBackgroundImage: NSImageView {
 		var ev: Float
 		var fadeTime: CFTimeInterval
 		
-		if(score > 50) { // 99 - 51
-			ev = 3
-			fadeTime = 2.0
-		} else if(score > 20) { // 50 - 21
-			ev = 4
-			fadeTime = 3.0
-		} else if(score > 0) { // 20 - 1
-			ev = 5.5
-			fadeTime = 3.0
-		} else { // Pointless
-			ev = 7
-			fadeTime = 3.5
+		switch(score) {
+			case 0:
+				ev = 7
+				fadeTime = 3.5
+			case 20...1:
+				ev = 5.5
+				fadeTime = 3.0
+			case 50...21:
+				ev = 4
+				fadeTime = 3.0
+			default:
+				ev = 3
+				fadeTime = 2.0
 		}
 		
 		let pulseup = CABasicAnimation()

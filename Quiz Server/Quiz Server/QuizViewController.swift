@@ -23,13 +23,13 @@ class QuizViewController: NSViewController {
     var currentRound = RoundType.Idle
     
     let testView = TestViewController(nibName: "TestView", bundle: nil)!
-    let pointlessView = PointlessView()
+    let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         testView.view.frame = roundView.bounds
-        pointlessView.frame = roundView.bounds
+        pointlessGame.view.frame = roundView.bounds
     }
     
     func resetRound() {
@@ -43,7 +43,8 @@ class QuizViewController: NSViewController {
         case .TrueFalse:
             break // Do nothing
         case .Pointless:
-            pointlessView.reset()
+			break
+            //pointlessGame.reset()
         }
     }
     
@@ -68,7 +69,7 @@ class QuizViewController: NSViewController {
             case .TrueFalse:
                 break // Do nothing
             case .Pointless:
-                roundView.addSubview(pointlessView)
+                roundView.addSubview(pointlessGame.view)
             }
         }
     }
@@ -78,7 +79,7 @@ class QuizViewController: NSViewController {
             return false
         }
         
-        pointlessView.setScore(score)
+        //pointlessView.setScore(score)
         return true
     }
     
@@ -87,8 +88,8 @@ class QuizViewController: NSViewController {
             return false
         }
         
-        pointlessView.reset()
-        pointlessView.wrong()
+        //pointlessView.reset()
+        //pointlessView.wrong()
         return true
     }
     
