@@ -43,7 +43,7 @@ class QuizViewController: NSViewController {
         case .Idle:
             break // Do nothing
         case .Test:
-            break // Do nothing
+            testView.reset()
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:
@@ -92,6 +92,7 @@ class QuizViewController: NSViewController {
             break // Do nothing
         case .Test:
             quizLeds?.ledOn(team)
+            testView.buzzerPressed(team)
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:
@@ -110,6 +111,7 @@ class QuizViewController: NSViewController {
             break // Do nothing
         case .Test:
             quizLeds?.ledOff(team)
+            testView.buzzerReleased(team)
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:

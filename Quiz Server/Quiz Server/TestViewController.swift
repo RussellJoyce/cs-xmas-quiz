@@ -10,9 +10,35 @@ import Cocoa
 
 class TestViewController: NSViewController {
 
+    @IBOutlet weak var team1: NSTextField!
+    @IBOutlet weak var team2: NSTextField!
+    @IBOutlet weak var team3: NSTextField!
+    @IBOutlet weak var team4: NSTextField!
+    @IBOutlet weak var team5: NSTextField!
+    @IBOutlet weak var team6: NSTextField!
+    @IBOutlet weak var team7: NSTextField!
+    @IBOutlet weak var team8: NSTextField!
+    
+    var numbers = [NSTextField]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
+        numbers.extend([team1, team2, team3, team4, team5, team6, team7, team8])
+        reset()
+    }
+    
+    func reset() {
+        for team in numbers {
+            team.textColor = NSColor.whiteColor()
+        }
+    }
+    
+    func buzzerPressed(team: Int) {
+        numbers[team].textColor = NSColor.redColor()
+    }
+    
+    func buzzerReleased(team: Int) {
+        numbers[team].textColor = NSColor.whiteColor()
     }
     
 }
