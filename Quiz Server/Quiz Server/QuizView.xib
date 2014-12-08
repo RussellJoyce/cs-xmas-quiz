@@ -6,36 +6,33 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="QuizViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="titleLabel" destination="MZk-E8-rHg" id="5sm-bG-rQa"/>
+                <outlet property="roundView" destination="JC0-p6-koz" id="5El-8e-VqC"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="800" height="600"/>
+        <customView id="Hz6-mo-xeY" customClass="BackgroundView" customModule="Quiz_Server" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MZk-E8-rHg">
-                    <rect key="frame" x="18" y="362" width="764" height="87"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Quiz!" id="BzJ-GP-j4r">
-                        <font key="font" size="72" name="Helvetica-Bold"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <imageView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="37T-mP-P3d">
-                    <rect key="frame" x="0.0" y="502" width="800" height="98"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" image="christmaslights" id="MSe-2Y-aGe"/>
+                <imageView translatesAutoresizingMaskIntoConstraints="NO" id="37T-mP-P3d">
+                    <rect key="frame" x="0.0" y="982" width="1920" height="98"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageAlignment="topLeft" image="christmaslights" id="MSe-2Y-aGe"/>
                 </imageView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="JC0-p6-koz" userLabel="Round View">
+                    <rect key="frame" x="100" y="100" width="1720" height="880"/>
+                </customView>
             </subviews>
             <constraints>
-                <constraint firstItem="MZk-E8-rHg" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="20" id="0eX-TQ-OoG"/>
-                <constraint firstAttribute="trailing" secondItem="MZk-E8-rHg" secondAttribute="trailing" constant="20" id="DPe-KT-TM2"/>
+                <constraint firstAttribute="bottom" secondItem="JC0-p6-koz" secondAttribute="bottom" constant="100" id="2S5-aW-12H"/>
                 <constraint firstItem="37T-mP-P3d" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="EsW-K9-mid"/>
+                <constraint firstItem="JC0-p6-koz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="100" id="Hek-b9-uJj"/>
+                <constraint firstItem="JC0-p6-koz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="100" id="LnH-7g-h5s"/>
+                <constraint firstAttribute="trailing" secondItem="JC0-p6-koz" secondAttribute="trailing" constant="100" id="YgM-mn-IH5"/>
                 <constraint firstAttribute="trailing" secondItem="37T-mP-P3d" secondAttribute="trailing" id="g21-N0-fQ7"/>
             </constraints>
-            <point key="canvasLocation" x="3103" y="759.5"/>
+            <point key="canvasLocation" x="3103" y="1028"/>
         </customView>
     </objects>
     <resources>

@@ -56,6 +56,9 @@
 		46B025AE1A1BF8140088294B /* NSXReturnThrowError.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */; };
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
+		46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DC1A353E3E00A53E59 /* BackgroundView.swift */; };
+		46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DE1A353F7200A53E59 /* TestViewController.swift */; };
+		46B607E11A353F7200A53E59 /* TestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B607DF1A353F7200A53E59 /* TestView.xib */; };
 		46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */; };
 		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
 		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
@@ -138,6 +141,9 @@
 		46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSXReturnThrowError.m; sourceTree = "<group>"; };
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
+		46B607DC1A353E3E00A53E59 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
+		46B607DE1A353F7200A53E59 /* TestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
+		46B607DF1A353F7200A53E59 /* TestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestView.xib; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD06D1A2F690C00A7D9AF /* ORSSerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPort.h; path = ../ORSSerialPort/Source/ORSSerialPort.h; sourceTree = "<group>"; };
 		46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPort.m; path = ../ORSSerialPort/Source/ORSSerialPort.m; sourceTree = "<group>"; };
@@ -207,6 +213,9 @@
 				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
 				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
 				4620DC981A30C400006EABA1 /* QuizView.xib */,
+				46B607DC1A353E3E00A53E59 /* BackgroundView.swift */,
+				46B607DE1A353F7200A53E59 /* TestViewController.swift */,
+				46B607DF1A353F7200A53E59 /* TestView.xib */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -404,6 +413,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
@@ -435,8 +445,10 @@
 			files = (
 				4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */,
 				46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */,
+				46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */,
 				46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
+				46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */,
 				46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,

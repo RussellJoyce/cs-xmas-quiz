@@ -9,7 +9,9 @@
 import Cocoa
 import DDHidLib
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate {
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate {
+    
+    @IBOutlet weak var pointlessScore: NSTextField!
     
     var quizScreen: NSScreen?
     var quizController: DDHidJoystick?
@@ -111,11 +113,46 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
+    func tabView(tabView: NSTabView, didSelectTabViewItem tabViewItem: NSTabViewItem?) {
+        let index = tabView.indexOfTabViewItem(tabViewItem!)
+        
+        switch index {
+        case 0:
+            quizView.setRound(RoundType.Idle)
+        case 1:
+            quizView.setRound(RoundType.Test)
+        case 2:
+            quizView.setRound(RoundType.Buzzers)
+        case 3:
+            quizView.setRound(RoundType.TrueFalse)
+        case 4:
+            quizView.setRound(RoundType.Pointless)
+        default:
+            break
+        }
+    }
+    
+    
+    @IBAction func resetRound(sender: AnyObject) {
+        quizView.resetRound()
+    }
+    
+    @IBAction func setPointlessScoreValue(sender: AnyObject) {
+        if pointlessScore.stringValue.lowercaseString == "w" {
+            quizView.setPointlessWrong()
+        }
+        else if let score = pointlessScore.stringValue.toInt() {
+            quizView.setPointlessScore(score)
+        }
+    }
+    
+    @IBAction func pointlessWrong(sender: AnyObject) {
+        quizView.setPointlessWrong()
+    }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         println("Button \(buttonNumber) down")
         quizLeds?.ledOn(Byte(buttonNumber))
-        quizView.titleLabel.stringValue = "Button \(buttonNumber + 1) buzzed"
     }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
