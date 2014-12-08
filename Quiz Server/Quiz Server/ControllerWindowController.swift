@@ -68,10 +68,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     
     @IBAction func pressedNumber(sender: NSButton) {
         if (sender.state == NSOnState) {
-            quizLeds?.ledOn(Byte(sender.tag - 1))
+            quizLeds?.ledOn(sender.tag - 1)
         }
         else {
-            quizLeds?.ledOff(Byte(sender.tag - 1))
+            quizLeds?.ledOff(sender.tag - 1)
         }
     }
     

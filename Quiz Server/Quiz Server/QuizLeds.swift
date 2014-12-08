@@ -58,7 +58,7 @@ class QuizLeds: NSObject {
     ///
     /// :param: led The LED to to turn off (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func ledOff(led: Byte) -> Bool {
+    func ledOff(led: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LED_OFF + led] as [Byte], length: 1));
     }
     
@@ -66,7 +66,7 @@ class QuizLeds: NSObject {
     ///
     /// :param: led The LED to to turn on (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func ledOn(led: Byte) -> Bool {
+    func ledOn(led: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LED_ON + led] as [Byte], length: 1));
     }
     
@@ -74,7 +74,7 @@ class QuizLeds: NSObject {
     ///
     /// :param: animation The animation number (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func setAnimation(animation: Byte) -> Bool {
+    func setAnimation(animation: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LEDS_ANIM + animation] as [Byte], length: 1));
     }
 }
