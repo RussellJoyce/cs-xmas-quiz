@@ -151,14 +151,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.setPointlessWrong()
     }
     
+    
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
-        println("Button \(buttonNumber) down")
-        quizLeds?.ledOn(Byte(buttonNumber))
+        quizView.buzzerPressed(Int(buttonNumber))
     }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
-        println("Button \(buttonNumber) up")
-        quizLeds?.ledOff(Byte(buttonNumber))
+        quizView.buzzerReleased(Int(buttonNumber))
     }
 
     

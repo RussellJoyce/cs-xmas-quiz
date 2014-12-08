@@ -35,6 +35,8 @@ class QuizViewController: NSViewController {
     }
     
     func resetRound() {
+        quizLeds?.allOff()
+        
         switch (currentRound) {
         case .Idle:
             break // Do nothing
@@ -75,6 +77,44 @@ class QuizViewController: NSViewController {
             }
         }
     }
+    
+    
+    /// Called when buzzer has been pressed down
+    ///
+    /// :param: team Team number (0-7)
+    func buzzerPressed(team: Int) {
+        switch (currentRound) {
+        case .Idle:
+            break // Do nothing
+        case .Test:
+            quizLeds?.ledOn(team)
+        case .Buzzers:
+            break // Do nothing
+        case .TrueFalse:
+            break // Do nothing
+        case .Pointless:
+            break // Do nothing
+        }
+    }
+    
+    /// Called when buzzer has been released
+    ///
+    /// :param: team Team number (0-7)
+    func buzzerReleased(team: Int) {
+        switch (currentRound) {
+        case .Idle:
+            break // Do nothing
+        case .Test:
+            quizLeds?.ledOff(team)
+        case .Buzzers:
+            break // Do nothing
+        case .TrueFalse:
+            break // Do nothing
+        case .Pointless:
+            break // Do nothing
+        }
+    }
+    
     
     func setPointlessScore(score: Int) -> Bool {
         if currentRound != RoundType.Pointless || score < 0 || score > 100 {
