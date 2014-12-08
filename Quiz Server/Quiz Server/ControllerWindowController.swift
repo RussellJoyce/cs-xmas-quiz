@@ -28,6 +28,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         
         // Open serial port
         quizLeds?.openSerial()
+        quizView.quizLeds = quizLeds
         
         // Open game controller
         quizBuzzers?.setDelegate(self)

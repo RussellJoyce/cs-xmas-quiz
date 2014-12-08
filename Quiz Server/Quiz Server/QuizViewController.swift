@@ -25,6 +25,8 @@ class QuizViewController: NSViewController {
     let testView = TestViewController(nibName: "TestView", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
     
+    var quizLeds: QuizLeds?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
