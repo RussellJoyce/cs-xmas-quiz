@@ -6,31 +6,71 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PointlessGameController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="labelstack" destination="TXz-pk-vXC" id="ByA-kk-Pxg"/>
+                <outlet property="pv" destination="rDt-SH-Ywg" id="v9G-6n-jVX"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="729" height="500"/>
+        <customView wantsLayer="YES" id="Hz6-mo-xeY" customClass="PGMainView" customModule="Quiz_Server" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e4h-ih-Jko">
-                    <rect key="frame" x="165" y="360" width="82" height="32"/>
-                    <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MqZ-oz-Dcy">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
-                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ReT-JK-oI9">
-                    <rect key="frame" x="524" y="174" width="106" height="23"/>
-                    <buttonCell key="cell" type="smallSquare" title="Gradient Button" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WoE-ju-rKk">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system"/>
-                    </buttonCell>
-                </button>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="Q6D-JU-pIQ" userLabel="Blur Layer" colorLabel="IBBuiltInLabel-Red">
+                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                    <subviews>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="rDt-SH-Ywg" customClass="PointlessView" customModule="Quiz_Server" customModuleProvider="target">
+                            <rect key="frame" x="116" y="83" width="859" height="915"/>
+                        </customView>
+                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="iAF-aR-LGZ">
+                            <rect key="frame" x="1072" y="149" width="819" height="800"/>
+                            <subviews>
+                                <stackView orientation="vertical" alignment="centerX" hasEqualSpacing="YES" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="TXz-pk-vXC">
+                                    <rect key="frame" x="0.0" y="0.0" width="819" height="800"/>
+                                </stackView>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="TXz-pk-vXC" secondAttribute="bottom" id="AGp-bw-lSg"/>
+                                <constraint firstItem="TXz-pk-vXC" firstAttribute="leading" secondItem="iAF-aR-LGZ" secondAttribute="leading" id="FjT-dK-rgD"/>
+                                <constraint firstItem="TXz-pk-vXC" firstAttribute="top" secondItem="iAF-aR-LGZ" secondAttribute="top" id="Ytm-OB-3bG"/>
+                                <constraint firstAttribute="trailing" secondItem="TXz-pk-vXC" secondAttribute="trailing" id="z5c-hp-qKB"/>
+                            </constraints>
+                        </customView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="rDt-SH-Ywg" secondAttribute="trailing" constant="97" id="72R-7O-GMt"/>
+                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="1072" id="FvP-gi-Wvp"/>
+                        <constraint firstAttribute="bottom" secondItem="iAF-aR-LGZ" secondAttribute="bottom" constant="149" id="U3L-ra-FVP"/>
+                        <constraint firstItem="rDt-SH-Ywg" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="82" id="ZU6-0g-A5j"/>
+                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="131" id="Zmh-hq-27U"/>
+                        <constraint firstItem="rDt-SH-Ywg" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="116" id="a7s-Xq-wMu"/>
+                        <constraint firstAttribute="trailing" secondItem="iAF-aR-LGZ" secondAttribute="trailing" constant="29" id="hwB-00-sqs"/>
+                        <constraint firstAttribute="bottom" secondItem="rDt-SH-Ywg" secondAttribute="bottom" constant="83" id="noD-D4-Rsi"/>
+                    </constraints>
+                    <backgroundFilters>
+                        <ciFilter name="CIGaussianBlur">
+                            <configuration>
+                                <null key="inputImage"/>
+                                <real key="inputRadius" value="30"/>
+                            </configuration>
+                        </ciFilter>
+                        <ciFilter name="CIWhitePointAdjust">
+                            <configuration>
+                                <ciColor key="inputColor" red="0.75507023358585856" green="0.142240717929874" blue="0.71527546912016959" alpha="1"/>
+                                <null key="inputImage"/>
+                            </configuration>
+                        </ciFilter>
+                    </backgroundFilters>
+                </customView>
             </subviews>
-            <point key="canvasLocation" x="565.5" y="469"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="Q6D-JU-pIQ" secondAttribute="trailing" id="2j7-Ug-vZ0"/>
+                <constraint firstItem="Q6D-JU-pIQ" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Olt-qQ-YU9"/>
+                <constraint firstItem="Q6D-JU-pIQ" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="j2e-pF-upa"/>
+                <constraint firstAttribute="bottom" secondItem="Q6D-JU-pIQ" secondAttribute="bottom" id="uVw-Oz-liW"/>
+            </constraints>
+            <point key="canvasLocation" x="1088" y="809"/>
         </customView>
     </objects>
 </document>
