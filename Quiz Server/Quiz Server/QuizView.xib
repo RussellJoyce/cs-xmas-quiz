@@ -16,26 +16,17 @@
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <imageView translatesAutoresizingMaskIntoConstraints="NO" id="37T-mP-P3d">
-                    <rect key="frame" x="0.0" y="982" width="1920" height="98"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageAlignment="topLeft" image="christmaslights" id="MSe-2Y-aGe"/>
-                </imageView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="JC0-p6-koz" userLabel="Round View">
-                    <rect key="frame" x="100" y="100" width="1720" height="880"/>
+                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                 </customView>
             </subviews>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="JC0-p6-koz" secondAttribute="bottom" constant="100" id="2S5-aW-12H"/>
-                <constraint firstItem="37T-mP-P3d" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="EsW-K9-mid"/>
-                <constraint firstItem="JC0-p6-koz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="100" id="Hek-b9-uJj"/>
-                <constraint firstItem="JC0-p6-koz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="100" id="LnH-7g-h5s"/>
-                <constraint firstAttribute="trailing" secondItem="JC0-p6-koz" secondAttribute="trailing" constant="100" id="YgM-mn-IH5"/>
-                <constraint firstAttribute="trailing" secondItem="37T-mP-P3d" secondAttribute="trailing" id="g21-N0-fQ7"/>
+                <constraint firstItem="JC0-p6-koz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="108-bT-XCv"/>
+                <constraint firstItem="JC0-p6-koz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="UqW-rK-cOh"/>
+                <constraint firstAttribute="trailing" secondItem="JC0-p6-koz" secondAttribute="trailing" id="Vg5-hW-asM"/>
+                <constraint firstAttribute="bottom" secondItem="JC0-p6-koz" secondAttribute="bottom" id="b7p-EL-fkE"/>
             </constraints>
-            <point key="canvasLocation" x="3103" y="1028"/>
+            <point key="canvasLocation" x="3144" y="1058"/>
         </customView>
     </objects>
-    <resources>
-        <image name="christmaslights" width="1920" height="98"/>
-    </resources>
 </document>
