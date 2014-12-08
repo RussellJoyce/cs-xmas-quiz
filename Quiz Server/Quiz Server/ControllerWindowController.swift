@@ -17,6 +17,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
     var testMode: Bool = true
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
+    var quizWindow: NSWindow?
     
     var led1 = false
     
@@ -30,16 +31,26 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate {
         quizController?.setDelegate(self)
         quizController?.startListening()
         
-        // Show quiz view on selected screen (resized to fit)
-        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-            attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-            multiplier: 1, constant: quizScreen!.frame.width))
-        quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-            attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
-            toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-            multiplier: 1, constant: quizScreen!.frame.height))
-        quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
+        if (testMode) {
+            // Show quiz view in floating window
+            quizWindow = NSWindow(contentViewController: quizView)
+            quizWindow?.title = "Quiz Test"
+            quizWindow?.styleMask = NSTitledWindowMask
+            quizWindow?.makeKeyAndOrderFront(self)
+            self.window?.orderFront(self)
+        }
+        else {
+            // Show quiz view on selected screen (resized to fit)
+            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+                attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
+                toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+                multiplier: 1, constant: quizScreen!.frame.width))
+            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
+                attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
+                toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+                multiplier: 1, constant: quizScreen!.frame.height))
+            quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
+        }
     }
     
     func windowWillClose(notification: NSNotification) {
