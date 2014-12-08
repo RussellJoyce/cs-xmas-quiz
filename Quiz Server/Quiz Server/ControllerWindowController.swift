@@ -14,7 +14,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var pointlessScore: NSTextField!
     
     var quizScreen: NSScreen?
-    var quizController: DDHidJoystick?
+    var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode: Bool = true
     
@@ -30,8 +30,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizLeds?.openSerial()
         
         // Open game controller
-        quizController?.setDelegate(self)
-        quizController?.startListening()
+        quizBuzzers?.setDelegate(self)
+        quizBuzzers?.startListening()
         
         if (testMode) {
             // Show quiz view in floating window
@@ -62,7 +62,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         
         // Cleanly close serial port and game controller
         quizLeds?.closeSerial()
-        quizController?.stopListening()
+        quizBuzzers?.stopListening()
     }
     
     @IBAction func pressedNumber(sender: NSButton) {

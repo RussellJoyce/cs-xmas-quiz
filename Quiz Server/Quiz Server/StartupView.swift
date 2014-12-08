@@ -99,6 +99,6 @@ class StartupView: NSViewController {
         let test = testMode.state == NSOnState;
         
         let delegate = NSApplication.sharedApplication().delegate as AppDelegate
-        delegate.startQuiz(screen, controller: controller, serial: serial, testMode: test)
+        delegate.startQuiz(screen, buzzers: controller, serial: serial, testMode: test)
     }
 }
