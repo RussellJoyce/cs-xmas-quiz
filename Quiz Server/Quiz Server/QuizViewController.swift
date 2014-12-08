@@ -25,6 +25,8 @@ class QuizViewController: NSViewController {
     let testView = TestViewController(nibName: "TestView", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
     
+    var currentRoundView: NSView?
+    
     var quizLeds: QuizLeds?
     
     override func viewDidLoad() {
@@ -57,23 +59,25 @@ class QuizViewController: NSViewController {
         
             currentRound = round
             
-            for view in roundView.subviews as [NSView] {
-                view.removeFromSuperview()
-            }
+            currentRoundView?.removeFromSuperview()
             
             resetRound()
             
             switch (currentRound) {
             case .Idle:
-                break // Do nothing
+                currentRoundView = nil
             case .Test:
-                roundView.addSubview(testView.view)
+                currentRoundView = testView.view
             case .Buzzers:
-                break // Do nothing
+                currentRoundView = nil
             case .TrueFalse:
-                break // Do nothing
+                currentRoundView = nil
             case .Pointless:
-                roundView.addSubview(pointlessGame.view)
+                currentRoundView = pointlessGame.view
+            }
+            
+            if let currentRoundViewOpt = currentRoundView {
+                roundView.addSubview(currentRoundViewOpt)
             }
         }
     }
