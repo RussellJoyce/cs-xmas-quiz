@@ -38,19 +38,33 @@ class PointlessView: NSView {
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		self.addSubview(imgView)
-		constrainToSizeOfContainer(imgView, self)
-		
-		//On top of the background image, add an instance of the stackview
-		imgView.addSubview(pvc!.view)
-		constrainToSizeOfContainer(pvc!.view, imgView)
-		
-		//Preload sound buffers
-		counterSound.prepareToPlay()
-		endStingSound.prepareToPlay()
-		endPointlessSound.prepareToPlay()
-		wrongSound.prepareToPlay()
+		self.initialise()
 	}
+    
+    override init() {
+        super.init()
+        self.initialise()
+    }
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        self.initialise()
+    }
+
+    func initialise() {
+        self.addSubview(imgView)
+        constrainToSizeOfContainer(imgView, self)
+        
+        //On top of the background image, add an instance of the stackview
+        imgView.addSubview(pvc!.view)
+        constrainToSizeOfContainer(pvc!.view, imgView)
+        
+        //Preload sound buffers
+        counterSound.prepareToPlay()
+        endStingSound.prepareToPlay()
+        endPointlessSound.prepareToPlay()
+        wrongSound.prepareToPlay()
+    }
 	
 	func setScore(score: Int) {
 		if score < 100 {
