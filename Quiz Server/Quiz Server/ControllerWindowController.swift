@@ -58,8 +58,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     
     func windowWillClose(notification: NSNotification) {
         // Turn off all buzzer and animation LEDs
-        quizLeds?.allOff()
-        quizLeds?.setAnimation(0)
+        quizLeds?.buzzersOff()
+        quizLeds?.stringOff()
         
         // Cleanly close serial port and game controller
         quizLeds?.closeSerial()
@@ -68,10 +68,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     
     @IBAction func pressedNumber(sender: NSButton) {
         if (sender.state == NSOnState) {
-            quizLeds?.ledOn(sender.tag - 1)
+            quizLeds?.buzzerOn(sender.tag - 1)
         }
         else {
-            quizLeds?.ledOff(sender.tag - 1)
+            quizLeds?.buzzerOff(sender.tag - 1)
         }
     }
     
@@ -82,39 +82,39 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     @IBAction func pressedButton(sender: NSButton) {
         if led1 {
-            quizLeds?.ledOff(0)
+            quizLeds?.buzzerOff(0)
             usleep(100000)
-            quizLeds?.ledOff(1)
+            quizLeds?.buzzerOff(1)
             usleep(100000)
-            quizLeds?.ledOff(2)
+            quizLeds?.buzzerOff(2)
             usleep(100000)
-            quizLeds?.ledOff(3)
+            quizLeds?.buzzerOff(3)
             usleep(100000)
-            quizLeds?.ledOff(4)
+            quizLeds?.buzzerOff(4)
             usleep(100000)
-            quizLeds?.ledOff(5)
+            quizLeds?.buzzerOff(5)
             usleep(100000)
-            quizLeds?.ledOff(6)
+            quizLeds?.buzzerOff(6)
             usleep(100000)
-            quizLeds?.ledOff(7)
+            quizLeds?.buzzerOff(7)
             led1 = false
         }
         else {
-            quizLeds?.ledOn(0)
+            quizLeds?.buzzerOn(0)
             usleep(100000)
-            quizLeds?.ledOn(1)
+            quizLeds?.buzzerOn(1)
             usleep(100000)
-            quizLeds?.ledOn(2)
+            quizLeds?.buzzerOn(2)
             usleep(100000)
-            quizLeds?.ledOn(3)
+            quizLeds?.buzzerOn(3)
             usleep(100000)
-            quizLeds?.ledOn(4)
+            quizLeds?.buzzerOn(4)
             usleep(100000)
-            quizLeds?.ledOn(5)
+            quizLeds?.buzzerOn(5)
             usleep(100000)
-            quizLeds?.ledOn(6)
+            quizLeds?.buzzerOn(6)
             usleep(100000)
-            quizLeds?.ledOn(7)
+            quizLeds?.buzzerOn(7)
             led1 = true
         }
     }
