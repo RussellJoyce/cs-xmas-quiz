@@ -16,11 +16,3 @@ class IdleViewController: NSViewController {
     }
     
 }
-
-
-class IdleBackgroundView: NSView {
-    let bgImage = NSImage(named: "1")
-    override func drawRect(dirtyRect: NSRect) {
-        bgImage?.drawInRect(dirtyRect)
-    }
-}
