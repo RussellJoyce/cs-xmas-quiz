@@ -83,12 +83,7 @@ class StartupView: NSViewController {
         }
 
         
-        startButton.enabled = (screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled) || (testMode.state == NSOnState)
-    }
-    
-    
-    @IBAction func testModeChanged(sender: AnyObject) {
-        startButton.enabled = (screenSelector.enabled && controllerSelector.enabled && serialSelector.enabled) || (testMode.state == NSOnState)
+        startButton.enabled = true
     }
     
     

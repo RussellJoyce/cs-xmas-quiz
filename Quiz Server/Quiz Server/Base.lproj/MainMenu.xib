@@ -378,14 +378,11 @@
                         </textFieldCell>
                     </textField>
                     <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BzV-d4-VFP">
-                        <rect key="frame" x="18" y="22" width="93" height="18"/>
-                        <buttonCell key="cell" type="check" title="Test mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cK3-Iy-Rsk">
+                        <rect key="frame" x="18" y="22" width="126" height="18"/>
+                        <buttonCell key="cell" type="check" title="Windowed mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cK3-Iy-Rsk">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
-                        <connections>
-                            <action selector="testModeChanged:" target="9BG-lO-pnL" id="R7e-YB-xgW"/>
-                        </connections>
                     </button>
                     <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
                         <rect key="frame" x="447" y="13" width="105" height="32"/>
