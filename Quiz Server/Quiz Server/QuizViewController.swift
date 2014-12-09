@@ -111,7 +111,7 @@ class QuizViewController: NSViewController {
         case .Buzzers:
             buzzerView.buzzerPressed(team)
         case .TrueFalse:
-            break // Do nothing
+			trueFalseView.buzzerPressed(team)
         case .Pointless:
             break // Do nothing
         }

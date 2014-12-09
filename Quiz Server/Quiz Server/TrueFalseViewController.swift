@@ -23,20 +23,16 @@ class TrueFalseViewController: NSViewController {
 	@IBOutlet weak var team8: TrueFalseTeamView!
 	@IBOutlet var mainView: TFMainView!
 	
+	let 🔒 = Int()
+	var counting = false
+	var pressed = [Int]()
+	
 	var teams = [TrueFalseTeamView]()
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		topView.topLabel = topLabel
-		
-		teams.append(team1)
-		teams.append(team2)
-		teams.append(team3)
-		teams.append(team4)
-		teams.append(team5)
-		teams.append(team6)
-		teams.append(team7)
-		teams.append(team8)
+		teams.extend([team1, team2, team3, team4, team5, team6, team7, team8])
 		for i in 0..<teams.count {
 			teams[i].setTeam(i)
 		}
@@ -47,11 +43,20 @@ class TrueFalseViewController: NSViewController {
 	}
 	
 	func start() {
+		objc_sync_enter(🔒)
+		counting = true
+		pressed = [Int]()
+		objc_sync_exit(🔒)
+		
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
 			for(var i = 5; i > 0; i--) {
 				NSThread.sleepForTimeInterval(1.0)
 				dispatch_async(dispatch_get_main_queue(), {
 					self.topView.setVal(i)
+					
+					objc_sync_enter(self.🔒)
+					self.counting = false
+					objc_sync_exit(self.🔒)
 				})
 			}
 		})
@@ -61,6 +66,13 @@ class TrueFalseViewController: NSViewController {
 		
 	}
 	
+	func buzzerPressed(team: Int) {
+		objc_sync_enter(🔒)
+		if(counting) {
+			//pressed.
+		}
+		objc_sync_exit(🔒)
+	}
 }
 
 class TFMainView: NSView {
