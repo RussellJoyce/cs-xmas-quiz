@@ -66,7 +66,7 @@ class PointlessView: NSView {
         wrongSound.prepareToPlay()
     }
 	
-	func setScore(score: Int) {
+	func setScore(score: Int, callback: (()->Void)! = nil) {
 		if score < 100 {
 			counterSound.currentTime = 0
 			counterSound.play()
@@ -92,6 +92,9 @@ class PointlessView: NSView {
 					}
 					
 					self.imgView.pulse(score)
+					if(callback != nil) {
+						callback()
+					}
 				})
 			})
 		}
@@ -195,9 +198,8 @@ class PointlessBar: NSImageView {
 	override init() {
 		super.init()
 		self.wantsLayer = true
-		//self.layer?.backgroundColor = NSColor(red: 0, green: 1, blue: 1, alpha: 1).CGColor
 		self.translatesAutoresizingMaskIntoConstraints = false
-		setMinSize(self, 300, 3)
+		setMinSize(self, 300, 6)
 	}
 	
 	override func drawRect(dirtyRect: NSRect) {
@@ -399,6 +401,19 @@ func setMinSize(view: NSView, width: Int, height: Int) {
 		multiplier: 1, constant: CGFloat(height)))
 }
 
+
+func setMaxSize(view: NSView, width: Int, height: Int) {
+	view.translatesAutoresizingMaskIntoConstraints = false
+	
+	view.addConstraint(NSLayoutConstraint(item: view,
+		attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.LessThanOrEqual,
+		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		multiplier: 1, constant: CGFloat(width)))
+	view.addConstraint(NSLayoutConstraint(item: view,
+		attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.LessThanOrEqual,
+		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		multiplier: 1, constant: CGFloat(height)))
+}
 
 
 

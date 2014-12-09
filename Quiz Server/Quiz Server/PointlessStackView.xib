@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="PointlessStackViewController" customModule="Test" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="PointlessStackViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="mainLabel" destination="h54-JJ-wch" id="Vqr-95-UrZ"/>
                 <outlet property="stack" destination="8BF-mv-6KQ" id="N6s-ou-XGI"/>
@@ -14,34 +14,32 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="c22-O7-iKe">
-            <rect key="frame" x="0.0" y="0.0" width="312" height="332"/>
+            <rect key="frame" x="0.0" y="0.0" width="362" height="559"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <stackView autoresizesSubviews="NO" orientation="vertical" alignment="centerX" spacing="1" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="8BF-mv-6KQ">
-                    <rect key="frame" x="14" y="11" width="284" height="243"/>
+                    <rect key="frame" x="14" y="11" width="334" height="377"/>
                 </stackView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h54-JJ-wch">
-                    <rect key="frame" x="82" y="262" width="148" height="84"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="144" id="9xs-MT-a54"/>
-                    </constraints>
+                    <rect key="frame" x="73" y="414" width="217" height="159"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="100" id="VUY-1S-qPN">
-                        <font key="font" size="64" name="DINAlternate-Bold"/>
+                        <font key="font" size="120" name="DINAlternate-Bold"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="8BF-mv-6KQ" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="78" id="2cg-pD-L8r"/>
+                <constraint firstItem="8BF-mv-6KQ" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="171" id="2cg-pD-L8r"/>
+                <constraint firstItem="8BF-mv-6KQ" firstAttribute="top" secondItem="h54-JJ-wch" secondAttribute="bottom" constant="26" id="4WA-8B-tMX"/>
                 <constraint firstItem="8BF-mv-6KQ" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="9l1-RU-PCJ"/>
-                <constraint firstItem="h54-JJ-wch" firstAttribute="centerX" secondItem="8BF-mv-6KQ" secondAttribute="centerX" id="HGs-GR-upH"/>
-                <constraint firstItem="h54-JJ-wch" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="-14" id="L3t-jO-Xos"/>
+                <constraint firstItem="h54-JJ-wch" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="75" id="Jkb-9g-3pj"/>
+                <constraint firstItem="h54-JJ-wch" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="-14" id="auv-1V-jK4"/>
                 <constraint firstAttribute="bottom" secondItem="8BF-mv-6KQ" secondAttribute="bottom" constant="11" id="dY7-Ep-U5y"/>
-                <constraint firstItem="8BF-mv-6KQ" firstAttribute="top" secondItem="h54-JJ-wch" secondAttribute="bottom" constant="8" symbolic="YES" id="fg0-iz-55l"/>
                 <constraint firstItem="8BF-mv-6KQ" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="14" id="yna-hP-KWN"/>
+                <constraint firstItem="h54-JJ-wch" firstAttribute="centerX" secondItem="8BF-mv-6KQ" secondAttribute="centerX" id="z35-TG-XLa"/>
             </constraints>
-            <point key="canvasLocation" x="308" y="245"/>
+            <point key="canvasLocation" x="333" y="358.5"/>
         </customView>
     </objects>
 </document>
