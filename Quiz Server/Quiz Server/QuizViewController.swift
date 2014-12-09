@@ -41,6 +41,7 @@ class QuizViewController: NSViewController {
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
         
+        idleView.leds = quizLeds
         testView.leds = quizLeds
         
         setRound(RoundType.Idle)
@@ -55,7 +56,7 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            break // Do nothing
+            idleView.reset()
         case .Test:
             testView.reset()
         case .Buzzers:

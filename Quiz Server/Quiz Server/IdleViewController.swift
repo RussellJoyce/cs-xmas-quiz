@@ -10,9 +10,15 @@ import Cocoa
 
 class IdleViewController: NSViewController {
 
+    var leds: QuizLeds?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
+    }
+    
+    
+    func reset() {
+        leds?.stringAnimation(1)
     }
     
 }
