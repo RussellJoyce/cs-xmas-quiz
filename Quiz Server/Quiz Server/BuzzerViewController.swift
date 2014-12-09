@@ -18,7 +18,7 @@ class BuzzerViewController: NSViewController {
     
     var buzzes = [Buzz?](count: 8, repeatedValue: nil)
     
-    var quizLeds: QuizLeds?
+    var leds: QuizLeds?
 
     
     override func viewDidLoad() {
@@ -28,11 +28,11 @@ class BuzzerViewController: NSViewController {
     
     
     func reset() {
-        
+        leds?.buzzersOn()
     }
     
     func buzzerPressed(team: Int) {
-        
+        leds?.buzzerOff(team)
     }
     
 }
@@ -41,5 +41,15 @@ class BuzzerBackgroundView: NSView {
     let bgImage = NSImage(named: "2")
     override func drawRect(dirtyRect: NSRect) {
         bgImage?.drawInRect(dirtyRect)
+    }
+}
+
+class TeamView: NSView {
+    var color = NSColor.blackColor()
+    
+    override func drawRect(dirtyRect: NSRect) {
+        color.setFill()
+        NSRectFill(dirtyRect)
+        super.drawRect(dirtyRect)
     }
 }
