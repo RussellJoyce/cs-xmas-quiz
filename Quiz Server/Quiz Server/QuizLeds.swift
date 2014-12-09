@@ -43,38 +43,69 @@ class QuizLeds: NSObject {
     /// Turn all buzzer LEDs off
     ///
     /// :returns: true if data sent successfully, false otherwise
-    func allOff() -> Bool {
+    func buzzersOff() -> Bool {
         return serial.sendData(NSData(bytes: [LED_SET, 0x00] as [Byte], length: 2));
     }
     
     /// Turn all buzzer LEDs on
     ///
     /// :returns: true if data sent successfully, false otherwise
-    func allOn() -> Bool {
+    func buzzersOn() -> Bool {
         return serial.sendData(NSData(bytes: [LED_SET, 0xFF] as [Byte], length: 2));
     }
     
     /// Turn a specific buzzer LED off
     ///
-    /// :param: led The LED to to turn off (0-7)
+    /// :param: team The team's LED to to turn on (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func ledOff(led: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LED_OFF + led] as [Byte], length: 1));
+    func buzzerOff(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LED_OFF + team] as [Byte], length: 1));
     }
     
     /// Turn a specific buzzer LED on
     ///
-    /// :param: led The LED to to turn on (0-7)
+    /// :param: team The team's LED to to turn on (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func ledOn(led: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LED_ON + led] as [Byte], length: 1));
+    func buzzerOn(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LED_ON + team] as [Byte], length: 1));
     }
     
     /// Set animation on LED string
     ///
     /// :param: animation The animation number (0-7)
     /// :returns: true if data sent successfully, false otherwise
-    func setAnimation(animation: Int) -> Bool {
+    func stringAnimation(animation: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LEDS_ANIM + animation] as [Byte], length: 1));
+    }
+    
+    /// Turn LED string off (set to animation 0)
+    ///
+    /// :returns: true if data sent successfully, false otherwise
+    func stringOff() -> Bool {
+        return stringAnimation(0)
+    }
+    
+    /// Set LED string to focus on team with animation
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamAnimate(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_TEAM + team] as [Byte], length: 1));
+    }
+    
+    /// Set LED string team colour to red
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamRed(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_TEAMR + team] as [Byte], length: 1));
+    }
+    
+    /// Set LED string team colour to green
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamGreen(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_TEAMG + team] as [Byte], length: 1));
     }
 }

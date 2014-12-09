@@ -37,7 +37,7 @@ class QuizViewController: NSViewController {
     }
     
     func resetRound() {
-        quizLeds?.allOff()
+        quizLeds?.buzzersOff()
         
         switch (currentRound) {
         case .Idle:
@@ -91,7 +91,7 @@ class QuizViewController: NSViewController {
         case .Idle:
             break // Do nothing
         case .Test:
-            quizLeds?.ledOn(team)
+            quizLeds?.buzzerOn(team)
             testView.buzzerPressed(team)
         case .Buzzers:
             break // Do nothing
@@ -110,7 +110,7 @@ class QuizViewController: NSViewController {
         case .Idle:
             break // Do nothing
         case .Test:
-            quizLeds?.ledOff(team)
+            quizLeds?.buzzerOff(team)
             testView.buzzerReleased(team)
         case .Buzzers:
             break // Do nothing
