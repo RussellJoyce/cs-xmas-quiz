@@ -34,11 +34,14 @@ class QuizViewController: NSViewController {
         super.viewDidLoad()
         
         testView.view.frame = roundView.bounds
+        testView.leds = quizLeds
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
     }
     
     func resetRound() {
+        // Turn off LEDs
+        quizLeds?.stringOff()
         quizLeds?.buzzersOff()
         
         switch (currentRound) {
@@ -57,11 +60,8 @@ class QuizViewController: NSViewController {
     
     func setRound(round: RoundType) {
         if currentRound != round {
-        
             currentRound = round
-            
             currentRoundView?.removeFromSuperview()
-            
             resetRound()
             
             switch (currentRound) {
@@ -92,7 +92,6 @@ class QuizViewController: NSViewController {
         case .Idle:
             break // Do nothing
         case .Test:
-            quizLeds?.buzzerOn(team)
             testView.buzzerPressed(team)
         case .Buzzers:
             break // Do nothing
@@ -111,7 +110,6 @@ class QuizViewController: NSViewController {
         case .Idle:
             break // Do nothing
         case .Test:
-            quizLeds?.buzzerOff(team)
             testView.buzzerReleased(team)
         case .Buzzers:
             break // Do nothing
