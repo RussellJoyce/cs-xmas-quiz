@@ -49,8 +49,7 @@ class QuizViewController: NSViewController {
         case .TrueFalse:
             break // Do nothing
         case .Pointless:
-			break
-            //pointlessGame.reset()
+            pointlessGame.reset()
         }
     }
     

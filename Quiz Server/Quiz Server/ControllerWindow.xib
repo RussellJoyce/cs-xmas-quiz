@@ -172,7 +172,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2RS-Zt-DjW">
-                                            <rect key="frame" x="116" y="75" width="42" height="22"/>
+                                            <rect key="frame" x="108" y="77" width="42" height="21"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" allowsUndo="NO" state="on" borderStyle="bezel" alignment="right" title="100" placeholderString="score" drawsBackground="YES" id="XaL-5g-NaX">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -183,7 +183,7 @@
                                             </connections>
                                         </textField>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FtZ-Cp-zJH">
-                                            <rect key="frame" x="9" y="39" width="101" height="32"/>
+                                            <rect key="frame" x="165" y="70" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="Wrong" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AnN-fE-eoc">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -191,17 +191,6 @@
                                             </buttonCell>
                                             <connections>
                                                 <action selector="pointlessWrong:" target="-2" id="Prg-Kw-Nv8"/>
-                                            </connections>
-                                        </button>
-                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cgx-mG-AIC">
-                                            <rect key="frame" x="110" y="39" width="101" height="32"/>
-                                            <buttonCell key="cell" type="push" title="Reset team" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="46U-YL-akh">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                                <string key="keyEquivalent">w</string>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="pointlessResetTeam:" target="-2" id="0RL-Jl-6sn"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vj2-8l-cwd">
@@ -302,6 +291,17 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cgx-mG-AIC">
+                                            <rect key="frame" x="9" y="10" width="101" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Reset team" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="46U-YL-akh">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent">w</string>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessResetTeam:" target="-2" id="0RL-Jl-6sn"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>

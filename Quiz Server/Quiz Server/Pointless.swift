@@ -40,46 +40,47 @@ class PointlessView: NSView {
 		super.init(coder: coder)
 		self.initialise()
 	}
-    
-    override init() {
-        super.init()
-        self.initialise()
-    }
-    
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
-        self.initialise()
-    }
-
-    func initialise() {
-        self.addSubview(imgView)
-        constrainToSizeOfContainer(imgView, self)
-        
-        //On top of the background image, add an instance of the stackview
-        imgView.addSubview(pvc!.view)
-        constrainToSizeOfContainer(pvc!.view, imgView)
-        
-        //Preload sound buffers
-        counterSound.prepareToPlay()
-        endStingSound.prepareToPlay()
-        endPointlessSound.prepareToPlay()
-        wrongSound.prepareToPlay()
-    }
+	
+	override init() {
+		super.init()
+		self.initialise()
+	}
+	
+	override init(frame frameRect: NSRect) {
+		super.init(frame: frameRect)
+		self.initialise()
+	}
+	
+	func initialise() {
+		self.addSubview(imgView)
+		constrainToSizeOfContainer(imgView, self)
+		
+		//On top of the background image, add an instance of the stackview
+		imgView.addSubview(pvc!.view)
+		constrainToSizeOfContainer(pvc!.view, imgView)
+		
+		//Preload sound buffers
+		counterSound.prepareToPlay()
+		endStingSound.prepareToPlay()
+		endPointlessSound.prepareToPlay()
+		wrongSound.prepareToPlay()
+	}
 	
 	func setScore(score: Int, callback: (()->Void)! = nil) {
-		if score < 100 {
+		if score <= 100 {
 			counterSound.currentTime = 0
 			counterSound.play()
 			self.pvc!.resetBars()
 			dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-				for i in 0...(99-score) {
-					NSThread.sleepForTimeInterval(sleepTimeInterval)
-					dispatch_async(dispatch_get_main_queue(), {
-						self.pvc!.disappearBar(i, delay: 0)
-						self.pvc!.mainLabel.stringValue = String(99-i)
-					})
+				if(score < 100) {
+					for i in 0...(99-score) {
+						NSThread.sleepForTimeInterval(sleepTimeInterval)
+						dispatch_async(dispatch_get_main_queue(), {
+							self.pvc!.disappearBar(i, delay: 0)
+							self.pvc!.mainLabel.stringValue = String(99-i)
+						})
+					}
 				}
-				
 				dispatch_async(dispatch_get_main_queue(), {
 					self.counterSound.stop()
 					
@@ -266,18 +267,18 @@ class PointlessBackgroundImage: NSImageView {
 		var fadeTime: CFTimeInterval
 		
 		switch(score) {
-			case 0:
-				ev = 7
-				fadeTime = 3.5
-			case 1...20:
-				ev = 5.5
-				fadeTime = 3.0
-			case 21...50:
-				ev = 4
-				fadeTime = 3.0
-			default:
-				ev = 3
-				fadeTime = 2.0
+		case 0:
+			ev = 7
+			fadeTime = 3.5
+		case 1...20:
+			ev = 5.5
+			fadeTime = 3.0
+		case 21...50:
+			ev = 4
+			fadeTime = 3.0
+		default:
+			ev = 3
+			fadeTime = 2.0
 		}
 		
 		let pulseup = CABasicAnimation()
