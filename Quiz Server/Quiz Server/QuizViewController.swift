@@ -123,8 +123,8 @@ class QuizViewController: NSViewController {
     
 	
 	func setPointlessTeam(team: Int) {
-		quizLeds?.allOff()
-		quizLeds?.ledOn(team)
+		quizLeds?.buzzersOff()
+		quizLeds?.buzzerOn(team)
 		pointlessGame.setCurrentTeam(team)
 	}
 	
