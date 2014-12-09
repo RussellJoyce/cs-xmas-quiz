@@ -9,6 +9,7 @@
 import Cocoa
 
 enum RoundType {
+    case None
     case Idle
     case Test
     case Buzzers
@@ -20,9 +21,11 @@ class QuizViewController: NSViewController {
 
     @IBOutlet weak var roundView: NSView!
     
-    var currentRound = RoundType.Idle
+    var currentRound = RoundType.None
     
+    let idleView = IdleViewController(nibName: "IdleView", bundle: nil)!
     let testView = TestViewController(nibName: "TestView", bundle: nil)!
+    let buzzerView = BuzzerViewController(nibName: "BuzzerView", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
 	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)!
     
@@ -37,6 +40,8 @@ class QuizViewController: NSViewController {
         testView.leds = quizLeds
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
+        
+        setRound(RoundType.Idle)
     }
     
     func resetRound() {
@@ -45,12 +50,14 @@ class QuizViewController: NSViewController {
         quizLeds?.buzzersOff()
         
         switch (currentRound) {
+        case .None:
+            break // Do nothing
         case .Idle:
             break // Do nothing
         case .Test:
             testView.reset()
         case .Buzzers:
-            break // Do nothing
+            buzzerView.reset()
         case .TrueFalse:
             trueFalseView.reset()
 		case .Pointless:
@@ -65,12 +72,14 @@ class QuizViewController: NSViewController {
             resetRound()
             
             switch (currentRound) {
+            case .None:
+                break // Do nothing
             case .Idle:
-                currentRoundView = nil
+                currentRoundView = idleView.view
             case .Test:
                 currentRoundView = testView.view
             case .Buzzers:
-                currentRoundView = nil
+                currentRoundView = buzzerView.view
             case .TrueFalse:
                 currentRoundView = trueFalseView.view
             case .Pointless:
@@ -89,12 +98,14 @@ class QuizViewController: NSViewController {
     /// :param: team Team number (0-7)
     func buzzerPressed(team: Int) {
         switch (currentRound) {
+        case .None:
+            break // Do nothing
         case .Idle:
             break // Do nothing
         case .Test:
             testView.buzzerPressed(team)
         case .Buzzers:
-            break // Do nothing
+            buzzerView.buzzerPressed(team)
         case .TrueFalse:
             break // Do nothing
         case .Pointless:
@@ -107,6 +118,8 @@ class QuizViewController: NSViewController {
     /// :param: team Team number (0-7)
     func buzzerReleased(team: Int) {
         switch (currentRound) {
+        case .None:
+            break // Do nothing
         case .Idle:
             break // Do nothing
         case .Test:
