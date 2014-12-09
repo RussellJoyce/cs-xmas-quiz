@@ -24,6 +24,7 @@ class QuizViewController: NSViewController {
     
     let testView = TestViewController(nibName: "TestView", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
+	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)!
     
     var currentRoundView: NSView?
     
@@ -34,6 +35,7 @@ class QuizViewController: NSViewController {
         
         testView.view.frame = roundView.bounds
         pointlessGame.view.frame = roundView.bounds
+		trueFalseView.view.frame = roundView.bounds
     }
     
     func resetRound() {
@@ -47,8 +49,8 @@ class QuizViewController: NSViewController {
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:
-            break // Do nothing
-        case .Pointless:
+            trueFalseView.reset()
+		case .Pointless:
             pointlessGame.reset()
         }
     }
@@ -70,7 +72,7 @@ class QuizViewController: NSViewController {
             case .Buzzers:
                 currentRoundView = nil
             case .TrueFalse:
-                currentRoundView = nil
+                currentRoundView = trueFalseView.view
             case .Pointless:
                 currentRoundView = pointlessGame.view
             }
