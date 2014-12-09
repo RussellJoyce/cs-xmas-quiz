@@ -81,6 +81,9 @@ class PointlessGameController: NSViewController {
 		for i in 0...7 {
 			labels[i].setText("")
 		}
+		if(lastTeam < labels.count) {
+			labels[lastTeam].setInactive()
+		}
 	}
 	
 	
