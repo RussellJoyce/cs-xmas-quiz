@@ -267,10 +267,10 @@ class PointlessBackgroundImage: NSImageView {
 			case 0:
 				ev = 7
 				fadeTime = 3.5
-			case 20...1:
+			case 1...20:
 				ev = 5.5
 				fadeTime = 3.0
-			case 50...21:
+			case 21...50:
 				ev = 4
 				fadeTime = 3.0
 			default:

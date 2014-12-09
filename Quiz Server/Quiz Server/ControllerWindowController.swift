@@ -75,6 +75,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
     
+	@IBAction func pointlessTeam1(sender: AnyObject) {
+	}
+	
+	
+	
     @IBAction func pressedButton(sender: NSButton) {
         if led1 {
             quizLeds?.ledOff(0)
@@ -133,7 +138,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
     
-    
+
     @IBAction func resetRound(sender: AnyObject) {
         quizView.resetRound()
     }
@@ -147,6 +152,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
     
+	@IBAction func pointlessTeamPress(sender: NSButton) {
+		quizView.setPointlessTeam(sender.tag)
+	}
+	
+	@IBAction func pointlessResetTeam(sender: AnyObject) {
+		quizView.pointlessResetCurrentTeam()
+	}
+
     @IBAction func pointlessWrong(sender: AnyObject) {
         quizView.setPointlessWrong()
     }

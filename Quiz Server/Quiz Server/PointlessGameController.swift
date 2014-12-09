@@ -28,6 +28,24 @@ class PointlessGameController: NSViewController {
 		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
     }
 	
+	
+	func setCurrentTeam(team: Int) {
+		
+	}
+	
+	func setScore(score: Int) {
+		pv.setScore(score)
+	}
+	
+	func wrong() {
+		pv.wrong()
+	}
+	
+	func resetTeam() {
+		pv.reset()
+	}
+	
+	
 }
 
 

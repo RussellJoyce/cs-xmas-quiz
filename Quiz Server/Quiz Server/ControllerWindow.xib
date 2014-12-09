@@ -15,7 +15,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="720" height="340"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="720" height="340"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -145,7 +145,6 @@
                         <tabViewItems>
                             <tabViewItem label="Idle" identifier="1" id="u2C-EJ-D9s">
                                 <view key="view" id="b26-Hk-9q4">
-                                    <rect key="frame" x="10" y="33" width="445" height="159"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
@@ -173,7 +172,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2RS-Zt-DjW">
-                                            <rect key="frame" x="128" y="91" width="58" height="22"/>
+                                            <rect key="frame" x="116" y="75" width="42" height="22"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" allowsUndo="NO" state="on" borderStyle="bezel" alignment="right" title="100" placeholderString="score" drawsBackground="YES" id="XaL-5g-NaX">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -183,18 +182,8 @@
                                                 <action selector="setPointlessScoreValue:" target="-2" id="gCL-IE-hKD"/>
                                             </connections>
                                         </textField>
-                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vj2-8l-cwd">
-                                            <rect key="frame" x="188" y="101" width="140" height="32"/>
-                                            <buttonCell key="cell" type="push" title="Set Score" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hkI-0r-XDS">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="setPointlessScoreValue:" target="-2" id="b4J-NG-qey"/>
-                                            </connections>
-                                        </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FtZ-Cp-zJH">
-                                            <rect key="frame" x="188" y="68" width="140" height="32"/>
+                                            <rect key="frame" x="9" y="39" width="101" height="32"/>
                                             <buttonCell key="cell" type="push" title="Wrong" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AnN-fE-eoc">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -204,6 +193,115 @@
                                                 <action selector="pointlessWrong:" target="-2" id="Prg-Kw-Nv8"/>
                                             </connections>
                                         </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cgx-mG-AIC">
+                                            <rect key="frame" x="110" y="39" width="101" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Reset team" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="46U-YL-akh">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                                <string key="keyEquivalent">w</string>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessResetTeam:" target="-2" id="0RL-Jl-6sn"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vj2-8l-cwd">
+                                            <rect key="frame" x="9" y="70" width="101" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Set Score" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hkI-0r-XDS">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="setPointlessScoreValue:" target="-2" id="b4J-NG-qey"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="anj-ep-So4">
+                                            <rect key="frame" x="79" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="1" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ph4-iI-MeR">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="GlA-6E-g9k"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="inZ-Td-ViZ">
+                                            <rect key="frame" x="116" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="2" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bKX-N3-WhG">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="hvY-JV-uOa"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="qeJ-xt-l9c">
+                                            <rect key="frame" x="153" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="3" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BbA-pu-4Og">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="kvV-AE-c76"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="dZU-J2-WxN">
+                                            <rect key="frame" x="190" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="4" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c1k-bI-WcH">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="PQx-52-2Sd"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="b9m-Yj-GLy">
+                                            <rect key="frame" x="227" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="5" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mdP-IE-7cc">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="PtO-pD-qyw"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="btR-cX-KEO">
+                                            <rect key="frame" x="264" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="6" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c1Q-zR-jYB">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="q9a-Cp-cVi"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="EfK-Ya-T6j">
+                                            <rect key="frame" x="301" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="7" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zFQ-Xy-lnm">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="Kp0-Xg-h8y"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" tag="7" translatesAutoresizingMaskIntoConstraints="NO" id="1pa-GP-DPb">
+                                            <rect key="frame" x="338" y="118" width="27" height="31"/>
+                                            <buttonCell key="cell" type="square" title="8" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PeD-7t-3nA">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="oJg-bi-8rx"/>
+                                            </connections>
+                                        </button>
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xtg-Tb-4dT">
+                                            <rect key="frame" x="10" y="125" width="63" height="17"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Team No:" id="Ihd-NU-W61">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                 </view>
                             </tabViewItem>

@@ -121,24 +121,29 @@ class QuizViewController: NSViewController {
         }
     }
     
-    
+	
+	func setPointlessTeam(team: Int) {
+		pointlessGame.setCurrentTeam(team)
+	}
+	
+	func pointlessResetCurrentTeam() {
+		pointlessGame.resetTeam()
+	}
+	
     func setPointlessScore(score: Int) -> Bool {
         if currentRound != RoundType.Pointless || score < 0 || score > 100 {
             return false
         }
-        
-        //pointlessView.setScore(score)
-        return true
+		pointlessGame.setScore(score)
+		return true
     }
     
     func setPointlessWrong() -> Bool {
         if currentRound != RoundType.Pointless {
             return false
         }
-        
-        //pointlessView.reset()
-        //pointlessView.wrong()
-        return true
+		pointlessGame.wrong()
+		return true
     }
     
 }
