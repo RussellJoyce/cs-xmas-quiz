@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import AVFoundation
 
 class TestViewController: NSViewController {
 
@@ -21,9 +22,14 @@ class TestViewController: NSViewController {
     
     var numbers = [NSTextField]()
     
+    let eightSound = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         numbers.extend([team1, team2, team3, team4, team5, team6, team7, team8])
+        
+        eightSound.prepareToPlay()
+        
         reset()
     }
     
@@ -35,6 +41,11 @@ class TestViewController: NSViewController {
     
     func buzzerPressed(team: Int) {
         numbers[team].textColor = NSColor.redColor()
+        
+        if (team == 7) {
+            eightSound.currentTime = 0
+            eightSound.play()
+        }
     }
     
     func buzzerReleased(team: Int) {

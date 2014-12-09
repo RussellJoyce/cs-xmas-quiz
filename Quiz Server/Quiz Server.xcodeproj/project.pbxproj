@@ -24,6 +24,7 @@
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		4620DC9C1A30E354006EABA1 /* christmaslights.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC9B1A30E354006EABA1 /* christmaslights.gif */; };
+		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
 		46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; };
 		46B0256C1A1BF4ED0088294B /* DDHidLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -112,6 +113,7 @@
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		4620DC9B1A30E354006EABA1 /* christmaslights.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = christmaslights.gif; sourceTree = "<group>"; };
+		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		46B025541A1BF4EC0088294B /* DDHidLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DDHidLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46B025571A1BF4EC0088294B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				465FDFE71A372E5E00734431 /* eight.wav */,
 				4620DC9B1A30E354006EABA1 /* christmaslights.gif */,
 				3CD1DF541A306820003DEA9F /* counter_wrong.wav */,
 				3CD1DF551A306820003DEA9F /* counter_score100.wav */,
@@ -419,6 +422,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
 				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
