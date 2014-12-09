@@ -22,4 +22,12 @@ class TrueFalseViewController: NSViewController {
 		
 	}
 	
+	func start() {
+		
+	}
+	
+	func answer(ans : Bool) {
+		
+	}
+	
 }

@@ -164,7 +164,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.setPointlessWrong()
     }
     
-    
+	@IBAction func trueFalseStart(sender: NSButton) {
+		quizView.trueFalseStart()
+	}
+	
+	@IBAction func trueFalseTrue(sender: NSButton) {
+		quizView.trueFalseAnswer(true)
+	}
+	
+	@IBAction func trueFalseFalse(sender: NSButton) {
+		quizView.trueFalseAnswer(false)
+	}
+	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         quizView.buzzerPressed(Int(buttonNumber))
     }

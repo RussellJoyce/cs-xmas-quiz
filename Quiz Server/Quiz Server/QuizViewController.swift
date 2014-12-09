@@ -148,5 +148,13 @@ class QuizViewController: NSViewController {
 		pointlessGame.wrong()
 		return true
     }
+	
+	func trueFalseStart() {
+		trueFalseView.start()
+	}
+	
+	func trueFalseAnswer(ans : Bool) {
+		trueFalseView.answer(ans)
+	}
     
 }
