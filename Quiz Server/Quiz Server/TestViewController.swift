@@ -22,13 +22,13 @@ class TestViewController: NSViewController {
     
     var numbers = [NSTextField]()
     
-    let eightSound = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil)
+    let 👽 = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil) // EXTRATERRESTRIAL ALIEN
     
     override func viewDidLoad() {
         super.viewDidLoad()
         numbers.extend([team1, team2, team3, team4, team5, team6, team7, team8])
         
-        eightSound.prepareToPlay()
+        👽.prepareToPlay()
         
         reset()
     }
@@ -43,8 +43,8 @@ class TestViewController: NSViewController {
         numbers[team].textColor = NSColor.redColor()
         
         if (team == 7) {
-            eightSound.currentTime = 0
-            eightSound.play()
+            👽.currentTime = 0
+            👽.play()
         }
     }
     
