@@ -54,12 +54,12 @@
                             <rect key="frame" x="281" y="94" width="573" height="142"/>
                         </customView>
                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7q0-Mg-VIr" customClass="TFTopView" customModule="Quiz_Server" customModuleProvider="target">
-                            <rect key="frame" x="735" y="851" width="451" height="166"/>
+                            <rect key="frame" x="803" y="837" width="315" height="176"/>
                             <subviews>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUx-LF-TTO">
-                                    <rect key="frame" x="149" y="-20" width="152" height="186"/>
+                                    <rect key="frame" x="81" y="-10" width="152" height="186"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="5" id="a9C-98-9Pe">
-                                        <font key="font" size="144" name="ShreeDev0714-Bold"/>
+                                        <font key="font" size="161" name="ShreeDev0714-Bold"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>

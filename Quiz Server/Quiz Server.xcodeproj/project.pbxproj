@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
+		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
 		3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7082121A35FE38006DB763 /* PointlessGameController.swift */; };
 		3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C7082131A35FE38006DB763 /* PointlessGameController.xib */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
@@ -100,6 +102,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
+		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
 		3C7082121A35FE38006DB763 /* PointlessGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointlessGameController.swift; sourceTree = "<group>"; };
 		3C7082131A35FE38006DB763 /* PointlessGameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessGameController.xib; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
@@ -251,6 +255,8 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C5E2A4C1A37D0F9000D6447 /* timer.wav */,
+				3C5E2A4D1A37D0F9000D6447 /* timerend.wav */,
 				3C708BF61A379EE1007E24F5 /* buzzer.wav */,
 				465FDFE71A372E5E00734431 /* eight.wav */,
 				4620DC9B1A30E354006EABA1 /* christmaslights.gif */,
@@ -446,10 +452,12 @@
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
 				4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */,
 				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
+				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
+				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
