@@ -10,6 +10,7 @@
 #include "boardconfig.h"
 #include "library.h"
 #include "twinkle.h"
+#include "megamas.h"
 #include "quizbuzz.h"
 #include "commands.h"
 
@@ -226,6 +227,7 @@ void setup() {
 
     // Initialise animation array
     animations[1] = twinkle;
+    animations[2] = megamas;
 
     // Set up serial (Teensy implicity uses full USB bandwidth of 12Mb/s)
     Serial.begin(0);
