@@ -154,6 +154,12 @@ void updateTick() {
                 case LEDS_TEAMR:
                     setTeamColour(serialParam, CRGB::Red);
                     break;
+                case LEDS_TEAMW:
+                    setTeamColour(serialParam, CRGB::White);
+                    break;
+                case LEDS_TEAMO:
+                    setTeamColour(serialParam, CRGB::Black);
+                    break;
                 case LED_ON:
                     setBuzzerLedOn(serialParam);
                     break;
