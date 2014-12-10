@@ -12,6 +12,8 @@ let LEDS_ANIM  = 0x10 as Byte
 let LEDS_TEAM  = 0x20 as Byte
 let LEDS_TEAMR = 0x30 as Byte
 let LEDS_TEAMG = 0x40 as Byte
+let LEDS_TEAMW = 0x50 as Byte
+let LEDS_TEAMO = 0x60 as Byte
 
 let LED_ON  = 0xA0 as Byte
 let LED_OFF = 0xB0 as Byte
@@ -93,7 +95,7 @@ class QuizLeds: NSObject {
         return serial.sendData(NSData(bytes: [LEDS_TEAM + team] as [Byte], length: 1));
     }
     
-    /// Set LED string team colour to red
+    /// Set LED string team LEDs to red
     ///
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
@@ -101,11 +103,27 @@ class QuizLeds: NSObject {
         return serial.sendData(NSData(bytes: [LEDS_TEAMR + team] as [Byte], length: 1));
     }
     
-    /// Set LED string team colour to green
+    /// Set LED string team LEDs to green
     ///
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
     func stringTeamGreen(team: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LEDS_TEAMG + team] as [Byte], length: 1));
+    }
+    
+    /// Set LED string team LEDs to white
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamWhite(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_TEAMW + team] as [Byte], length: 1));
+    }
+    
+    /// Set LED string team LEDs to off
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamOff(team: Int) -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_TEAMO + team] as [Byte], length: 1));
     }
 }
