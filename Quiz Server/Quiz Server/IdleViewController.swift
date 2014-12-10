@@ -18,7 +18,7 @@ class IdleViewController: NSViewController {
     
     
     func reset() {
-        leds?.stringAnimation(1)
+        leds?.stringAnimation(2)
     }
     
 }
