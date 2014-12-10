@@ -10,6 +10,8 @@
 #define LEDS_TEAM    0x20
 #define LEDS_TEAMR   0x30
 #define LEDS_TEAMG   0x40
+#define LEDS_TEAMW   0x50
+#define LEDS_TEAMO   0x60
 
 #define LED_ON       0xA0
 #define LED_OFF      0xB0
