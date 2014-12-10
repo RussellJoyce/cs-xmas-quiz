@@ -37,13 +37,13 @@ class TestViewController: NSViewController {
         leds?.buzzersOff()
         for (index, team) in enumerate(numbers) {
             team.textColor = NSColor.whiteColor()
-            leds?.stringTeamRed(index)
+            leds?.stringOff()
         }
     }
     
     func buzzerPressed(team: Int) {
         numbers[team].textColor = NSColor.redColor()
-        leds?.stringTeamGreen(team)
+        leds?.stringTeamWhite(team)
         leds?.buzzerOn(team)
         
         if (team == 7) {
@@ -54,7 +54,7 @@ class TestViewController: NSViewController {
     
     func buzzerReleased(team: Int) {
         numbers[team].textColor = NSColor.whiteColor()
-        leds?.stringTeamRed(team)
+        leds?.stringTeamOff(team)
         leds?.buzzerOff(team)
     }
     
