@@ -74,11 +74,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizLeds?.buzzerOff(sender.tag - 1)
         }
     }
-    
-	@IBAction func pointlessTeam1(sender: AnyObject) {
-	}
-	
-	
+
 	
     @IBAction func pressedButton(sender: NSButton) {
         if led1 {

@@ -33,7 +33,7 @@ class PointlessGameController: NSViewController {
 	
 	func setCurrentTeam(team: Int) {
 		labels[team].setActive()
-		if(lastTeam < labels.count)	{
+		if(lastTeam < labels.count && lastTeam != team)	{
 			labels[lastTeam].setInactive()
 		}
 		lastTeam = team
