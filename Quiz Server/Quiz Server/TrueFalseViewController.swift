@@ -138,10 +138,10 @@ class TrueFalseTeamView : NSView {
 	let textColOut = NSColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1)
 	let bgColOut = NSColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.3).CGColor
 	
-	let textColTrue = NSColor(red: 0.5, green: 1, blue: 0.5, alpha: 1)
-	let bgColTrue = NSColor(red: 0.7, green: 1, blue: 0.7, alpha: 0.3).CGColor
-	let textColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 1)
-	let bgColFalse = NSColor(red: 1, green: 0.7, blue: 0.7, alpha: 0.3).CGColor
+	let textColTrue = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1)
+	let bgColTrue = NSColor(red: 0.5, green: 1, blue: 0.5, alpha: 0.3).CGColor
+	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
+	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).CGColor
 	
 	func setTeam(team : Int) {
 		teamno = team
@@ -158,7 +158,7 @@ class TrueFalseTeamView : NSView {
 		self.addSubview(label)
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
+			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
 			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
 			multiplier: 1, constant: CGFloat(280)))
 		
@@ -182,11 +182,13 @@ class TrueFalseTeamView : NSView {
 	func setPressedTrue() {
 		label.textColor = textColTrue
 		self.layer!.backgroundColor = bgColTrue
+		label.stringValue = "Team " + String(teamno + 1) + ": ✅"
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
 		self.layer!.backgroundColor = bgColFalse
+		label.stringValue = "Team " + String(teamno + 1) + ": ❌"
 	}
 	
 	func setNeutral() {
