@@ -28,6 +28,7 @@ class TrueFalseViewController: NSViewController {
 	var counting = false
 	var pressed = [Int]()
 	var teamEnabled = [true, true, true, true, true, true, true, true]
+	var leds: QuizLeds?
 	
 	var teams = [TrueFalseTeamView]()
 	
@@ -43,7 +44,7 @@ class TrueFalseViewController: NSViewController {
 		topView.topLabel = topLabel
 		teams.extend([team1, team2, team3, team4, team5, team6, team7, team8])
 		for i in 0..<teams.count {
-			teams[i].setTeam(i)
+			teams[i].setTeam(i, leds: leds!)
 		}
 		🔊.prepareToPlay()
 		🔊end.prepareToPlay()
@@ -132,6 +133,7 @@ class TrueFalseTeamView : NSView {
 
 	var teamno : Int = 0
 	let label = NSTextField()
+	var leds: QuizLeds? = nil
 	
 	let textColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let bgColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).CGColor
@@ -143,8 +145,9 @@ class TrueFalseTeamView : NSView {
 	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
 	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).CGColor
 	
-	func setTeam(team : Int) {
+	func setTeam(team : Int, leds : QuizLeds) {
 		teamno = team
+		self.leds = leds
 		
 		label.editable = false
 		label.drawsBackground = false
@@ -183,24 +186,30 @@ class TrueFalseTeamView : NSView {
 		label.textColor = textColTrue
 		self.layer!.backgroundColor = bgColTrue
 		label.stringValue = "Team " + String(teamno + 1) + ": ✅"
+		leds!.stringTeamGreen(teamno)
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
 		self.layer!.backgroundColor = bgColFalse
 		label.stringValue = "Team " + String(teamno + 1) + ": ❌"
+		leds!.stringTeamRed(teamno)
 	}
 	
 	func setNeutral() {
 		label.textColor = textColStd
 		self.layer!.backgroundColor = bgColStd
 		label.stringValue = "Team " + String(teamno + 1)
+		leds!.stringTeamWhite(teamno)
+		leds!.buzzerOn(teamno)
 	}
 	
 	func setTeamOut() {
 		label.textColor = textColOut
 		self.layer!.backgroundColor = bgColOut
 		label.stringValue = "Team " + String(teamno + 1) + " OUT"
+		leds!.stringTeamOff(teamno)
+		leds!.buzzerOff(teamno)
 	}
 	
 	required init?(coder: NSCoder) {super.init(coder: coder)}

@@ -44,6 +44,7 @@ class QuizViewController: NSViewController {
         idleView.leds = quizLeds
         testView.leds = quizLeds
         buzzerView.leds = quizLeds
+		trueFalseView.leds = quizLeds
         
         setRound(RoundType.Idle)
     }
