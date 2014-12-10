@@ -121,7 +121,7 @@ class TrueFalseViewController: NSViewController {
 }
 
 class TFMainView: NSView {
-	let bgImage = NSImage(named: "3")
+	let bgImage = NSImage(named: "dark-purple-background")
 	override func drawRect(dirtyRect: NSRect) {
 		bgImage?.drawInRect(dirtyRect)
 	}
@@ -149,7 +149,7 @@ class TrueFalseTeamView : NSView {
 		label.editable = false
 		label.drawsBackground = false
 		label.bezeled = false
-		label.font = NSFont(name: "DIN Alternate Bold", size: 65)
+		label.font = NSFont(name: "DIN Alternate Bold", size: 70)
 		label.stringValue = "Team " + String(teamno + 1)
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.textColor = textColStd
