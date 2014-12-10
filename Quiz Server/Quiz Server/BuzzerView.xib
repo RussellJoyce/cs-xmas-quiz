@@ -6,59 +6,335 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BuzzerViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="team1" destination="wG6-Yk-TjM" id="AsQ-W7-sS7"/>
+                <outlet property="team2" destination="5ja-xL-YOx" id="Dxe-c9-qee"/>
+                <outlet property="team3" destination="cin-LI-1TI" id="hC7-IJ-KMd"/>
+                <outlet property="team4" destination="AuV-2C-eKF" id="9HH-QI-avZ"/>
+                <outlet property="team5" destination="PLP-Zm-45j" id="Sce-SQ-Q1i"/>
+                <outlet property="team6" destination="ZQ2-eB-2FZ" id="tNp-c4-UYL"/>
+                <outlet property="team7" destination="9hL-3w-kqN" id="RsE-ue-uKb"/>
+                <outlet property="team8" destination="V6H-vx-3Zv" id="ZSi-Bd-ejh"/>
+                <outlet property="teamName1" destination="7vd-6t-Ngz" id="3uq-Vb-B5h"/>
+                <outlet property="teamName2" destination="sY4-Ub-666" id="HPo-PB-qJq"/>
+                <outlet property="teamName3" destination="WvM-6H-jFO" id="dLk-kb-9Fn"/>
+                <outlet property="teamName4" destination="7xN-L3-9TA" id="1RG-8o-URH"/>
+                <outlet property="teamName5" destination="WeS-IO-RQN" id="bSJ-v2-kJW"/>
+                <outlet property="teamName6" destination="IdQ-P5-cUv" id="cNC-HU-Djq"/>
+                <outlet property="teamName7" destination="RLv-5q-uUY" id="X7M-1t-5ED"/>
+                <outlet property="teamName8" destination="Acl-lN-k5r" id="Xnl-zZ-ESp"/>
+                <outlet property="teamTime2" destination="LTH-LQ-T6s" id="3YP-Cg-CPy"/>
+                <outlet property="teamTime3" destination="YQ9-1I-0l5" id="VLW-As-pkO"/>
+                <outlet property="teamTime4" destination="ebd-Ro-hrp" id="jZs-Cz-4cD"/>
+                <outlet property="teamTime5" destination="DbD-IK-kfZ" id="PIP-uX-hZ8"/>
+                <outlet property="teamTime6" destination="a3t-Se-hh9" id="HRA-9u-QSV"/>
+                <outlet property="teamTime7" destination="aWe-T1-1On" id="fDF-Pl-wY9"/>
+                <outlet property="teamTime8" destination="W9V-we-516" id="aCT-gD-cV4"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView wantsLayer="YES" id="Hz6-mo-xeY" customClass="BuzzerBackgroundView" customModule="Quiz_Server" customModuleProvider="target">
+        <customView id="Hz6-mo-xeY" customClass="BuzzerBackgroundView" customModule="Quiz_Server" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="502" y="850" width="916" height="192"/>
-                    <shadow key="shadow" blurRadius="5">
-                        <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                    </shadow>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="502" y="920" width="916" height="140"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7vd-6t-Ngz">
+                            <rect key="frame" x="18" y="10" width="880" height="131"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="xNM-OO-XEB">
+                                <font key="font" size="109" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5ja-xL-YOx" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="721" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5ja-xL-YOx" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="788" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sY4-Ub-666">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="1jn-fd-Ulb">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LTH-LQ-T6s">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="U8F-Ux-yxa">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iGx-uv-hFX" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="605" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cin-LI-1TI" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="660" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WvM-6H-jFO">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="vfL-8g-acm">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YQ9-1I-0l5">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="odu-AJ-WfI">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Adu-Os-3cF" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="489" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AuV-2C-eKF" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="532" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xN-L3-9TA">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="GfM-47-o9a">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ebd-Ro-hrp">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="HTz-ka-2A8">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9V3-yY-vmP" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="373" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLP-Zm-45j" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="404" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WeS-IO-RQN">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="sck-ta-00Y">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DbD-IK-kfZ">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="rsf-Zk-8p9">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fgb-vp-OPs" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="257" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ2-eB-2FZ" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="276" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IdQ-P5-cUv">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="md8-7Y-mmA">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a3t-Se-hh9">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="0cG-ye-BN2">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZFL-r6-G3n" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="141" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9hL-3w-kqN" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="148" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RLv-5q-uUY">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="jg4-Dd-4ee">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aWe-T1-1On">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="dDK-x8-3TN">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eZb-Q1-i8k" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="25" width="734" height="100"/>
+                <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6H-vx-3Zv" customClass="TeamView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="20" width="734" height="120"/>
+                    <subviews>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Acl-lN-k5r">
+                            <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="vvM-1g-6QQ">
+                                <font key="font" size="78" name="HelveticaNeue-Bold"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W9V-we-516">
+                            <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <backgroundFilters>
+                                <ciFilter name="CIGaussianBlur">
+                                    <configuration>
+                                        <null key="inputImage"/>
+                                        <real key="inputRadius" value="10"/>
+                                    </configuration>
+                                </ciFilter>
+                            </backgroundFilters>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="jv0-v1-qDV">
+                                <font key="font" size="27" name="HelveticaNeue-Light"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
                     <shadow key="shadow" blurRadius="3">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
