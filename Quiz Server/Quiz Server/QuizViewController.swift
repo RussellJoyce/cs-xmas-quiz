@@ -36,15 +36,15 @@ class QuizViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        idleView.leds = quizLeds
+        testView.leds = quizLeds
+        buzzerView.leds = quizLeds
+        trueFalseView.leds = quizLeds
+        
         idleView.view.frame = roundView.bounds
         testView.view.frame = roundView.bounds
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
-        
-        idleView.leds = quizLeds
-        testView.leds = quizLeds
-        buzzerView.leds = quizLeds
-		trueFalseView.leds = quizLeds
         
         setRound(RoundType.Idle)
     }

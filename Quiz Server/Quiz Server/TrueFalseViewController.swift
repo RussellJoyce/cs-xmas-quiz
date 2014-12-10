@@ -44,7 +44,7 @@ class TrueFalseViewController: NSViewController {
 		topView.topLabel = topLabel
 		teams.extend([team1, team2, team3, team4, team5, team6, team7, team8])
 		for i in 0..<teams.count {
-			teams[i].setTeam(i, leds: leds!)
+			teams[i].setTeam(i, leds: leds)
 		}
 		🔊.prepareToPlay()
 		🔊end.prepareToPlay()
@@ -133,7 +133,7 @@ class TrueFalseTeamView : NSView {
 
 	var teamno : Int = 0
 	let label = NSTextField()
-	var leds: QuizLeds? = nil
+	var leds: QuizLeds?
 	
 	let textColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let bgColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).CGColor
@@ -145,7 +145,7 @@ class TrueFalseTeamView : NSView {
 	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
 	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).CGColor
 	
-	func setTeam(team : Int, leds : QuizLeds) {
+	func setTeam(team : Int, leds : QuizLeds?) {
 		teamno = team
 		self.leds = leds
 		
@@ -184,32 +184,32 @@ class TrueFalseTeamView : NSView {
 	
 	func setPressedTrue() {
 		label.textColor = textColTrue
-		self.layer!.backgroundColor = bgColTrue
-		label.stringValue = "Team " + String(teamno + 1) + ": ✅"
-		leds!.stringTeamGreen(teamno)
+		self.layer?.backgroundColor = bgColTrue
+		label.stringValue = "Team \(teamno + 1): ✅"
+		leds?.stringTeamGreen(teamno)
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
-		self.layer!.backgroundColor = bgColFalse
-		label.stringValue = "Team " + String(teamno + 1) + ": ❌"
-		leds!.stringTeamRed(teamno)
+		self.layer?.backgroundColor = bgColFalse
+		label.stringValue = "Team \(teamno + 1): ❌"
+		leds?.stringTeamRed(teamno)
 	}
 	
 	func setNeutral() {
 		label.textColor = textColStd
-		self.layer!.backgroundColor = bgColStd
-		label.stringValue = "Team " + String(teamno + 1)
-		leds!.stringTeamWhite(teamno)
-		leds!.buzzerOn(teamno)
+		self.layer?.backgroundColor = bgColStd
+		label.stringValue = "Team \(teamno + 1)"
+		leds?.stringTeamWhite(teamno)
+		leds?.buzzerOn(teamno)
 	}
 	
 	func setTeamOut() {
 		label.textColor = textColOut
-		self.layer!.backgroundColor = bgColOut
-		label.stringValue = "Team " + String(teamno + 1) + " OUT"
-		leds!.stringTeamOff(teamno)
-		leds!.buzzerOff(teamno)
+		self.layer?.backgroundColor = bgColOut
+		label.stringValue = "Team \(teamno + 1) OUT"
+		leds?.stringTeamOff(teamno)
+		leds?.buzzerOff(teamno)
 	}
 	
 	required init?(coder: NSCoder) {super.init(coder: coder)}
@@ -219,7 +219,7 @@ class TrueFalseTeamView : NSView {
 		
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
-		self.layer!.backgroundColor = bgColStd
+		self.layer?.backgroundColor = bgColStd
 		
 		let blurFilter = CIFilter(name: "CIGaussianBlur")
 		blurFilter.setDefaults()
@@ -235,10 +235,10 @@ class TrueFalseTeamView : NSView {
 
 class TFTopView : NSView {
 	
-	var topLabel : NSTextField!
+	var topLabel : NSTextField?
 	
 	func setVal(val : Int) {
-		topLabel.stringValue = String(val)
+		topLabel?.stringValue = String(val)
 		
 		let fade = CABasicAnimation()
 		fade.keyPath = "opacity"
@@ -263,7 +263,7 @@ class TFTopView : NSView {
 		
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
-		self.layer!.backgroundColor = NSColor(red: 1, green: 1, blue: 1, alpha: 0.8).CGColor
+		self.layer?.backgroundColor = NSColor(red: 1, green: 1, blue: 1, alpha: 0.8).CGColor
 		
 		self.alphaValue = 0
 		
