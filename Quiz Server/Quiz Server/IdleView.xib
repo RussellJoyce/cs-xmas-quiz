@@ -6,6 +6,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IdleViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="skView" destination="pLF-xo-exw" id="cDV-HA-KRB"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -19,6 +20,9 @@
                     <rect key="frame" x="0.0" y="-88" width="1920" height="1438"/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="axesIndependently" image="1" id="OFS-4a-Gf8"/>
                 </imageView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLF-xo-exw" customClass="SKView">
+                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                </customView>
                 <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p6K-m1-DJR">
                     <rect key="frame" x="208" y="587" width="1504" height="402"/>
                     <shadow key="shadow" blurRadius="10">
