@@ -67,15 +67,26 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func pressedNumber(sender: NSButton) {
-        if (sender.state == NSOnState) {
-            quizLeds?.buzzerOn(sender.tag - 1)
+        // If buzzers are connected, buttons will act as virtual buzzers
+        if quizBuzzers == nil {
+            if (sender.state == NSOnState) {
+                quizView.buzzerPressed(sender.tag - 1)
+            }
+            else {
+                quizView.buzzerReleased(sender.tag - 1)
+            }
         }
         else {
-            quizLeds?.buzzerOff(sender.tag - 1)
+            if (sender.state == NSOnState) {
+                quizLeds?.buzzerOn(sender.tag - 1)
+            }
+            else {
+                quizLeds?.buzzerOff(sender.tag - 1)
+            }
         }
     }
-
-	
+    
+    
     @IBAction func pressedButton(sender: NSButton) {
         if led1 {
             quizLeds?.buzzerOff(0)
