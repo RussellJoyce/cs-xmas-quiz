@@ -76,6 +76,7 @@ class BuzzerViewController: NSViewController {
                 firstBuzzTime = NSDate()
                 buzzNoise.currentTime = 0
                 buzzNoise.play()
+                leds?.stringTeamAnimate(team)
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
