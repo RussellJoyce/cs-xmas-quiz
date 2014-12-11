@@ -34,7 +34,9 @@
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		4620DC9C1A30E354006EABA1 /* christmaslights.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC9B1A30E354006EABA1 /* christmaslights.gif */; };
 		463FDE821A39039500FA9B3F /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Snow.sks */; };
+		4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4656CA1A1A39100200A70F91 /* SparksDown.sks */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
+		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
 		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
@@ -135,7 +137,9 @@
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		4620DC9B1A30E354006EABA1 /* christmaslights.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = christmaslights.gif; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
+		4656CA1A1A39100200A70F91 /* SparksDown.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDown.sks; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
 		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -256,6 +260,8 @@
 				4600123B1A3786AD0039AF86 /* IdleViewController.swift */,
 				4600123C1A3786AD0039AF86 /* IdleView.xib */,
 				463FDE811A39039500FA9B3F /* Snow.sks */,
+				46596C811A38E04800822FB7 /* SparksUp.sks */,
+				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
 				46596C821A38E04800822FB7 /* spark.png */,
 			);
 			path = "Quiz Server";
@@ -466,6 +472,7 @@
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
+				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
 				463FDE821A39039500FA9B3F /* Snow.sks in Resources */,
@@ -475,6 +482,7 @@
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
+				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
