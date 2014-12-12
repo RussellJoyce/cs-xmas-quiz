@@ -11,14 +11,14 @@ import AVFoundation
 
 class BuzzerViewController: NSViewController {
     
-    @IBOutlet weak var team1: TeamView!
-    @IBOutlet weak var team2: TeamView!
-    @IBOutlet weak var team3: TeamView!
-    @IBOutlet weak var team4: TeamView!
-    @IBOutlet weak var team5: TeamView!
-    @IBOutlet weak var team6: TeamView!
-    @IBOutlet weak var team7: TeamView!
-    @IBOutlet weak var team8: TeamView!
+    @IBOutlet weak var team1: NSView!
+    @IBOutlet weak var team2: NSView!
+    @IBOutlet weak var team3: NSView!
+    @IBOutlet weak var team4: NSView!
+    @IBOutlet weak var team5: NSView!
+    @IBOutlet weak var team6: NSView!
+    @IBOutlet weak var team7: NSView!
+    @IBOutlet weak var team8: NSView!
     
     @IBOutlet weak var teamName1: NSTextField!
     @IBOutlet weak var teamName2: NSTextField!
@@ -41,19 +41,23 @@ class BuzzerViewController: NSViewController {
     var buzzNumber = 0
     var firstBuzzTime: NSDate?
     var leds: QuizLeds?
-    var teams = [TeamView]()
+    var teams = [NSView]()
     var teamNames = [NSTextField]()
     var teamTimes = [NSTextField?]()
     var teamEnabled = [true, true, true, true, true, true, true, true]
-    let teamColours = [NSColor.lightRedColor(), NSColor.greenColor(), NSColor.lightBlueColor(), NSColor.yellowColor(), NSColor.magentaColor(), NSColor.cyanColor(), NSColor.lightPurpleColor(), NSColor.whiteColor()]
     let buzzNoise = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!), error: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        teams.extend([team1, team2, team3, team4, team5, team6, team7, team8])
-        teamNames.extend([teamName1, teamName2, teamName3, teamName4, teamName5, teamName6, teamName7, teamName8])
-        teamTimes.extend([nil, teamTime2, teamTime3, teamTime4, teamTime5, teamTime6, teamTime7, teamTime8])
+        teams += [team1, team2, team3, team4, team5, team6, team7, team8]
+        teamNames += [teamName1, teamName2, teamName3, teamName4, teamName5, teamName6, teamName7, teamName8]
+        teamTimes += [nil, teamTime2, teamTime3, teamTime4, teamTime5, teamTime6, teamTime7, teamTime8] as [NSTextField?]
         buzzNoise.prepareToPlay()
+        
+        for (team, teamView) in enumerate(teams) {
+            //teamView.wantsLayer = true
+            //teamView.layerUsesCoreImageFilters = true
+        }
     }
     
     func reset() {
@@ -70,7 +74,7 @@ class BuzzerViewController: NSViewController {
             teamEnabled[team] = false
             leds?.buzzerOff(team)
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
-            teams[buzzNumber].color = teamColours[team]
+            teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
             
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
@@ -92,29 +96,5 @@ class BuzzerBackgroundView: NSView {
     let bgImage = NSImage(named: "2")
     override func drawRect(dirtyRect: NSRect) {
         bgImage?.drawInRect(dirtyRect, fromRect: dirtyRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
-    }
-}
-
-class TeamView: NSView {
-    var color = NSColor.blackColor()
-    
-    override func drawRect(dirtyRect: NSRect) {
-        color.setFill()
-        NSRectFill(dirtyRect)
-        super.drawRect(dirtyRect)
-    }
-}
-
-extension NSColor {
-    class func lightBlueColor() -> NSColor {
-        return NSColor(red:0.310, green:0.643, blue:0.937, alpha: 1)
-    }
-    
-    class func lightPurpleColor() -> NSColor {
-        return NSColor(red:0.725, green:0.459, blue:0.937, alpha: 1)
-    }
-    
-    class func lightRedColor() -> NSColor {
-        return NSColor(red:0.929, green:0.318, blue:0.380, alpha: 1)
     }
 }
