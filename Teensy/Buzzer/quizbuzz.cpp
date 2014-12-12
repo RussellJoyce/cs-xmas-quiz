@@ -6,29 +6,30 @@ typedef struct {
 } bounds_t;
 
 bounds_t teams[NUM_TEAMS] = {
-	{5, 13}, //Team 1
-	{18, 26}, //Team 2
-	{31, 39}, //Team 3
-	{44, 52}, //Team 4
-	{57, 65}, //Team 5
-	{70, 78}, //Team 6
-	{83, 91}, //Team 7
-	{94, 98}, //Team 8
+	{  5,  26}, //Team 1
+	{ 36,  52}, //Team 2
+	{ 62,  78}, //Team 3
+	{ 88, 104}, //Team 4
+	{114, 130}, //Team 5
+	{140, 156}, //Team 6
+	{166, 182}, //Team 7
+	{188, 196}, //Team 8
 };
 
+// Team colours as 45 degrees apart on the hue spectrum
 CRGB teamcol[NUM_TEAMS] = {
-	CRGB(255,   0,   0), //Team 1 (red)
-	CRGB(  0, 255,   0), //Team 2 (green)
-	CRGB(  0,   0, 255), //Team 3 (blue)
-	CRGB(255, 255,   0), //Team 4 (yellow)
-	CRGB(255,   0, 255), //Team 5 (magenta)
-	CRGB(  0, 255, 255), //Team 6 (cyan)
-	CRGB(128,   0, 255), //Team 7 (purple)
-	CRGB(255, 255, 255), //Team 8 (white)
+	CHSV(  0, 255, 255), //Team 1 (0)
+	CHSV( 32, 255, 255), //Team 2 (45)
+	CHSV( 64, 255, 255), //Team 3 (90)
+	CHSV( 96, 255, 255), //Team 4 (135)
+	CHSV(128, 255, 255), //Team 5 (180)
+	CHSV(160, 255, 255), //Team 6 (225)
+	CHSV(192, 255, 255), //Team 7 (270)
+	CHSV(224, 255, 255), //Team 8 (315)
 };
 
-#define NUM_FRAMES 100
-#define FRAME_DELAY 1
+#define NUM_FRAMES 170
+#define FRAME_DELAY 0
 #define SWOOP_TEAM_COLS 1
 #define SWOOP_FADE_SPEED 8
 #define POST_SWOOP_FADE_SPEED 5
