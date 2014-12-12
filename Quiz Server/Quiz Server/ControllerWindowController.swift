@@ -29,7 +29,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Open serial port
         quizLeds?.openSerial()
         quizView.quizLeds = quizLeds
-        
+		
         // Open game controller
         quizBuzzers?.setDelegate(self)
         quizBuzzers?.startListening()
@@ -182,6 +182,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func trueFalseFalse(sender: NSButton) {
 		quizView.trueFalseAnswer(false)
 	}
+	
+	@IBAction func testSetAllGreen(sender: AnyObject) {
+		for i in 0...7 {
+			quizLeds?.stringTeamGreen(i)
+		}
+	}
+	
+	@IBAction func testSetAllRed(sender: AnyObject) {
+		for i in 0...7 {
+			quizLeds?.stringTeamRed(i)
+		}
+	}
+	
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         quizView.buzzerPressed(Int(buttonNumber))

@@ -15,7 +15,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="720" height="340"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="720" height="340"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -152,6 +152,28 @@
                                 <view key="view" id="6Pa-j9-Bqf">
                                     <rect key="frame" x="10" y="33" width="445" height="159"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SGY-lJ-ZWr">
+                                            <rect key="frame" x="23" y="103" width="132" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Set all Green" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pb8-Lh-A4U">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="testSetAllGreen:" target="-2" id="yMg-zu-626"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R2N-2R-OAg">
+                                            <rect key="frame" x="23" y="64" width="132" height="32"/>
+                                            <buttonCell key="cell" type="push" title="Set all Red" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GDl-pL-qxh">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="testSetAllRed:" target="-2" id="hGt-q2-0XE"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Buzzers" identifier="" id="zkE-YU-uHw">

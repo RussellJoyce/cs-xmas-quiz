@@ -100,6 +100,7 @@ class QuizLeds: NSObject {
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
     func stringTeamRed(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMR + team] as [Byte], length: 1));
     }
     
@@ -108,6 +109,7 @@ class QuizLeds: NSObject {
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
     func stringTeamGreen(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMG + team] as [Byte], length: 1));
     }
     
@@ -116,6 +118,7 @@ class QuizLeds: NSObject {
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
     func stringTeamWhite(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMW + team] as [Byte], length: 1));
     }
     
@@ -124,6 +127,7 @@ class QuizLeds: NSObject {
     /// :param: team The team number (0-7)
     /// :returns: true if data sent successfully, false otherwise
     func stringTeamOff(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMO + team] as [Byte], length: 1));
     }
 }
