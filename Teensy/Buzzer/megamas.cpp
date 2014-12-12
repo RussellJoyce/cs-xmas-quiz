@@ -2,16 +2,9 @@
 
 Megamas *megamas = new Megamas();
 
-//							Min 	Max		Step	Start
-static Parameter mmasspeed(	0, 		100, 	10, 	0);
-static Parameter mmasnum(	5, 		50, 	5, 		10);
-static Parameter transpeed(	1, 		10, 	1, 		4);
-
-static void reset(void *arg) {
-	mmasspeed.reset();
-	mmasnum.reset();
-	transpeed.reset();
-}
+#define SPEED         4  // Speed of change
+#define NUMBER       10  // Number of LEDs to change
+#define TRANS_SPEED   3  // Transition speed
 
 
 static CHSV target[NUM_LEDS];
@@ -32,9 +25,9 @@ void Megamas::tick() {
 
 	framenum++;
 
-	if(framenum > mmasspeed.get()) {
+	if(framenum > SPEED) {
 		framenum = 0;
-		for(int i = 0; i < mmasnum.get(); i++) {
+		for(int i = 0; i < NUMBER; i++) {
 			switch(random(3)) {
 				case 0:
 					target[random(NUM_LEDS)] = CHSV(0, 255, 255);
@@ -51,20 +44,20 @@ void Megamas::tick() {
 
 	for(int i = 0; i < NUM_LEDS; i++) {
 		if(current[i].h < target[i].h) {
-			if(target[i].h - current[i].h < transpeed.get()) {
+			if(target[i].h - current[i].h < TRANS_SPEED) {
 				current[i].h = target[i].h;
-			} else if(current[i].h < (255-transpeed.get())) {
-				current[i].h += transpeed.get();
+			} else if(current[i].h < (255-TRANS_SPEED)) {
+				current[i].h += TRANS_SPEED;
 			} else {
 				current[i].h = 255;
 			}
 		}
 
 		if(current[i].h > target[i].h) {
-			if(current[i].h - target[i].h < transpeed.get()) {
+			if(current[i].h - target[i].h < TRANS_SPEED) {
 				current[i].h = target[i].h;
-			} else if(current[i].h > transpeed.get()) {
-				current[i].h -= transpeed.get();
+			} else if(current[i].h > TRANS_SPEED) {
+				current[i].h -= TRANS_SPEED;
 			} else {
 				current[i].h = 0;
 			}
