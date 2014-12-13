@@ -17,6 +17,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode: Bool = true
+    var buzzersEnabled = [Bool](count: 8, repeatedValue: true)
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
     var quizWindow: NSWindow?
@@ -67,21 +68,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func pressedNumber(sender: NSButton) {
-        // If buzzers are connected, buttons will act as virtual buzzers
+        // If buzzers are not connected, buttons will act as virtual buzzers,
+        //  otherwise, buttons will disable buzzers
         if quizBuzzers == nil {
             if (sender.state == NSOnState) {
-                quizView.buzzerPressed(sender.tag - 1)
+                quizView.buzzerPressed(sender.tag)
             }
             else {
-                quizView.buzzerReleased(sender.tag - 1)
+                quizView.buzzerReleased(sender.tag)
             }
         }
         else {
             if (sender.state == NSOnState) {
-                quizLeds?.buzzerOn(sender.tag - 1)
+                buzzersEnabled[sender.tag] = false
+                quizView.buzzerReleased(sender.tag)
             }
             else {
-                quizLeds?.buzzerOff(sender.tag - 1)
+                buzzersEnabled[sender.tag] = true
             }
         }
     }
@@ -197,12 +200,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
-        quizView.buzzerPressed(Int(buttonNumber))
+        let button = Int(buttonNumber)
+        if (buzzersEnabled[button]) {
+            quizView.buzzerPressed(button)
+        }
     }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
-        quizView.buzzerReleased(Int(buttonNumber))
+        let button = Int(buttonNumber)
+        if (buzzersEnabled[button]) {
+            quizView.buzzerReleased(button)
+        }
     }
 
-    
 }
