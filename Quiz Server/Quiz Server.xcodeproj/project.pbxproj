@@ -431,7 +431,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
-				ORGANIZATIONNAME = "Russell Joyce";
+				ORGANIZATIONNAME = "Russell Joyce & Ian Gray";
 				TargetAttributes = {
 					46056EB31A19624E00C37628 = {
 						CreatedOnToolsVersion = 6.1;

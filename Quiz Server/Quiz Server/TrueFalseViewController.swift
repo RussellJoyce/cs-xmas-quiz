@@ -3,7 +3,7 @@
 //  Quiz Server
 //
 //  Created by Ian Gray on 09/12/2014.
-//  Copyright (c) 2014 Russell Joyce. All rights reserved.
+//  Copyright (c) 2014 Russell Joyce & Ian Gray. All rights reserved.
 //
 
 import Cocoa
