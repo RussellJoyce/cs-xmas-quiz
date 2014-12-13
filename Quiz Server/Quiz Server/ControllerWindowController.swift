@@ -22,7 +22,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
     var quizWindow: NSWindow?
     
-    var led1 = false
     
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -88,46 +87,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             }
         }
     }
-    
-    
-    @IBAction func pressedButton(sender: NSButton) {
-        if led1 {
-            quizLeds?.buzzerOff(0)
-            usleep(100000)
-            quizLeds?.buzzerOff(1)
-            usleep(100000)
-            quizLeds?.buzzerOff(2)
-            usleep(100000)
-            quizLeds?.buzzerOff(3)
-            usleep(100000)
-            quizLeds?.buzzerOff(4)
-            usleep(100000)
-            quizLeds?.buzzerOff(5)
-            usleep(100000)
-            quizLeds?.buzzerOff(6)
-            usleep(100000)
-            quizLeds?.buzzerOff(7)
-            led1 = false
-        }
-        else {
-            quizLeds?.buzzerOn(0)
-            usleep(100000)
-            quizLeds?.buzzerOn(1)
-            usleep(100000)
-            quizLeds?.buzzerOn(2)
-            usleep(100000)
-            quizLeds?.buzzerOn(3)
-            usleep(100000)
-            quizLeds?.buzzerOn(4)
-            usleep(100000)
-            quizLeds?.buzzerOn(5)
-            usleep(100000)
-            quizLeds?.buzzerOn(6)
-            usleep(100000)
-            quizLeds?.buzzerOn(7)
-            led1 = true
-        }
-    }
+
     
     func tabView(tabView: NSTabView, didSelectTabViewItem tabViewItem: NSTabViewItem?) {
         let index = tabView.indexOfTabViewItem(tabViewItem!)
