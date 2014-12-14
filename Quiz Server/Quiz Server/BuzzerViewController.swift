@@ -8,6 +8,7 @@
 
 import Cocoa
 import AVFoundation
+import SpriteKit
 
 class BuzzerViewController: NSViewController {
     
@@ -37,6 +38,17 @@ class BuzzerViewController: NSViewController {
     @IBOutlet weak var teamTime7: NSTextField!
     @IBOutlet weak var teamTime8: NSTextField!
     
+    @IBOutlet weak var sparksView: SKView!
+    
+    let scene = SKScene()
+    let sparks = [SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks"),
+        SKEmitterNode(fileNamed: "BuzzSparks")]
     
     var buzzNumber = 0
     var firstBuzzTime: NSDate?
@@ -54,13 +66,29 @@ class BuzzerViewController: NSViewController {
         teamTimes += [nil, teamTime2, teamTime3, teamTime4, teamTime5, teamTime6, teamTime7, teamTime8] as [NSTextField?]
         buzzNoise.prepareToPlay()
         
-        for (team, teamView) in enumerate(teams) {
-            //teamView.wantsLayer = true
-            //teamView.layerUsesCoreImageFilters = true
+        // Set up SpriteKit sparks
+        sparksView.allowsTransparency = true
+        scene.size = sparksView.bounds.size
+        scene.backgroundColor = NSColor.clearColor()
+        sparksView.presentScene(scene)
+        for (index, node) in enumerate(sparks) {
+            if index == 0 {
+                node.position = CGPoint(x: 960, y: 990)
+            }
+            else {
+                node.particlePositionRange = CGVectorMake(734, 120)
+                node.position = CGPoint(x: 960, y: 80 + ((7-index) * 128))
+            }
+            node.particleColorSequence = nil
+            scene.addChild(node)
         }
     }
     
     func reset() {
+        for node in sparks {
+            node.particleBirthRate = 0
+        }
+        
         leds?.buzzersOn()
         teamEnabled = [true, true, true, true, true, true, true, true]
         for team in teams {
@@ -74,7 +102,14 @@ class BuzzerViewController: NSViewController {
             teamEnabled[team] = false
             leds?.buzzerOff(team)
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
-            teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
+            let teamHue = CGFloat(team) / 8.0
+            teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
+            let spark = sparks[buzzNumber]
+            spark.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.7, brightness: 1.0, alpha: 1.0)
+            spark.particleBirthRate = (buzzNumber == 0) ? 20000 : 10000
+            delay(0.1) {
+                spark.particleBirthRate = 0
+            }
             
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
@@ -92,9 +127,33 @@ class BuzzerViewController: NSViewController {
     }
 }
 
+class PlaceholderView: NSView {
+    let color = NSColor(deviceWhite: 1.0, alpha: 0.4)
+    
+    override func drawRect(dirtyRect: NSRect) {
+        color.setFill()
+        NSRectFill(dirtyRect)
+        super.drawRect(dirtyRect)
+    }
+}
+
 class BuzzerBackgroundView: NSView {
     let bgImage = NSImage(named: "2")
     override func drawRect(dirtyRect: NSRect) {
         bgImage?.drawInRect(dirtyRect, fromRect: dirtyRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
     }
 }
+
+
+
+// Some nice NSTimer extensions from https://gist.github.com/radex/41a1e75bb1290fb5d559
+
+func delay(delay:Double, closure:()->()) {
+    dispatch_after(
+        dispatch_time(
+            DISPATCH_TIME_NOW,
+            Int64(delay * Double(NSEC_PER_SEC))
+        ),
+        dispatch_get_main_queue(), closure)
+}
+

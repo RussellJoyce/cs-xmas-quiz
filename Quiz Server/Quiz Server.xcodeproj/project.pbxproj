@@ -30,6 +30,7 @@
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
 		46056ED61A1974A800C37628 /* StartupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056ED51A1974A800C37628 /* StartupView.swift */; };
+		46197AF11A3E05A000B5652F /* BuzzSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46197AEF1A3E05A000B5652F /* BuzzSparks.sks */; };
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		4620DC9C1A30E354006EABA1 /* christmaslights.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC9B1A30E354006EABA1 /* christmaslights.gif */; };
@@ -133,6 +134,7 @@
 		46056EBE1A19624E00C37628 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		46056ED41A196EF100C37628 /* TestPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestPlayground.playground; sourceTree = "<group>"; };
 		46056ED51A1974A800C37628 /* StartupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupView.swift; sourceTree = "<group>"; };
+		46197AEF1A3E05A000B5652F /* BuzzSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzSparks.sks; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		4620DC9B1A30E354006EABA1 /* christmaslights.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = christmaslights.gif; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				463FDE811A39039500FA9B3F /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
+				46197AEF1A3E05A000B5652F /* BuzzSparks.sks */,
 				46596C821A38E04800822FB7 /* spark.png */,
 			);
 			path = "Quiz Server";
@@ -468,6 +471,7 @@
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
 				4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */,
 				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
+				46197AF11A3E05A000B5652F /* BuzzSparks.sks in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
