@@ -41,14 +41,7 @@ class BuzzerViewController: NSViewController {
     @IBOutlet weak var sparksView: SKView!
     
     let scene = SKScene()
-    let sparks = [SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks"),
-        SKEmitterNode(fileNamed: "BuzzSparks")]
+    let sparks = SKEmitterNode(fileNamed: "BuzzSparks")
     
     var buzzNumber = 0
     var firstBuzzTime: NSDate?
@@ -71,23 +64,13 @@ class BuzzerViewController: NSViewController {
         scene.size = sparksView.bounds.size
         scene.backgroundColor = NSColor.clearColor()
         sparksView.presentScene(scene)
-        for (index, node) in enumerate(sparks) {
-            if index == 0 {
-                node.position = CGPoint(x: 960, y: 990)
-            }
-            else {
-                node.particlePositionRange = CGVectorMake(734, 120)
-                node.position = CGPoint(x: 960, y: 80 + ((7-index) * 128))
-            }
-            node.particleColorSequence = nil
-            scene.addChild(node)
-        }
+        sparks.position = CGPoint(x: 960, y: 990)
+        sparks.particleColorSequence = nil
+        scene.addChild(sparks)
     }
     
     func reset() {
-        for node in sparks {
-            node.particleBirthRate = 0
-        }
+        sparks.particleBirthRate = 0
         
         leds?.buzzersOn()
         teamEnabled = [true, true, true, true, true, true, true, true]
@@ -104,18 +87,17 @@ class BuzzerViewController: NSViewController {
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
             let teamHue = CGFloat(team) / 8.0
             teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
-            let spark = sparks[buzzNumber]
-            spark.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.7, brightness: 1.0, alpha: 1.0)
-            spark.particleBirthRate = (buzzNumber == 0) ? 20000 : 10000
-            delay(0.1) {
-                spark.particleBirthRate = 0
-            }
             
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
                 buzzNoise.currentTime = 0
                 buzzNoise.play()
                 leds?.stringTeamAnimate(team)
+                sparks.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.35, brightness: 1.0, alpha: 1.0)
+                sparks.particleBirthRate = 30000
+                delay(0.2) {
+                    self.sparks.particleBirthRate = 0
+                }
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
@@ -146,7 +128,7 @@ class BuzzerBackgroundView: NSView {
 
 
 
-// Some nice NSTimer extensions from https://gist.github.com/radex/41a1e75bb1290fb5d559
+// A nice dispatch function from http://stackoverflow.com/questions/24034544/dispatch-after-gcd-in-swift/24318861#24318861
 
 func delay(delay:Double, closure:()->()) {
     dispatch_after(
