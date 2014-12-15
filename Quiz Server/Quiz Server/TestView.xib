@@ -24,28 +24,12 @@
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ml6-1S-7c0" customClass="SKView">
+                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ml6-1S-7c0" userLabel="Sparks View" customClass="SKView">
                     <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                 </customView>
-                <customView ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DvJ-TY-gTm">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DvJ-TY-gTm">
                     <rect key="frame" x="147" y="403" width="1626" height="274"/>
                     <subviews>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0F3-DR-5rY">
-                            <rect key="frame" x="204" y="50" width="200" height="200"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="2" id="cLA-1C-0Ry">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jWo-lm-8G2">
-                            <rect key="frame" x="612" y="50" width="200" height="200"/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="4" id="7WF-fD-Zqi">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VVW-x5-vVy">
                             <rect key="frame" x="0.0" y="50" width="200" height="200"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="1" id="tcU-Dv-Io3">
@@ -54,9 +38,25 @@
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                             </textFieldCell>
                         </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0F3-DR-5rY">
+                            <rect key="frame" x="204" y="50" width="200" height="200"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="2" id="cLA-1C-0Ry">
+                                <font key="font" metaFont="systemBold" size="180"/>
+                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Zw-FY-PVg">
                             <rect key="frame" x="408" y="50" width="200" height="200"/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="3" id="9FI-6N-JkI">
+                                <font key="font" metaFont="systemBold" size="180"/>
+                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jWo-lm-8G2">
+                            <rect key="frame" x="612" y="50" width="200" height="200"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="4" id="7WF-fD-Zqi">
                                 <font key="font" metaFont="systemBold" size="180"/>
                                 <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -97,10 +97,6 @@
                     </subviews>
                 </customView>
             </subviews>
-            <constraints>
-                <constraint firstAttribute="centerX" secondItem="DvJ-TY-gTm" secondAttribute="centerX" id="Kvu-L0-3gO"/>
-                <constraint firstAttribute="centerY" secondItem="DvJ-TY-gTm" secondAttribute="centerY" id="cbQ-WF-4sc"/>
-            </constraints>
             <point key="canvasLocation" x="705" y="506"/>
         </customView>
     </objects>
