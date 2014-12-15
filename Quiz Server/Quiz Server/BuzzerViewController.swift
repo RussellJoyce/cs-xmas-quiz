@@ -38,6 +38,8 @@ class BuzzerViewController: NSViewController {
     @IBOutlet weak var teamTime7: NSTextField!
     @IBOutlet weak var teamTime8: NSTextField!
 	
+    @IBOutlet weak var snowView: SKView!
+    
     var buzzNumber = 0
     var firstBuzzTime: NSDate?
     var leds: QuizLeds?
@@ -46,6 +48,8 @@ class BuzzerViewController: NSViewController {
     var teamTimes = [NSTextField?]()
     var teamEnabled = [true, true, true, true, true, true, true, true]
     let buzzNoise = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!), error: nil)
+    let snowScene = SKScene()
+    let snow = SKEmitterNode(fileNamed: "Snow")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +67,16 @@ class BuzzerViewController: NSViewController {
 			team.layerUsesCoreImageFilters = true
 			team.layer?.filters = [scaleFilter]
 		}
-		
+        
+        snowView.allowsTransparency = true
+        snowScene.size = snowView.bounds.size
+        snowScene.backgroundColor = NSColor.clearColor()
+        snowView.showsFPS = true
+        snowView.presentScene(snowScene)
+        snow.position = CGPoint(x: snowScene.size.width / 2, y: snowScene.size.height + 5)
+        snow.particleColor = NSColor.whiteColor()
+        snow.particleColorSequence = nil
+        snowScene.addChild(snow)
     }
     
     func reset() {
@@ -73,6 +86,7 @@ class BuzzerViewController: NSViewController {
             team.hidden = true
         }
         buzzNumber = 0
+        snow.particleColor = NSColor.whiteColor()
     }
     
     func buzzerPressed(team: Int) {
@@ -108,18 +122,20 @@ class BuzzerViewController: NSViewController {
 			scale.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
 			teams[buzzNumber].layer!.addAnimation(scale, forKey: "scale")
 			
+            teams[buzzNumber].hidden = false
 			
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
                 buzzNoise.currentTime = 0
                 buzzNoise.play()
                 leds?.stringTeamAnimate(team)
+                snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.25, brightness: 1.0, alpha: 1.0)
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
                 teamTimes[buzzNumber]?.stringValue = NSString(format: "+ %0.04f seconds", time)
             }
-            teams[buzzNumber].hidden = false
+            
             buzzNumber++
         }
     }
@@ -141,17 +157,3 @@ class BuzzerBackgroundView: NSView {
         bgImage?.drawInRect(dirtyRect, fromRect: dirtyRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
     }
 }
-
-
-
-// A nice dispatch function from http://stackoverflow.com/questions/24034544/dispatch-after-gcd-in-swift/24318861#24318861
-
-func delay(delay:Double, closure:()->()) {
-    dispatch_after(
-        dispatch_time(
-            DISPATCH_TIME_NOW,
-            Int64(delay * Double(NSEC_PER_SEC))
-        ),
-        dispatch_get_main_queue(), closure)
-}
-
