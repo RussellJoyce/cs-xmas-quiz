@@ -72,13 +72,14 @@ class QuizViewController: NSViewController {
     
     func setRound(round: RoundType) {
         if currentRound != round {
+            let lastRoundView = currentRoundView
+            resetRound()
             currentRound = round
-            currentRoundView?.removeFromSuperview()
             resetRound()
             
             switch (currentRound) {
             case .None:
-                break // Do nothing
+                currentRoundView = nil
             case .Idle:
                 currentRoundView = idleView.view
             case .Test:
@@ -92,7 +93,26 @@ class QuizViewController: NSViewController {
             }
             
             if let currentRoundViewOpt = currentRoundView {
-                roundView.addSubview(currentRoundViewOpt)
+                if let lastRoundViewOpt = lastRoundView {
+                    // Animated transitions (doesn't quite work)
+//                    let transition = CATransition()
+//                    transition.type = kCATransitionReveal
+//                    transition.subtype = kCATransitionFromTop
+//                    roundView.setAnimations(["subviews": transition])
+//                    NSAnimationContext.beginGrouping()
+//                    NSAnimationContext.currentContext().timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+//                    NSAnimationContext.currentContext().duration = 3.0
+//                    roundView.animator().replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
+//                    NSAnimationContext.endGrouping()
+                    
+                    roundView.replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
+                }
+                else {
+                    roundView.addSubview(currentRoundViewOpt)
+                }
+            }
+            else {
+                lastRoundView?.removeFromSuperview()
             }
         }
     }
