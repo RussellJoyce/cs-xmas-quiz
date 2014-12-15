@@ -37,12 +37,7 @@ class BuzzerViewController: NSViewController {
     @IBOutlet weak var teamTime6: NSTextField!
     @IBOutlet weak var teamTime7: NSTextField!
     @IBOutlet weak var teamTime8: NSTextField!
-    
-    @IBOutlet weak var sparksView: SKView!
-    
-    let scene = SKScene()
-    let sparks = SKEmitterNode(fileNamed: "BuzzSparks")
-    
+	
     var buzzNumber = 0
     var firstBuzzTime: NSDate?
     var leds: QuizLeds?
@@ -58,20 +53,20 @@ class BuzzerViewController: NSViewController {
         teamNames += [teamName1, teamName2, teamName3, teamName4, teamName5, teamName6, teamName7, teamName8]
         teamTimes += [nil, teamTime2, teamTime3, teamTime4, teamTime5, teamTime6, teamTime7, teamTime8] as [NSTextField?]
         buzzNoise.prepareToPlay()
-        
-        // Set up SpriteKit sparks
-        sparksView.allowsTransparency = true
-        scene.size = sparksView.bounds.size
-        scene.backgroundColor = NSColor.clearColor()
-        sparksView.presentScene(scene)
-        sparks.position = CGPoint(x: 960, y: 990)
-        sparks.particleColorSequence = nil
-        scene.addChild(sparks)
+		
+		
+		for team in teams {
+			let scaleFilter = CIFilter(name: "CILanczosScaleTransform")
+			scaleFilter.setDefaults()
+			scaleFilter.setValue(1, forKey: "inputScale")
+			scaleFilter.name = "scale"
+			team.layerUsesCoreImageFilters = true
+			team.layer?.filters = [scaleFilter]
+		}
+		
     }
     
     func reset() {
-        sparks.particleBirthRate = 0
-        
         leds?.buzzersOn()
         teamEnabled = [true, true, true, true, true, true, true, true]
         for team in teams {
@@ -87,17 +82,38 @@ class BuzzerViewController: NSViewController {
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
             let teamHue = CGFloat(team) / 8.0
             teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
-            
+			
+			
+			let movey = CABasicAnimation()
+			movey.keyPath = "position.y"
+			movey.fromValue = 500
+			movey.toValue = teams[buzzNumber].frame.origin.y
+			movey.duration = 0.3
+			movey.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+			teams[buzzNumber].layer!.addAnimation(movey, forKey: "movey")
+			
+			let movex = CABasicAnimation()
+			movex.keyPath = "position.x"
+			movex.fromValue = teams[buzzNumber].frame.origin.x - (teams[buzzNumber].frame.width)
+			movex.toValue = teams[buzzNumber].frame.origin.x
+			movex.duration = 0.3
+			movex.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+			teams[buzzNumber].layer!.addAnimation(movex, forKey: "movex")
+			
+			let scale = CABasicAnimation()
+			scale.keyPath = "filters.scale.inputScale"
+			scale.fromValue = 3
+			scale.toValue = 1
+			scale.duration = 0.3
+			scale.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+			teams[buzzNumber].layer!.addAnimation(scale, forKey: "scale")
+			
+			
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
                 buzzNoise.currentTime = 0
                 buzzNoise.play()
                 leds?.stringTeamAnimate(team)
-                sparks.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.35, brightness: 1.0, alpha: 1.0)
-                sparks.particleBirthRate = 30000
-                delay(0.2) {
-                    self.sparks.particleBirthRate = 0
-                }
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow

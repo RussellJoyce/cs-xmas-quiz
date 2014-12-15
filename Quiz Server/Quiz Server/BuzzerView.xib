@@ -6,7 +6,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BuzzerViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="sparksView" destination="CoU-ZW-dR9" id="DNH-sv-sSU"/>
                 <outlet property="team1" destination="wG6-Yk-TjM" id="AsQ-W7-sS7"/>
                 <outlet property="team2" destination="5ja-xL-YOx" id="Dxe-c9-qee"/>
                 <outlet property="team3" destination="cin-LI-1TI" id="hC7-IJ-KMd"/>
@@ -35,14 +34,35 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="Hz6-mo-xeY" customClass="BuzzerBackgroundView" customModule="Quiz_Server" customModuleProvider="target">
+        <customView wantsLayer="YES" id="Hz6-mo-xeY" customClass="BuzzerBackgroundView" customModule="Quiz_Server" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kI7-LD-Yge" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kI7-LD-Yge" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iDu-D3-Gf8" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="788" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wJI-hf-ndL" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="660" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jT8-8u-2bj" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="532" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wlv-95-Ay3" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="404" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z6U-rN-s54" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="276" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ALJ-sy-1dt" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="148" width="734" height="120"/>
+                </customView>
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r6c-DS-fnc" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="593" y="20" width="734" height="120"/>
+                </customView>
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM" userLabel="Team 1">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7vd-6t-Ngz">
@@ -62,7 +82,7 @@
                     </shadow>
                     <animations/>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5ja-xL-YOx">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5ja-xL-YOx" userLabel="Team 2">
                     <rect key="frame" x="593" y="788" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sY4-Ub-666">
@@ -92,7 +112,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cin-LI-1TI">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cin-LI-1TI" userLabel="Team 3">
                     <rect key="frame" x="593" y="660" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WvM-6H-jFO">
@@ -122,7 +142,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AuV-2C-eKF">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AuV-2C-eKF" userLabel="Team 4">
                     <rect key="frame" x="593" y="532" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xN-L3-9TA">
@@ -152,7 +172,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLP-Zm-45j">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLP-Zm-45j" userLabel="Team 5">
                     <rect key="frame" x="593" y="404" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WeS-IO-RQN">
@@ -182,7 +202,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ2-eB-2FZ">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ2-eB-2FZ" userLabel="Team 6">
                     <rect key="frame" x="593" y="276" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IdQ-P5-cUv">
@@ -212,7 +232,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9hL-3w-kqN">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9hL-3w-kqN" userLabel="Team 7">
                     <rect key="frame" x="593" y="148" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RLv-5q-uUY">
@@ -242,7 +262,7 @@
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
                 </customView>
-                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6H-vx-3Zv">
+                <customView hidden="YES" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6H-vx-3Zv" userLabel="Team 8">
                     <rect key="frame" x="593" y="20" width="734" height="120"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Acl-lN-k5r">
@@ -271,30 +291,6 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iDu-D3-Gf8" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="788" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wJI-hf-ndL" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="660" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jT8-8u-2bj" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="532" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wlv-95-Ay3" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="404" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z6U-rN-s54" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="276" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ALJ-sy-1dt" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="148" width="734" height="120"/>
-                </customView>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r6c-DS-fnc" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="593" y="20" width="734" height="120"/>
-                </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CoU-ZW-dR9" customClass="SKView">
-                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                 </customView>
             </subviews>
             <animations/>
