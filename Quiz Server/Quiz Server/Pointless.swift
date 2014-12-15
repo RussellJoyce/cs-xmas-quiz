@@ -157,7 +157,7 @@ class PointlessStackViewController: NSViewController {
 		let blur = CABasicAnimation()
 		blur.keyPath = "filters.motion.inputRadius"
 		blur.fromValue = 0
-		blur.toValue = 40
+		blur.toValue = 80
 		blur.duration = barAnimationTime
 		blur.beginTime = CACurrentMediaTime() + delay
 		
