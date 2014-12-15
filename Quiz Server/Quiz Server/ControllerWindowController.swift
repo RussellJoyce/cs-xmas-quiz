@@ -11,6 +11,14 @@ import DDHidLib
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate {
     
+    @IBOutlet weak var buzzerButton1: NSButton!
+    @IBOutlet weak var buzzerButton2: NSButton!
+    @IBOutlet weak var buzzerButton3: NSButton!
+    @IBOutlet weak var buzzerButton4: NSButton!
+    @IBOutlet weak var buzzerButton5: NSButton!
+    @IBOutlet weak var buzzerButton6: NSButton!
+    @IBOutlet weak var buzzerButton7: NSButton!
+    @IBOutlet weak var buzzerButton8: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
     
     var quizScreen: NSScreen?
@@ -18,6 +26,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var quizLeds: QuizLeds?
     var testMode: Bool = true
     var buzzersEnabled = [Bool](count: 8, repeatedValue: true)
+    var buzzersDisabled = false
+    var buzzerButtons = [NSButton]()
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil) as QuizViewController!
     var quizWindow: NSWindow?
@@ -54,6 +64,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 multiplier: 1, constant: quizScreen!.frame.height))
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
+        
+        buzzerButtons += [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8]
     }
     
     func windowWillClose(notification: NSNotification) {
@@ -84,6 +96,22 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             }
             else {
                 buzzersEnabled[sender.tag] = true
+            }
+        }
+    }
+    
+    @IBAction func disableAllBuzzers(sender: NSButton) {
+        if (sender.state == NSOnState) {
+            buzzersDisabled = true
+            for i in 0...7 {
+                quizView.buzzerReleased(i)
+                buzzerButtons[i].enabled = false
+            }
+        }
+        else {
+            buzzersDisabled = false
+            for button in buzzerButtons {
+                button.enabled = true
             }
         }
     }
@@ -161,14 +189,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)
-        if (buzzersEnabled[button]) {
+        if (!buzzersDisabled && buzzersEnabled[button]) {
             quizView.buzzerPressed(button)
         }
     }
     
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
         let button = Int(buttonNumber)
-        if (buzzersEnabled[button]) {
+        if (!buzzersDisabled && buzzersEnabled[button]) {
             quizView.buzzerReleased(button)
         }
     }
