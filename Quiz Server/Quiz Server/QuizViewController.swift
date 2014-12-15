@@ -106,7 +106,7 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            break // Do nothing
+            idleView.buzzerPressed(team)
         case .Test:
             testView.buzzerPressed(team)
         case .Buzzers:
@@ -126,7 +126,7 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            break // Do nothing
+            idleView.buzzerReleased(team)
         case .Test:
             testView.buzzerReleased(team)
         case .Buzzers:

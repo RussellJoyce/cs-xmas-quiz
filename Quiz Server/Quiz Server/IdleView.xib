@@ -20,7 +20,7 @@
                     <rect key="frame" x="0.0" y="-88" width="1920" height="1438"/>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="axesIndependently" image="1" id="OFS-4a-Gf8"/>
                 </imageView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLF-xo-exw" customClass="SKView">
+                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLF-xo-exw" userLabel="Snow View" customClass="SKView">
                     <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                 </customView>
                 <textField wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p6K-m1-DJR">
