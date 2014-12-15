@@ -15,8 +15,7 @@ class PointlessGameController: NSViewController {
 	
 	var labels = [PGLabelView]()
 	var lastTeam = 10
-	var canShow💩 = false
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -54,18 +53,12 @@ class PointlessGameController: NSViewController {
 			switch(arc4random_uniform(6)) {
 			case 0: labels[lastTeam].setText("❌")
 			case 1: labels[lastTeam].setText("❌")
-			case 2:
-				if canShow💩 { //Lol
-					labels[lastTeam].setText("💩")
-				} else {
-					labels[lastTeam].setText("❌")
-				}
+			case 2: labels[lastTeam].setText("❌")
 			case 3: labels[lastTeam].setText("😩")
 			case 4: labels[lastTeam].setText("😟")
 			case 5: labels[lastTeam].setText("👎")
 			default: labels[lastTeam].setText("❌")
 			}
-			canShow💩 = true
 		}
 	}
 	
