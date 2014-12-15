@@ -198,7 +198,6 @@ class PointlessBar: NSImageView {
 	
 	override init() {
 		super.init()
-		self.wantsLayer = true
 		self.translatesAutoresizingMaskIntoConstraints = false
 		setMinSize(self, 300, 6)
 	}
