@@ -6,14 +6,14 @@ typedef struct {
 } bounds_t;
 
 bounds_t teams[NUM_TEAMS] = {
-	{  5,  26}, //Team 1
-	{ 36,  52}, //Team 2
-	{ 62,  78}, //Team 3
-	{ 88, 104}, //Team 4
-	{114, 130}, //Team 5
-	{140, 156}, //Team 6
-	{166, 182}, //Team 7
-	{188, 196}, //Team 8
+	{  0,  24}, //Team 1
+	{ 25,  49}, //Team 2
+	{ 50,  74}, //Team 3
+	{ 75,  99}, //Team 4
+	{100, 124}, //Team 5
+	{125, 149}, //Team 6
+	{150, 174}, //Team 7
+	{175, 199}, //Team 8
 };
 
 // Team colours as 45 degrees apart on the hue spectrum
