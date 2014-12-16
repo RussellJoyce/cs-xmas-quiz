@@ -12,6 +12,7 @@ import SpriteKit
 class IdleViewController: NSViewController {
 
     @IBOutlet weak var skView: SKView!
+    @IBOutlet weak var lights: NSImageView!
     
     let scene = SKScene()
     let snow = SKEmitterNode(fileNamed: "Snow")
@@ -32,6 +33,16 @@ class IdleViewController: NSViewController {
         poo.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
         scene.addChild(poo)
         scene.addChild(snow)
+        
+        // Add animated lights
+        let images = [NSImage(named: "lights4")!, NSImage(named: "lights3")!, NSImage(named: "lights2")!, NSImage(named: "lights1")!, NSImage(named: "lights4")!]
+        let animation = CAKeyframeAnimation(keyPath: "contents")
+        animation.calculationMode = kCAAnimationCubic
+        animation.duration = 6.0
+        animation.repeatCount = Float.infinity
+        animation.values = images
+        lights.layer?.addAnimation(animation, forKey:"contents")
+        //lights.image = nil
     }
     
     func reset() {

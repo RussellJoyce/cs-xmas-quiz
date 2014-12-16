@@ -6,6 +6,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IdleViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="lights" destination="gRr-DQ-cfh" id="vnB-Ab-de7"/>
                 <outlet property="skView" destination="pLF-xo-exw" id="cDV-HA-KRB"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -34,15 +35,15 @@
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Xfi-Hb-rWO">
-                    <rect key="frame" x="0.0" y="982" width="1920" height="98"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" animates="YES" imageScaling="proportionallyDown" image="christmaslights" id="Sq6-Zk-wKs"/>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gRr-DQ-cfh">
+                    <rect key="frame" x="0.0" y="887" width="1920" height="200"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="lights" id="scS-P2-E2F"/>
                 </imageView>
             </subviews>
         </customView>
     </objects>
     <resources>
         <image name="1" width="1600" height="1200"/>
-        <image name="christmaslights" width="1920" height="98"/>
+        <image name="lights" width="1920" height="200"/>
     </resources>
 </document>
