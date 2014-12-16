@@ -162,6 +162,7 @@ class QuizViewController: NSViewController {
 	func setPointlessTeam(team: Int) {
 		quizLeds?.buzzersOff()
 		quizLeds?.buzzerOn(team)
+		quizLeds?.stringOff()
 		quizLeds?.stringTeamWhite(team)
 		pointlessGame.setCurrentTeam(team)
 	}
