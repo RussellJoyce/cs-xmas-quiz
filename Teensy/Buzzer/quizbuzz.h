@@ -26,6 +26,11 @@ round to indicate which teams are still in (green) and out (red).
 void set_team_colour(int team, CRGB col);
 
 /*
+Illuminate the LEDs of a given team in their team colour, and turn off other LEDs
+*/
+void set_team_buzz_colour(int team);
+
+/*
 The colours assigned to each team.
 */
 extern CRGB teamcol[NUM_TEAMS];

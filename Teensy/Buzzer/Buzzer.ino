@@ -53,6 +53,7 @@ volatile boolean serialSecond = false;
 
 volatile int buzzerAnimationTeam = -1;
 volatile int buzzerColourTeam = -1;
+volatile int buzzerBuzzColourTeam = -1;
 CRGB buzzerColour = CRGB::White;
 
 Animation *animations[8];
@@ -123,14 +124,23 @@ inline void switchAnimation(Animation *arg) {
 inline void playBuzzerAnimation(int team) {
     currentAnim = NULL;
     buzzerColourTeam = -1;
+    buzzerBuzzColourTeam = -1;
     buzzerAnimationTeam = team;
 }
 
 inline void setTeamColour(int team, CRGB colour) {
     currentAnim = NULL;
     buzzerAnimationTeam = -1;
+    buzzerBuzzColourTeam = -1;
     buzzerColourTeam = team;
     buzzerColour = colour;
+}
+
+inline void setTeamBuzzColour(int team) {
+    currentAnim = NULL;
+    buzzerAnimationTeam = -1;
+    buzzerColourTeam = -1;
+    buzzerBuzzColourTeam = team;
 }
 
 
@@ -160,6 +170,9 @@ void updateTick() {
                     break;
                 case LEDS_TEAMO:
                     setTeamColour(serialParam, CRGB::Black);
+                    break;
+                case LEDS_TEAMC:
+                    setTeamBuzzColour(serialParam);
                     break;
                 case LED_ON:
                     setBuzzerLedOn(serialParam);
@@ -260,6 +273,10 @@ void loop() {
     else if (buzzerColourTeam != -1) {
         set_team_colour(buzzerColourTeam, buzzerColour);
         buzzerColourTeam = -1;
+    }
+    else if (buzzerBuzzColourTeam != -1) {
+        set_team_buzz_colour(buzzerBuzzColourTeam);
+        buzzerBuzzColourTeam = -1;
     }
 }
 

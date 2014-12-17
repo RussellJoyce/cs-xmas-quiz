@@ -87,3 +87,11 @@ void set_team_colour(int team, CRGB col) {
 	FastLED.show();
 }
 
+void set_team_buzz_colour(int team) {
+	if(team < 0 || team >= NUM_TEAMS) return;
+	for(int i = 0; i < NUM_LEDS; i++) {
+		leds[i] = (i < teams[team].st || i > teams[team].end) ? CRGB::Black : teamcol[team];
+	}
+	FastLED.show();
+}
+
