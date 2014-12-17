@@ -73,7 +73,6 @@ class BuzzerViewController: NSViewController {
         snowView.allowsTransparency = true
         snowScene.size = snowView.bounds.size
         snowScene.backgroundColor = NSColor.clearColor()
-        snowView.showsFPS = true
         snowView.presentScene(snowScene)
         snow.position = CGPoint(x: snowScene.size.width / 2, y: snowScene.size.height + 5)
         snow.particleColor = NSColor.whiteColor()
