@@ -186,6 +186,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 	}
 	
+    @IBAction func buzzersNextTeam(sender: AnyObject) {
+        quizView.buzzersNextTeam()
+    }
+    
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)

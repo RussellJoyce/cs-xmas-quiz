@@ -47,6 +47,8 @@ class BuzzerViewController: NSViewController {
     var teamNames = [NSTextField]()
     var teamTimes = [NSTextField?]()
     var teamEnabled = [true, true, true, true, true, true, true, true]
+    var buzzes = [Int]()
+    var nextTeamNumber = 0
     let buzzNoise = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!), error: nil)
     let snowScene = SKScene()
     let snow = SKEmitterNode(fileNamed: "Snow")
@@ -84,8 +86,11 @@ class BuzzerViewController: NSViewController {
         teamEnabled = [true, true, true, true, true, true, true, true]
         for team in teams {
             team.hidden = true
+            team.layer?.opacity = 1.0
         }
         buzzNumber = 0
+        buzzes.removeAll()
+        nextTeamNumber = 0
         snow.particleColor = NSColor.whiteColor()
     }
     
@@ -96,7 +101,7 @@ class BuzzerViewController: NSViewController {
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
             let teamHue = CGFloat(team) / 8.0
             teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
-			
+			buzzes.append(team)
 			
 			let movey = CABasicAnimation()
 			movey.keyPath = "position.y"
@@ -130,6 +135,7 @@ class BuzzerViewController: NSViewController {
                 buzzNoise.play()
                 leds?.stringTeamAnimate(team)
                 snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.25, brightness: 1.0, alpha: 1.0)
+                nextTeamNumber = 1
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
@@ -137,6 +143,16 @@ class BuzzerViewController: NSViewController {
             }
             
             buzzNumber++
+        }
+    }
+    
+    func nextTeam() {
+        if nextTeamNumber < buzzes.count {
+            let team = buzzes[nextTeamNumber]
+            teams[nextTeamNumber - 1].layer?.opacity = 0.5
+            leds?.stringTeamColour(team)
+            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 0.25, brightness: 1.0, alpha: 1.0)
+            nextTeamNumber++
         }
     }
 }

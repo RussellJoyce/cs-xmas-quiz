@@ -14,6 +14,7 @@
                 <outlet property="buzzerButton6" destination="a4l-S0-qOY" id="K6w-pB-D1z"/>
                 <outlet property="buzzerButton7" destination="Rq1-ez-HAM" id="W4G-1T-hRG"/>
                 <outlet property="buzzerButton8" destination="SKv-7z-Uw4" id="Qtd-Gt-Cjd"/>
+                <outlet property="buzzersNextTeam" destination="C4c-Bw-JeK" id="ks1-un-5mv"/>
                 <outlet property="pointlessScore" destination="2RS-Zt-DjW" id="eN0-RM-dOi"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -289,9 +290,29 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xEJ-vb-2Lu">
-                                            <rect key="frame" x="260" y="111" width="241" height="50"/>
+                                            <rect key="frame" x="260" y="176" width="241" height="50"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="This page left intentionally blank." id="uiI-Dq-x2o">
                                                 <font key="font" metaFont="system" size="21"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C4c-Bw-JeK">
+                                            <rect key="frame" x="279" y="45" width="203" height="109"/>
+                                            <buttonCell key="cell" type="bevel" title="Wrong! Next Team..." bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QH5-Gh-c9z">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <string key="keyEquivalent">n</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="buzzersNextTeam:" target="-2" id="MdW-0r-nML"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j90-Wg-Utz">
+                                            <rect key="frame" x="367" y="23" width="27" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘N" id="bDI-82-vyV">
+                                                <font key="font" size="13" name=".LucidaGrandeUI"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>

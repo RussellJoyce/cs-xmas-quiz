@@ -195,4 +195,8 @@ class QuizViewController: NSViewController {
 		trueFalseView.answer(ans)
 	}
     
+    func buzzersNextTeam() {
+        buzzerView.nextTeam()
+    }
+    
 }
