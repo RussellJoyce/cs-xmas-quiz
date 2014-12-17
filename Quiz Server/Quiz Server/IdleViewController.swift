@@ -16,7 +16,9 @@ class IdleViewController: NSViewController {
     
     let scene = SKScene()
     let snow = SKEmitterNode(fileNamed: "Snow")
-    let poo = SKEmitterNode(fileNamed: "Poo")
+    //let poo = SKEmitterNode(fileNamed: "Poo")
+    let santa = SKEmitterNode(fileNamed: "Santa")
+    let trees = SKEmitterNode(fileNamed: "Tree")
     var leds: QuizLeds?
     var snowAmount = CGFloat(40.0)
     var buzzerStates = [Bool](count: 8, repeatedValue: false)
@@ -30,8 +32,12 @@ class IdleViewController: NSViewController {
         scene.backgroundColor = NSColor.clearColor()
         skView.presentScene(scene)
         snow.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 16)
-        poo.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
-        scene.addChild(poo)
+        //poo.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
+        santa.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
+        trees.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
+        //scene.addChild(poo)
+        scene.addChild(santa)
+        scene.addChild(trees)
         scene.addChild(snow)
         
         // Add animated lights
@@ -49,7 +55,9 @@ class IdleViewController: NSViewController {
         leds?.stringAnimation(2)
         snowAmount = 40
         snow.particleBirthRate = snowAmount
-        poo.particleBirthRate = 0
+        //poo.particleBirthRate = 0
+        santa.particleBirthRate = 0
+        trees.particleBirthRate = 0
         
         buzzerStates = [Bool](count: 8, repeatedValue: false)
     }
@@ -61,7 +69,9 @@ class IdleViewController: NSViewController {
             buzzerStates[team] = true
             
             if buzzerStates == [true, true, true, true, true, true, true, true] {
-                poo.particleBirthRate = 20
+                //poo.particleBirthRate = 20
+                santa.particleBirthRate = 15
+                trees.particleBirthRate = 15
             }
         }
     }
@@ -71,7 +81,9 @@ class IdleViewController: NSViewController {
             snowAmount -= 50
             snow.particleBirthRate = snowAmount
             buzzerStates[team] = false
-            poo.particleBirthRate = 0
+            //poo.particleBirthRate = 0
+            santa.particleBirthRate = 0
+            trees.particleBirthRate = 0
         }
     }
     

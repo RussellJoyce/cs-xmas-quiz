@@ -81,6 +81,10 @@
 		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
 		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
+		46F180A11A41DD8E00D2FF1D /* tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F1809F1A41DD8E00D2FF1D /* tree.png */; };
+		46F180A21A41DD8E00D2FF1D /* santa.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A01A41DD8E00D2FF1D /* santa.png */; };
+		46F180A51A41DDCE00D2FF1D /* Santa.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A31A41DDCE00D2FF1D /* Santa.sks */; };
+		46F180A61A41DDCE00D2FF1D /* Tree.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A41A41DDCE00D2FF1D /* Tree.sks */; };
 		46F6F8BA1A406DE700C4180C /* lights.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B51A406DE700C4180C /* lights.png */; };
 		46F6F8BC1A406DE700C4180C /* lights2.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B71A406DE700C4180C /* lights2.png */; };
 		46F6F8BD1A406DE700C4180C /* lights3.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B81A406DE700C4180C /* lights3.png */; };
@@ -193,6 +197,10 @@
 		46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
 		46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
+		46F1809F1A41DD8E00D2FF1D /* tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tree.png; sourceTree = "<group>"; };
+		46F180A01A41DD8E00D2FF1D /* santa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = santa.png; sourceTree = "<group>"; };
+		46F180A31A41DDCE00D2FF1D /* Santa.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Santa.sks; sourceTree = "<group>"; };
+		46F180A41A41DDCE00D2FF1D /* Tree.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Tree.sks; sourceTree = "<group>"; };
 		46F6F8B51A406DE700C4180C /* lights.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights.png; sourceTree = "<group>"; };
 		46F6F8B71A406DE700C4180C /* lights2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights2.png; sourceTree = "<group>"; };
 		46F6F8B81A406DE700C4180C /* lights3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights3.png; sourceTree = "<group>"; };
@@ -272,10 +280,14 @@
 				4600123B1A3786AD0039AF86 /* IdleViewController.swift */,
 				4600123C1A3786AD0039AF86 /* IdleView.xib */,
 				463FDE811A39039500FA9B3F /* Poo.sks */,
+				46F180A31A41DDCE00D2FF1D /* Santa.sks */,
+				46F180A41A41DDCE00D2FF1D /* Tree.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
 				46498C801A3F352400CAFACC /* poo.png */,
+				46F1809F1A41DD8E00D2FF1D /* tree.png */,
+				46F180A01A41DD8E00D2FF1D /* santa.png */,
 				46596C821A38E04800822FB7 /* spark.png */,
 			);
 			path = "Quiz Server";
@@ -489,6 +501,7 @@
 				46F6F8C01A40991600C4180C /* lights1.png in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
+				46F180A51A41DDCE00D2FF1D /* Santa.sks in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
@@ -500,6 +513,8 @@
 				46F6F8BC1A406DE700C4180C /* lights2.png in Resources */,
 				463FDE821A39039500FA9B3F /* Poo.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
+				46F180A11A41DD8E00D2FF1D /* tree.png in Resources */,
+				46F180A61A41DDCE00D2FF1D /* Tree.sks in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
@@ -508,6 +523,7 @@
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
+				46F180A21A41DD8E00D2FF1D /* santa.png in Resources */,
 				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46F6F8BE1A406DE700C4180C /* lights4.png in Resources */,
