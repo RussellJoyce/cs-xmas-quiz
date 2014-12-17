@@ -40,9 +40,11 @@ class QuizViewController: NSViewController {
         testView.leds = quizLeds
         buzzerView.leds = quizLeds
         trueFalseView.leds = quizLeds
+        pointlessGame.leds = quizLeds
         
         idleView.view.frame = roundView.bounds
         testView.view.frame = roundView.bounds
+        buzzerView.view.frame = roundView.bounds
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
         
@@ -160,10 +162,6 @@ class QuizViewController: NSViewController {
     
 	
 	func setPointlessTeam(team: Int) {
-		quizLeds?.buzzersOff()
-		quizLeds?.buzzerOn(team)
-		quizLeds?.stringOff()
-		quizLeds?.stringTeamWhite(team)
 		pointlessGame.setCurrentTeam(team)
 	}
 	

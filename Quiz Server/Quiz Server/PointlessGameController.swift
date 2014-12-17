@@ -15,6 +15,7 @@ class PointlessGameController: NSViewController {
 	
 	var labels = [PGLabelView]()
 	var lastTeam = 10
+    var leds: QuizLeds?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +28,17 @@ class PointlessGameController: NSViewController {
 		
 		pv.layer!.borderWidth = 4
 		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
+        
+        pv?.leds = leds
     }
 	
 	
 	func setCurrentTeam(team: Int) {
+        leds?.buzzersOff()
+        leds?.buzzerOn(team)
+        leds?.stringOff()
+        leds?.stringTeamWhite(team)
+        
 		labels[team].setActive()
 		if(lastTeam < labels.count && lastTeam != team)	{
 			labels[lastTeam].setInactive()
@@ -48,6 +56,7 @@ class PointlessGameController: NSViewController {
 	}
 	
 	func wrong() {
+        leds?.stringPointlessWrong()
 		pv.wrong()
 		if(lastTeam < labels.count)	{
 			switch(arc4random_uniform(6)) {

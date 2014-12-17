@@ -8,13 +8,15 @@
 
 import Cocoa
 
-let LEDS_ANIM  = 0x10 as Byte
-let LEDS_TEAM  = 0x20 as Byte
-let LEDS_TEAMR = 0x30 as Byte
-let LEDS_TEAMG = 0x40 as Byte
-let LEDS_TEAMW = 0x50 as Byte
-let LEDS_TEAMO = 0x60 as Byte
-let LEDS_TEAMC = 0x70 as Byte
+let LEDS_ANIM   = 0x10 as Byte
+let LEDS_TEAM   = 0x20 as Byte
+let LEDS_TEAMR  = 0x30 as Byte
+let LEDS_TEAMG  = 0x40 as Byte
+let LEDS_TEAMW  = 0x50 as Byte
+let LEDS_TEAMO  = 0x60 as Byte
+let LEDS_TEAMC  = 0x70 as Byte
+let LEDS_POINTW = 0x80 as Byte
+let LEDS_POINTC = 0x90 as Byte
 
 let LED_ON  = 0xA0 as Byte
 let LED_OFF = 0xB0 as Byte
@@ -139,5 +141,19 @@ class QuizLeds: NSObject {
     func stringTeamColour(team: Int) -> Bool {
         NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMC + team] as [Byte], length: 1));
+    }
+    
+    /// Play Pointless wrong animation on LED string
+    ///
+    /// :returns: true if data sent successfully, false otherwise
+    func stringPointlessWrong() -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_POINTW] as [Byte], length: 1));
+    }
+    
+    /// Play Pointless correct animation on LED string
+    ///
+    /// :returns: true if data sent successfully, false otherwise
+    func stringPointlessCorrect() -> Bool {
+        return serial.sendData(NSData(bytes: [LEDS_POINTC] as [Byte], length: 1));
     }
 }

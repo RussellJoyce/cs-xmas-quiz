@@ -19,6 +19,8 @@ let moveRandomAmount = 8
 ///The top-level view for creating a Pointless score display
 //Creates and places an instance of PointlessStackViewController as a subview
 class PointlessView: NSView {
+    
+    var leds: QuizLeds?
 	
 	let imgView = PointlessBackgroundImage()
 	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
@@ -96,6 +98,8 @@ class PointlessView: NSView {
 					if(callback != nil) {
 						callback()
 					}
+                    
+                    self.leds?.stringPointlessCorrect()
 				})
 			})
 		}
