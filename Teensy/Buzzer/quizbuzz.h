@@ -31,6 +31,16 @@ Illuminate the LEDs of a given team in their team colour, and turn off other LED
 void set_team_buzz_colour(int team);
 
 /*
+Play Pointless wrong animation
+*/
+void play_pointless_wrong();
+
+/*
+Play Pointless correct animation
+*/
+void play_pointless_correct();
+
+/*
 The colours assigned to each team.
 */
 extern CRGB teamcol[NUM_TEAMS];

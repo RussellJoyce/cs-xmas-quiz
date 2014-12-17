@@ -13,6 +13,8 @@
 #define LEDS_TEAMW   0x50
 #define LEDS_TEAMO   0x60
 #define LEDS_TEAMC   0x70
+#define LEDS_POINTW  0x80
+#define LEDS_POINTC  0x90
 
 #define LED_ON       0xA0
 #define LED_OFF      0xB0

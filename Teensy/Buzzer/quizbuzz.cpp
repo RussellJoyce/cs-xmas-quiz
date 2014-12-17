@@ -79,6 +79,50 @@ void play_buzz_anim(int team) {
 	}
 }
 
+void play_pointless_wrong() {
+	clearLEDs();
+
+	// Fade in fast
+	for (int frame = 0; frame < 10; frame++) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			leds[led] = CHSV(0, 255, frame * 25);
+		}
+		FastLED.show();
+	}
+
+	// Fade out slowly
+	for (int frame = 255; frame >= 0; frame--) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			leds[led] = CHSV(0, 255, frame);
+		}
+		FastLED.show();
+	}
+
+	clearLEDs();
+}
+
+void play_pointless_correct() {
+	clearLEDs();
+
+	// Fade in fast
+	for (int frame = 0; frame < 10; frame++) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			leds[led] = CHSV(0, 0, frame * 25);
+		}
+		FastLED.show();
+	}
+
+	// Fade out slowly
+	for (int frame = 255; frame >= 0; frame--) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			leds[led] = CHSV(0, 0, frame);
+		}
+		FastLED.show();
+	}
+
+	clearLEDs();
+}
+
 void set_team_colour(int team, CRGB col) {
 	if(team < 0 || team >= NUM_TEAMS) return;
 	for(int i = teams[team].st; i <= teams[team].end; i++) {

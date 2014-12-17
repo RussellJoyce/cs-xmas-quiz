@@ -54,6 +54,7 @@ volatile boolean serialSecond = false;
 volatile int buzzerAnimationTeam = -1;
 volatile int buzzerColourTeam = -1;
 volatile int buzzerBuzzColourTeam = -1;
+volatile int pointlessAnim = -1;
 CRGB buzzerColour = CRGB::White;
 
 Animation *animations[8];
@@ -125,6 +126,7 @@ inline void playBuzzerAnimation(int team) {
     currentAnim = NULL;
     buzzerColourTeam = -1;
     buzzerBuzzColourTeam = -1;
+    pointlessAnim = -1;
     buzzerAnimationTeam = team;
 }
 
@@ -132,6 +134,7 @@ inline void setTeamColour(int team, CRGB colour) {
     currentAnim = NULL;
     buzzerAnimationTeam = -1;
     buzzerBuzzColourTeam = -1;
+    pointlessAnim = -1;
     buzzerColourTeam = team;
     buzzerColour = colour;
 }
@@ -140,7 +143,24 @@ inline void setTeamBuzzColour(int team) {
     currentAnim = NULL;
     buzzerAnimationTeam = -1;
     buzzerColourTeam = -1;
+    pointlessAnim = -1;
     buzzerBuzzColourTeam = team;
+}
+
+inline void setPointlessWrong() {
+    currentAnim = NULL;
+    buzzerAnimationTeam = -1;
+    buzzerColourTeam = -1;
+    buzzerBuzzColourTeam = -1;
+    pointlessAnim = 1;
+}
+
+inline void setPointlessCorrect() {
+    currentAnim = NULL;
+    buzzerAnimationTeam = -1;
+    buzzerColourTeam = -1;
+    buzzerBuzzColourTeam = -1;
+    pointlessAnim = 2;
 }
 
 
@@ -173,6 +193,12 @@ void updateTick() {
                     break;
                 case LEDS_TEAMC:
                     setTeamBuzzColour(serialParam);
+                    break;
+                case LEDS_POINTW:
+                    setPointlessWrong();
+                    break;
+                case LEDS_POINTC:
+                    setPointlessCorrect();
                     break;
                 case LED_ON:
                     setBuzzerLedOn(serialParam);
@@ -277,6 +303,14 @@ void loop() {
     else if (buzzerBuzzColourTeam != -1) {
         set_team_buzz_colour(buzzerBuzzColourTeam);
         buzzerBuzzColourTeam = -1;
+    }
+    else if (pointlessAnim == 1) {
+        play_pointless_wrong();
+        pointlessAnim = -1;
+    }
+    else if (pointlessAnim == 2) {
+        play_pointless_correct();
+        pointlessAnim = -1;
     }
 }
 
