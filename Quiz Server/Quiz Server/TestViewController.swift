@@ -24,6 +24,7 @@ class TestViewController: NSViewController {
     
     var numbers = [NSTextField]()
     var leds: QuizLeds?
+    var eightCount = 0
     
     let 👽 = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil) // EXTRATERRESTRIAL ALIEN
     
@@ -82,6 +83,8 @@ class TestViewController: NSViewController {
         for node in sparksDown {
             node.particleBirthRate = 0
         }
+        
+        eightCount = 0
     }
     
     func buzzerPressed(team: Int) {
@@ -91,9 +94,15 @@ class TestViewController: NSViewController {
         sparksUp[team].particleBirthRate = 600
         sparksDown[team].particleBirthRate = 600
         
-        if (team == 7) {
-            👽.currentTime = 0
-            👽.play()
+        if team == 7 {
+            if eightCount == 0 {
+                eightCount = 7
+                👽.currentTime = 0
+                👽.play()
+            }
+            else {
+                eightCount--
+            }
         }
     }
     
