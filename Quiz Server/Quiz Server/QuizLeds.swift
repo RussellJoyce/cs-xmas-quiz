@@ -14,6 +14,7 @@ let LEDS_TEAMR = 0x30 as Byte
 let LEDS_TEAMG = 0x40 as Byte
 let LEDS_TEAMW = 0x50 as Byte
 let LEDS_TEAMO = 0x60 as Byte
+let LEDS_TEAMC = 0x70 as Byte
 
 let LED_ON  = 0xA0 as Byte
 let LED_OFF = 0xB0 as Byte
@@ -129,5 +130,14 @@ class QuizLeds: NSObject {
     func stringTeamOff(team: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMO + team] as [Byte], length: 1));
+    }
+    
+    /// Set LED string team LEDs to team colour, set other team LEDs off
+    ///
+    /// :param: team The team number (0-7)
+    /// :returns: true if data sent successfully, false otherwise
+    func stringTeamColour(team: Int) -> Bool {
+        NSThread.sleepForTimeInterval(0.01)
+        return serial.sendData(NSData(bytes: [LEDS_TEAMC + team] as [Byte], length: 1));
     }
 }
