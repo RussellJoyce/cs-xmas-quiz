@@ -35,7 +35,7 @@
 #include <string.h> // for memcpy()
 
 #ifdef QUIZ_INTERFACE // defined by usb_dev.h -> usb_desc.h
-
+#if F_CPU >= 20000000
 
 uint32_t usb_quiz_data[1];
 
@@ -96,4 +96,5 @@ int usb_quiz_send(void)
     return 0;
 }
 
+#endif // F_CPU
 #endif // QUIZ_INTERFACE

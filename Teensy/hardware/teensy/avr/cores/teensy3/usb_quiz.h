@@ -10,10 +10,10 @@
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
  *
- * 1. The above copyright notice and this permission notice shall be 
+ * 1. The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
  *
- * 2. If the Software is incorporated into a build system that allows 
+ * 2. If the Software is incorporated into a build system that allows
  * selection among a list of target devices, then similar target
  * devices manufactured by PJRC.COM must be included in the list of
  * target devices and selectable in the same manner.
@@ -28,61 +28,49 @@
  * SOFTWARE.
  */
 
-#include "WProgram.h"
+#ifndef USBquiz_h_
+#define USBquiz_h_
 
-#if F_CPU >= 20000000
+#if defined(QUIZ_INTERFACE)
 
-#ifdef USB_SERIAL
-usb_serial_class Serial;
+#include <inttypes.h>
+
+// C language implementation
+#ifdef __cplusplus
+extern "C" {
+#endif
+int usb_quiz_send(void);
+extern uint32_t usb_quiz_data[1];
+#ifdef __cplusplus
+}
 #endif
 
-#ifdef USB_HID
-usb_keyboard_class Keyboard;
-usb_mouse_class Mouse;
-usb_joystick_class Joystick;
-uint8_t usb_joystick_class::manual_mode = 0;
-usb_seremu_class Serial;
-#endif
+// C++ interface
+#ifdef __cplusplus
+class usb_quiz_class
+{
+    public:
+    void begin(void) { }
+    void end(void) { }
+    void button(uint8_t button, bool val) {
+        if (--button >= 8) return;
+        if (val) usb_quiz_data[0] |= (1 << button);
+        else usb_quiz_data[0] &= ~(1 << button);
+        if (!manual_mode) usb_quiz_send();
+    }
+    void useManualSend(bool mode) {
+        manual_mode = mode;
+    }
+    void send_now(void) {
+        usb_quiz_send();
+    }
+    private:
+    static uint8_t manual_mode;
+};
+extern usb_quiz_class Quiz;
 
-#ifdef USB_SERIAL_HID
-usb_serial_class Serial;
-usb_keyboard_class Keyboard;
-usb_mouse_class Mouse;
-usb_joystick_class Joystick;
-uint8_t usb_joystick_class::manual_mode = 0;
-#endif
+#endif // __cplusplus
 
-#ifdef USB_MIDI
-usb_midi_class usbMIDI;
-usb_seremu_class Serial;
-#endif
+#endif // QUIZ_INTERFACE
+#endif // USBquiz_h_
 
-#ifdef USB_RAWHID
-usb_rawhid_class RawHID;
-usb_seremu_class Serial;
-#endif
-
-#ifdef USB_FLIGHTSIM
-FlightSimClass FlightSim;
-usb_seremu_class Serial;
-#endif
-
-#ifdef USB_QUIZ
-usb_serial_class Serial;
-usb_quiz_class Quiz;
-uint8_t usb_quiz_class::manual_mode = 0;
-#endif
-
-
-#else // F_CPU < 20 MHz
-
-#if defined(USB_SERIAL) || defined(USB_SERIAL_HID)
-usb_serial_class Serial;
-#else
-usb_seremu_class Serial;
-#endif
-
-#endif // F_CPU
-
-void serialEvent() __attribute__((weak));
-void serialEvent() {}
