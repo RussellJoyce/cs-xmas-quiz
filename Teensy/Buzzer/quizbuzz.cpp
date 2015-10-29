@@ -6,26 +6,30 @@ typedef struct {
 } bounds_t;
 
 bounds_t teams[NUM_TEAMS] = {
-	{  0,  24}, //Team 1
-	{ 25,  49}, //Team 2
-	{ 50,  74}, //Team 3
-	{ 75,  99}, //Team 4
-	{100, 124}, //Team 5
-	{125, 149}, //Team 6
-	{150, 174}, //Team 7
-	{175, 199}, //Team 8
+	{  0,  19}, // Team 1
+	{ 20,  39}, // Team 2
+	{ 40,  59}, // Team 3
+	{ 60,  79}, // Team 4
+	{ 80,  99}, // Team 5
+	{100, 119}, // Team 6
+	{120, 134}, // Team 7
+	{140, 159}, // Team 8
+	{160, 179}, // Team 9
+	{180, 199}, // Team 10
 };
 
-// Team colours as 45 degrees apart on the hue spectrum
+// Team colours as 36 degrees apart on the hue spectrum
 CRGB teamcol[NUM_TEAMS] = {
-	CHSV(  0, 255, 255), //Team 1 (0)
-	CHSV( 32, 255, 255), //Team 2 (45)
-	CHSV( 64, 255, 255), //Team 3 (90)
-	CHSV( 96, 255, 255), //Team 4 (135)
-	CHSV(128, 255, 255), //Team 5 (180)
-	CHSV(160, 255, 255), //Team 6 (225)
-	CHSV(192, 255, 255), //Team 7 (270)
-	CHSV(224, 255, 255), //Team 8 (315)
+	CHSV(  0, 255, 255), // Team 1  (  0)
+	CHSV( 25, 255, 255), // Team 2  ( 36)
+	CHSV( 51, 255, 255), // Team 3  ( 72)
+	CHSV( 76, 255, 255), // Team 4  (108)
+	CHSV(102, 255, 255), // Team 5  (144)
+	CHSV(128, 255, 255), // Team 6  (180)
+	CHSV(153, 255, 255), // Team 7  (216)
+	CHSV(179, 255, 255), // Team 8  (252)
+	CHSV(204, 255, 255), // Team 9  (288)
+	CHSV(230, 255, 255), // Team 10 (324)
 };
 
 #define NUM_FRAMES 170

@@ -20,28 +20,31 @@
 #define BTN4  10
 #define BTN5   6
 #define BTN6   2
-#define BTN7  18
-#define BTN8  20
+#define BTN7  19
+#define BTN8  21
+#define BTN9   1
+#define BTN10  5
 #define LED1  14
 #define LED2  16
 #define LED3  12
 #define LED4   8
 #define LED5   4
 #define LED6   0
-#define LED7  19
-#define LED8  21
+#define LED7  18
+#define LED8  20
+#define LED9   3
+#define LED10  7
 #define LEDB  13 // On-board LED
-#define LEDS  23 // LED string data pin
 
 
 Animation *currentAnim;
 CRGB leds[NUM_LEDS];
 
-volatile uint8_t buttons = 0;
-volatile uint8_t oldButtons = 0;
-volatile uint8_t buzzerLeds = 0;
+volatile uint16_t buttons = 0;
+volatile uint16_t oldButtons = 0;
+volatile uint16_t buzzerLeds = 0;
 
-const int ledPins[] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8};
+const int ledPins[] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8, LED9, LED10};
 
 IntervalTimer updateTimer;
 
@@ -55,29 +58,33 @@ volatile int buzzerBuzzColourTeam = -1;
 volatile int pointlessAnim = -1;
 CRGB buzzerColour = CRGB::White;
 
-Animation *animations[8];
+Animation *animations[16];
 
 
 inline void outputBuzzerLeds() {
-    digitalWrite(LED1, !bitRead(buzzerLeds, 0));
-    digitalWrite(LED2, !bitRead(buzzerLeds, 1));
-    digitalWrite(LED3, !bitRead(buzzerLeds, 2));
-    digitalWrite(LED4, !bitRead(buzzerLeds, 3));
-    digitalWrite(LED5, !bitRead(buzzerLeds, 4));
-    digitalWrite(LED6, !bitRead(buzzerLeds, 5));
-    digitalWrite(LED7, !bitRead(buzzerLeds, 6));
-    digitalWrite(LED8, !bitRead(buzzerLeds, 7));
+    digitalWrite(LED1,  !bitRead(buzzerLeds, 0));
+    digitalWrite(LED2,  !bitRead(buzzerLeds, 1));
+    digitalWrite(LED3,  !bitRead(buzzerLeds, 2));
+    digitalWrite(LED4,  !bitRead(buzzerLeds, 3));
+    digitalWrite(LED5,  !bitRead(buzzerLeds, 4));
+    digitalWrite(LED6,  !bitRead(buzzerLeds, 5));
+    digitalWrite(LED7,  !bitRead(buzzerLeds, 6));
+    digitalWrite(LED8,  !bitRead(buzzerLeds, 7));
+    digitalWrite(LED9,  !bitRead(buzzerLeds, 8));
+    digitalWrite(LED10, !bitRead(buzzerLeds, 9));
 }
 
 inline void outputBuzzerButtons() {
-    Quiz.button(1, bitRead(buttons, 0));
-    Quiz.button(2, bitRead(buttons, 1));
-    Quiz.button(3, bitRead(buttons, 2));
-    Quiz.button(4, bitRead(buttons, 3));
-    Quiz.button(5, bitRead(buttons, 4));
-    Quiz.button(6, bitRead(buttons, 5));
-    Quiz.button(7, bitRead(buttons, 6));
-    Quiz.button(8, bitRead(buttons, 7));
+    Quiz.button(1,  bitRead(buttons, 0));
+    Quiz.button(2,  bitRead(buttons, 1));
+    Quiz.button(3,  bitRead(buttons, 2));
+    Quiz.button(4,  bitRead(buttons, 3));
+    Quiz.button(5,  bitRead(buttons, 4));
+    Quiz.button(6,  bitRead(buttons, 5));
+    Quiz.button(7,  bitRead(buttons, 6));
+    Quiz.button(8,  bitRead(buttons, 7));
+    Quiz.button(9,  bitRead(buttons, 8));
+    Quiz.button(10, bitRead(buttons, 9));
     Quiz.send_now();
 }
 
@@ -102,7 +109,7 @@ inline void setBuzzerLedOff(int led) {
     }
 }
 
-inline void setBuzzerLeds(uint8_t mask) {
+inline void setBuzzerLeds(uint16_t mask) {
     if (mask != buzzerLeds) {
         buzzerLeds = mask;
         outputBuzzerLeds();
@@ -167,7 +174,7 @@ void updateTick() {
     if (Serial.available()) {
         serialData = Serial.read();
         serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0x to Fx)
-        serialParam = serialData & 0x07;   // Set parameter to be low 3 bits (0 to 7)
+        serialParam = serialData & 0x0F;   // Set parameter to be low 4 bits (x0 to xF)
 
         switch (serialCommand) {
             case LEDS_ANIM:
@@ -204,10 +211,10 @@ void updateTick() {
                 setBuzzerLedOff(serialParam);
                 break;
             case LED_ALLON:
-                setBuzzerLeds(0xFF);
+                setBuzzerLeds(0x03FF);
                 break;
             case LED_ALLOFF:
-                setBuzzerLeds(0x00);
+                setBuzzerLeds(0x0000);
                 break;
         }
     }
@@ -222,16 +229,20 @@ void updateTick() {
     bitWrite(buttons, 5, digitalRead(BTN6));
     bitWrite(buttons, 6, digitalRead(BTN7));
     bitWrite(buttons, 7, digitalRead(BTN8));
+    bitWrite(buttons, 8, digitalRead(BTN9));
+    bitWrite(buttons, 9, digitalRead(BTN10));
 
     if (buttons != oldButtons) {
-        Quiz.button(1, bitRead(buttons, 0));
-        Quiz.button(2, bitRead(buttons, 1));
-        Quiz.button(3, bitRead(buttons, 2));
-        Quiz.button(4, bitRead(buttons, 3));
-        Quiz.button(5, bitRead(buttons, 4));
-        Quiz.button(6, bitRead(buttons, 5));
-        Quiz.button(7, bitRead(buttons, 6));
-        Quiz.button(8, bitRead(buttons, 7));
+        Quiz.button(1,  bitRead(buttons, 0));
+        Quiz.button(2,  bitRead(buttons, 1));
+        Quiz.button(3,  bitRead(buttons, 2));
+        Quiz.button(4,  bitRead(buttons, 3));
+        Quiz.button(5,  bitRead(buttons, 4));
+        Quiz.button(6,  bitRead(buttons, 5));
+        Quiz.button(7,  bitRead(buttons, 6));
+        Quiz.button(8,  bitRead(buttons, 7));
+        Quiz.button(9,  bitRead(buttons, 8));
+        Quiz.button(10, bitRead(buttons, 9));
         Quiz.send_now();
     }
 }
@@ -239,23 +250,28 @@ void updateTick() {
 
 void setup() {
     // Set up button/LED pins
-    pinMode(BTN1, INPUT);
-    pinMode(BTN2, INPUT);
-    pinMode(BTN3, INPUT);
-    pinMode(BTN4, INPUT);
-    pinMode(BTN5, INPUT);
-    pinMode(BTN6, INPUT);
-    pinMode(BTN7, INPUT);
-    pinMode(BTN8, INPUT);
-    pinMode(LED1, OUTPUT);
-    pinMode(LED2, OUTPUT);
-    pinMode(LED3, OUTPUT);
-    pinMode(LED4, OUTPUT);
-    pinMode(LED5, OUTPUT);
-    pinMode(LED6, OUTPUT);
-    pinMode(LED7, OUTPUT);
-    pinMode(LED8, OUTPUT);
-    pinMode(LEDB, OUTPUT);
+    pinMode(BTN1,  INPUT);
+    pinMode(BTN2,  INPUT);
+    pinMode(BTN3,  INPUT);
+    pinMode(BTN4,  INPUT);
+    pinMode(BTN5,  INPUT);
+    pinMode(BTN6,  INPUT);
+    pinMode(BTN7,  INPUT);
+    pinMode(BTN8,  INPUT);
+    pinMode(BTN9,  INPUT);
+    pinMode(BTN10, INPUT);
+    pinMode(LED1,  OUTPUT);
+    pinMode(LED2,  OUTPUT);
+    pinMode(LED3,  OUTPUT);
+    pinMode(LED4,  OUTPUT);
+    pinMode(LED5,  OUTPUT);
+    pinMode(LED6,  OUTPUT);
+    pinMode(LED7,  OUTPUT);
+    pinMode(LED8,  OUTPUT);
+    pinMode(LED9,  OUTPUT);
+    pinMode(LED10, OUTPUT);
+    pinMode(LEDB,  OUTPUT);
+    pinMode(LED_DATA_PIN, OUTPUT);
 
     // Initialise animation array
     animations[1] = twinkle;
