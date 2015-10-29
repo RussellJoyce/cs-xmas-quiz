@@ -89,8 +89,8 @@ int usb_quiz_send(void)
         yield();
     }
     transmit_previous_timeout = 0;
-    memcpy(tx_packet->buf, usb_quiz_data, 1);
-    tx_packet->len = 1;
+    memcpy(tx_packet->buf, usb_quiz_data, 2);
+    tx_packet->len = 2;
     usb_tx(QUIZ_ENDPOINT, tx_packet);
     //serial_print("ok\n");
     return 0;

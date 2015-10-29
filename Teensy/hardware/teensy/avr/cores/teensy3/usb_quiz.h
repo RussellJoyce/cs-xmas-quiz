@@ -53,7 +53,7 @@ class usb_quiz_class
     void begin(void) { }
     void end(void) { }
     void button(uint8_t button, bool val) {
-        if (--button >= 8) return;
+        if (--button >= 10) return;
         if (val) usb_quiz_data[0] |= (1 << button);
         else usb_quiz_data[0] &= ~(1 << button);
         if (!manual_mode) usb_quiz_send();
