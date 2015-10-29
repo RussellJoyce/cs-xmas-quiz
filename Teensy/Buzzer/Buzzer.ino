@@ -46,10 +46,8 @@ const int ledPins[] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8};
 IntervalTimer updateTimer;
 
 volatile uint8_t serialData;
-volatile uint8_t serialData2;
 volatile uint8_t serialCommand;
 volatile uint8_t serialParam;
-volatile boolean serialSecond = false;
 
 volatile int buzzerAnimationTeam = -1;
 volatile int buzzerColourTeam = -1;
@@ -168,54 +166,49 @@ void updateTick() {
     // Handle any data on serial port
     if (Serial.available()) {
         serialData = Serial.read();
-        if (!serialSecond) {
-            serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0 to F)
-            serialParam = serialData & 0x07;   // Set parameter to be low 3 bits (0 to 7)
+        serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0x to Fx)
+        serialParam = serialData & 0x07;   // Set parameter to be low 3 bits (0 to 7)
 
-            switch (serialCommand) {
-                case LEDS_ANIM:
-                    switchAnimation(animations[serialParam]);
-                    break;
-                case LEDS_TEAM:
-                    playBuzzerAnimation(serialParam);
-                    break;
-                case LEDS_TEAMG:
-                    setTeamColour(serialParam, CRGB::Green);
-                    break;
-                case LEDS_TEAMR:
-                    setTeamColour(serialParam, CRGB::Red);
-                    break;
-                case LEDS_TEAMW:
-                    setTeamColour(serialParam, CRGB::White);
-                    break;
-                case LEDS_TEAMO:
-                    setTeamColour(serialParam, CRGB::Black);
-                    break;
-                case LEDS_TEAMC:
-                    setTeamBuzzColour(serialParam);
-                    break;
-                case LEDS_POINTW:
-                    setPointlessWrong();
-                    break;
-                case LEDS_POINTC:
-                    setPointlessCorrect();
-                    break;
-                case LED_ON:
-                    setBuzzerLedOn(serialParam);
-                    break;
-                case LED_OFF:
-                    setBuzzerLedOff(serialParam);
-                    break;
-                case LED_SET:
-                    serialSecond = true;
-                    break;
-            }
-        }
-        else {
-            if (serialCommand == LED_SET) {
-                setBuzzerLeds(serialData);
-            }
-            serialSecond = false;
+        switch (serialCommand) {
+            case LEDS_ANIM:
+                switchAnimation(animations[serialParam]);
+                break;
+            case LEDS_TEAM:
+                playBuzzerAnimation(serialParam);
+                break;
+            case LEDS_TEAMG:
+                setTeamColour(serialParam, CRGB::Green);
+                break;
+            case LEDS_TEAMR:
+                setTeamColour(serialParam, CRGB::Red);
+                break;
+            case LEDS_TEAMW:
+                setTeamColour(serialParam, CRGB::White);
+                break;
+            case LEDS_TEAMO:
+                setTeamColour(serialParam, CRGB::Black);
+                break;
+            case LEDS_TEAMC:
+                setTeamBuzzColour(serialParam);
+                break;
+            case LEDS_POINTW:
+                setPointlessWrong();
+                break;
+            case LEDS_POINTC:
+                setPointlessCorrect();
+                break;
+            case LED_ON:
+                setBuzzerLedOn(serialParam);
+                break;
+            case LED_OFF:
+                setBuzzerLedOff(serialParam);
+                break;
+            case LED_ALLON:
+                setBuzzerLeds(0xFF);
+                break;
+            case LED_ALLOFF:
+                setBuzzerLeds(0x00);
+                break;
         }
     }
 

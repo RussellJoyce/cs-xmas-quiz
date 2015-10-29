@@ -18,9 +18,10 @@ let LEDS_TEAMC  = 0x70 as Byte
 let LEDS_POINTW = 0x80 as Byte
 let LEDS_POINTC = 0x90 as Byte
 
-let LED_ON  = 0xA0 as Byte
-let LED_OFF = 0xB0 as Byte
-let LED_SET = 0xC0 as Byte
+let LED_ON     = 0xA0 as Byte
+let LED_OFF    = 0xB0 as Byte
+let LED_ALLON  = 0xC0 as Byte
+let LED_ALLOFF = 0xD0 as Byte
 
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
 class QuizLeds: NSObject {
@@ -49,14 +50,14 @@ class QuizLeds: NSObject {
     ///
     /// :returns: true if data sent successfully, false otherwise
     func buzzersOff() -> Bool {
-        return serial.sendData(NSData(bytes: [LED_SET, 0x00] as [Byte], length: 2));
+        return serial.sendData(NSData(bytes: [LED_ALLOFF] as [Byte], length: 1));
     }
     
     /// Turn all buzzer LEDs on
     ///
     /// :returns: true if data sent successfully, false otherwise
     func buzzersOn() -> Bool {
-        return serial.sendData(NSData(bytes: [LED_SET, 0xFF] as [Byte], length: 2));
+        return serial.sendData(NSData(bytes: [LED_ALLON] as [Byte], length: 1));
     }
     
     /// Turn a specific buzzer LED off

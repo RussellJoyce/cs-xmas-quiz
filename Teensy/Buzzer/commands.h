@@ -18,6 +18,7 @@
 
 #define LED_ON       0xA0
 #define LED_OFF      0xB0
-#define LED_SET      0xC0
+#define LED_ALLON    0xC0
+#define LED_ALLOFF   0xD0
 
 #endif
