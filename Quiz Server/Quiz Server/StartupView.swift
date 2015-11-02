@@ -65,7 +65,7 @@ class StartupView: NSViewController {
         
         
         let serialPortManager = ORSSerialPortManager.sharedSerialPortManager()
-        allPorts = serialPortManager.availablePorts as? [ORSSerialPort]
+        allPorts = serialPortManager.availablePorts as [ORSSerialPort]
         
         if let ports = allPorts {
             print("Found \(ports.count) serial port(s):")
