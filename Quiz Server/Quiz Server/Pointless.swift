@@ -25,26 +25,22 @@ class PointlessView: NSView {
 	let imgView = PointlessBackgroundImage()
 	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
 	
-	let counterSound = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_soft_end", ofType: "wav")!),
-		error: nil)
-	let endStingSound = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_score100", ofType: "wav")!),
-		error: nil)
-	let endPointlessSound = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_sting", ofType: "wav")!),
-		error: nil)
-	let wrongSound = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_wrong", ofType: "wav")!),
-		error: nil)
+	let counterSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_soft_end", ofType: "wav")!))
+	let endStingSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_score100", ofType: "wav")!))
+	let endPointlessSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_sting", ofType: "wav")!))
+	let wrongSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_wrong", ofType: "wav")!))
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		self.initialise()
 	}
 	
-	override init() {
-		super.init()
+	init() {
+		super.init(frame: NSRect())
 		self.initialise()
 	}
 	
@@ -55,11 +51,11 @@ class PointlessView: NSView {
 	
 	func initialise() {
 		self.addSubview(imgView)
-		constrainToSizeOfContainer(imgView, self)
+		constrainToSizeOfContainer(imgView, container: self)
 		
 		//On top of the background image, add an instance of the stackview
 		imgView.addSubview(pvc!.view)
-		constrainToSizeOfContainer(pvc!.view, imgView)
+		constrainToSizeOfContainer(pvc!.view, container: imgView)
 		
 		//Preload sound buffers
 		counterSound.prepareToPlay()
@@ -132,7 +128,7 @@ class PointlessStackViewController: NSViewController {
 		super.viewDidLoad()
 		
 		//Add the bars
-		for i in 0..<numBars {
+		for _ in 0..<numBars {
 			let container = PointlessBarContainer()
 			stack.addView(container, inGravity: NSStackViewGravity.Bottom)
 			
@@ -200,10 +196,10 @@ class PointlessStackViewController: NSViewController {
 class PointlessBar: NSImageView {
 	let bgImage = NSImage(named: "bar3")
 	
-	override init() {
-		super.init()
+	init() {
+		super.init(frame: NSRect())
 		self.translatesAutoresizingMaskIntoConstraints = false
-		setMinSize(self, 300, 6)
+		setMinSize(self, width: 300, height: 6)
 	}
 	
 	override func drawRect(dirtyRect: NSRect) {
@@ -217,14 +213,14 @@ class PointlessBar: NSImageView {
 ///Containers are needed because if we applied the filters to the PointlessBars themselves the
 ///results could not render outside of the bounds of the bar
 class PointlessBarContainer: NSView {
-	override init() {
-		super.init()
+	init() {
+		super.init(frame: NSRect())
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
 		self.alphaValue = CGFloat(barAlphaStart)
 		
-		let blurFilter = CIFilter(name: "CIMotionBlur")
+		let blurFilter = CIFilter(name: "CIMotionBlur")!
 		blurFilter.setDefaults()
 		blurFilter.setValue(0, forKey: "inputRadius")
 		blurFilter.setValue(0, forKey: "inputAngle")
@@ -241,18 +237,18 @@ class PointlessBarContainer: NSView {
 class PointlessBackgroundImage: NSImageView {
 	let bgImage = NSImage(named: "purple-texture")
 	
-	override init() {
-		super.init()
+	init() {
+		super.init(frame: NSRect())
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
 		self.layer?.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
 		
-		let pulse = CIFilter(name: "CIExposureAdjust")
+		let pulse = CIFilter(name: "CIExposureAdjust")!
 		pulse.setDefaults()
 		pulse.setValue(1, forKey: "inputEV")
 		pulse.name = "pulse"
 		
-		let wp = CIFilter(name: "CIWhitePointAdjust")
+		let wp = CIFilter(name: "CIWhitePointAdjust")!
 		wp.setDefaults()
 		wp.setValue(CIColor(red: 1, green: 1, blue: 1), forKey: "inputColor")
 		wp.name = "wp"
@@ -305,9 +301,9 @@ class PointlessBackgroundImage: NSImageView {
 	
 	func wrongpulse() {
 		let rampUpTime = 0.1
-		var ev: Float = 0.2
-		var fadeTime: CFTimeInterval = 2.5
-		var col = CIColor(red: 1, green: 0, blue: 0)
+		let ev: Float = 0.2
+		let fadeTime: CFTimeInterval = 2.5
+		let col = CIColor(red: 1, green: 0, blue: 0)
 		
 		let pulseup = CABasicAnimation()
 		pulseup.keyPath = "filters.pulse.inputEV"
@@ -360,8 +356,8 @@ class PointlessBackgroundImage: NSImageView {
 
 /// Constrain the view target to be the size of container.
 /// target must be a subview of container!
-///:param: target The view to have constraints applied to it
-///:param: container The view into which constraints are added. Must contain target as a subview
+///- parameter target: The view to have constraints applied to it
+///- parameter container: The view into which constraints are added. Must contain target as a subview
 func constrainToSizeOfContainer(target: NSView, container: NSView) {
 	target.frame = container.bounds
 	target.translatesAutoresizingMaskIntoConstraints = false

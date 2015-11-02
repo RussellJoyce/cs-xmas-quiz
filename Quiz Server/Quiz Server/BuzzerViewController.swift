@@ -49,9 +49,9 @@ class BuzzerViewController: NSViewController {
     var teamEnabled = [true, true, true, true, true, true, true, true]
     var buzzes = [Int]()
     var nextTeamNumber = 0
-    let buzzNoise = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!), error: nil)
+    let buzzNoise = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!))
     let snowScene = SKScene()
-    let snow = SKEmitterNode(fileNamed: "Snow")
+    let snow = SKEmitterNode(fileNamed: "Snow")!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,7 +62,7 @@ class BuzzerViewController: NSViewController {
 		
 		
 		for team in teams {
-			let scaleFilter = CIFilter(name: "CILanczosScaleTransform")
+			let scaleFilter = CIFilter(name: "CILanczosScaleTransform")!
 			scaleFilter.setDefaults()
 			scaleFilter.setValue(1, forKey: "inputScale")
 			scaleFilter.name = "scale"
@@ -138,7 +138,7 @@ class BuzzerViewController: NSViewController {
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
-                teamTimes[buzzNumber]?.stringValue = NSString(format: "+ %0.04f seconds", time)
+                teamTimes[buzzNumber]?.stringValue = NSString(format: "+ %0.04f seconds", time) as String
             }
             
             buzzNumber++

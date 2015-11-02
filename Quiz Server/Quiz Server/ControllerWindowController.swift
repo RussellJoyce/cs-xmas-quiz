@@ -145,7 +145,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         if pointlessScore.stringValue.lowercaseString == "w" {
             quizView.setPointlessWrong()
         }
-        else if let score = pointlessScore.stringValue.toInt() {
+        else if let score = Int(pointlessScore.stringValue) {
             quizView.setPointlessScore(score)
         }
     }

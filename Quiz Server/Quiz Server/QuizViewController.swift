@@ -122,7 +122,7 @@ class QuizViewController: NSViewController {
     
     /// Called when buzzer has been pressed down
     ///
-    /// :param: team Team number (0-7)
+    /// - parameter team: Team number (0-7)
     func buzzerPressed(team: Int) {
         switch (currentRound) {
         case .None:
@@ -142,7 +142,7 @@ class QuizViewController: NSViewController {
     
     /// Called when buzzer has been released
     ///
-    /// :param: team Team number (0-7)
+    /// - parameter team: Team number (0-7)
     func buzzerReleased(team: Int) {
         switch (currentRound) {
         case .None:

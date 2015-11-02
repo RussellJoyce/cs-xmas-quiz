@@ -29,33 +29,33 @@ class StartupView: NSViewController {
         
         if let screens = allScreens {
             let numScreens = screens.count
-            println("Found \(numScreens) screen(s):")
+            print("Found \(numScreens) screen(s):")
             
             if numScreens > 0 {
                 screenSelector.removeAllItems()
                 screenSelector.enabled = true
 
-                for (index, screen) in enumerate(screens) {
-                    println("  \(screen.frame)")
+                for (index, screen) in screens.enumerate() {
+                    print("  \(screen.frame)")
                     screenSelector.addItemWithTitle("Screen \(index) - \(screen.frame)")
                 }
             }
         }
         else {
-            println("Error enumerating screens");
+            print("Error enumerating screens");
         }
         
         
         allControllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
         
         if let controllers = allControllers {
-            println("Found \(controllers.count) game controller(s):")
+            print("Found \(controllers.count) game controller(s):")
             
             if controllers.count > 0 {
                 controllerSelector.removeAllItems()
                 
                 for controller in controllers {
-                    println("  \(controller.manufacturer()) - \(controller.productName())")
+                    print("  \(controller.manufacturer()) - \(controller.productName())")
                     controllerSelector.addItemWithTitle(controller.productName())
                 }
                 
@@ -68,13 +68,13 @@ class StartupView: NSViewController {
         allPorts = serialPortManager.availablePorts as? [ORSSerialPort]
         
         if let ports = allPorts {
-            println("Found \(ports.count) serial port(s):")
+            print("Found \(ports.count) serial port(s):")
             
             if ports.count > 0 {
                 serialSelector.removeAllItems()
                 
                 for port in ports {
-                    println("  \(port.name)")
+                    print("  \(port.name)")
                     serialSelector.addItemWithTitle(port.name)
                 }
                 
@@ -93,7 +93,7 @@ class StartupView: NSViewController {
         let serial = (allPorts?.count > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSOnState;
         
-        let delegate = NSApplication.sharedApplication().delegate as AppDelegate
+        let delegate = NSApplication.sharedApplication().delegate as! AppDelegate
         delegate.startQuiz(screen, buzzers: controller, serial: serial, testMode: test)
     }
 }

@@ -26,29 +26,29 @@ class TestViewController: NSViewController {
     var leds: QuizLeds?
     var eightCount = 0
     
-    let 👽 = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil) // EXTRATERRESTRIAL ALIEN
+    let 👽 = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!)) // EXTRATERRESTRIAL ALIEN
     
     let scene = SKScene()
-    let sparksUp = [SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp")]
-    let sparksDown = [SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown")]
+    let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!,
+        SKEmitterNode(fileNamed: "SparksUp")!]
+    let sparksDown = [SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!,
+        SKEmitterNode(fileNamed: "SparksDown")!]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        numbers.extend([team1, team2, team3, team4, team5, team6, team7, team8])
+        numbers.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
         👽.prepareToPlay()
         
         
@@ -57,11 +57,11 @@ class TestViewController: NSViewController {
         scene.size = sparksView.bounds.size
         scene.backgroundColor = NSColor.clearColor()
         sparksView.presentScene(scene)
-        for (index, node) in enumerate(sparksUp) {
+        for (index, node) in sparksUp.enumerate() {
             node.position = CGPoint(x: (index * 204) + 247, y: 653)
             scene.addChild(node)
         }
-        for (index, node) in enumerate(sparksDown) {
+        for (index, node) in sparksDown.enumerate() {
             node.position = CGPoint(x: (index * 204) + 247, y: 433)
             scene.addChild(node)
         }
@@ -72,7 +72,7 @@ class TestViewController: NSViewController {
     func reset() {
         leds?.stringOff()
         leds?.buzzersOff()
-        for (index, team) in enumerate(numbers) {
+        for (_, team) in numbers.enumerate() {
             team.textColor = NSColor.whiteColor()
             leds?.stringOff()
         }

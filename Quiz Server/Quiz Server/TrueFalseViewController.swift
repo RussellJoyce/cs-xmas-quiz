@@ -32,17 +32,15 @@ class TrueFalseViewController: NSViewController {
 	
 	var teams = [TrueFalseTeamView]()
 	
-	let 🔊 = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timer", ofType: "wav")!),
-		error: nil)
-	let 🔊end = AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timerend", ofType: "wav")!),
-		error: nil)
+	let 🔊 = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timer", ofType: "wav")!))
+	let 🔊end = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timerend", ofType: "wav")!))
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		topView.topLabel = topLabel
-		teams.extend([team1, team2, team3, team4, team5, team6, team7, team8])
+		teams.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
 		for i in 0..<teams.count {
 			teams[i].setTeam(i, leds: leds)
 		}
@@ -86,7 +84,7 @@ class TrueFalseViewController: NSViewController {
 				//Now set the team colours based on who pressed what
 				for i in 0...7 {
 					if(self.teamEnabled[i]) {
-						if contains(self.pressed, i) {
+						if self.pressed.contains(i) {
 							self.teams[i].setPressedTrue()
 						} else {
 							self.teams[i].setPressedFalse()
@@ -100,7 +98,7 @@ class TrueFalseViewController: NSViewController {
 	func answer(ans : Bool) {
 		for i in 0...7 {
 			if(self.teamEnabled[i]) {
-				if(contains(self.pressed, i) == ans) {
+				if(self.pressed.contains(i) == ans) {
 					self.teams[i].setNeutral()
 				} else {
 					teamEnabled[i] = false
@@ -113,7 +111,7 @@ class TrueFalseViewController: NSViewController {
 	func buzzerPressed(team: Int) {
 		objc_sync_enter(🔒)
 		if(counting && teamEnabled[team]) {
-			if !contains(pressed, team) {
+			if !pressed.contains(team) {
 				pressed.append(team)
 			}
 		}
@@ -156,7 +154,7 @@ class TrueFalseTeamView : NSView {
 		label.stringValue = "Team " + String(teamno + 1)
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.textColor = textColStd
-		label.alignment = NSTextAlignment.CenterTextAlignment
+		label.alignment = NSTextAlignment.Center
 		
 		self.addSubview(label)
 		
@@ -221,7 +219,7 @@ class TrueFalseTeamView : NSView {
 		self.layerUsesCoreImageFilters = true
 		self.layer?.backgroundColor = bgColStd
 		
-		let blurFilter = CIFilter(name: "CIGaussianBlur")
+		let blurFilter = CIFilter(name: "CIGaussianBlur")!
 		blurFilter.setDefaults()
 		blurFilter.setValue(5, forKey: "inputRadius")
 		blurFilter.name = "gauss"
@@ -267,7 +265,7 @@ class TFTopView : NSView {
 		
 		self.alphaValue = 0
 		
-		let gauss = CIFilter(name: "CIGaussianBlur")
+		let gauss = CIFilter(name: "CIGaussianBlur")!
 		gauss.setDefaults()
 		gauss.setValue(0, forKey: "inputRadius")
 		gauss.name = "gauss"

@@ -48,7 +48,7 @@ class PointlessGameController: NSViewController {
 	}
 	
 	func setScore(score: Int) {
-		pv.setScore(score, {
+		pv.setScore(score, callback: {
 			if(self.lastTeam < self.labels.count)	{
 				self.labels[self.lastTeam].setText(String(score))
 			}
@@ -103,8 +103,8 @@ class PGLabelView : NSView {
 	
 	init(teamno : Int) {
 		self.teamno = teamno
-		super.init()
-		self.teamno = teamno //This is required. teamno gets reset to 100 by the required constructors below and don't have time to fix it properly. 😩
+		super.init(frame: NSRect())
+		//self.teamno = teamno //This is required. teamno gets reset to 100 by the required constructors below and don't have time to fix it properly. 😩
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true

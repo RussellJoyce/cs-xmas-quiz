@@ -15,10 +15,10 @@ class IdleViewController: NSViewController {
     @IBOutlet weak var lights: NSImageView!
     
     let scene = SKScene()
-    let snow = SKEmitterNode(fileNamed: "Snow")
-    //let poo = SKEmitterNode(fileNamed: "Poo")
-    let santa = SKEmitterNode(fileNamed: "Santa")
-    let trees = SKEmitterNode(fileNamed: "Tree")
+    let snow = SKEmitterNode(fileNamed: "Snow")!
+    //let poo = SKEmitterNode(fileNamed: "Poo")!
+    let santa = SKEmitterNode(fileNamed: "Santa")!
+    let trees = SKEmitterNode(fileNamed: "Tree")!
     var leds: QuizLeds?
     var snowAmount = CGFloat(40.0)
     var buzzerStates = [Bool](count: 8, repeatedValue: false)
