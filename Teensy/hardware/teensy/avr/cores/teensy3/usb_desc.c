@@ -964,10 +964,10 @@ const usb_descriptor_list_t usb_descriptor_list[] = {
 #ifdef FLIGHTSIM_INTERFACE
 	{0x2200, FLIGHTSIM_INTERFACE, flightsim_report_desc, sizeof(flightsim_report_desc)},
 	{0x2100, FLIGHTSIM_INTERFACE, config_descriptor+FLIGHTSIM_HID_DESC_OFFSET, 9},
+#endif
 #ifdef QUIZ_INTERFACE
         {0x2200, QUIZ_INTERFACE, quiz_report_desc, sizeof(quiz_report_desc)},
         {0x2100, QUIZ_INTERFACE, config_descriptor+QUIZ_HID_DESC_OFFSET, 9},
-#endif
 #endif
         {0x0300, 0x0000, (const uint8_t *)&string0, 0},
         {0x0301, 0x0409, (const uint8_t *)&usb_string_manufacturer_name, 0},
