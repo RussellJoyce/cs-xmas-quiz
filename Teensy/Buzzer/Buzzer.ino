@@ -22,8 +22,8 @@
 #define BTN6   2
 #define BTN7  19
 #define BTN8  21
-#define BTN9   1
-#define BTN10  5
+#define BTN9   5
+#define BTN10  1
 #define LED1  14
 #define LED2  16
 #define LED3  12
@@ -32,8 +32,8 @@
 #define LED6   0
 #define LED7  18
 #define LED8  20
-#define LED9   3
-#define LED10  7
+#define LED9   7
+#define LED10  3
 #define LEDB  13 // On-board LED
 
 
