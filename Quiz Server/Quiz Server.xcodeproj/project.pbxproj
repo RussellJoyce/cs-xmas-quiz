@@ -35,6 +35,11 @@
 		463FDE821A39039500FA9B3F /* Poo.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Poo.sks */; };
 		46498C811A3F352400CAFACC /* poo.png in Resources */ = {isa = PBXBuildFile; fileRef = 46498C801A3F352400CAFACC /* poo.png */; };
 		46498C831A3F366700CAFACC /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46498C821A3F366700CAFACC /* Snow.sks */; };
+		464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */; };
+		464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */; };
+		464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19231BE7E44700F0491B /* ORSSerialPort.m */; };
+		464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19251BE7E44700F0491B /* ORSSerialPortManager.m */; };
+		464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19271BE7E44700F0491B /* ORSSerialRequest.m */; };
 		4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4656CA1A1A39100200A70F91 /* SparksDown.sks */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
@@ -77,9 +82,6 @@
 		46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DC1A353E3E00A53E59 /* BackgroundView.swift */; };
 		46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DE1A353F7200A53E59 /* TestViewController.swift */; };
 		46B607E11A353F7200A53E59 /* TestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B607DF1A353F7200A53E59 /* TestView.xib */; };
-		46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */; };
-		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
-		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46F180A11A41DD8E00D2FF1D /* tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F1809F1A41DD8E00D2FF1D /* tree.png */; };
 		46F180A21A41DD8E00D2FF1D /* santa.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A01A41DD8E00D2FF1D /* santa.png */; };
@@ -148,6 +150,16 @@
 		463FDE811A39039500FA9B3F /* Poo.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Poo.sks; sourceTree = "<group>"; };
 		46498C801A3F352400CAFACC /* poo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = poo.png; sourceTree = "<group>"; };
 		46498C821A3F366700CAFACC /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
+		464E191E1BE7E44700F0491B /* ORSSerialBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialBuffer.h; path = ../ORSSerialPort/Source/ORSSerialBuffer.h; sourceTree = "<group>"; };
+		464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialBuffer.m; path = ../ORSSerialPort/Source/ORSSerialBuffer.m; sourceTree = "<group>"; };
+		464E19201BE7E44700F0491B /* ORSSerialPacketDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPacketDescriptor.h; path = ../ORSSerialPort/Source/ORSSerialPacketDescriptor.h; sourceTree = "<group>"; };
+		464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPacketDescriptor.m; path = ../ORSSerialPort/Source/ORSSerialPacketDescriptor.m; sourceTree = "<group>"; };
+		464E19221BE7E44700F0491B /* ORSSerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPort.h; path = ../ORSSerialPort/Source/ORSSerialPort.h; sourceTree = "<group>"; };
+		464E19231BE7E44700F0491B /* ORSSerialPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPort.m; path = ../ORSSerialPort/Source/ORSSerialPort.m; sourceTree = "<group>"; };
+		464E19241BE7E44700F0491B /* ORSSerialPortManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPortManager.h; path = ../ORSSerialPort/Source/ORSSerialPortManager.h; sourceTree = "<group>"; };
+		464E19251BE7E44700F0491B /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
+		464E19261BE7E44700F0491B /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
+		464E19271BE7E44700F0491B /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 		4656CA1A1A39100200A70F91 /* SparksDown.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDown.sks; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
@@ -190,12 +202,6 @@
 		46B607DE1A353F7200A53E59 /* TestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		46B607DF1A353F7200A53E59 /* TestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestView.xib; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
-		46DAD06D1A2F690C00A7D9AF /* ORSSerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPort.h; path = ../ORSSerialPort/Source/ORSSerialPort.h; sourceTree = "<group>"; };
-		46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPort.m; path = ../ORSSerialPort/Source/ORSSerialPort.m; sourceTree = "<group>"; };
-		46DAD06F1A2F690C00A7D9AF /* ORSSerialPortManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPortManager.h; path = ../ORSSerialPort/Source/ORSSerialPortManager.h; sourceTree = "<group>"; };
-		46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
-		46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
-		46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46F1809F1A41DD8E00D2FF1D /* tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tree.png; sourceTree = "<group>"; };
 		46F180A01A41DD8E00D2FF1D /* santa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = santa.png; sourceTree = "<group>"; };
@@ -379,12 +385,16 @@
 		46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */ = {
 			isa = PBXGroup;
 			children = (
-				46DAD06D1A2F690C00A7D9AF /* ORSSerialPort.h */,
-				46DAD06E1A2F690C00A7D9AF /* ORSSerialPort.m */,
-				46DAD06F1A2F690C00A7D9AF /* ORSSerialPortManager.h */,
-				46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */,
-				46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */,
-				46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */,
+				464E191E1BE7E44700F0491B /* ORSSerialBuffer.h */,
+				464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */,
+				464E19201BE7E44700F0491B /* ORSSerialPacketDescriptor.h */,
+				464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */,
+				464E19221BE7E44700F0491B /* ORSSerialPort.h */,
+				464E19231BE7E44700F0491B /* ORSSerialPort.m */,
+				464E19241BE7E44700F0491B /* ORSSerialPortManager.h */,
+				464E19251BE7E44700F0491B /* ORSSerialPortManager.m */,
+				464E19261BE7E44700F0491B /* ORSSerialRequest.h */,
+				464E19271BE7E44700F0491B /* ORSSerialRequest.m */,
 				46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */,
 			);
 			name = ORSSerialPort;
@@ -548,16 +558,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */,
-				46DAD0731A2F690C00A7D9AF /* ORSSerialPort.m in Sources */,
 				46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */,
-				46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
+				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
 				46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */,
-				46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
+				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,
+				464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */,
+				464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */,
 				4600123D1A3786AD0039AF86 /* IdleViewController.swift in Sources */,
+				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
