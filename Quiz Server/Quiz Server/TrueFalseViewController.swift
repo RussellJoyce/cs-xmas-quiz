@@ -26,6 +26,7 @@ class TrueFalseViewController: NSViewController {
 	
 	let 🔒 = Int()
 	var counting = false
+	var counted = false
 	var pressed = [Int]()
 	var teamEnabled = [true, true, true, true, true, true, true, true]
 	var leds: QuizLeds?
@@ -49,15 +50,22 @@ class TrueFalseViewController: NSViewController {
     }
 	
 	func reset() {
+		objc_sync_enter(🔒)
 		counting = false
-		teamEnabled = [true, true, true, true, true, true, true, true]
 		pressed = [Int]()
+		objc_sync_exit(🔒)
+		teamEnabled = [true, true, true, true, true, true, true, true]
 		for i in 0...7 {
 			teams[i].setNeutral()
 		}
+		counted = false
 	}
 	
 	func start() {
+		if (counting) {
+			return
+		}
+		
 		objc_sync_enter(🔒)
 		counting = true
 		pressed = [Int]()
@@ -67,6 +75,9 @@ class TrueFalseViewController: NSViewController {
 			for(var i = 5; i >= 0; i--) {
 				if(i != 5) {
 					NSThread.sleepForTimeInterval(1.0)
+					if (!self.counting) {
+						return
+					}
 				}
 				dispatch_sync(dispatch_get_main_queue(), {
 					self.topView.setVal(i)
@@ -91,11 +102,16 @@ class TrueFalseViewController: NSViewController {
 						}
 					}
 				}
+				self.counted = true
 			})
 		})
 	}
 	
 	func answer(ans : Bool) {
+		if (!counted) {
+			return
+		}
+		
 		for i in 0...7 {
 			if(self.teamEnabled[i]) {
 				if(self.pressed.contains(i) == ans) {
@@ -106,6 +122,8 @@ class TrueFalseViewController: NSViewController {
 				}
 			}
 		}
+		
+		counted = false
 	}
 	
 	func buzzerPressed(team: Int) {
