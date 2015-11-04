@@ -255,7 +255,7 @@
                         <font key="font" metaFont="systemBold" size="17"/>
                         <tabViewItems>
                             <tabViewItem label="Idle" identifier="1" id="u2C-EJ-D9s">
-                                <view key="view" id="b26-Hk-9q4">
+                                <view key="view" ambiguous="YES" id="b26-Hk-9q4">
                                     <rect key="frame" x="10" y="33" width="355" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -313,7 +313,7 @@
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Buzzers" identifier="" id="zkE-YU-uHw">
-                                <view key="view" ambiguous="YES" id="zH3-jV-1Z8">
+                                <view key="view" id="zH3-jV-1Z8">
                                     <rect key="frame" x="10" y="33" width="760" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

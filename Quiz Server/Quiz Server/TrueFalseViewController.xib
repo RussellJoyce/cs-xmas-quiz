@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrueFalseViewController" customModule="Quiz_Server" customModuleProvider="target">
@@ -31,33 +32,42 @@
                     <subviews>
                         <customView identifier="2" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bZ4-xH-ID0" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="1067" y="622" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="1" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sc7-Vm-ZR4" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="281" y="622" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="4" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xP9-Ux-ebO" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="1067" y="447" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="3" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s8O-jg-kOL" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="281" y="447" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="6" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="L4h-8H-2DC" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="1067" y="269" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="5" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ag5-u7-mkJ" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="281" y="269" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="8" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="feq-go-4vd" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="1067" y="94" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView identifier="7" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Whi-ie-AXh" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="281" y="94" width="573" height="142"/>
+                            <animations/>
                         </customView>
                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7q0-Mg-VIr" customClass="TFTopView" customModule="Quiz_Server" customModuleProvider="target">
                             <rect key="frame" x="803" y="837" width="315" height="176"/>
                             <subviews>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XUx-LF-TTO">
                                     <rect key="frame" x="81" y="-10" width="152" height="186"/>
+                                    <animations/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="5" id="a9C-98-9Pe">
                                         <font key="font" size="161" name="ShreeDev0714-Bold"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -65,8 +75,10 @@
                                     </textFieldCell>
                                 </textField>
                             </subviews>
+                            <animations/>
                         </customView>
                     </subviews>
+                    <animations/>
                 </customView>
             </subviews>
             <constraints>
@@ -75,6 +87,7 @@
                 <constraint firstAttribute="trailing" secondItem="Fcs-Nl-11W" secondAttribute="trailing" id="dWW-pW-eNp"/>
                 <constraint firstItem="Fcs-Nl-11W" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="t49-fO-GOt"/>
             </constraints>
+            <animations/>
             <point key="canvasLocation" x="319" y="300"/>
         </customView>
         <collectionViewItem id="EVU-3e-yBb">
@@ -85,6 +98,7 @@
         <view id="l89-ON-h5K">
             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
             <autoresizingMask key="autoresizingMask"/>
+            <animations/>
         </view>
     </objects>
 </document>

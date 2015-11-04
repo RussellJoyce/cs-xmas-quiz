@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PointlessStackViewController" customModule="Quiz_Server" customModuleProvider="target">
@@ -19,9 +20,11 @@
             <subviews>
                 <stackView autoresizesSubviews="NO" orientation="vertical" alignment="centerX" spacing="1" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="8BF-mv-6KQ">
                     <rect key="frame" x="14" y="11" width="334" height="377"/>
+                    <animations/>
                 </stackView>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h54-JJ-wch">
                     <rect key="frame" x="73" y="414" width="217" height="159"/>
+                    <animations/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="100" id="VUY-1S-qPN">
                         <font key="font" size="120" name="DINAlternate-Bold"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -39,6 +42,7 @@
                 <constraint firstItem="8BF-mv-6KQ" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="14" id="yna-hP-KWN"/>
                 <constraint firstItem="h54-JJ-wch" firstAttribute="centerX" secondItem="8BF-mv-6KQ" secondAttribute="centerX" id="z35-TG-XLa"/>
             </constraints>
+            <animations/>
             <point key="canvasLocation" x="333" y="358.5"/>
         </customView>
     </objects>
