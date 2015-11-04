@@ -58,8 +58,6 @@ class BuzzerViewController: NSViewController {
         teams += [team1, team2, team3, team4, team5, team6, team7, team8]
         teamNames += [teamName1, teamName2, teamName3, teamName4, teamName5, teamName6, teamName7, teamName8]
         teamTimes += [nil, teamTime2, teamTime3, teamTime4, teamTime5, teamTime6, teamTime7, teamTime8] as [NSTextField?]
-        buzzNoise.prepareToPlay()
-		
 		
 		for team in teams {
 			let scaleFilter = CIFilter(name: "CILanczosScaleTransform")!
@@ -91,6 +89,7 @@ class BuzzerViewController: NSViewController {
         buzzes.removeAll()
         nextTeamNumber = 0
         snow.particleColor = NSColor.whiteColor()
+		buzzNoise.prepareToPlay()
     }
     
     func buzzerPressed(team: Int) {

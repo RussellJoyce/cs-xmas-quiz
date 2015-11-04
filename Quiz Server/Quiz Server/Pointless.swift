@@ -56,12 +56,6 @@ class PointlessView: NSView {
 		//On top of the background image, add an instance of the stackview
 		imgView.addSubview(pvc!.view)
 		constrainToSizeOfContainer(pvc!.view, container: imgView)
-		
-		//Preload sound buffers
-		counterSound.prepareToPlay()
-		endStingSound.prepareToPlay()
-		endPointlessSound.prepareToPlay()
-		wrongSound.prepareToPlay()
 	}
 	
 	func setScore(score: Int, callback: (()->Void)! = nil) {
@@ -111,6 +105,12 @@ class PointlessView: NSView {
 	func reset() {
 		self.pvc!.resetBars()
 		self.pvc!.mainLabel.stringValue = String(100)
+		
+		//Preload sound buffers
+		counterSound.prepareToPlay()
+		endStingSound.prepareToPlay()
+		endPointlessSound.prepareToPlay()
+		wrongSound.prepareToPlay()
 	}
 }
 

@@ -26,7 +26,7 @@ class TestViewController: NSViewController {
     var leds: QuizLeds?
     var eightCount = 0
     
-    let 👽 = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!)) // EXTRATERRESTRIAL ALIEN
+    let eightSound = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!))
     
     let scene = SKScene()
     let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
@@ -49,8 +49,6 @@ class TestViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         numbers.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
-        👽.prepareToPlay()
-        
         
         // Set up SpriteKit sparks
         sparksView.allowsTransparency = true
@@ -85,6 +83,7 @@ class TestViewController: NSViewController {
         }
         
         eightCount = 0
+		eightSound.prepareToPlay()
     }
     
     func buzzerPressed(team: Int) {
@@ -97,8 +96,8 @@ class TestViewController: NSViewController {
         if team == 7 {
             if eightCount == 0 {
                 eightCount = 7
-                👽.currentTime = 0
-                👽.play()
+				eightSound.currentTime = 0
+				eightSound.play()
             }
             else {
                 eightCount--

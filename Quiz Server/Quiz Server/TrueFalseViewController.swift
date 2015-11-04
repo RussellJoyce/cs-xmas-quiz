@@ -45,8 +45,6 @@ class TrueFalseViewController: NSViewController {
 		for i in 0..<teams.count {
 			teams[i].setTeam(i, leds: leds)
 		}
-		🔊.prepareToPlay()
-		🔊end.prepareToPlay()
     }
 	
 	func reset() {
@@ -59,6 +57,9 @@ class TrueFalseViewController: NSViewController {
 			teams[i].setNeutral()
 		}
 		counted = false
+		
+		🔊.prepareToPlay()
+		🔊end.prepareToPlay()
 	}
 	
 	func start() {
