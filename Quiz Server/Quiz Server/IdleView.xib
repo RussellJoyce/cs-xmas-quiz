@@ -28,7 +28,7 @@
                         <color key="color" white="0.0" alpha="0.80000000000000004" colorSpace="calibratedWhite"/>
                     </shadow>
                     <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Computer Science Christmas Quiz 2014" id="dh6-8p-AYe">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Computer Science Christmas Quiz 2015" id="dh6-8p-AYe">
                         <font key="font" metaFont="systemBold" size="140"/>
                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
