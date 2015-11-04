@@ -27,24 +27,30 @@ class TestViewController: NSViewController {
 		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
 		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
 		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
 		SKLabelNode(fontNamed: ".AppleSystemUIFontBold")]
-    let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!,
-        SKEmitterNode(fileNamed: "SparksUp")!]
-    let sparksDown = [SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!,
-        SKEmitterNode(fileNamed: "SparksDown")!]
-    
+	let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!,
+		SKEmitterNode(fileNamed: "SparksUp")!]
+	let sparksDown = [SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!,
+		SKEmitterNode(fileNamed: "SparksDown")!]
+	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
@@ -53,19 +59,19 @@ class TestViewController: NSViewController {
         scene.backgroundColor = NSColor.blackColor()
 		for (index, node) in numbers.enumerate() {
 			node.fontColor = NSColor.blueColor()
-			node.fontSize = 180.0
+			node.fontSize = 170.0
 			node.horizontalAlignmentMode = .Center
 			node.verticalAlignmentMode = .Center
 			node.text = String(index + 1)
-			node.position = CGPoint(x: (index * 204) + 247, y: 540)
+			node.position = CGPoint(x: (index * 190) + 105, y: 540)
 			scene.addChild(node)
 		}
         for (index, node) in sparksUp.enumerate() {
-            node.position = CGPoint(x: (index * 204) + 247, y: 655)
+            node.position = CGPoint(x: (index * 190) + 105, y: 655)
             scene.addChild(node)
         }
         for (index, node) in sparksDown.enumerate() {
-            node.position = CGPoint(x: (index * 204) + 247, y: 425)
+            node.position = CGPoint(x: (index * 190) + 105, y: 425)
             scene.addChild(node)
         }
 		skView.presentScene(scene)
@@ -92,7 +98,7 @@ class TestViewController: NSViewController {
     }
     
     func buzzerPressed(team: Int) {
-        numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+        numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
         leds?.stringTeamWhite(team)
         leds?.buzzerOn(team)
         sparksUp[team].particleBirthRate = 600
