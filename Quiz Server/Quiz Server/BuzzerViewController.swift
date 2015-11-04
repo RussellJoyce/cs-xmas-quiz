@@ -93,6 +93,7 @@ class BuzzerViewController: NSViewController {
         buzzes.removeAll()
         nextTeamNumber = 0
         snow.particleColor = NSColor.whiteColor()
+		snow.particleBirthRate = 30.0
     }
     
     func buzzerPressed(team: Int) {
@@ -134,7 +135,8 @@ class BuzzerViewController: NSViewController {
                 firstBuzzTime = NSDate()
                 snowScene.runAction(buzzNoise)
                 leds?.stringTeamAnimate(team)
-                snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.25, brightness: 1.0, alpha: 1.0)
+                snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.5, brightness: 1.0, alpha: 1.0)
+				snow.particleBirthRate = 200.0
                 nextTeamNumber = 1
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
@@ -151,7 +153,8 @@ class BuzzerViewController: NSViewController {
             let team = buzzes[nextTeamNumber]
             teams[nextTeamNumber - 1].layer?.opacity = 0.5
             leds?.stringTeamColour(team)
-            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 0.25, brightness: 1.0, alpha: 1.0)
+            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 0.5, brightness: 1.0, alpha: 1.0)
+			snow.particleBirthRate = 200.0
             nextTeamNumber++
         }
     }
