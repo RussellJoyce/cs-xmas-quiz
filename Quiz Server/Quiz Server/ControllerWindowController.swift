@@ -19,13 +19,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var buzzerButton6: NSButton!
     @IBOutlet weak var buzzerButton7: NSButton!
     @IBOutlet weak var buzzerButton8: NSButton!
+	@IBOutlet weak var buzzerButton9: NSButton!
+	@IBOutlet weak var buzzerButton10: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
     
     var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode: Bool = true
-    var buzzersEnabled = [Bool](count: 8, repeatedValue: true)
+    var buzzersEnabled = [Bool](count: 10, repeatedValue: true)
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
     
@@ -65,7 +67,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
         
-        buzzerButtons += [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8]
+        buzzerButtons += [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
     }
     
     func windowWillClose(notification: NSNotification) {
@@ -103,7 +105,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func disableAllBuzzers(sender: NSButton) {
         if (sender.state == NSOnState) {
             buzzersDisabled = true
-            for i in 0...7 {
+            for i in 0...9 {
                 quizView.buzzerReleased(i)
                 buzzerButtons[i].enabled = false
             }
@@ -175,13 +177,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func testSetAllGreen(sender: AnyObject) {
-		for i in 0...7 {
+		for i in 0...9 {
 			quizLeds?.stringTeamGreen(i)
 		}
 	}
 	
 	@IBAction func testSetAllRed(sender: AnyObject) {
-		for i in 0...7 {
+		for i in 0...9 {
 			quizLeds?.stringTeamRed(i)
 		}
 	}

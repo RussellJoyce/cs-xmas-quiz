@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ControllerWindowController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="buzzerButton1" destination="ydL-7h-C5l" id="mmk-NY-PgF"/>
+                <outlet property="buzzerButton10" destination="eRY-MI-FOA" id="v1d-NT-Mrg"/>
                 <outlet property="buzzerButton2" destination="WaF-fQ-3vN" id="sEJ-aj-kre"/>
                 <outlet property="buzzerButton3" destination="Re1-b6-i9A" id="uMo-tn-3uD"/>
                 <outlet property="buzzerButton4" destination="bjJ-3t-6kK" id="8pB-TT-9qh"/>
@@ -15,6 +16,7 @@
                 <outlet property="buzzerButton6" destination="a4l-S0-qOY" id="K6w-pB-D1z"/>
                 <outlet property="buzzerButton7" destination="Rq1-ez-HAM" id="W4G-1T-hRG"/>
                 <outlet property="buzzerButton8" destination="SKv-7z-Uw4" id="Qtd-Gt-Cjd"/>
+                <outlet property="buzzerButton9" destination="W5J-EJ-vK2" id="2AJ-Da-7HL"/>
                 <outlet property="pointlessScore" destination="2RS-Zt-DjW" id="eN0-RM-dOi"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -23,10 +25,10 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
-            <rect key="contentRect" x="0.0" y="0.0" width="806" height="432"/>
+            <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="806" height="432"/>
+                <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ydp-t8-TLJ">
@@ -147,7 +149,7 @@
                         </connections>
                     </button>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eaX-tb-WDD">
-                        <rect key="frame" x="663" y="336" width="125" height="86"/>
+                        <rect key="frame" x="799" y="336" width="125" height="86"/>
                         <animations/>
                         <buttonCell key="cell" type="bevel" title="Reset Round" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ywk-Xt-1pH">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -241,7 +243,7 @@
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="In5-Bg-nEb">
-                        <rect key="frame" x="706" y="316" width="39" height="17"/>
+                        <rect key="frame" x="842" y="316" width="39" height="17"/>
                         <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌥⌘R" id="oIW-Vq-PwT">
                             <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -250,17 +252,17 @@
                         </textFieldCell>
                     </textField>
                     <tabView fixedFrame="YES" initialItem="u2C-EJ-D9s" translatesAutoresizingMaskIntoConstraints="NO" id="SaY-do-P3f">
-                        <rect key="frame" x="13" y="10" width="780" height="304"/>
+                        <rect key="frame" x="13" y="10" width="916" height="304"/>
                         <animations/>
                         <font key="font" metaFont="systemBold" size="17"/>
                         <tabViewItems>
                             <tabViewItem label="Idle" identifier="1" id="u2C-EJ-D9s">
                                 <view key="view" ambiguous="YES" id="b26-Hk-9q4">
-                                    <rect key="frame" x="10" y="33" width="760" height="258"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C6x-pJ-wxn">
-                                            <rect key="frame" x="65" y="87" width="631" height="144"/>
+                                            <rect key="frame" x="133" y="87" width="631" height="144"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Computer Science Christmas Quiz System" id="n6F-zS-vDU">
                                                 <font key="font" metaFont="system" size="60"/>
@@ -269,7 +271,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kRN-6S-na2">
-                                            <rect key="frame" x="266" y="51" width="229" height="17"/>
+                                            <rect key="frame" x="334" y="51" width="229" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="by Ian Gray &amp; Russell Joyce, 2014-15" id="XGM-rO-MLQ">
                                                 <font key="font" metaFont="system"/>
@@ -283,11 +285,11 @@
                             </tabViewItem>
                             <tabViewItem label="Test" identifier="2" id="OV7-s7-eho">
                                 <view key="view" id="6Pa-j9-Bqf">
-                                    <rect key="frame" x="10" y="33" width="760" height="258"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SGY-lJ-ZWr">
-                                            <rect key="frame" x="272" y="138" width="216" height="32"/>
+                                            <rect key="frame" x="340" y="138" width="216" height="32"/>
                                             <animations/>
                                             <buttonCell key="cell" type="push" title="Set all Team LEDs Green" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pb8-Lh-A4U">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -298,7 +300,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R2N-2R-OAg">
-                                            <rect key="frame" x="272" y="99" width="216" height="32"/>
+                                            <rect key="frame" x="340" y="99" width="216" height="32"/>
                                             <animations/>
                                             <buttonCell key="cell" type="push" title="Set all Team LEDs Red" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GDl-pL-qxh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -314,11 +316,11 @@
                             </tabViewItem>
                             <tabViewItem label="Buzzers" identifier="" id="zkE-YU-uHw">
                                 <view key="view" id="zH3-jV-1Z8">
-                                    <rect key="frame" x="10" y="33" width="760" height="258"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xEJ-vb-2Lu">
-                                            <rect key="frame" x="260" y="176" width="241" height="50"/>
+                                            <rect key="frame" x="328" y="176" width="241" height="50"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="This page left intentionally blank." id="uiI-Dq-x2o">
                                                 <font key="font" metaFont="system" size="21"/>
@@ -327,7 +329,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C4c-Bw-JeK">
-                                            <rect key="frame" x="279" y="45" width="203" height="109"/>
+                                            <rect key="frame" x="347" y="45" width="203" height="109"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Wrong! Next Team..." bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QH5-Gh-c9z">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -340,7 +342,7 @@
                                             </connections>
                                         </button>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j90-Wg-Utz">
-                                            <rect key="frame" x="367" y="23" width="27" height="17"/>
+                                            <rect key="frame" x="435" y="23" width="27" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘N" id="bDI-82-vyV">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -354,11 +356,11 @@
                             </tabViewItem>
                             <tabViewItem label="True/False" identifier="" id="gEv-Hs-Dry">
                                 <view key="view" id="Ssg-s3-vJT">
-                                    <rect key="frame" x="10" y="33" width="760" height="258"/>
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ysI-NP-hST">
-                                            <rect key="frame" x="143" y="50" width="203" height="131"/>
+                                            <rect key="frame" x="210" y="50" width="203" height="131"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Start Timer" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AQc-oz-Lyt">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -373,7 +375,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vDd-FH-Uwt">
-                                            <rect key="frame" x="415" y="117" width="203" height="64"/>
+                                            <rect key="frame" x="482" y="117" width="203" height="64"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="True" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xl3-ZL-VWM">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -386,7 +388,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r3f-F8-eF8">
-                                            <rect key="frame" x="415" y="50" width="203" height="64"/>
+                                            <rect key="frame" x="482" y="50" width="203" height="64"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="False" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sQD-MD-ZO5">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -399,7 +401,7 @@ DQ
                                             </connections>
                                         </button>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4gn-4Y-jJZ">
-                                            <rect key="frame" x="415" y="187" width="203" height="33"/>
+                                            <rect key="frame" x="482" y="187" width="203" height="33"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Answer was:" id="uNI-XD-gDq">
                                                 <font key="font" metaFont="system" size="27"/>
@@ -408,7 +410,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aBp-pi-f54">
-                                            <rect key="frame" x="229" y="28" width="30" height="17"/>
+                                            <rect key="frame" x="296" y="28" width="30" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘↩" id="0LN-oE-Gsq">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -417,7 +419,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JdT-VJ-DqS">
-                                            <rect key="frame" x="622" y="141" width="25" height="17"/>
+                                            <rect key="frame" x="689" y="141" width="25" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘T" id="AGY-C7-2wq">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -426,7 +428,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ANb-eM-GTB">
-                                            <rect key="frame" x="622" y="74" width="24" height="17"/>
+                                            <rect key="frame" x="689" y="74" width="24" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘F" id="dj0-C6-8Py">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -440,10 +442,11 @@ DQ
                             </tabViewItem>
                             <tabViewItem label="Pointless" identifier="" id="KMJ-xD-WLu">
                                 <view key="view" id="CBH-3d-xuU">
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2RS-Zt-DjW">
-                                            <rect key="frame" x="12" y="-226" width="125" height="53"/>
+                                            <rect key="frame" x="57" y="32" width="125" height="53"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" allowsUndo="NO" state="on" borderStyle="bezel" alignment="right" placeholderString="score" drawsBackground="YES" id="XaL-5g-NaX">
                                                 <font key="font" metaFont="systemBold" size="40"/>
@@ -455,7 +458,7 @@ DQ
                                             </connections>
                                         </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F3c-rD-BET">
-                                            <rect key="frame" x="371" y="-232" width="203" height="64"/>
+                                            <rect key="frame" x="441" y="26" width="203" height="64"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Wrong" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Y4-3E-fnt">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -468,7 +471,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t0a-Kq-wrf">
-                                            <rect key="frame" x="624" y="-232" width="121" height="81"/>
+                                            <rect key="frame" x="694" y="26" width="121" height="81"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Reset Team" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qmh-g4-Iry">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -481,7 +484,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YiM-qr-EvK">
-                                            <rect key="frame" x="143" y="-232" width="203" height="64"/>
+                                            <rect key="frame" x="188" y="26" width="203" height="64"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Set Score" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1sG-C2-4Q3">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -496,7 +499,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oXE-3H-bTy">
-                                            <rect key="frame" x="112" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="112" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="1" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1AJ-pD-KFf">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -509,7 +512,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="d43-Mj-Krp">
-                                            <rect key="frame" x="180" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="180" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="2" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7uD-Vr-IN2">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -522,7 +525,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="fre-tI-RjQ">
-                                            <rect key="frame" x="248" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="248" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="3" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ZWb-SA-K86">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -535,7 +538,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="cbi-RT-dxX">
-                                            <rect key="frame" x="316" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="316" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="4" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nfQ-sd-5af">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -548,7 +551,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="XMM-d9-maK">
-                                            <rect key="frame" x="384" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="384" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="5" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FpF-UF-Amb">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -561,7 +564,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="lgR-IK-cgA">
-                                            <rect key="frame" x="452" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="452" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="6" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7YP-jn-cSb">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -574,7 +577,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="6" translatesAutoresizingMaskIntoConstraints="NO" id="WLB-Cy-YCM">
-                                            <rect key="frame" x="520" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="520" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="7" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MhY-BE-guc">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -587,7 +590,7 @@ DQ
                                             </connections>
                                         </button>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="7" translatesAutoresizingMaskIntoConstraints="NO" id="1XY-eD-eEh">
-                                            <rect key="frame" x="588" y="-101" width="60" height="62"/>
+                                            <rect key="frame" x="588" y="157" width="60" height="62"/>
                                             <animations/>
                                             <buttonCell key="cell" type="smallSquare" title="8" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pE3-y1-ElR">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -600,7 +603,7 @@ DQ
                                             </connections>
                                         </button>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lNN-Qk-nDW">
-                                            <rect key="frame" x="27" y="-94" width="79" height="48"/>
+                                            <rect key="frame" x="27" y="164" width="79" height="48"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Team number:" id="8fw-EC-K3N">
                                                 <font key="font" metaFont="system" size="20"/>
@@ -609,7 +612,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ng2-SF-Z1A">
-                                            <rect key="frame" x="129" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="129" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘1" id="VMt-HR-olH">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -618,7 +621,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ryk-w2-p8Q">
-                                            <rect key="frame" x="197" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="197" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘2" id="kxX-AZ-GVM">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -627,7 +630,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2jf-b7-Ymb">
-                                            <rect key="frame" x="265" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="265" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘3" id="7fv-bI-bwq">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -636,7 +639,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yPk-5X-9V5">
-                                            <rect key="frame" x="333" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="333" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘4" id="wzl-W4-n5p">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -645,7 +648,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4DB-Yv-49E">
-                                            <rect key="frame" x="401" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="401" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘5" id="xBE-lR-CYf">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -654,7 +657,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cDM-Hp-pDE">
-                                            <rect key="frame" x="469" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="469" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘6" id="FNK-HI-laO">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -663,7 +666,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gHM-1a-3eS">
-                                            <rect key="frame" x="537" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="537" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘7" id="AWw-Vg-Qw2">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -672,7 +675,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dMl-I5-gMz">
-                                            <rect key="frame" x="605" y="-125" width="26" height="17"/>
+                                            <rect key="frame" x="605" y="133" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘8" id="eep-Ne-66Q">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -681,7 +684,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="htU-PA-KyC">
-                                            <rect key="frame" x="229" y="-254" width="30" height="17"/>
+                                            <rect key="frame" x="274" y="4" width="30" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘↩" id="xNk-ce-3lG">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -690,7 +693,7 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H9N-Dy-VC2">
-                                            <rect key="frame" x="457" y="-254" width="29" height="17"/>
+                                            <rect key="frame" x="527" y="4" width="29" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘W" id="9WR-2g-gQR">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -699,9 +702,53 @@ DQ
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ClE-cA-xo2">
-                                            <rect key="frame" x="671" y="-254" width="26" height="17"/>
+                                            <rect key="frame" x="741" y="4" width="26" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘R" id="WV7-Af-jhN">
+                                                <font key="font" size="13" name=".LucidaGrandeUI"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="ymw-yg-qSa">
+                                            <rect key="frame" x="656" y="157" width="60" height="62"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="smallSquare" title="9" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="VYO-O7-nEV">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="40"/>
+                                                <string key="keyEquivalent">9</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="jZQ-VW-Ena"/>
+                                            </connections>
+                                        </button>
+                                        <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="9" translatesAutoresizingMaskIntoConstraints="NO" id="axD-tL-JaA">
+                                            <rect key="frame" x="724" y="157" width="60" height="62"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="smallSquare" title="10" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="32k-QV-gge">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="40"/>
+                                                <string key="keyEquivalent">0</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="pointlessTeamPress:" target="-2" id="F1I-HO-2VO"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUe-FQ-yOD">
+                                            <rect key="frame" x="673" y="133" width="26" height="17"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘9" id="jme-EY-zg2">
+                                                <font key="font" size="13" name=".LucidaGrandeUI"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TTC-KK-Uq6">
+                                            <rect key="frame" x="741" y="133" width="26" height="17"/>
+                                            <animations/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘0" id="O93-BS-fE1">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -716,13 +763,57 @@ DQ
                             <outlet property="delegate" destination="-2" id="Rr6-g8-hrf"/>
                         </connections>
                     </tabView>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="W5J-EJ-vK2">
+                        <rect key="frame" x="648" y="351" width="60" height="62"/>
+                        <animations/>
+                        <buttonCell key="cell" type="smallSquare" title="9" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Zca-Rq-ytF">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="systemBold" size="40"/>
+                            <string key="keyEquivalent">9</string>
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pressedNumber:" target="-2" id="t93-Hx-1in"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NMm-pa-XjQ">
+                        <rect key="frame" x="659" y="327" width="39" height="17"/>
+                        <animations/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌥⌘9" id="jNb-sP-mZp">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" tag="9" translatesAutoresizingMaskIntoConstraints="NO" id="eRY-MI-FOA">
+                        <rect key="frame" x="716" y="351" width="60" height="62"/>
+                        <animations/>
+                        <buttonCell key="cell" type="smallSquare" title="10" bezelStyle="smallSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hep-Ou-QU0">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                            <font key="font" metaFont="systemBold" size="40"/>
+                            <string key="keyEquivalent">0</string>
+                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="pressedNumber:" target="-2" id="NIV-eL-kXC"/>
+                        </connections>
+                    </button>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Tl3-5a-ABu">
+                        <rect key="frame" x="727" y="327" width="39" height="17"/>
+                        <animations/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌥⌘0" id="2mf-jH-y0h">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="75" y="399"/>
+            <point key="canvasLocation" x="143" y="399"/>
         </window>
     </objects>
 </document>
