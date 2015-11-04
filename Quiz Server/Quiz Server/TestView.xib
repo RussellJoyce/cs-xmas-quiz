@@ -7,15 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TestViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="sparksView" destination="Ml6-1S-7c0" id="wWa-bi-7oG"/>
-                <outlet property="team1" destination="VVW-x5-vVy" id="Jxo-Sz-rby"/>
-                <outlet property="team2" destination="0F3-DR-5rY" id="k1h-de-1HD"/>
-                <outlet property="team3" destination="5Zw-FY-PVg" id="oJT-24-25y"/>
-                <outlet property="team4" destination="jWo-lm-8G2" id="CO6-f4-ovJ"/>
-                <outlet property="team5" destination="Dcq-qd-IGn" id="W1d-OC-mEA"/>
-                <outlet property="team6" destination="UuA-bu-xkJ" id="PXU-o4-Ucv"/>
-                <outlet property="team7" destination="lR4-8e-KzQ" id="foE-Mq-tCv"/>
-                <outlet property="team8" destination="LAD-s6-hob" id="Pct-Wn-gCb"/>
+                <outlet property="skView" destination="Ml6-1S-7c0" id="hJp-z1-coF"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -27,84 +19,6 @@
             <subviews>
                 <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ml6-1S-7c0" userLabel="Sparks View" customClass="SKView">
                     <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
-                    <animations/>
-                </customView>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DvJ-TY-gTm" userLabel="Numbers View">
-                    <rect key="frame" x="147" y="403" width="1626" height="274"/>
-                    <subviews>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VVW-x5-vVy">
-                            <rect key="frame" x="0.0" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="1" id="tcU-Dv-Io3">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0F3-DR-5rY">
-                            <rect key="frame" x="204" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="2" id="cLA-1C-0Ry">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Zw-FY-PVg">
-                            <rect key="frame" x="408" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="3" id="9FI-6N-JkI">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jWo-lm-8G2">
-                            <rect key="frame" x="612" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="4" id="7WF-fD-Zqi">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dcq-qd-IGn">
-                            <rect key="frame" x="816" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="5" id="url-jz-Mct">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UuA-bu-xkJ">
-                            <rect key="frame" x="1020" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="6" id="9Pp-Zf-KUx">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lR4-8e-KzQ">
-                            <rect key="frame" x="1224" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="7" id="p5p-Ee-8NK">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LAD-s6-hob">
-                            <rect key="frame" x="1428" y="50" width="200" height="200"/>
-                            <animations/>
-                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="8" id="J2v-ob-EVU">
-                                <font key="font" metaFont="systemBold" size="180"/>
-                                <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                            </textFieldCell>
-                        </textField>
-                    </subviews>
                     <animations/>
                 </customView>
             </subviews>

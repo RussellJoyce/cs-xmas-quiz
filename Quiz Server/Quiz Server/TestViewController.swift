@@ -12,23 +12,22 @@ import SpriteKit
 
 class TestViewController: NSViewController {
 
-    @IBOutlet weak var team1: NSTextField!
-    @IBOutlet weak var team2: NSTextField!
-    @IBOutlet weak var team3: NSTextField!
-    @IBOutlet weak var team4: NSTextField!
-    @IBOutlet weak var team5: NSTextField!
-    @IBOutlet weak var team6: NSTextField!
-    @IBOutlet weak var team7: NSTextField!
-    @IBOutlet weak var team8: NSTextField!
-    @IBOutlet weak var sparksView: SKView!
+    @IBOutlet weak var skView: SKView!
     
-    var numbers = [NSTextField]()
     var leds: QuizLeds?
     var eightCount = 0
     
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
     
     let scene = SKScene()
+	let numbers = [SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
+		SKLabelNode(fontNamed: ".AppleSystemUIFontBold")]
     let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
         SKEmitterNode(fileNamed: "SparksUp")!,
         SKEmitterNode(fileNamed: "SparksUp")!,
@@ -48,20 +47,28 @@ class TestViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        numbers.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
-        
-        // Set up SpriteKit sparks
-        scene.size = sparksView.bounds.size
+		
+        // Set up SpriteKit sparks and numbers
+        scene.size = skView.bounds.size
         scene.backgroundColor = NSColor.blackColor()
+		for (index, node) in numbers.enumerate() {
+			node.fontColor = NSColor.blueColor()
+			node.fontSize = 180.0
+			node.horizontalAlignmentMode = .Center
+			node.verticalAlignmentMode = .Center
+			node.text = String(index + 1)
+			node.position = CGPoint(x: (index * 204) + 247, y: 540)
+			scene.addChild(node)
+		}
         for (index, node) in sparksUp.enumerate() {
-            node.position = CGPoint(x: (index * 204) + 247, y: 653)
+            node.position = CGPoint(x: (index * 204) + 247, y: 655)
             scene.addChild(node)
         }
         for (index, node) in sparksDown.enumerate() {
-            node.position = CGPoint(x: (index * 204) + 247, y: 433)
+            node.position = CGPoint(x: (index * 204) + 247, y: 425)
             scene.addChild(node)
         }
-		sparksView.presentScene(scene)
+		skView.presentScene(scene)
         
         reset()
     }
@@ -70,7 +77,7 @@ class TestViewController: NSViewController {
         leds?.stringOff()
         leds?.buzzersOff()
         for (_, team) in numbers.enumerate() {
-            team.textColor = NSColor.whiteColor()
+            team.fontColor = NSColor.whiteColor()
             leds?.stringOff()
         }
         
@@ -85,7 +92,7 @@ class TestViewController: NSViewController {
     }
     
     func buzzerPressed(team: Int) {
-        numbers[team].textColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+        numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
         leds?.stringTeamWhite(team)
         leds?.buzzerOn(team)
         sparksUp[team].particleBirthRate = 600
@@ -103,7 +110,7 @@ class TestViewController: NSViewController {
     }
     
     func buzzerReleased(team: Int) {
-        numbers[team].textColor = NSColor.whiteColor()
+        numbers[team].fontColor = NSColor.whiteColor()
         leds?.stringTeamOff(team)
         leds?.buzzerOff(team)
         sparksUp[team].particleBirthRate = 0
