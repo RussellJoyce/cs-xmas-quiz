@@ -21,7 +21,7 @@ class IdleViewController: NSViewController {
     let trees = SKEmitterNode(fileNamed: "Tree")!
     var leds: QuizLeds?
     var snowAmount = CGFloat(40.0)
-    var buzzerStates = [Bool](count: 8, repeatedValue: false)
+    var buzzerStates = [Bool](count: 10, repeatedValue: false)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +52,7 @@ class IdleViewController: NSViewController {
         santa.particleBirthRate = 0
         trees.particleBirthRate = 0
         
-        buzzerStates = [Bool](count: 8, repeatedValue: false)
+        buzzerStates = [Bool](count: 10, repeatedValue: false)
 		
 		// Add animated lights
 		let images = [NSImage(named: "lights4")!, NSImage(named: "lights3")!, NSImage(named: "lights2")!, NSImage(named: "lights1")!, NSImage(named: "lights4")!]
@@ -71,7 +71,7 @@ class IdleViewController: NSViewController {
             snow.particleBirthRate = snowAmount
             buzzerStates[team] = true
             
-            if buzzerStates == [true, true, true, true, true, true, true, true] {
+            if buzzerStates == [true, true, true, true, true, true, true, true, true, true] {
                 //poo.particleBirthRate = 20
                 santa.particleBirthRate = 15
                 trees.particleBirthRate = 15
