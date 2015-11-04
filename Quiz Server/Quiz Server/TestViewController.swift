@@ -26,7 +26,7 @@ class TestViewController: NSViewController {
     var leds: QuizLeds?
     var eightCount = 0
     
-    let eightSound = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!))
+	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
     
     let scene = SKScene()
     let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
@@ -82,7 +82,6 @@ class TestViewController: NSViewController {
         }
         
         eightCount = 0
-		eightSound.prepareToPlay()
     }
     
     func buzzerPressed(team: Int) {
@@ -95,8 +94,7 @@ class TestViewController: NSViewController {
         if team == 7 {
             if eightCount == 0 {
                 eightCount = 7
-				eightSound.currentTime = 0
-				eightSound.play()
+				scene.runAction(eightSound)
             }
             else {
                 eightCount--

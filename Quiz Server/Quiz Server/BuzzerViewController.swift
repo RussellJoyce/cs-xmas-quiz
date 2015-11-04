@@ -49,7 +49,7 @@ class BuzzerViewController: NSViewController {
     var teamEnabled = [true, true, true, true, true, true, true, true]
     var buzzes = [Int]()
     var nextTeamNumber = 0
-    let buzzNoise = try! AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!))
+    let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
     let snowScene = SKScene()
     let snow = SKEmitterNode(fileNamed: "Snow")!
     
@@ -93,7 +93,6 @@ class BuzzerViewController: NSViewController {
         buzzes.removeAll()
         nextTeamNumber = 0
         snow.particleColor = NSColor.whiteColor()
-		buzzNoise.prepareToPlay()
     }
     
     func buzzerPressed(team: Int) {
@@ -133,8 +132,7 @@ class BuzzerViewController: NSViewController {
 			
             if buzzNumber == 0 {
                 firstBuzzTime = NSDate()
-                buzzNoise.currentTime = 0
-                buzzNoise.play()
+                snowScene.runAction(buzzNoise)
                 leds?.stringTeamAnimate(team)
                 snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.25, brightness: 1.0, alpha: 1.0)
                 nextTeamNumber = 1
