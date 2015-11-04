@@ -27,18 +27,21 @@ class IdleViewController: NSViewController {
         super.viewDidLoad()
         
         // Set up SpriteKit scene/view
-        skView.allowsTransparency = true
         scene.size = skView.bounds.size
-        scene.backgroundColor = NSColor.clearColor()
-        skView.presentScene(scene)
+        scene.backgroundColor = NSColor.blackColor()
+		let bgImage = SKSpriteNode(imageNamed: "1")
+		bgImage.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
+		bgImage.size = scene.size
         snow.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 16)
         //poo.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
         santa.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
         trees.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
         //scene.addChild(poo)
+		scene.addChild(bgImage)
         scene.addChild(santa)
         scene.addChild(trees)
         scene.addChild(snow)
+		skView.presentScene(scene)
     }
     
     func reset() {

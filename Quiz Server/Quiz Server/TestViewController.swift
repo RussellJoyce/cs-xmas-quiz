@@ -51,10 +51,8 @@ class TestViewController: NSViewController {
         numbers.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
         
         // Set up SpriteKit sparks
-        sparksView.allowsTransparency = true
         scene.size = sparksView.bounds.size
-        scene.backgroundColor = NSColor.clearColor()
-        sparksView.presentScene(scene)
+        scene.backgroundColor = NSColor.blackColor()
         for (index, node) in sparksUp.enumerate() {
             node.position = CGPoint(x: (index * 204) + 247, y: 653)
             scene.addChild(node)
@@ -63,6 +61,7 @@ class TestViewController: NSViewController {
             node.position = CGPoint(x: (index * 204) + 247, y: 433)
             scene.addChild(node)
         }
+		sparksView.presentScene(scene)
         
         reset()
     }

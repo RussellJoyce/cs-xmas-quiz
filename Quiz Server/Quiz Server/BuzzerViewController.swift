@@ -67,15 +67,19 @@ class BuzzerViewController: NSViewController {
 			team.layerUsesCoreImageFilters = true
 			team.layer?.filters = [scaleFilter]
 		}
-        
-        snowView.allowsTransparency = true
+		
+		
         snowScene.size = snowView.bounds.size
-        snowScene.backgroundColor = NSColor.clearColor()
-        snowView.presentScene(snowScene)
+		snowScene.backgroundColor = NSColor.blackColor()
+		let bgImage = SKSpriteNode(imageNamed: "2")
+		bgImage.position = CGPoint(x: snowScene.size.width / 2, y: snowScene.size.height / 2)
+		bgImage.size = snowScene.size
         snow.position = CGPoint(x: snowScene.size.width / 2, y: snowScene.size.height + 5)
         snow.particleColor = NSColor.whiteColor()
         snow.particleColorSequence = nil
+		snowScene.addChild(bgImage)
         snowScene.addChild(snow)
+		snowView.presentScene(snowScene)
     }
     
     func reset() {
@@ -162,12 +166,5 @@ class PlaceholderView: NSView {
         color.setFill()
         NSRectFill(dirtyRect)
         super.drawRect(dirtyRect)
-    }
-}
-
-class BuzzerBackgroundView: NSView {
-    let bgImage = NSImage(named: "2")
-    override func drawRect(dirtyRect: NSRect) {
-        bgImage?.drawInRect(dirtyRect, fromRect: dirtyRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
     }
 }

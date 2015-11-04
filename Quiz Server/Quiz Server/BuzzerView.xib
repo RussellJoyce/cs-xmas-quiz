@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BuzzerViewController" customModule="Quiz_Server" customModuleProvider="target">
@@ -35,36 +36,45 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView wantsLayer="YES" id="Hz6-mo-xeY" customClass="BuzzerBackgroundView" customModule="Quiz_Server" customModuleProvider="target">
+        <customView wantsLayer="YES" id="Hz6-mo-xeY">
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sPC-AR-Gbf" userLabel="SK View" customClass="SKView">
                     <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kI7-LD-Yge" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iDu-D3-Gf8" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="788" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wJI-hf-ndL" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="660" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jT8-8u-2bj" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="532" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wlv-95-Ay3" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="404" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z6U-rN-s54" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="276" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ALJ-sy-1dt" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="148" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r6c-DS-fnc" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="20" width="734" height="120"/>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM" userLabel="Team 1">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
@@ -74,6 +84,7 @@
                             <shadow key="shadow" blurRadius="5">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="xNM-OO-XEB">
                                 <font key="font" size="109" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -94,6 +105,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="1jn-fd-Ulb">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -105,6 +117,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="U8F-Ux-yxa">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -115,6 +128,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cin-LI-1TI" userLabel="Team 3">
                     <rect key="frame" x="593" y="660" width="734" height="120"/>
@@ -124,6 +138,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="vfL-8g-acm">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -135,6 +150,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="odu-AJ-WfI">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -145,6 +161,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AuV-2C-eKF" userLabel="Team 4">
                     <rect key="frame" x="593" y="532" width="734" height="120"/>
@@ -154,6 +171,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="GfM-47-o9a">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -165,6 +183,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="HTz-ka-2A8">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -175,6 +194,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLP-Zm-45j" userLabel="Team 5">
                     <rect key="frame" x="593" y="404" width="734" height="120"/>
@@ -184,6 +204,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="sck-ta-00Y">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -195,6 +216,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="rsf-Zk-8p9">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -205,6 +227,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ2-eB-2FZ" userLabel="Team 6">
                     <rect key="frame" x="593" y="276" width="734" height="120"/>
@@ -214,6 +237,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="md8-7Y-mmA">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -225,6 +249,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="0cG-ye-BN2">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -235,6 +260,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9hL-3w-kqN" userLabel="Team 7">
                     <rect key="frame" x="593" y="148" width="734" height="120"/>
@@ -244,6 +270,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="jg4-Dd-4ee">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -255,6 +282,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="dDK-x8-3TN">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -265,6 +293,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6H-vx-3Zv" userLabel="Team 8">
                     <rect key="frame" x="593" y="20" width="734" height="120"/>
@@ -274,6 +303,7 @@
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Team 0" id="vvM-1g-6QQ">
                                 <font key="font" size="78" name="HelveticaNeue-Bold"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -285,6 +315,7 @@
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
+                            <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="+ 0.0000 seconds" id="jv0-v1-qDV">
                                 <font key="font" size="27" name="HelveticaNeue"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -295,6 +326,7 @@
                     <shadow key="shadow" blurRadius="5">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
+                    <animations/>
                 </customView>
             </subviews>
             <animations/>
