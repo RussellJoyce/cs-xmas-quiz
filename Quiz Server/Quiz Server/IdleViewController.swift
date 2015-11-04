@@ -39,16 +39,6 @@ class IdleViewController: NSViewController {
         scene.addChild(santa)
         scene.addChild(trees)
         scene.addChild(snow)
-        
-        // Add animated lights
-        let images = [NSImage(named: "lights4")!, NSImage(named: "lights3")!, NSImage(named: "lights2")!, NSImage(named: "lights1")!, NSImage(named: "lights4")!]
-        let animation = CAKeyframeAnimation(keyPath: "contents")
-        animation.calculationMode = kCAAnimationCubic
-        animation.duration = 6.0
-        animation.repeatCount = Float.infinity
-        animation.values = images
-        lights.layer?.addAnimation(animation, forKey:"contents")
-        //lights.image = nil
     }
     
     func reset() {
@@ -60,6 +50,16 @@ class IdleViewController: NSViewController {
         trees.particleBirthRate = 0
         
         buzzerStates = [Bool](count: 8, repeatedValue: false)
+		
+		// Add animated lights
+		let images = [NSImage(named: "lights4")!, NSImage(named: "lights3")!, NSImage(named: "lights2")!, NSImage(named: "lights1")!, NSImage(named: "lights4")!]
+		let animation = CAKeyframeAnimation(keyPath: "contents")
+		animation.calculationMode = kCAAnimationCubic
+		animation.duration = 6.0
+		animation.repeatCount = Float.infinity
+		animation.values = images
+		lights.layer?.removeAllAnimations()
+		lights.layer?.addAnimation(animation, forKey:"contents")
     }
     
     func buzzerPressed(team: Int) {
