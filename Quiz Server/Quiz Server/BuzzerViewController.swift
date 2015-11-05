@@ -46,7 +46,7 @@ class BuzzerViewController: NSViewController {
     var teams = [NSView]()
     var teamNames = [NSTextField]()
     var teamTimes = [NSTextField?]()
-    var teamEnabled = [true, true, true, true, true, true, true, true]
+    var teamEnabled = [Bool](count: 10, repeatedValue: true)
     var buzzes = [Int]()
     var nextTeamNumber = 0
     let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
@@ -84,7 +84,7 @@ class BuzzerViewController: NSViewController {
     
     func reset() {
         leds?.buzzersOn()
-        teamEnabled = [true, true, true, true, true, true, true, true]
+        teamEnabled = [Bool](count: 10, repeatedValue: true)
         for team in teams {
             team.hidden = true
             team.layer?.opacity = 1.0
@@ -97,11 +97,11 @@ class BuzzerViewController: NSViewController {
     }
     
     func buzzerPressed(team: Int) {
-        if teamEnabled[team] {
+        if teamEnabled[team] && buzzes.count < 8 {
             teamEnabled[team] = false
             leds?.buzzerOff(team)
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
-            let teamHue = CGFloat(team) / 8.0
+            let teamHue = CGFloat(team) / 10.0
             teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
 			buzzes.append(team)
 			
@@ -153,7 +153,7 @@ class BuzzerViewController: NSViewController {
             let team = buzzes[nextTeamNumber]
             teams[nextTeamNumber - 1].layer?.opacity = 0.5
             leds?.stringTeamColour(team)
-            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 0.5, brightness: 1.0, alpha: 1.0)
+            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 0.5, brightness: 1.0, alpha: 1.0)
 			snow.particleBirthRate = 200.0
             nextTeamNumber++
         }
