@@ -7,7 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrueFalseViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="mainView" destination="Hz6-mo-xeY" id="vFI-nt-tkB"/>
                 <outlet property="team1" destination="bRO-yi-dQN" id="pxo-Ex-F6l"/>
                 <outlet property="team10" destination="4zL-Yx-6oK" id="8oK-qC-Rkx"/>
                 <outlet property="team2" destination="VwB-uS-JCz" id="hKn-to-jDx"/>
