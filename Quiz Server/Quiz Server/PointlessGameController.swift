@@ -14,13 +14,13 @@ class PointlessGameController: NSViewController {
 	@IBOutlet weak var pv: PointlessView!
 	
 	var labels = [PGLabelView]()
-	var lastTeam = 10
+	var lastTeam = 100
     var leds: QuizLeds?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		for i in 1...8 {
+		for i in 1...10 {
 			let v = PGLabelView(teamno: i)
 			labels.append(v)
 			labelstack.addView(v, inGravity: NSStackViewGravity.Center)
@@ -80,12 +80,13 @@ class PointlessGameController: NSViewController {
 	
 	func reset() {
 		pv.reset()
-		for i in 0...7 {
+		for i in 0...9 {
 			labels[i].setText("")
 		}
 		if(lastTeam < labels.count) {
 			labels[lastTeam].setInactive()
 		}
+		lastTeam = 100
 	}
 	
 	
@@ -104,7 +105,6 @@ class PGLabelView : NSView {
 	init(teamno : Int) {
 		self.teamno = teamno
 		super.init(frame: NSRect())
-		//self.teamno = teamno //This is required. teamno gets reset to 100 by the required constructors below and don't have time to fix it properly. 😩
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true

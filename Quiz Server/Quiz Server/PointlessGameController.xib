@@ -27,10 +27,10 @@
                             <animations/>
                         </customView>
                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="iAF-aR-LGZ">
-                            <rect key="frame" x="1072" y="149" width="819" height="800"/>
+                            <rect key="frame" x="1072" y="83" width="819" height="915"/>
                             <subviews>
                                 <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="TXz-pk-vXC">
-                                    <rect key="frame" x="0.0" y="0.0" width="819" height="800"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="819" height="915"/>
                                     <animations/>
                                 </stackView>
                             </subviews>
@@ -46,9 +46,9 @@
                     <constraints>
                         <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="rDt-SH-Ywg" secondAttribute="trailing" constant="97" id="72R-7O-GMt"/>
                         <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="1072" id="FvP-gi-Wvp"/>
-                        <constraint firstAttribute="bottom" secondItem="iAF-aR-LGZ" secondAttribute="bottom" constant="149" id="U3L-ra-FVP"/>
+                        <constraint firstAttribute="bottom" secondItem="iAF-aR-LGZ" secondAttribute="bottom" constant="83" id="U3L-ra-FVP"/>
                         <constraint firstItem="rDt-SH-Ywg" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="82" id="ZU6-0g-A5j"/>
-                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="131" id="Zmh-hq-27U"/>
+                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="82" id="Zmh-hq-27U"/>
                         <constraint firstItem="rDt-SH-Ywg" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="116" id="a7s-Xq-wMu"/>
                         <constraint firstAttribute="trailing" secondItem="iAF-aR-LGZ" secondAttribute="trailing" constant="29" id="hwB-00-sqs"/>
                         <constraint firstAttribute="bottom" secondItem="rDt-SH-Ywg" secondAttribute="bottom" constant="83" id="noD-D4-Rsi"/>
