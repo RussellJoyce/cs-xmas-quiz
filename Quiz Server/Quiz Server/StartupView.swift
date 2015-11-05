@@ -37,7 +37,7 @@ class StartupView: NSViewController {
 
                 for (index, screen) in screens.enumerate() {
                     print("  \(screen.frame)")
-                    screenSelector.addItemWithTitle("Screen \(index) - \(screen.frame)")
+                    screenSelector.addItemWithTitle("Screen \(index) - \(Int(screen.frame.width))x\(Int(screen.frame.height)) \(screen.frame.origin)")
                 }
             }
         }
