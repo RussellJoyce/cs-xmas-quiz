@@ -22,13 +22,14 @@ class TrueFalseViewController: NSViewController {
 	@IBOutlet weak var team6: TrueFalseTeamView!
 	@IBOutlet weak var team7: TrueFalseTeamView!
 	@IBOutlet weak var team8: TrueFalseTeamView!
-	@IBOutlet var mainView: TFMainView!
+	@IBOutlet weak var team9: TrueFalseTeamView!
+	@IBOutlet weak var team10: TrueFalseTeamView!
 	
 	let 🔒 = Int()
 	var counting = false
 	var counted = false
 	var pressed = [Int]()
-	var teamEnabled = [true, true, true, true, true, true, true, true]
+	var teamEnabled = [Bool](count: 10, repeatedValue: true)
 	var leds: QuizLeds?
 	
 	var teams = [TrueFalseTeamView]()
@@ -41,7 +42,7 @@ class TrueFalseViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		topView.topLabel = topLabel
-		teams.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8])
+		teams.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
 		for i in 0..<teams.count {
 			teams[i].setTeam(i, leds: leds)
 		}
@@ -52,9 +53,9 @@ class TrueFalseViewController: NSViewController {
 		counting = false
 		pressed = [Int]()
 		objc_sync_exit(🔒)
-		teamEnabled = [true, true, true, true, true, true, true, true]
-		for i in 0...7 {
-			teams[i].setNeutral()
+		teamEnabled = [Bool](count: 10, repeatedValue: true)
+		for team in teams {
+			team.setNeutral()
 		}
 		counted = false
 		
@@ -94,12 +95,12 @@ class TrueFalseViewController: NSViewController {
 				self.🔊end.play()
 				objc_sync_exit(self.🔒)
 				//Now set the team colours based on who pressed what
-				for i in 0...7 {
+				for (i, team) in self.teams.enumerate() {
 					if(self.teamEnabled[i]) {
 						if self.pressed.contains(i) {
-							self.teams[i].setPressedTrue()
+							team.setPressedTrue()
 						} else {
-							self.teams[i].setPressedFalse()
+							team.setPressedFalse()
 						}
 					}
 				}
@@ -113,13 +114,13 @@ class TrueFalseViewController: NSViewController {
 			return
 		}
 		
-		for i in 0...7 {
+		for (i, team) in teams.enumerate() {
 			if(self.teamEnabled[i]) {
 				if(self.pressed.contains(i) == ans) {
-					self.teams[i].setNeutral()
+					team.setNeutral()
 				} else {
 					teamEnabled[i] = false
-					self.teams[i].setTeamOut()
+					team.setTeamOut()
 				}
 			}
 		}
