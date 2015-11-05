@@ -32,7 +32,7 @@
                     <rect key="frame" x="776" y="815" width="368" height="215"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ifC-hs-8Wl">
-                            <rect key="frame" x="99" y="0.0" width="171" height="215"/>
+                            <rect key="frame" x="99" y="-56" width="171" height="271"/>
                             <animations/>
                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="5" id="STc-AS-7Kh">
                                 <font key="font" size="200" name="ShreeDev0714-Bold"/>
@@ -43,43 +43,43 @@
                     </subviews>
                     <animations/>
                 </customView>
-                <customView identifier="6" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2jS-1n-7Gd" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2jS-1n-7Gd" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="1229" y="468" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="1" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRO-yi-dQN" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRO-yi-dQN" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="118" y="851" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="7" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OE2-fY-odG" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OE2-fY-odG" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="118" y="88" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="4" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wF7-8K-I6A" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wF7-8K-I6A" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="1229" y="661" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="7" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gZo-cC-oYX" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gZo-cC-oYX" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="118" y="278" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="3" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VwB-uS-JCz" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VwB-uS-JCz" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="118" y="661" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="8" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4zL-Yx-6oK" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4zL-Yx-6oK" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="1229" y="88" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="2" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yGk-B2-UPj" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yGk-B2-UPj" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="1229" y="851" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="8" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VmA-MD-ch5" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VmA-MD-ch5" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="1229" y="278" width="573" height="142"/>
                     <animations/>
                 </customView>
-                <customView identifier="5" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="poX-1I-oEH" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="poX-1I-oEH" customClass="TrueFalseTeamView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="118" y="468" width="573" height="142"/>
                     <animations/>
                 </customView>
