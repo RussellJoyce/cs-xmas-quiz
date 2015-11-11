@@ -1,25 +1,7 @@
 #include "quizbuzz.h"
 
-typedef struct {
-	int st;
-	int end;
-} bounds_t;
-
-bounds_t teams[NUM_TEAMS] = {
-	{  0,  19}, // Team 1
-	{ 20,  39}, // Team 2
-	{ 40,  59}, // Team 3
-	{ 60,  79}, // Team 4
-	{ 80,  99}, // Team 5
-	{100, 119}, // Team 6
-	{120, 134}, // Team 7
-	{140, 159}, // Team 8
-	{160, 179}, // Team 9
-	{180, 199}, // Team 10
-};
-
 // Team colours as 36 degrees apart on the hue spectrum
-CRGB teamcol[NUM_TEAMS] = {
+CHSV teamcol[NUM_TEAMS] = {
 	CHSV(  0, 255, 255), // Team 1  (  0)
 	CHSV( 25, 255, 255), // Team 2  ( 36)
 	CHSV( 51, 255, 255), // Team 3  ( 72)
@@ -32,54 +14,50 @@ CRGB teamcol[NUM_TEAMS] = {
 	CHSV(230, 255, 255), // Team 10 (324)
 };
 
-#define NUM_FRAMES 170
-#define FRAME_DELAY 0
-#define SWOOP_TEAM_COLS 1
-#define SWOOP_FADE_SPEED 8
-#define POST_SWOOP_FADE_SPEED 5
+
+int ledstringpos(int x) {
+	if(x % 2) {
+		//odd
+		return 200 - ((x+1)/2);
+	} else {
+		return x/2;
+	}
+}
+
 
 void play_buzz_anim(int team) {
+	int frame;
 	if(team < 0 || team >= NUM_TEAMS) return;
 
-	clearLEDs();
-
-	int right_dist = (NUM_LEDS - teams[team].end) - 1;
-
-	//'Swoop' part of the animation where leds stream from the left and right
-	//to focus on the target range
-	for(int frame = 0; frame < NUM_FRAMES; frame++) {
-
-		float pos = (float) frame / (float) NUM_FRAMES;
-
-		int leftpos = round((float) teams[team].st * pos);
-		int rightpos = (NUM_LEDS - round((float) right_dist * pos)) - 1;
-
-		if(SWOOP_TEAM_COLS) { //Use team colours for the swoop
-			leds[leftpos] = teamcol[team];
-			leds[rightpos] = teamcol[team];
-		} else { //Use random colours
-			leds[leftpos] = CHSV(random(255), 255, 255);
-			leds[rightpos] = CHSV(random(255), 255, 255);
+	//Fade in
+	#define MID (NUM_LEDS/2)
+	for(frame = 0; frame < 170; frame++) {
+		int brightness;
+		for(int x = 0; x < NUM_LEDS; x++) {
+			if(x < MID) brightness = (frame * 2) - x;
+			else brightness = (frame * 2) - (NUM_LEDS - x);
+			if(brightness > 255) brightness = 255;
+			if(brightness < 0) brightness = 0;
+			leds[ledstringpos(x)] = CRGB(brightness, brightness, brightness);
 		}
-
-		fadeAllLeds(SWOOP_FADE_SPEED);	
-
 		FastLED.show();
-		delay(FRAME_DELAY);
+		delay(0);
 	}
 
-	//Swoop complete, focus on the target range
-	for(int i = teams[team].st; i <= teams[team].end; i++) {
-		leds[i] = teamcol[team];
+	//Fade to colour
+	int fadespeed[NUM_LEDS];
+	for(int x = 0; x < NUM_LEDS; x++) {
+		fadespeed[x] = random(4) + 1;
 	}
-	FastLED.show();
 
-	while(1) {
-		int rv1 = fadeLeds(2, 0, teams[team].st - 1);
-		int rv2 = fadeLeds(2, teams[team].end + 1, NUM_LEDS - 1);
-		if(rv1 == 0 && rv2 == 0) break;
+	for(frame = 0; frame < 255; frame++) {
+		for(int x = 0; x < NUM_LEDS; x++) {
+			int sat = frame * fadespeed[x];
+			if(sat > 255) sat = 255;
+			leds[ledstringpos(x)] = CHSV(teamcol[team].hue, sat, 255);
+		}
 		FastLED.show();
-		delay(POST_SWOOP_FADE_SPEED);
+		delay(1);
 	}
 }
 
@@ -129,8 +107,8 @@ void play_pointless_correct() {
 
 void set_team_colour(int team, CRGB col) {
 	if(team < 0 || team >= NUM_TEAMS) return;
-	for(int i = teams[team].st; i <= teams[team].end; i++) {
-		leds[i] = col;
+	for(int i = 0; i < NUM_LEDS; i++) {
+		leds[i] = teamcol[team];
 	}
 	FastLED.show();
 }
@@ -138,8 +116,60 @@ void set_team_colour(int team, CRGB col) {
 void set_team_buzz_colour(int team) {
 	if(team < 0 || team >= NUM_TEAMS) return;
 	for(int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = (i < teams[team].st || i > teams[team].end) ? CRGB::Black : teamcol[team];
+		leds[i] = teamcol[team];
 	}
 	FastLED.show();
 }
+
+
+
+/*void play_buzz_anim_old(int team) {
+	if(team < 0 || team >= NUM_TEAMS) return;
+
+	clearLEDs();
+
+	int right_dist = (NUM_LEDS - teams[team].end) - 1;
+
+	//'Swoop' part of the animation where leds stream from the left and right
+	//to focus on the target range
+	for(int frame = 0; frame < NUM_FRAMES; frame++) {
+
+		float pos = (float) frame / (float) NUM_FRAMES;
+
+		int leftpos = round((float) teams[team].st * pos);
+		int rightpos = (NUM_LEDS - round((float) right_dist * pos)) - 1;
+
+		if(SWOOP_TEAM_COLS) { //Use team colours for the swoop
+			leds[leftpos] = teamcol[team];
+			leds[rightpos] = teamcol[team];
+		} else { //Use random colours
+			leds[leftpos] = CHSV(random(255), 255, 255);
+			leds[rightpos] = CHSV(random(255), 255, 255);
+		}
+
+		fadeAllLeds(SWOOP_FADE_SPEED);	
+
+		FastLED.show();
+		delay(FRAME_DELAY);
+	}
+
+	//Swoop complete, focus on the target range
+	for(int i = teams[team].st; i <= teams[team].end; i++) {
+		leds[i] = teamcol[team];
+	}
+	FastLED.show();
+
+	while(1) {
+		int rv1 = fadeLeds(2, 0, teams[team].st - 1);
+		int rv2 = fadeLeds(2, teams[team].end + 1, NUM_LEDS - 1);
+		if(rv1 == 0 && rv2 == 0) break;
+		FastLED.show();
+		delay(POST_SWOOP_FADE_SPEED);
+	}
+}*/
+
+
+
+
+
 

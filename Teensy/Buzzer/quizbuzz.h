@@ -43,6 +43,6 @@ void play_pointless_correct();
 /*
 The colours assigned to each team.
 */
-extern CRGB teamcol[NUM_TEAMS];
+extern CHSV teamcol[NUM_TEAMS];
 
 #endif
