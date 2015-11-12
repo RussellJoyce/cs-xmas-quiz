@@ -15,7 +15,6 @@ class TestViewController: NSViewController {
     @IBOutlet weak var skView: SKView!
     
     var leds: QuizLeds?
-    var eightCount = 0
     
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
     
@@ -93,8 +92,6 @@ class TestViewController: NSViewController {
         for node in sparksDown {
             node.particleBirthRate = 0
         }
-        
-        eightCount = 0
     }
     
     func buzzerPressed(team: Int) {
@@ -105,13 +102,7 @@ class TestViewController: NSViewController {
         sparksDown[team].particleBirthRate = 600
         
         if team == 7 {
-            if eightCount == 0 {
-                eightCount = 7
-				scene.runAction(eightSound)
-            }
-            else {
-                eightCount--
-            }
+			scene.runAction(eightSound)
         }
     }
     
