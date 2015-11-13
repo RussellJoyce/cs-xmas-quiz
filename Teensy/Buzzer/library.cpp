@@ -32,6 +32,9 @@ int fadeAllLeds(int speed) {
 	return fadeLeds(speed, 0, NUM_LEDS - 1);
 }
 
+void fadeLEDsOut(int speed) {
+	while(fadeAllLeds(speed)) FastLED.show();
+}
 
 Animation::Animation() {}
 Animation::~Animation() {}

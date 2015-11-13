@@ -39,6 +39,7 @@ private:
 void clearLEDs();
 int fadeAllLeds(int speed);
 int fadeLeds(int speed, int start, int end);
+void fadeLEDsOut(int speed);
 
 //Menu utility functions
 void param_inc(void *dir);
