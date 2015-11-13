@@ -216,6 +216,9 @@ void updateTick() {
             case LED_ALLOFF:
                 setBuzzerLeds(0x0000);
                 break;
+            case POINT_STATE:
+                pointless_state(serialParam);
+                break;
         }
     }
 

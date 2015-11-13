@@ -31,7 +31,7 @@ typedef void (*buzzanim_p)(int);
 buzzanim_p anims[] = {sweeptocentre, sparklesweepl, sparklesweepr, pulses, build, colourwipe1, colourwipe2, colourwipe3};
 
 //Play a random buzzer animation
-bool randommode = false;
+bool randommode = true;
 void play_buzz_anim(int team) {
 	if(randommode) {
 		anims[random(sizeof(anims) / sizeof(buzzanim_p))](team);
@@ -200,6 +200,16 @@ void play_pointless_wrong() {
 void play_pointless_correct() {
 	pointlessfade(true);
 }
+
+void pointless_state(int state) {
+	state = constrain(state, 0, 100);
+	clearLEDs();
+	for(int x = 0; x < round((float) state / 100.0f * (float) NUM_LEDS); x++) {
+		leds[ledlookup[x]] = CRGB(255, 255, 0);
+	}
+	FastLED.show();
+}
+
 
 void set_team_colour(int team, CRGB col) {
 	if(team < 0 || team >= NUM_TEAMS) return;

@@ -20,5 +20,6 @@
 #define LED_OFF      0xB0
 #define LED_ALLON    0xC0
 #define LED_ALLOFF   0xD0
+#define POINT_STATE  0xE0
 
 #endif

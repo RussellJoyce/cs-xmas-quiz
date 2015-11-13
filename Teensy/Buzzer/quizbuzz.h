@@ -41,6 +41,11 @@ Play Pointless correct animation
 void play_pointless_correct();
 
 /*
+Set the pointless display to the given state (0-100)
+*/
+void pointless_state(int state);
+
+/*
 The colours assigned to each team.
 */
 extern CHSV teamcol[NUM_TEAMS];
