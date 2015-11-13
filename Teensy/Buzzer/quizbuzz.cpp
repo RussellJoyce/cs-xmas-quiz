@@ -201,9 +201,19 @@ void play_pointless_correct() {
 	pointlessfade(true);
 }
 
-void pointless_state(int state) {
-	state = constrain(state, 0, 100);
-	clearLEDs();
+void pointless_state(int cmd) {
+	static int state;
+
+	switch(cmd) {
+		case 0: //Reset 
+			state = 100;
+			break;
+		case 1: //Decrement
+			state--;
+			break;
+	}
+	
+	for(int x = 0; x < NUM_LEDS; x++) leds[x] = CRGB(0, 0, 0);
 	for(int x = 0; x < round((float) state / 100.0f * (float) NUM_LEDS); x++) {
 		leds[ledlookup[x]] = CRGB(255, 255, 0);
 	}

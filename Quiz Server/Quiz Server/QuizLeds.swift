@@ -22,6 +22,7 @@ let LED_ON     = 0xA0 as UInt8
 let LED_OFF    = 0xB0 as UInt8
 let LED_ALLON  = 0xC0 as UInt8
 let LED_ALLOFF = 0xD0 as UInt8
+let LED_POINT_STATE = 0xE0 as UInt8
 
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
 class QuizLeds: NSObject {
@@ -143,7 +144,21 @@ class QuizLeds: NSObject {
         NSThread.sleepForTimeInterval(0.01)
         return serial.sendData(NSData(bytes: [LEDS_TEAMC + UInt8(team)], length: 1));
     }
-    
+	
+	/// Reset the Pointless LEDs
+	/// - returns: true if data sent successfully, false otherwise
+	func stringPointlessReset() -> Bool {
+		return serial.sendData(NSData(bytes: [LED_POINT_STATE + UInt8(0)], length: 1));
+	}
+	
+	/// Decrement the Pointless LEDs
+	///
+	/// - returns: true if data sent successfully, false otherwise
+	func stringPointlessDec() -> Bool {
+		return serial.sendData(NSData(bytes: [LED_POINT_STATE + UInt8(1)], length: 1));
+	}
+
+	
     /// Play Pointless wrong animation on LED string
     ///
     /// - returns: true if data sent successfully, false otherwise

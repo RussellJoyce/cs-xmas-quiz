@@ -60,6 +60,7 @@ class PointlessView: NSView {
 	
 	func setScore(score: Int, callback: (()->Void)! = nil) {
 		if score <= 100 {
+			leds?.stringPointlessReset()
 			counterSound.currentTime = 0
 			counterSound.play()
 			self.pvc!.resetBars()
@@ -70,6 +71,7 @@ class PointlessView: NSView {
 						dispatch_async(dispatch_get_main_queue(), {
 							self.pvc!.disappearBar(i, delay: 0)
 							self.pvc!.mainLabel.stringValue = String(99-i)
+							self.leds?.stringPointlessDec()
 						})
 					}
 				}
