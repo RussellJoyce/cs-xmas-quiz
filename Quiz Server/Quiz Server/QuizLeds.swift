@@ -10,11 +10,8 @@ import Cocoa
 
 let LEDS_ANIM   = 0x10 as UInt8
 let LEDS_TEAM   = 0x20 as UInt8
-let LEDS_TEAMR  = 0x30 as UInt8
-let LEDS_TEAMG  = 0x40 as UInt8
-let LEDS_TEAMW  = 0x50 as UInt8
-let LEDS_TEAMO  = 0x60 as UInt8
-let LEDS_TEAMC  = 0x70 as UInt8
+let LEDS_TEAMC  = 0x30 as UInt8
+let LEDS_COL    = 0x40 as UInt8
 let LEDS_POINTW = 0x80 as UInt8
 let LEDS_POINTC = 0x90 as UInt8
 
@@ -99,51 +96,18 @@ class QuizLeds: NSObject {
     func stringTeamAnimate(team: Int) -> Bool {
         return serial.sendData(NSData(bytes: [LEDS_TEAM + UInt8(team)], length: 1));
     }
-	
-    /// Set LED string team LEDs to red
-    ///
-    /// - parameter team: The team number (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    func stringTeamRed(team: Int) -> Bool {
+
+	/// Set LED string to team colour
+	func stringTeamColour(team: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
-        return serial.sendData(NSData(bytes: [LEDS_TEAMR + UInt8(team)], length: 1));
-    }
-    
-    /// Set LED string team LEDs to green
-    ///
-    /// - parameter team: The team number (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    func stringTeamGreen(team: Int) -> Bool {
+		return serial.sendData(NSData(bytes: [LEDS_TEAMC + UInt8(team)], length: 1));
+	}
+
+	/// Set LED string team LEDs to a given fixed colour
+	func stringFixedColour(team: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
-        return serial.sendData(NSData(bytes: [LEDS_TEAMG + UInt8(team)], length: 1));
-    }
-    
-    /// Set LED string team LEDs to white
-    ///
-    /// - parameter team: The team number (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    func stringTeamWhite(team: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-        return serial.sendData(NSData(bytes: [LEDS_TEAMW + UInt8(team)], length: 1));
-    }
-    
-    /// Set LED string team LEDs to off
-    ///
-    /// - parameter team: The team number (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    func stringTeamOff(team: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-        return serial.sendData(NSData(bytes: [LEDS_TEAMO + UInt8(team)], length: 1));
-    }
-    
-    /// Set LED string team LEDs to team colour, set other team LEDs off
-    ///
-    /// - parameter team: The team number (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    func stringTeamColour(team: Int) -> Bool {
-        NSThread.sleepForTimeInterval(0.01)
-        return serial.sendData(NSData(bytes: [LEDS_TEAMC + UInt8(team)], length: 1));
-    }
+		return serial.sendData(NSData(bytes: [LEDS_COL + UInt8(team)], length: 1));
+	}
 	
 	/// Reset the Pointless LEDs
 	/// - returns: true if data sent successfully, false otherwise

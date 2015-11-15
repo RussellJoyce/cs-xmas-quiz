@@ -177,15 +177,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func testSetAllGreen(sender: AnyObject) {
-		for i in 0...9 {
-			quizLeds?.stringTeamGreen(i)
-		}
 	}
 	
 	@IBAction func testSetAllRed(sender: AnyObject) {
-		for i in 0...9 {
-			quizLeds?.stringTeamRed(i)
-		}
+
 	}
 	
     @IBAction func buzzersNextTeam(sender: AnyObject) {

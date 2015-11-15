@@ -20,15 +20,14 @@ and returns with only the LEDs of the buzzed team lit (in their colours)
 void play_buzz_anim(int team);
 
 /*
-Illuminate the LEDs of a given team in a given colour. Used by the True/False
-round to indicate which teams are still in (green) and out (red).
+Set the string to the given team colour
 */
-void set_team_colour(int team, CRGB col);
+void set_string_team_colour(int team);
 
-/*
-Illuminate the LEDs of a given team in their team colour, and turn off other LEDs
+/* 
+Set the string to a given fixed colour
 */
-void set_team_buzz_colour(int team);
+void set_string_colour(int col);
 
 /*
 Play Pointless wrong animation
