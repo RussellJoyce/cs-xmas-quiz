@@ -114,6 +114,12 @@ class TrueFalseViewController: NSViewController {
 			return
 		}
 		
+		if(ans) {
+			leds?.stringFixedColour(1);
+		} else {
+			leds?.stringFixedColour(0);
+		}
+		
 		for (i, team) in teams.enumerate() {
 			if(self.teamEnabled[i]) {
 				if(self.pressed.contains(i) == ans) {
@@ -204,21 +210,18 @@ class TrueFalseTeamView : NSView {
 		label.textColor = textColTrue
 		self.layer?.backgroundColor = bgColTrue
 		label.stringValue = "Team \(teamno + 1): ✅"
-		leds?.stringTeamGreen(teamno)
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
 		self.layer?.backgroundColor = bgColFalse
 		label.stringValue = "Team \(teamno + 1): ❌"
-		leds?.stringTeamRed(teamno)
 	}
 	
 	func setNeutral() {
 		label.textColor = textColStd
 		self.layer?.backgroundColor = bgColStd
 		label.stringValue = "Team \(teamno + 1)"
-		leds?.stringTeamWhite(teamno)
 		leds?.buzzerOn(teamno)
 	}
 	
@@ -226,7 +229,6 @@ class TrueFalseTeamView : NSView {
 		label.textColor = textColOut
 		self.layer?.backgroundColor = bgColOut
 		label.stringValue = "Team \(teamno + 1) OUT"
-		leds?.stringTeamOff(teamno)
 		leds?.buzzerOff(teamno)
 	}
 	

@@ -37,8 +37,7 @@ class PointlessGameController: NSViewController {
         leds?.buzzersOff()
         leds?.buzzerOn(team)
         leds?.stringOff()
-        leds?.stringTeamWhite(team)
-        
+
 		labels[team].setActive()
 		if(lastTeam < labels.count && lastTeam != team)	{
 			labels[lastTeam].setInactive()

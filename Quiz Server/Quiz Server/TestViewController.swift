@@ -99,7 +99,6 @@ class TestViewController: NSViewController {
     
     func buzzerPressed(team: Int) {
         numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-        leds?.stringTeamWhite(team)
         leds?.buzzerOn(team)
         sparksUp[team].particleBirthRate = 600
         sparksDown[team].particleBirthRate = 600
@@ -117,7 +116,6 @@ class TestViewController: NSViewController {
     
     func buzzerReleased(team: Int) {
         numbers[team].fontColor = NSColor.whiteColor()
-        leds?.stringTeamOff(team)
         leds?.buzzerOff(team)
         sparksUp[team].particleBirthRate = 0
         sparksDown[team].particleBirthRate = 0
