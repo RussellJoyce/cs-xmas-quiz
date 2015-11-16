@@ -54,6 +54,7 @@ class TestViewController: NSViewController {
         super.viewDidLoad()
 		
         // Set up SpriteKit sparks and numbers
+		skView.ignoresSiblingOrder = true
         scene.size = skView.bounds.size
         scene.backgroundColor = NSColor.blackColor()
 		for (index, node) in numbers.enumerate() {
@@ -63,14 +64,17 @@ class TestViewController: NSViewController {
 			node.verticalAlignmentMode = .Center
 			node.text = String(index + 1)
 			node.position = CGPoint(x: (index * 190) + 105, y: 540)
+			node.zPosition = 2
 			scene.addChild(node)
 		}
         for (index, node) in sparksUp.enumerate() {
             node.position = CGPoint(x: (index * 190) + 105, y: 655)
+			node.zPosition = 1
             scene.addChild(node)
         }
         for (index, node) in sparksDown.enumerate() {
             node.position = CGPoint(x: (index * 190) + 105, y: 425)
+			node.zPosition = 1
             scene.addChild(node)
         }
 		skView.presentScene(scene)

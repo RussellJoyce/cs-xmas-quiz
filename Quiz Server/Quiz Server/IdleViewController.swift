@@ -24,7 +24,6 @@ class IdleViewController: NSViewController {
         // Set up SpriteKit scene/view
 		skView.ignoresSiblingOrder = true
         scene.size = skView.bounds.size
-        scene.backgroundColor = NSColor.blackColor()
 		let bgImage = SKSpriteNode(imageNamed: "1")
 		bgImage.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
 		bgImage.size = scene.size
