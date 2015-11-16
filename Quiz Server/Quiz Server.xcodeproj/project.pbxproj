@@ -30,6 +30,9 @@
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
 		46056ED61A1974A800C37628 /* StartupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056ED51A1974A800C37628 /* StartupView.swift */; };
+		4606F5E21BF924A200D2599B /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */; };
+		4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E31BF926E200D2599B /* BuzzParticles.sks */; };
+		4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E41BF926E200D2599B /* BuzzGlow.sks */; };
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		463FDE821A39039500FA9B3F /* Poo.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Poo.sks */; };
@@ -145,6 +148,9 @@
 		46056EBE1A19624E00C37628 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		46056ED41A196EF100C37628 /* TestPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestPlayground.playground; sourceTree = "<group>"; };
 		46056ED51A1974A800C37628 /* StartupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupView.swift; sourceTree = "<group>"; };
+		4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
+		4606F5E31BF926E200D2599B /* BuzzParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzParticles.sks; sourceTree = "<group>"; };
+		4606F5E41BF926E200D2599B /* BuzzGlow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzGlow.sks; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Poo.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Poo.sks; sourceTree = "<group>"; };
@@ -282,6 +288,7 @@
 				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
 				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
 				460012371A376C0D0039AF86 /* BuzzerViewController.swift */,
+				4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */,
 				460012381A376C0D0039AF86 /* BuzzerView.xib */,
 				4600123B1A3786AD0039AF86 /* IdleViewController.swift */,
 				4600123C1A3786AD0039AF86 /* IdleView.xib */,
@@ -291,6 +298,8 @@
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
+				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
+				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
 				46498C801A3F352400CAFACC /* poo.png */,
 				46F1809F1A41DD8E00D2FF1D /* tree.png */,
 				46F180A01A41DD8E00D2FF1D /* santa.png */,
@@ -529,6 +538,8 @@
 				46F180A61A41DDCE00D2FF1D /* Tree.sks in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
+				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
+				4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
@@ -567,6 +578,7 @@
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,
 				464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */,
+				4606F5E21BF924A200D2599B /* BuzzerTeamNode.swift in Sources */,
 				464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */,
