@@ -53,8 +53,6 @@ volatile uint8_t serialCommand;
 volatile uint8_t serialParam;
 
 volatile int buzzerAnimationTeam = -1;
-volatile int buzzerColourTeam = -1;
-volatile int buzzerBuzzColourTeam = -1;
 volatile int pointlessAnim = -1;
 CRGB buzzerColour = CRGB::White;
 
@@ -129,42 +127,19 @@ inline void switchAnimation(Animation *arg) {
 
 inline void playBuzzerAnimation(int team) {
     currentAnim = NULL;
-    buzzerColourTeam = -1;
-    buzzerBuzzColourTeam = -1;
     pointlessAnim = -1;
     buzzerAnimationTeam = team;
-}
-
-inline void setTeamColour(int team, CRGB colour) {
-    currentAnim = NULL;
-    buzzerAnimationTeam = -1;
-    buzzerBuzzColourTeam = -1;
-    pointlessAnim = -1;
-    buzzerColourTeam = team;
-    buzzerColour = colour;
-}
-
-inline void setTeamBuzzColour(int team) {
-    currentAnim = NULL;
-    buzzerAnimationTeam = -1;
-    buzzerColourTeam = -1;
-    pointlessAnim = -1;
-    buzzerBuzzColourTeam = team;
 }
 
 inline void setPointlessWrong() {
     currentAnim = NULL;
     buzzerAnimationTeam = -1;
-    buzzerColourTeam = -1;
-    buzzerBuzzColourTeam = -1;
     pointlessAnim = 1;
 }
 
 inline void setPointlessCorrect() {
     currentAnim = NULL;
     buzzerAnimationTeam = -1;
-    buzzerColourTeam = -1;
-    buzzerBuzzColourTeam = -1;
     pointlessAnim = 2;
 }
 
@@ -183,20 +158,11 @@ void updateTick() {
             case LEDS_TEAM:
                 playBuzzerAnimation(serialParam);
                 break;
-            case LEDS_TEAMG:
-                setTeamColour(serialParam, CRGB::Green);
-                break;
-            case LEDS_TEAMR:
-                setTeamColour(serialParam, CRGB::Red);
-                break;
-            case LEDS_TEAMW:
-                setTeamColour(serialParam, CRGB::White);
-                break;
-            case LEDS_TEAMO:
-                setTeamColour(serialParam, CRGB::Black);
-                break;
             case LEDS_TEAMC:
-                setTeamBuzzColour(serialParam);
+                set_string_team_colour(serialParam);
+                break;
+            case LEDS_COL:
+                set_string_colour(serialParam);
                 break;
             case LEDS_POINTW:
                 setPointlessWrong();
@@ -307,14 +273,6 @@ void loop() {
     else if (buzzerAnimationTeam != -1) {
         play_buzz_anim(buzzerAnimationTeam);
         buzzerAnimationTeam = -1;
-    }
-    else if (buzzerColourTeam != -1) {
-        set_team_colour(buzzerColourTeam, buzzerColour);
-        buzzerColourTeam = -1;
-    }
-    else if (buzzerBuzzColourTeam != -1) {
-        set_team_buzz_colour(buzzerBuzzColourTeam);
-        buzzerBuzzColourTeam = -1;
     }
     else if (pointlessAnim == 1) {
         play_pointless_wrong();

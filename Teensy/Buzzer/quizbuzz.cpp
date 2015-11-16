@@ -220,24 +220,28 @@ void pointless_state(int cmd) {
 	FastLED.show();
 }
 
-
-void set_team_colour(int team, CRGB col) {
+void set_string_team_colour(int team) {
 	if(team < 0 || team >= NUM_TEAMS) return;
-	for(int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = teamcol[team];
-	}
+	for(int i = 0; i < NUM_LEDS; i++) leds[i] = teamcol[team];
 	FastLED.show();
 }
 
-void set_team_buzz_colour(int team) {
-	if(team < 0 || team >= NUM_TEAMS) return;
-	for(int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = teamcol[team];
+void set_string_colour(int col) {
+	CRGB c;
+	switch(col) {
+		case 0: c = CRGB(255,0,0); break;
+		case 1: c = CRGB(0,255,0); break;
+		case 2: c = CRGB(0,0,255); break;
+		case 3: c = CRGB(0,255,255); break;
+		case 4: c = CRGB(255,0,255); break;
+		case 5: c = CRGB(255,255,0); break;
+		case 6: c = CRGB(255,255,255); break;
+		default: c = CRGB(0,0,0); break;
 	}
+
+	for(int i = 0; i < NUM_LEDS; i++) leds[i] = c;
 	FastLED.show();
 }
-
-
 
 
 

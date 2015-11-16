@@ -15,7 +15,6 @@ class TestViewController: NSViewController {
     @IBOutlet weak var skView: SKView!
     
     var leds: QuizLeds?
-    var eightCount = 0
     
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
     
@@ -93,31 +92,21 @@ class TestViewController: NSViewController {
         for node in sparksDown {
             node.particleBirthRate = 0
         }
-        
-        eightCount = 0
     }
     
     func buzzerPressed(team: Int) {
         numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-        leds?.stringTeamWhite(team)
         leds?.buzzerOn(team)
         sparksUp[team].particleBirthRate = 600
         sparksDown[team].particleBirthRate = 600
         
         if team == 7 {
-            if eightCount == 0 {
-                eightCount = 7
-				scene.runAction(eightSound)
-            }
-            else {
-                eightCount--
-            }
+			scene.runAction(eightSound)
         }
     }
     
     func buzzerReleased(team: Int) {
         numbers[team].fontColor = NSColor.whiteColor()
-        leds?.stringTeamOff(team)
         leds?.buzzerOff(team)
         sparksUp[team].particleBirthRate = 0
         sparksDown[team].particleBirthRate = 0
