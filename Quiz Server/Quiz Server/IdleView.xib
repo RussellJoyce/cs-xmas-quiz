@@ -1,49 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9059"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IdleViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="lights" destination="gRr-DQ-cfh" id="vnB-Ab-de7"/>
                 <outlet property="skView" destination="pLF-xo-exw" id="cDV-HA-KRB"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView wantsLayer="YES" id="Hz6-mo-xeY">
+        <customView id="Hz6-mo-xeY">
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLF-xo-exw" userLabel="Snow View" customClass="SKView">
+                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pLF-xo-exw" userLabel="Snow View" customClass="SKView">
                     <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                     <animations/>
                 </customView>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p6K-m1-DJR">
-                    <rect key="frame" x="208" y="587" width="1504" height="402"/>
-                    <shadow key="shadow" blurRadius="10">
-                        <color key="color" white="0.0" alpha="0.80000000000000004" colorSpace="calibratedWhite"/>
-                    </shadow>
-                    <animations/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Computer Science Christmas Quiz 2015" id="dh6-8p-AYe">
-                        <font key="font" metaFont="systemBold" size="140"/>
-                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gRr-DQ-cfh">
-                    <rect key="frame" x="0.0" y="887" width="1920" height="200"/>
-                    <animations/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="lights" id="scS-P2-E2F"/>
-                </imageView>
             </subviews>
             <animations/>
         </customView>
     </objects>
-    <resources>
-        <image name="lights" width="1920" height="200"/>
-    </resources>
 </document>
