@@ -23,9 +23,7 @@ class QuizViewController: NSViewController {
     
     var currentRound = RoundType.None
     
-    let idleView = IdleViewController(nibName: "IdleView", bundle: nil)!
-    let testView = TestViewController(nibName: "TestView", bundle: nil)!
-    let buzzerView = BuzzerViewController(nibName: "BuzzerView", bundle: nil)!
+    let spriteKitView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
 	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)!
     
@@ -36,15 +34,11 @@ class QuizViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        idleView.leds = quizLeds
-        testView.leds = quizLeds
-        buzzerView.leds = quizLeds
+        spriteKitView.leds = quizLeds
         trueFalseView.leds = quizLeds
         pointlessGame.leds = quizLeds
         
-        idleView.view.frame = roundView.bounds
-        testView.view.frame = roundView.bounds
-        buzzerView.view.frame = roundView.bounds
+        spriteKitView.view.frame = roundView.bounds
         pointlessGame.view.frame = roundView.bounds
 		trueFalseView.view.frame = roundView.bounds
         
@@ -60,11 +54,11 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            idleView.reset()
+            spriteKitView.reset()
         case .Test:
-            testView.reset()
+            spriteKitView.reset()
         case .Buzzers:
-            buzzerView.reset()
+            spriteKitView.reset()
         case .TrueFalse:
             trueFalseView.reset()
 		case .Pointless:
@@ -77,45 +71,37 @@ class QuizViewController: NSViewController {
             let lastRoundView = currentRoundView
             resetRound()
             currentRound = round
+			spriteKitView.setRound(round)
             resetRound()
             
             switch (currentRound) {
             case .None:
                 currentRoundView = nil
             case .Idle:
-                currentRoundView = idleView.view
+                currentRoundView = spriteKitView.view
             case .Test:
-                currentRoundView = testView.view
+				currentRoundView = spriteKitView.view
             case .Buzzers:
-                currentRoundView = buzzerView.view
+				currentRoundView = spriteKitView.view
             case .TrueFalse:
                 currentRoundView = trueFalseView.view
             case .Pointless:
                 currentRoundView = pointlessGame.view
             }
-            
-            if let currentRoundViewOpt = currentRoundView {
-                if let lastRoundViewOpt = lastRoundView {
-                    // Animated transitions (doesn't quite work)
-//                    let transition = CATransition()
-//                    transition.type = kCATransitionReveal
-//                    transition.subtype = kCATransitionFromTop
-//                    roundView.setAnimations(["subviews": transition])
-//                    NSAnimationContext.beginGrouping()
-//                    NSAnimationContext.currentContext().timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
-//                    NSAnimationContext.currentContext().duration = 3.0
-//                    roundView.animator().replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
-//                    NSAnimationContext.endGrouping()
-                    
-                    roundView.replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
-                }
-                else {
-                    roundView.addSubview(currentRoundViewOpt)
-                }
-            }
-            else {
-                lastRoundView?.removeFromSuperview()
-            }
+			
+			if currentRoundView != lastRoundView {
+				if let currentRoundViewOpt = currentRoundView {
+					if let lastRoundViewOpt = lastRoundView {
+						roundView.replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
+					}
+					else {
+						roundView.addSubview(currentRoundViewOpt)
+					}
+				}
+				else {
+					lastRoundView?.removeFromSuperview()
+				}
+			}
         }
     }
     
@@ -128,11 +114,11 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            idleView.buzzerPressed(team)
+            spriteKitView.buzzerPressed(team)
         case .Test:
-            testView.buzzerPressed(team)
+            spriteKitView.buzzerPressed(team)
         case .Buzzers:
-            buzzerView.buzzerPressed(team)
+            spriteKitView.buzzerPressed(team)
         case .TrueFalse:
 			trueFalseView.buzzerPressed(team)
         case .Pointless:
@@ -148,9 +134,9 @@ class QuizViewController: NSViewController {
         case .None:
             break // Do nothing
         case .Idle:
-            idleView.buzzerReleased(team)
+            spriteKitView.buzzerReleased(team)
         case .Test:
-            testView.buzzerReleased(team)
+            spriteKitView.buzzerReleased(team)
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:
@@ -194,7 +180,7 @@ class QuizViewController: NSViewController {
 	}
     
     func buzzersNextTeam() {
-        buzzerView.nextTeam()
+        spriteKitView.nextBuzzerTeam()
     }
     
 }

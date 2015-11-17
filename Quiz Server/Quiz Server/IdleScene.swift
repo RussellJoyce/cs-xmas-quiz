@@ -1,41 +1,42 @@
 //
-//  IdleViewController.swift
+//  IdleScene.swift
 //  Quiz Server
 //
-//  Created by Russell Joyce on 09/12/2014.
-//  Copyright (c) 2014 Russell Joyce & Ian Gray. All rights reserved.
+//  Created by Russell Joyce on 16/11/2015.
+//  Copyright © 2015 Russell Joyce & Ian Gray. All rights reserved.
 //
 
 import Cocoa
 import SpriteKit
 
-class IdleViewController: NSViewController {
-
-    @IBOutlet weak var skView: SKView!
-    
-    let scene = SKScene()
-    let snow = SKEmitterNode(fileNamed: "Snow")!
-    var snowmojis = [SKEmitterNode]()
-    var leds: QuizLeds?
+class IdleScene: SKScene {
 	
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Set up SpriteKit scene/view
-		skView.ignoresSiblingOrder = true
-        scene.size = skView.bounds.size
+	let snow = SKEmitterNode(fileNamed: "Snow")!
+	var snowmojis = [SKEmitterNode]()
+	var leds: QuizLeds?
+	private var setUp = false
+	
+	func setUpScene(size: CGSize, leds: QuizLeds?) {
+		if setUp {
+			return
+		}
+		setUp = true
+		
+		self.size = size
+		self.leds = leds
+		
 		let bgImage = SKSpriteNode(imageNamed: "1")
-		bgImage.position = CGPoint(x: scene.size.width / 2, y: scene.size.height / 2)
-		bgImage.size = scene.size
+		bgImage.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+		bgImage.size = self.size
 		bgImage.zPosition = 0
-        snow.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 16)
+		snow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
 		snow.particleBirthRate = 40
 		snow.zPosition = 11
 		
 		for i in 0...9 {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
 			snowmoji.particleTexture = SKTexture(imageNamed: "snowmoji\(i)")
-			snowmoji.position = CGPoint(x: scene.size.width / 2, y: scene.size.height + 32)
+			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
 			snowmoji.zPosition = CGFloat(i + 1)
 			snowmojis.append(snowmoji)
 		}
@@ -105,29 +106,27 @@ class IdleViewController: NSViewController {
 		lights.runAction(lightsAction)
 		
 		for node in snowmojis {
-			scene.addChild(node)
+			self.addChild(node)
 		}
-		scene.addChild(bgImage)
-        scene.addChild(snow)
-		scene.addChild(text)
-		scene.addChild(textShadow)
-		scene.addChild(lights)
-		skView.presentScene(scene)
-    }
-    
-    func reset() {
-        leds?.stringAnimation(2)
+		self.addChild(bgImage)
+		self.addChild(snow)
+		self.addChild(text)
+		self.addChild(textShadow)
+		self.addChild(lights)
+	}
+	
+	func reset() {
+		leds?.stringAnimation(2)
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}
-    }
-    
-    func buzzerPressed(team: Int) {
+	}
+	
+	func buzzerPressed(team: Int) {
 		snowmojis[team].particleBirthRate = 20
-    }
-    
-    func buzzerReleased(team: Int) {
-        snowmojis[team].particleBirthRate = 0
-    }
-    
+	}
+	
+	func buzzerReleased(team: Int) {
+		snowmojis[team].particleBirthRate = 0
+	}
 }

@@ -22,15 +22,10 @@
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
 		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
-		460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460012371A376C0D0039AF86 /* BuzzerViewController.swift */; };
-		4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 460012381A376C0D0039AF86 /* BuzzerView.xib */; };
-		4600123D1A3786AD0039AF86 /* IdleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4600123B1A3786AD0039AF86 /* IdleViewController.swift */; };
-		4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4600123C1A3786AD0039AF86 /* IdleView.xib */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
 		46056ED61A1974A800C37628 /* StartupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056ED51A1974A800C37628 /* StartupView.swift */; };
-		4606F5E21BF924A200D2599B /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */; };
 		4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E31BF926E200D2599B /* BuzzParticles.sks */; };
 		4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E41BF926E200D2599B /* BuzzGlow.sks */; };
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
@@ -47,6 +42,11 @@
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
 		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
+		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
+		46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */; };
+		46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739381BFAB45300E03DE5 /* BuzzerScene.swift */; };
+		46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393A1BFAB46A00E03DE5 /* TestScene.swift */; };
+		46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
 		46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; };
 		46B0256C1A1BF4ED0088294B /* DDHidLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -81,15 +81,13 @@
 		46B025AE1A1BF8140088294B /* NSXReturnThrowError.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */; };
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
-		46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DC1A353E3E00A53E59 /* BackgroundView.swift */; };
-		46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B607DE1A353F7200A53E59 /* TestViewController.swift */; };
-		46B607E11A353F7200A53E59 /* TestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B607DF1A353F7200A53E59 /* TestView.xib */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46F6F8BA1A406DE700C4180C /* lights.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B51A406DE700C4180C /* lights.png */; };
 		46F6F8BC1A406DE700C4180C /* lights2.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B71A406DE700C4180C /* lights2.png */; };
 		46F6F8BD1A406DE700C4180C /* lights3.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B81A406DE700C4180C /* lights3.png */; };
 		46F6F8BE1A406DE700C4180C /* lights4.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B91A406DE700C4180C /* lights4.png */; };
 		46F6F8C01A40991600C4180C /* lights1.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8BF1A40991600C4180C /* lights1.png */; };
+		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,10 +130,6 @@
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
 		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
-		460012371A376C0D0039AF86 /* BuzzerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerViewController.swift; sourceTree = "<group>"; };
-		460012381A376C0D0039AF86 /* BuzzerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BuzzerView.xib; sourceTree = "<group>"; };
-		4600123B1A3786AD0039AF86 /* IdleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleViewController.swift; sourceTree = "<group>"; };
-		4600123C1A3786AD0039AF86 /* IdleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IdleView.xib; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46056EB81A19624E00C37628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46056EB91A19624E00C37628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -143,7 +137,6 @@
 		46056EBE1A19624E00C37628 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		46056ED41A196EF100C37628 /* TestPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = TestPlayground.playground; sourceTree = "<group>"; };
 		46056ED51A1974A800C37628 /* StartupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupView.swift; sourceTree = "<group>"; };
-		4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
 		4606F5E31BF926E200D2599B /* BuzzParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzParticles.sks; sourceTree = "<group>"; };
 		4606F5E41BF926E200D2599B /* BuzzGlow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzGlow.sks; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
@@ -165,6 +158,11 @@
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
 		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
+		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
+		46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpriteKitViewController.xib; sourceTree = "<group>"; };
+		46A739381BFAB45300E03DE5 /* BuzzerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerScene.swift; sourceTree = "<group>"; };
+		46A7393A1BFAB46A00E03DE5 /* TestScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
+		46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		46B025541A1BF4EC0088294B /* DDHidLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DDHidLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46B025571A1BF4EC0088294B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -198,9 +196,6 @@
 		46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSXReturnThrowError.m; sourceTree = "<group>"; };
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
-		46B607DC1A353E3E00A53E59 /* BackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
-		46B607DE1A353F7200A53E59 /* TestViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
-		46B607DF1A353F7200A53E59 /* TestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TestView.xib; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46F6F8B51A406DE700C4180C /* lights.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights.png; sourceTree = "<group>"; };
@@ -208,6 +203,7 @@
 		46F6F8B81A406DE700C4180C /* lights3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights3.png; sourceTree = "<group>"; };
 		46F6F8B91A406DE700C4180C /* lights4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights4.png; sourceTree = "<group>"; };
 		46F6F8BF1A40991600C4180C /* lights1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights1.png; sourceTree = "<group>"; };
+		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,18 +266,16 @@
 				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
 				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
 				4620DC981A30C400006EABA1 /* QuizView.xib */,
-				46B607DC1A353E3E00A53E59 /* BackgroundView.swift */,
-				46B607DE1A353F7200A53E59 /* TestViewController.swift */,
-				46B607DF1A353F7200A53E59 /* TestView.xib */,
 				3C7082121A35FE38006DB763 /* PointlessGameController.swift */,
 				3C7082131A35FE38006DB763 /* PointlessGameController.xib */,
 				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
 				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
-				460012371A376C0D0039AF86 /* BuzzerViewController.swift */,
-				4606F5E11BF924A200D2599B /* BuzzerTeamNode.swift */,
-				460012381A376C0D0039AF86 /* BuzzerView.xib */,
-				4600123B1A3786AD0039AF86 /* IdleViewController.swift */,
-				4600123C1A3786AD0039AF86 /* IdleView.xib */,
+				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
+				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
+				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
+				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
+				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
+				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
@@ -503,14 +497,12 @@
 			files = (
 				46F6F8BA1A406DE700C4180C /* lights.png in Resources */,
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
-				4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */,
 				46F6F8C01A40991600C4180C /* lights1.png in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
-				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
-				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
+				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
@@ -551,22 +543,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */,
-				46B607E01A353F7200A53E59 /* TestViewController.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
+				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
-				46B607DD1A353E3E00A53E59 /* BackgroundView.swift in Sources */,
+				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,
 				464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */,
-				4606F5E21BF924A200D2599B /* BuzzerTeamNode.swift in Sources */,
 				464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
-				460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */,
-				4600123D1A3786AD0039AF86 /* IdleViewController.swift in Sources */,
+				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
+				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
+				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
 				3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
