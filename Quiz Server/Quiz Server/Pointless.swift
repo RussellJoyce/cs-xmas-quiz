@@ -394,12 +394,12 @@ func setMinSize(view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		attribute: .Width, relatedBy: .GreaterThanOrEqual,
+		toItem: nil, attribute: .NotAnAttribute,
 		multiplier: 1, constant: CGFloat(width)))
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		attribute: .Height, relatedBy: .GreaterThanOrEqual,
+		toItem: nil, attribute: .NotAnAttribute,
 		multiplier: 1, constant: CGFloat(height)))
 }
 
@@ -408,12 +408,12 @@ func setMaxSize(view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.LessThanOrEqual,
-		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		attribute: .Width, relatedBy: .LessThanOrEqual,
+		toItem: nil, attribute: .NotAnAttribute,
 		multiplier: 1, constant: CGFloat(width)))
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.LessThanOrEqual,
-		toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+		attribute: .Height, relatedBy: .LessThanOrEqual,
+		toItem: nil, attribute: .NotAnAttribute,
 		multiplier: 1, constant: CGFloat(height)))
 }
 

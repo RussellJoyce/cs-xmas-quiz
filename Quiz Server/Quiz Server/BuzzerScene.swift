@@ -20,7 +20,7 @@ class BuzzerScene: SKScene {
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
-	var teamBox: BuzzerTeamNode?
+	var teamBoxes = [BuzzerTeamNode]()
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -46,12 +46,14 @@ class BuzzerScene: SKScene {
 		buzzes.removeAll()
 		nextTeamNumber = 0
 		
-		teamBox?.removeFromParent()
-		teamBox = nil
+		for teamBox in teamBoxes {
+			teamBox.removeFromParent()
+		}
+		teamBoxes.removeAll()
 	}
 	
 	func buzzerPressed(team: Int) {
-		if teamEnabled[team] && buzzes.count < 8 {
+		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
 			leds?.buzzerOff(team)
 			
@@ -63,14 +65,19 @@ class BuzzerScene: SKScene {
 				leds?.stringTeamAnimate(team)
 				nextTeamNumber = 1
 				
-				teamBox = BuzzerTeamNode(team: team)
-				teamBox?.position = self.centrePoint
-				teamBox?.zPosition = 10
-				self.addChild(teamBox!)
+				let box = BuzzerTeamNode(team: team, width: 900, height: 200, fontSize: 150, addGlow: true)
+				box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
+				box.zPosition = 10
+				teamBoxes.append(box)
+				self.addChild(box)
+				
+			} else {
+				let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
+				box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 300) - CGFloat(buzzNumber * 160))
+				box.zPosition = 9
+				teamBoxes.append(box)
+				self.addChild(box)
 			}
-			//            else if let firstBuzzTimeOpt = firstBuzzTime {
-			//                let time = -firstBuzzTimeOpt.timeIntervalSinceNow
-			//            }
 			
 			buzzNumber++
 		}
@@ -78,6 +85,7 @@ class BuzzerScene: SKScene {
 	
 	func nextTeam() {
 		if nextTeamNumber < buzzes.count {
+			teamBoxes[nextTeamNumber-1].runAction(SKAction.fadeAlphaTo(0.3, duration: 0.5))
 			let team = buzzes[nextTeamNumber]
 			leds?.stringTeamColour(team)
 			nextTeamNumber++
