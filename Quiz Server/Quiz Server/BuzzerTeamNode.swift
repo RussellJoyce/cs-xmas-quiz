@@ -23,20 +23,16 @@ class BuzzerTeamNode: SKNode {
 		scale.timingMode = .EaseOut
 		let fade = SKAction.fadeInWithDuration(0.2)
 		fade.timingMode = .EaseOut
-		let entranceGroup = SKAction.group([
-			fade,
-			SKAction.sequence([
-				SKAction.scaleTo(1.3, duration: 0),
-				scale
-				])
-			])
+		let entranceGroup = SKAction.group([fade, scale])
+		
+		let mainNode = SKNode()
+		mainNode.position = CGPointZero
 		
 		let bgBox = SKShapeNode(rectOfSize: CGSize(width: width, height: height))
 		bgBox.zPosition = 2
 		bgBox.position = CGPointZero
 		bgBox.fillColor = bgColour
 		bgBox.lineWidth = 0.0
-		bgBox.alpha = 0.0
 		
 		let shadow = SKShapeNode(rectOfSize: CGSize(width: width + 20, height: height + 20))
 		shadow.zPosition = 1
@@ -72,11 +68,6 @@ class BuzzerTeamNode: SKNode {
 		textShadow.filter = filter;
 		textShadow.addChild(shadowText)
 		
-		bgBox.runAction(entranceGroup)
-		shadow.runAction(entranceGroup)
-		text.runAction(entranceGroup)
-		shadowText.runAction(entranceGroup)
-
 		let particles1 = SKEmitterNode(fileNamed: "BuzzParticles")!
 		particles1.position = CGPoint(x: (width/2)-10, y: 0)
 		particles1.zPosition = 0
@@ -128,11 +119,18 @@ class BuzzerTeamNode: SKNode {
 			glow.removeWhenDone()
 			self.addChild(glow)
 		}
-			
-		self.addChild(bgBox)
-		self.addChild(shadow)
-		self.addChild(text)
-		self.addChild(textShadow)
+		
+		mainNode.addChild(bgBox)
+		mainNode.addChild(shadow)
+		mainNode.addChild(text)
+		mainNode.addChild(textShadow)
+		mainNode.alpha = 0
+		mainNode.setScale(1.3)
+		
+		self.addChild(mainNode)
+
+		mainNode.runAction(entranceGroup)
+		
 		self.addChild(particles1)
 		self.addChild(particles2)
 		self.addChild(particles3)
