@@ -81,6 +81,10 @@ class BuzzerScene: SKScene {
 			
 			buzzNumber++
 		}
+		
+		if buzzes.count == 5 {
+			leds?.buzzersOff()
+		}
 	}
 	
 	func nextTeam() {
