@@ -32,7 +32,7 @@ class BuzzerScene: SKScene {
 		self.leds = leds
 		
 		let bgImage = SKSpriteNode(imageNamed: "2")
-		bgImage.zPosition = -1.0
+		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
 		bgImage.size = self.size
 		
@@ -65,16 +65,16 @@ class BuzzerScene: SKScene {
 				leds?.stringTeamAnimate(team)
 				nextTeamNumber = 1
 				
-				let box = BuzzerTeamNode(team: team, width: 900, height: 200, fontSize: 150, addGlow: true)
-				box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
-				box.zPosition = 10
+				let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
+				box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
+				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
 				
 			} else {
 				let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
-				box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 300) - CGFloat(buzzNumber * 160))
-				box.zPosition = 9
+				box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
+				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
 			}
@@ -86,6 +86,8 @@ class BuzzerScene: SKScene {
 	func nextTeam() {
 		if nextTeamNumber < buzzes.count {
 			teamBoxes[nextTeamNumber-1].runAction(SKAction.fadeAlphaTo(0.3, duration: 0.5))
+			teamBoxes[nextTeamNumber-1].stopGlow()
+			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
 			leds?.stringTeamColour(team)
 			nextTeamNumber++
