@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import SpriteKit
+import AVFoundation
 
 class TimerScene: SKScene {
 
@@ -17,6 +18,8 @@ class TimerScene: SKScene {
 	private var correct: Int = 0
 	private var time: Int = 60
 	private var running: Bool = false
+	private var starttime: NSDate = NSDate()
+	private var tickcount: Int = 0
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -25,6 +28,13 @@ class TimerScene: SKScene {
 	let countshadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let mainNode = SKNode()
 	let countmainNode = SKNode()
+	
+	let tickSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("tick", ofType: "mp3")!))
+	let blopSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("blop", ofType: "mp3")!))
+	let hornSound = try! AVAudioPlayer(
+		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("airhorn", ofType: "mp3")!))
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -43,14 +53,14 @@ class TimerScene: SKScene {
 		bgImage.size = self.size
 		self.addChild(bgImage)
 		
-		mainNode.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
-		countmainNode.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 500)
+		mainNode.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 360)
+		countmainNode.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 700)
 		
 		text.text = "60"
 		text.fontSize = 300
 		text.fontColor = NSColor.whiteColor()
 		text.horizontalAlignmentMode = .Center
-		text.verticalAlignmentMode = .Center
+		text.verticalAlignmentMode = .Baseline
 		text.zPosition = 6
 		text.position = CGPointZero
 		shadowText.text = "60"
@@ -81,7 +91,7 @@ class TimerScene: SKScene {
 		countshadowText.fontSize = 200
 		countshadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
 		countshadowText.horizontalAlignmentMode = .Center
-		countshadowText.verticalAlignmentMode = .Center
+		countshadowText.verticalAlignmentMode = .Baseline
 		countshadowText.zPosition = 5
 		countshadowText.position = CGPointZero
 		let counttextShadow = SKEffectNode()
@@ -110,13 +120,37 @@ class TimerScene: SKScene {
 	}
 	
 	func startTimer() {
+		tickcount = 1
 		running = true
+		starttime = NSDate()
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-			NSThread.sleepForTimeInterval(1.0)
+			NSThread.sleepUntilDate(self.starttime.dateByAddingTimeInterval(NSTimeInterval(self.tickcount)))
 			dispatch_async(dispatch_get_main_queue(), {
 				self.tick();
 			})
 		})
+	}
+	
+	func tick() {
+		if(running) {
+			time--
+			tickcount++
+			updateTime()
+			if(time == 0) {
+				running = false
+				hornSound.currentTime = 0
+				hornSound.play()
+			} else {
+				tickSound.currentTime = 0
+				tickSound.play()
+				dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+					NSThread.sleepUntilDate(self.starttime.dateByAddingTimeInterval(NSTimeInterval(self.tickcount)))
+					dispatch_async(dispatch_get_main_queue(), {
+						self.tick();
+					})
+				})
+			}
+		}
 	}
 	
 	func stopTimer() {
@@ -125,31 +159,14 @@ class TimerScene: SKScene {
 	
 	func timerIncrement() {
 		correct++
+		blopSound.currentTime = 0
+		blopSound.play()
 		updateAnswers()
 	}
 	
 	func timerDecrement() {
 		correct--
 		updateAnswers()
-	}
-	
-	
-	func tick() {
-		if(running) {
-			time--
-			updateTime()
-			if(time == 0) {
-				running = false
-				
-			} else {
-				dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-					NSThread.sleepForTimeInterval(1.0)
-					dispatch_async(dispatch_get_main_queue(), {
-						self.tick();
-					})
-				})
-			}
-		}
 	}
 	
 	func updateTime() {

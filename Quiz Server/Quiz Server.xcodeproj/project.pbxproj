@@ -13,6 +13,9 @@
 		3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C7082131A35FE38006DB763 /* PointlessGameController.xib */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
 		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
+		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
+		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
+		3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB51C03D53000A2B397 /* airhorn.mp3 */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
@@ -117,6 +120,9 @@
 		3C7082131A35FE38006DB763 /* PointlessGameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessGameController.xib; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
 		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
+		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
+		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
+		3C872EB51C03D53000A2B397 /* airhorn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = airhorn.mp3; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
 		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
@@ -283,6 +289,9 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C872EB51C03D53000A2B397 /* airhorn.mp3 */,
+				3C872EB31C03D47A00A2B397 /* blop.mp3 */,
+				3C872EB11C03D35100A2B397 /* tick.mp3 */,
 				3C5E2A4C1A37D0F9000D6447 /* timer.wav */,
 				3C5E2A4D1A37D0F9000D6447 /* timerend.wav */,
 				3C708BF61A379EE1007E24F5 /* buzzer.wav */,
@@ -484,13 +493,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
+				3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
+				3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
+				3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
