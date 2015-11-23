@@ -15,6 +15,7 @@ enum RoundType {
     case Buzzers
     case TrueFalse
     case Pointless
+	case Timer
 }
 
 class QuizViewController: NSViewController {
@@ -51,11 +52,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .None:
             break // Do nothing
-        case .Idle:
-            spriteKitView.reset()
-        case .Test:
-            spriteKitView.reset()
-        case .Buzzers:
+        case .Idle, .Test, .Buzzers, .Timer:
             spriteKitView.reset()
         case .TrueFalse:
             trueFalseView.reset()
@@ -75,12 +72,8 @@ class QuizViewController: NSViewController {
             switch (currentRound) {
             case .None:
                 currentRoundView = nil
-            case .Idle:
+            case .Idle, .Test, .Buzzers, .Timer:
                 currentRoundView = spriteKitView.view
-            case .Test:
-				currentRoundView = spriteKitView.view
-            case .Buzzers:
-				currentRoundView = spriteKitView.view
             case .TrueFalse:
                 currentRoundView = trueFalseView.view
             case .Pointless:
@@ -111,11 +104,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .None:
             break // Do nothing
-        case .Idle:
-            spriteKitView.buzzerPressed(team)
-        case .Test:
-            spriteKitView.buzzerPressed(team)
-        case .Buzzers:
+        case .Idle, .Test, .Buzzers, .Timer:
             spriteKitView.buzzerPressed(team)
         case .TrueFalse:
 			trueFalseView.buzzerPressed(team)
@@ -135,6 +124,8 @@ class QuizViewController: NSViewController {
             spriteKitView.buzzerReleased(team)
         case .Test:
             spriteKitView.buzzerReleased(team)
+		case .Timer:
+			break
         case .Buzzers:
             break // Do nothing
         case .TrueFalse:
@@ -144,6 +135,23 @@ class QuizViewController: NSViewController {
         }
     }
     
+	
+	func startTimer() {
+		spriteKitView.startTimer();
+	}
+	
+	func stopTimer() {
+		spriteKitView.stopTimer();
+	}
+
+	func timerIncrement() {
+		spriteKitView.timerIncrement();
+	}
+	
+	func timerDecrement() {
+		spriteKitView.timerDecrement();
+	}
+	
 	
 	func setPointlessTeam(team: Int) {
 		pointlessGame.setCurrentTeam(team)

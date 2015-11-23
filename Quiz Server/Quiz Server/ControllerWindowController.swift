@@ -133,6 +133,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.setRound(RoundType.TrueFalse)
         case 4:
             quizView.setRound(RoundType.Pointless)
+		case 5:
+			quizView.setRound(RoundType.Timer)
         default:
             break
         }
@@ -187,6 +189,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.buzzersNextTeam()
     }
     
+	@IBAction func startTimer(sender: AnyObject) {
+		quizView.startTimer()
+	}
+	
+	@IBAction func stopTimer(sender: AnyObject) {
+		quizView.stopTimer()
+	}
+	
+	@IBAction func timerIncrement(sender: AnyObject) {
+		quizView.timerIncrement()
+	}
+	
+	@IBAction func timerDecrement(sender: AnyObject) {
+		quizView.timerDecrement()
+	}
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)

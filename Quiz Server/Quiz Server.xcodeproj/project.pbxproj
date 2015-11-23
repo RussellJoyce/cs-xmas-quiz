@@ -12,6 +12,7 @@
 		3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7082121A35FE38006DB763 /* PointlessGameController.swift */; };
 		3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C7082131A35FE38006DB763 /* PointlessGameController.xib */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
+		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
@@ -115,6 +116,7 @@
 		3C7082121A35FE38006DB763 /* PointlessGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointlessGameController.swift; sourceTree = "<group>"; };
 		3C7082131A35FE38006DB763 /* PointlessGameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessGameController.xib; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
+		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
 		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
+				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
@@ -537,6 +540,7 @@
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
+				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
 				3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */,

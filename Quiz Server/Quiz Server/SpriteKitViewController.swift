@@ -16,6 +16,7 @@ class SpriteKitViewController: NSViewController {
 	let idleScene = IdleScene()
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
+	let timerScene = TimerScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.None
 
@@ -29,6 +30,7 @@ class SpriteKitViewController: NSViewController {
 		idleScene.setUpScene(skView.bounds.size, leds: leds)
 		testScene.setUpScene(skView.bounds.size, leds: leds)
 		buzzerScene.setUpScene(skView.bounds.size, leds: leds)
+		timerScene.setUpScene(skView.bounds.size, leds: leds)
 	}
 	
 	func setRound(round: RoundType) {
@@ -43,6 +45,8 @@ class SpriteKitViewController: NSViewController {
 			skView.presentScene(testScene)
 		case .Buzzers:
 			skView.presentScene(buzzerScene)
+		case .Timer:
+			skView.presentScene(timerScene)
 		case .TrueFalse:
 			skView.presentScene(nil)
 		case .Pointless:
@@ -60,6 +64,8 @@ class SpriteKitViewController: NSViewController {
 			testScene.reset()
 		case .Buzzers:
 			buzzerScene.reset()
+		case .Timer:
+			timerScene.reset()
 		case .TrueFalse:
 			break
 		case .Pointless:
@@ -77,6 +83,8 @@ class SpriteKitViewController: NSViewController {
 			testScene.buzzerPressed(team)
 		case .Buzzers:
 			buzzerScene.buzzerPressed(team)
+		case .Timer:
+			break
 		case .TrueFalse:
 			break
 		case .Pointless:
@@ -92,6 +100,8 @@ class SpriteKitViewController: NSViewController {
 			idleScene.buzzerReleased(team)
 		case .Test:
 			testScene.buzzerReleased(team)
+		case .Timer:
+			break
 		case .Buzzers:
 			break
 		case .TrueFalse:
@@ -103,6 +113,22 @@ class SpriteKitViewController: NSViewController {
 	
 	func nextBuzzerTeam() {
 		buzzerScene.nextTeam()
+	}
+	
+	func startTimer() {
+		timerScene.startTimer();
+	}
+	
+	func stopTimer() {
+		timerScene.stopTimer();
+	}
+	
+	func timerIncrement() {
+		timerScene.timerIncrement();
+	}
+	
+	func timerDecrement() {
+		timerScene.timerDecrement();
 	}
 	
 }

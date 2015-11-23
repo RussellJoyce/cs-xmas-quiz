@@ -26,7 +26,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -257,12 +257,12 @@
                         <font key="font" metaFont="systemBold" size="17"/>
                         <tabViewItems>
                             <tabViewItem label="Idle" identifier="1" id="u2C-EJ-D9s">
-                                <view key="view" ambiguous="YES" id="b26-Hk-9q4">
-                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
+                                <view key="view" id="b26-Hk-9q4">
+                                    <rect key="frame" x="10" y="33" width="425" height="0.0"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C6x-pJ-wxn">
-                                            <rect key="frame" x="133" y="87" width="631" height="144"/>
+                                            <rect key="frame" x="133" y="-171" width="631" height="144"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Computer Science Christmas Quiz System" id="n6F-zS-vDU">
                                                 <font key="font" metaFont="system" size="60"/>
@@ -271,7 +271,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kRN-6S-na2">
-                                            <rect key="frame" x="334" y="51" width="229" height="17"/>
+                                            <rect key="frame" x="334" y="-207" width="229" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="by Ian Gray &amp; Russell Joyce, 2014-15" id="XGM-rO-MLQ">
                                                 <font key="font" metaFont="system"/>
@@ -754,6 +754,59 @@ DQ
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                    </subviews>
+                                    <animations/>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Timer" identifier="" id="jWj-s8-V1l">
+                                <view key="view" ambiguous="YES" id="A2n-zC-4Pw">
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ia0-pp-JoK">
+                                            <rect key="frame" x="469" y="155" width="128" height="50"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="bevel" title="Stop Timer" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jt2-v1-Adk">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="19"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="stopTimer:" target="-2" id="Zv2-8h-uHU"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e8D-X0-Bfb">
+                                            <rect key="frame" x="299" y="66" width="128" height="50"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="bevel" title="+" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rh4-eN-1qw">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="19"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="timerIncrement:" target="-2" id="AuK-AD-tGo"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqE-tj-dAP">
+                                            <rect key="frame" x="469" y="66" width="128" height="50"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="bevel" title="-" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LEX-CW-LgI">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="19"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="timerDecrement:" target="-2" id="N4c-Y5-TvH"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FET-O6-e6A">
+                                            <rect key="frame" x="299" y="155" width="128" height="50"/>
+                                            <animations/>
+                                            <buttonCell key="cell" type="bevel" title="Start Timer" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jHL-Xf-Aai">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="19"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="startTimer:" target="-2" id="IRo-7f-FSj"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <animations/>
                                 </view>
