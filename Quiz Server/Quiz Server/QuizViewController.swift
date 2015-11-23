@@ -18,8 +18,6 @@ enum RoundType {
 }
 
 class QuizViewController: NSViewController {
-
-    @IBOutlet weak var roundView: NSView!
     
     var currentRound = RoundType.None
     
@@ -38,9 +36,9 @@ class QuizViewController: NSViewController {
         trueFalseView.leds = quizLeds
         pointlessGame.leds = quizLeds
         
-        spriteKitView.view.frame = roundView.bounds
-        pointlessGame.view.frame = roundView.bounds
-		trueFalseView.view.frame = roundView.bounds
+        spriteKitView.view.frame = view.bounds
+        pointlessGame.view.frame = view.bounds
+		trueFalseView.view.frame = view.bounds
         
         setRound(RoundType.Idle)
     }
@@ -90,12 +88,12 @@ class QuizViewController: NSViewController {
             }
 			
 			if currentRoundView != lastRoundView {
-				if let currentRoundViewOpt = currentRoundView {
-					if let lastRoundViewOpt = lastRoundView {
-						roundView.replaceSubview(lastRoundViewOpt, with: currentRoundViewOpt)
+				if let currentRoundView = currentRoundView {
+					if let lastRoundView = lastRoundView {
+						view.replaceSubview(lastRoundView, with: currentRoundView)
 					}
 					else {
-						roundView.addSubview(currentRoundViewOpt)
+						view.addSubview(currentRoundView)
 					}
 				}
 				else {

@@ -7,7 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="QuizViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="roundView" destination="JC0-p6-koz" id="5El-8e-VqC"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -16,18 +15,6 @@
         <customView id="Hz6-mo-xeY">
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <subviews>
-                <customView translatesAutoresizingMaskIntoConstraints="NO" id="JC0-p6-koz" userLabel="Round View">
-                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
-                    <animations/>
-                </customView>
-            </subviews>
-            <constraints>
-                <constraint firstItem="JC0-p6-koz" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="108-bT-XCv"/>
-                <constraint firstItem="JC0-p6-koz" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="UqW-rK-cOh"/>
-                <constraint firstAttribute="trailing" secondItem="JC0-p6-koz" secondAttribute="trailing" id="Vg5-hW-asM"/>
-                <constraint firstAttribute="bottom" secondItem="JC0-p6-koz" secondAttribute="bottom" id="b7p-EL-fkE"/>
-            </constraints>
             <animations/>
             <point key="canvasLocation" x="3144" y="1058"/>
         </customView>
