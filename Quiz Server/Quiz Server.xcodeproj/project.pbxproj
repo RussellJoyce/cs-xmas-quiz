@@ -82,11 +82,6 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
-		46F6F8BA1A406DE700C4180C /* lights.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B51A406DE700C4180C /* lights.png */; };
-		46F6F8BC1A406DE700C4180C /* lights2.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B71A406DE700C4180C /* lights2.png */; };
-		46F6F8BD1A406DE700C4180C /* lights3.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B81A406DE700C4180C /* lights3.png */; };
-		46F6F8BE1A406DE700C4180C /* lights4.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B91A406DE700C4180C /* lights4.png */; };
-		46F6F8C01A40991600C4180C /* lights1.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8BF1A40991600C4180C /* lights1.png */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
 
@@ -198,11 +193,6 @@
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
-		46F6F8B51A406DE700C4180C /* lights.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights.png; sourceTree = "<group>"; };
-		46F6F8B71A406DE700C4180C /* lights2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights2.png; sourceTree = "<group>"; };
-		46F6F8B81A406DE700C4180C /* lights3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights3.png; sourceTree = "<group>"; };
-		46F6F8B91A406DE700C4180C /* lights4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights4.png; sourceTree = "<group>"; };
-		46F6F8BF1A40991600C4180C /* lights1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights1.png; sourceTree = "<group>"; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -290,11 +280,6 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				46F6F8B51A406DE700C4180C /* lights.png */,
-				46F6F8BF1A40991600C4180C /* lights1.png */,
-				46F6F8B71A406DE700C4180C /* lights2.png */,
-				46F6F8B81A406DE700C4180C /* lights3.png */,
-				46F6F8B91A406DE700C4180C /* lights4.png */,
 				3C5E2A4C1A37D0F9000D6447 /* timer.wav */,
 				3C5E2A4D1A37D0F9000D6447 /* timerend.wav */,
 				3C708BF61A379EE1007E24F5 /* buzzer.wav */,
@@ -495,9 +480,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				46F6F8BA1A406DE700C4180C /* lights.png in Resources */,
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
-				46F6F8C01A40991600C4180C /* lights1.png in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
@@ -506,7 +489,6 @@
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
-				46F6F8BC1A406DE700C4180C /* lights2.png in Resources */,
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
@@ -521,9 +503,7 @@
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
-				46F6F8BE1A406DE700C4180C /* lights4.png in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
-				46F6F8BD1A406DE700C4180C /* lights3.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
