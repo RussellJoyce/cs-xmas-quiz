@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
 		3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7082121A35FE38006DB763 /* PointlessGameController.swift */; };
@@ -114,6 +115,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
 		3C7082121A35FE38006DB763 /* PointlessGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointlessGameController.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
+				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
 				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
 				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
@@ -499,6 +502,7 @@
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
+				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,

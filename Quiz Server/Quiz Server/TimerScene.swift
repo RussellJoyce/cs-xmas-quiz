@@ -140,6 +140,12 @@ class TimerScene: SKScene {
 				running = false
 				hornSound.currentTime = 0
 				hornSound.play()
+				
+				let p = SKEmitterNode(fileNamed: "SparksUp2")!
+				p.position = CGPoint(x: self.centrePoint.x, y: 0)
+				p.zPosition = 2
+				p.removeWhenDone()
+				self.addChild(p)
 			} else {
 				tickSound.currentTime = 0
 				tickSound.play()
