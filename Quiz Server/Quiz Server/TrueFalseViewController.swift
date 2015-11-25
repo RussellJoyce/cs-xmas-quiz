@@ -71,12 +71,16 @@ class TrueFalseViewController: NSViewController {
 		objc_sync_enter(🔒)
 		counting = true
 		pressed = [Int]()
+		leds?.stringPointlessReset()
 		objc_sync_exit(🔒)
 		
 		dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
 			for(var i = 5; i >= 0; i--) {
 				if(i != 5) {
 					NSThread.sleepForTimeInterval(1.0)
+					for _ in 0...19 {
+						self.leds?.stringPointlessDec()
+					}
 					if (!self.counting) {
 						return
 					}

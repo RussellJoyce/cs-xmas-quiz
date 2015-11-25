@@ -287,49 +287,16 @@
                                 <view key="view" id="6Pa-j9-Bqf">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SGY-lJ-ZWr">
-                                            <rect key="frame" x="340" y="138" width="216" height="32"/>
-                                            <animations/>
-                                            <buttonCell key="cell" type="push" title="Set all Team LEDs Green" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pb8-Lh-A4U">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="testSetAllGreen:" target="-2" id="yMg-zu-626"/>
-                                            </connections>
-                                        </button>
-                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R2N-2R-OAg">
-                                            <rect key="frame" x="340" y="99" width="216" height="32"/>
-                                            <animations/>
-                                            <buttonCell key="cell" type="push" title="Set all Team LEDs Red" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GDl-pL-qxh">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="testSetAllRed:" target="-2" id="hGt-q2-0XE"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
                                     <animations/>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Buzzers" identifier="" id="zkE-YU-uHw">
-                                <view key="view" id="zH3-jV-1Z8">
+                                <view key="view" ambiguous="YES" id="zH3-jV-1Z8">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xEJ-vb-2Lu">
-                                            <rect key="frame" x="328" y="176" width="241" height="50"/>
-                                            <animations/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="This page left intentionally blank." id="uiI-Dq-x2o">
-                                                <font key="font" metaFont="system" size="21"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C4c-Bw-JeK">
-                                            <rect key="frame" x="347" y="45" width="203" height="109"/>
+                                            <rect key="frame" x="347" y="81" width="203" height="109"/>
                                             <animations/>
                                             <buttonCell key="cell" type="bevel" title="Wrong! Next Team..." bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QH5-Gh-c9z">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -342,7 +309,7 @@
                                             </connections>
                                         </button>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j90-Wg-Utz">
-                                            <rect key="frame" x="435" y="23" width="27" height="17"/>
+                                            <rect key="frame" x="435" y="59" width="27" height="17"/>
                                             <animations/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘N" id="bDI-82-vyV">
                                                 <font key="font" size="13" name=".LucidaGrandeUI"/>
@@ -759,7 +726,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Timer" identifier="" id="jWj-s8-V1l">
-                                <view key="view" ambiguous="YES" id="A2n-zC-4Pw">
+                                <view key="view" id="A2n-zC-4Pw">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
