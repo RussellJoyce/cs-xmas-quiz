@@ -10,6 +10,7 @@ import Foundation
 import Cocoa
 import SpriteKit
 import AVFoundation
+import Darwin
 
 class TimerScene: SKScene {
 
@@ -94,7 +95,6 @@ class TimerScene: SKScene {
 				self.filternode.shouldRasterize = true
 			})
 		])
-		
 
 		mainNode.position = CGPoint(x: 900, y: self.size.height - 360)
 		countmainNode.position = CGPoint(x: 560, y: self.size.height - 700)
@@ -117,7 +117,7 @@ class TimerScene: SKScene {
 		textShadow.zPosition = 5
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
-		filter?.setValue(120 / 5.8, forKey: "inputRadius")
+		filter?.setValue(350 / 5.8, forKey: "inputRadius")
 		textShadow.filter = filter;
 		textShadow.addChild(shadowText)
 		
@@ -147,12 +147,13 @@ class TimerScene: SKScene {
 
 		self.addChild(countmainNode)
 		self.addChild(mainNode)
+		
 	}
 	
 
 	func reset() {
 		correct = 0
-		time = 5
+		time = 60
 		timer?.invalidate()
 		updateAnswers()
 		updateTime()
@@ -178,6 +179,31 @@ class TimerScene: SKScene {
 	func timerIncrement() {
 		correct++
 		self.runAction(blopSound)
+		
+		/*let sprayEmitter = SKEmitterNode(fileNamed: "TimerSpray")!
+		sprayEmitter.position = CGPoint(x: 1430, y: self.size.height - 650)
+		sprayEmitter.zPosition = 2
+		self.addChild(sprayEmitter)
+		var rnd: CGFloat?
+		let sprayAction = SKAction.sequence([
+			SKAction.runBlock({ () -> Void in
+				rnd = CGFloat(arc4random_uniform(1000)) / CGFloat(1000)
+			}),
+			SKAction.customActionWithDuration(0.4, actionBlock: {(node, time) -> Void in
+				sprayEmitter.emissionAngle = ((time / 0.4) * 3 * CGFloat(M_PI)) + (rnd! * 2 * CGFloat(M_PI))
+				if(time > 0.3) {
+					sprayEmitter.particleBirthRate = (0.4 - time) * 4000
+				}
+			}),
+			SKAction.runBlock({ () -> Void in
+				sprayEmitter.particleBirthRate = 0
+			}),
+			SKAction.waitForDuration(2),
+			SKAction.removeFromParent()
+		])
+		
+		sprayEmitter.runAction(sprayAction)*/
+		
 		updateAnswers()
 	}
 	

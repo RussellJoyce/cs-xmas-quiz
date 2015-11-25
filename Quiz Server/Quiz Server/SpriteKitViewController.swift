@@ -24,8 +24,8 @@ class SpriteKitViewController: NSViewController {
 		super.viewDidLoad()
 		
 		skView.ignoresSiblingOrder = true
-		skView.showsFPS = true
-		skView.showsNodeCount = true
+		//skView.showsFPS = true
+		//skView.showsNodeCount = true
 		
 		idleScene.setUpScene(skView.bounds.size, leds: leds)
 		testScene.setUpScene(skView.bounds.size, leds: leds)

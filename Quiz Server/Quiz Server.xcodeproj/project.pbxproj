@@ -27,6 +27,7 @@
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
 		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
+		3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3CF41C1F1C04C7D100785564 /* TimerSpray.sks */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
@@ -135,6 +136,7 @@
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
 		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
+		3CF41C1F1C04C7D100785564 /* TimerSpray.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimerSpray.sks; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46056EB81A19624E00C37628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46056EB91A19624E00C37628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
+				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
 				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
@@ -523,6 +526,7 @@
 				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
+				3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
