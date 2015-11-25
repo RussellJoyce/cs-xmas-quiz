@@ -21,6 +21,7 @@ class TimerScene: SKScene {
 	private var timer: NSTimer?
 	private var pulseAction: SKAction?
 	private let filternode = SKEffectNode()
+	private var ledcount : Float = 0;
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -78,11 +79,19 @@ class TimerScene: SKScene {
 			pulseupaction,
 			tickSound,
 			SKAction.runBlock({ () -> Void in
+				self.ledcount = self.ledcount + (5/3)
+				let ledstodec = Int(floor(self.ledcount))
+				for _ in 0..<ledstodec {
+					self.leds?.stringPointlessDec()
+				}
+				self.ledcount -= floor(self.ledcount)
+				
 				self.time--
 				self.updateTime()
 				if(self.time == 0) {
 					self.timer?.invalidate()
 					self.runAction(self.hornSound)
+					leds?.stringPointlessCorrect()
 					let p = SKEmitterNode(fileNamed: "SparksUp2")!
 					p.position = CGPoint(x: self.centrePoint.x, y: 0)
 					p.zPosition = 2
@@ -157,6 +166,7 @@ class TimerScene: SKScene {
 		timer?.invalidate()
 		updateAnswers()
 		updateTime()
+		leds?.stringPointlessReset()
 	}
 	
 	func startTimer() {
