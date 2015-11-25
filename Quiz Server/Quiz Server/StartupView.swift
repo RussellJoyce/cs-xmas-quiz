@@ -26,7 +26,8 @@ class StartupView: NSViewController {
         super.viewDidLoad()
         
         allScreens = NSScreen.screens() as [NSScreen]?
-        
+		allScreens!.sortInPlace({$0.frame.width > $1.frame.width})
+		
         if let screens = allScreens {
             let numScreens = screens.count
             print("Found \(numScreens) screen(s):")
