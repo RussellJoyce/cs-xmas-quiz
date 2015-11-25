@@ -105,8 +105,8 @@ class TimerScene: SKScene {
 			})
 		])
 
-		mainNode.position = CGPoint(x: 900, y: self.size.height - 360)
-		countmainNode.position = CGPoint(x: 560, y: self.size.height - 700)
+		mainNode.position = CGPoint(x: 750, y: self.size.height - 360)
+		countmainNode.position = CGPoint(x: 460, y: self.size.height - 700)
 		
 		text.fontSize = 300
 		text.fontColor = NSColor.whiteColor()
@@ -162,7 +162,7 @@ class TimerScene: SKScene {
 
 	func reset() {
 		correct = 0
-		time = 60
+		time = 15
 		timer?.invalidate()
 		updateAnswers()
 		updateTime()
@@ -223,6 +223,11 @@ class TimerScene: SKScene {
 	}
 	
 	func updateTime() {
+		if(time > 9) {
+			mainNode.position = CGPoint(x: 770, y: self.size.height - 360)
+		} else {
+			mainNode.position = CGPoint(x: 850, y: self.size.height - 360)
+		}
 		text.text = String(time)
 		shadowText.text = String(time)
 	}
