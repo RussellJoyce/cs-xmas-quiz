@@ -16,36 +16,9 @@ class TestScene: SKScene {
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
-	let numbers = [SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold")]
-	let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!]
-	let sparksDown = [SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!]
+	var numbers = [SKLabelNode]()
+	var sparksUp = [SKEmitterNode]()
+	var sparksDown = [SKEmitterNode]()
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -57,25 +30,29 @@ class TestScene: SKScene {
 		self.leds = leds
 		
 		self.backgroundColor = NSColor.blackColor()
-		for (index, node) in numbers.enumerate() {
-			node.fontColor = NSColor.blueColor()
-			node.fontSize = 170.0
-			node.horizontalAlignmentMode = .Center
-			node.verticalAlignmentMode = .Center
-			node.text = String(index + 1)
-			node.position = CGPoint(x: (index * 190) + 105, y: 540)
-			node.zPosition = 2
-			self.addChild(node)
-		}
-		for (index, node) in sparksUp.enumerate() {
-			node.position = CGPoint(x: (index * 190) + 105, y: 655)
-			node.zPosition = 1
-			self.addChild(node)
-		}
-		for (index, node) in sparksDown.enumerate() {
-			node.position = CGPoint(x: (index * 190) + 105, y: 425)
-			node.zPosition = 1
-			self.addChild(node)
+		
+		for i in 0...9 {
+			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			numberNode.fontSize = 170.0
+			numberNode.horizontalAlignmentMode = .Center
+			numberNode.verticalAlignmentMode = .Center
+			numberNode.text = String(i + 1)
+			numberNode.position = CGPoint(x: (i * 190) + 105, y: 540)
+			numberNode.zPosition = 2
+			numbers.append(numberNode)
+			self.addChild(numberNode)
+		
+			let sparksUpNode = SKEmitterNode(fileNamed: "SparksUp")!
+			sparksUpNode.position = CGPoint(x: (i * 190) + 105, y: 655)
+			sparksUpNode.zPosition = 1
+			sparksUp.append(sparksUpNode)
+			self.addChild(sparksUpNode)
+
+			let sparksDownNode = SKEmitterNode(fileNamed: "SparksDown")!
+			sparksDownNode.position = CGPoint(x: (i * 190) + 105, y: 425)
+			sparksDownNode.zPosition = 1
+			sparksDown.append(sparksDownNode)
+			self.addChild(sparksDownNode)
 		}
 	}
 	
