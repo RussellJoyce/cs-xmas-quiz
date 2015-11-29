@@ -162,7 +162,7 @@ class TimerScene: SKScene {
 
 	func reset() {
 		correct = 0
-		time = 15
+		time = 60
 		timer?.invalidate()
 		updateAnswers()
 		updateTime()
