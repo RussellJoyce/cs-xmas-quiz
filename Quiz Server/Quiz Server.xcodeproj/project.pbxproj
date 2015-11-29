@@ -43,6 +43,7 @@
 		464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19231BE7E44700F0491B /* ORSSerialPort.m */; };
 		464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19251BE7E44700F0491B /* ORSSerialPortManager.m */; };
 		464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19271BE7E44700F0491B /* ORSSerialRequest.m */; };
+		4654E6F31C0B71EF0048F5D9 /* SparksDownImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */; };
 		4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4656CA1A1A39100200A70F91 /* SparksDown.sks */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
@@ -88,6 +89,7 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
+		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
 
@@ -160,6 +162,7 @@
 		464E19251BE7E44700F0491B /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
 		464E19261BE7E44700F0491B /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
 		464E19271BE7E44700F0491B /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
+		4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDownImage.sks; sourceTree = "<group>"; };
 		4656CA1A1A39100200A70F91 /* SparksDown.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDown.sks; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
@@ -205,6 +208,7 @@
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
+		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -283,6 +287,8 @@
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
+				46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */,
+				4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */,
 				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
 				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
@@ -499,6 +505,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
+				4654E6F31C0B71EF0048F5D9 /* SparksDownImage.sks in Resources */,
 				3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */,
@@ -514,6 +521,7 @@
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
+				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
 				4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */,

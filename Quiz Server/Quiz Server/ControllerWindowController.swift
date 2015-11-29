@@ -178,13 +178,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.trueFalseAnswer(false)
 	}
 	
-	@IBAction func testSetAllGreen(sender: AnyObject) {
-	}
-	
-	@IBAction func testSetAllRed(sender: AnyObject) {
-
-	}
-	
     @IBAction func buzzersNextTeam(sender: AnyObject) {
         quizView.buzzersNextTeam()
     }
@@ -203,6 +196,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func timerDecrement(sender: AnyObject) {
 		quizView.timerDecrement()
+	}
+	
+	@IBAction func setTeamType(sender: NSPopUpButton) {
+		switch sender.indexOfSelectedItem {
+		case 0:
+			quizView.setTeamType(sender.tag, type: .Christmas)
+		case 1:
+			quizView.setTeamType(sender.tag, type: .Academic)
+		case 2:
+			quizView.setTeamType(sender.tag, type: .Ibm)
+		default:
+			quizView.setTeamType(sender.tag, type: .Christmas)
+		}
 	}
 	
     override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {

@@ -95,8 +95,7 @@ class QuizViewController: NSViewController {
 			}
         }
     }
-    
-    
+	
     /// Called when buzzer has been pressed down
     ///
     /// - parameter team: Team number (0-7)
@@ -135,7 +134,6 @@ class QuizViewController: NSViewController {
         }
     }
     
-	
 	func startTimer() {
 		spriteKitView.startTimer();
 	}
@@ -151,7 +149,6 @@ class QuizViewController: NSViewController {
 	func timerDecrement() {
 		spriteKitView.timerDecrement();
 	}
-	
 	
 	func setPointlessTeam(team: Int) {
 		pointlessGame.setCurrentTeam(team)
@@ -188,5 +185,8 @@ class QuizViewController: NSViewController {
     func buzzersNextTeam() {
         spriteKitView.nextBuzzerTeam()
     }
-    
+	
+	func setTeamType(team: Int, type: TeamType) {
+		spriteKitView.setTeamType(team, type: type)
+	}
 }
