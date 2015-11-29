@@ -28,8 +28,8 @@ class TestScene: SKScene {
 	var imageSparks = [[SKEmitterNode]]()
 	
 	let ibmSparks = ["ibm-i", "ibm-b", "ibm-m"]
-	let academicSparks = ["mortarboard", "floppydisk", "thinking"]
-	let christmasSparks = ["tree", "santa", "present"]
+	let academicSparks = ["mortarboard", "mortarboard", "mortarboard"]
+	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
 	
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
