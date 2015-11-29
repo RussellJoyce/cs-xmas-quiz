@@ -194,7 +194,7 @@ class PGLabelView : NSView {
 
 
 class PGMainView: NSView {
-	let bgImage = NSImage(named: "purple-texture")
+	let bgImage = NSImage(named: "purple-texture-blurred")
 	override func drawRect(dirtyRect: NSRect) {
 		bgImage?.drawInRect(dirtyRect)
 	}

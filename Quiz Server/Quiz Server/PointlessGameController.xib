@@ -8,8 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PointlessGameController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="labelstack" destination="TXz-pk-vXC" id="ByA-kk-Pxg"/>
-                <outlet property="pv" destination="rDt-SH-Ywg" id="v9G-6n-jVX"/>
+                <outlet property="labelstack" destination="JeB-6P-ehh" id="QZL-4F-xby"/>
+                <outlet property="pv" destination="5dV-tf-4RZ" id="OOl-Mw-Bdc"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
         </customObject>
@@ -19,62 +19,36 @@
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView translatesAutoresizingMaskIntoConstraints="NO" id="Q6D-JU-pIQ" userLabel="Blur Layer" colorLabel="IBBuiltInLabel-Red">
-                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="5dV-tf-4RZ" customClass="PointlessView" customModule="Quiz_Server" customModuleProvider="target">
+                    <rect key="frame" x="116" y="83" width="859" height="915"/>
+                    <animations/>
+                </customView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="XAt-Fg-45y">
+                    <rect key="frame" x="1072" y="83" width="819" height="915"/>
                     <subviews>
-                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="rDt-SH-Ywg" customClass="PointlessView" customModule="Quiz_Server" customModuleProvider="target">
-                            <rect key="frame" x="116" y="83" width="859" height="915"/>
+                        <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="JeB-6P-ehh">
+                            <rect key="frame" x="0.0" y="0.0" width="819" height="915"/>
                             <animations/>
-                        </customView>
-                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="iAF-aR-LGZ">
-                            <rect key="frame" x="1072" y="83" width="819" height="915"/>
-                            <subviews>
-                                <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="TXz-pk-vXC">
-                                    <rect key="frame" x="0.0" y="0.0" width="819" height="915"/>
-                                    <animations/>
-                                </stackView>
-                            </subviews>
-                            <constraints>
-                                <constraint firstAttribute="bottom" secondItem="TXz-pk-vXC" secondAttribute="bottom" id="AGp-bw-lSg"/>
-                                <constraint firstItem="TXz-pk-vXC" firstAttribute="leading" secondItem="iAF-aR-LGZ" secondAttribute="leading" id="FjT-dK-rgD"/>
-                                <constraint firstItem="TXz-pk-vXC" firstAttribute="top" secondItem="iAF-aR-LGZ" secondAttribute="top" id="Ytm-OB-3bG"/>
-                                <constraint firstAttribute="trailing" secondItem="TXz-pk-vXC" secondAttribute="trailing" id="z5c-hp-qKB"/>
-                            </constraints>
-                            <animations/>
-                        </customView>
+                        </stackView>
                     </subviews>
                     <constraints>
-                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="rDt-SH-Ywg" secondAttribute="trailing" constant="97" id="72R-7O-GMt"/>
-                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="1072" id="FvP-gi-Wvp"/>
-                        <constraint firstAttribute="bottom" secondItem="iAF-aR-LGZ" secondAttribute="bottom" constant="83" id="U3L-ra-FVP"/>
-                        <constraint firstItem="rDt-SH-Ywg" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="82" id="ZU6-0g-A5j"/>
-                        <constraint firstItem="iAF-aR-LGZ" firstAttribute="top" secondItem="Q6D-JU-pIQ" secondAttribute="top" constant="82" id="Zmh-hq-27U"/>
-                        <constraint firstItem="rDt-SH-Ywg" firstAttribute="leading" secondItem="Q6D-JU-pIQ" secondAttribute="leading" constant="116" id="a7s-Xq-wMu"/>
-                        <constraint firstAttribute="trailing" secondItem="iAF-aR-LGZ" secondAttribute="trailing" constant="29" id="hwB-00-sqs"/>
-                        <constraint firstAttribute="bottom" secondItem="rDt-SH-Ywg" secondAttribute="bottom" constant="83" id="noD-D4-Rsi"/>
+                        <constraint firstItem="JeB-6P-ehh" firstAttribute="top" secondItem="XAt-Fg-45y" secondAttribute="top" id="DSz-Ze-7CU"/>
+                        <constraint firstAttribute="trailing" secondItem="JeB-6P-ehh" secondAttribute="trailing" id="GHH-F1-yz5"/>
+                        <constraint firstItem="JeB-6P-ehh" firstAttribute="leading" secondItem="XAt-Fg-45y" secondAttribute="leading" id="ntT-42-Cyf"/>
+                        <constraint firstAttribute="bottom" secondItem="JeB-6P-ehh" secondAttribute="bottom" id="pTX-PU-Xrk"/>
                     </constraints>
-                    <backgroundFilters>
-                        <ciFilter name="CIGaussianBlur">
-                            <configuration>
-                                <null key="inputImage"/>
-                                <real key="inputRadius" value="30"/>
-                            </configuration>
-                        </ciFilter>
-                        <ciFilter name="CIWhitePointAdjust">
-                            <configuration>
-                                <ciColor key="inputColor" red="0.75507023358585856" green="0.142240717929874" blue="0.71527546912016959" alpha="1"/>
-                                <null key="inputImage"/>
-                            </configuration>
-                        </ciFilter>
-                    </backgroundFilters>
                     <animations/>
                 </customView>
             </subviews>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="Q6D-JU-pIQ" secondAttribute="trailing" id="2j7-Ug-vZ0"/>
-                <constraint firstItem="Q6D-JU-pIQ" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="Olt-qQ-YU9"/>
-                <constraint firstItem="Q6D-JU-pIQ" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="j2e-pF-upa"/>
-                <constraint firstAttribute="bottom" secondItem="Q6D-JU-pIQ" secondAttribute="bottom" id="uVw-Oz-liW"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="top" secondItem="5dV-tf-4RZ" secondAttribute="top" id="2U9-hi-IX3"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="leading" secondItem="5dV-tf-4RZ" secondAttribute="trailing" constant="97" id="4BI-B2-5AS"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="1072" id="DXe-iT-XZK"/>
+                <constraint firstItem="5dV-tf-4RZ" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="116" id="Iha-WF-d3m"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="centerY" secondItem="Hz6-mo-xeY" secondAttribute="centerY" id="JpK-aI-DQl"/>
+                <constraint firstAttribute="trailing" secondItem="XAt-Fg-45y" secondAttribute="trailing" constant="29" id="mOI-gd-B02"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="bottom" secondItem="5dV-tf-4RZ" secondAttribute="bottom" id="x1I-Lw-TVa"/>
+                <constraint firstItem="XAt-Fg-45y" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="82" id="yVT-uR-Wnh"/>
             </constraints>
             <animations/>
             <point key="canvasLocation" x="1088" y="809"/>
