@@ -9,6 +9,12 @@
 import Cocoa
 import SpriteKit
 
+enum TeamType {
+	case Christmas
+	case Academic
+	case Ibm
+}
+
 class TestScene: SKScene {
 	
 	var leds: QuizLeds?
@@ -16,36 +22,15 @@ class TestScene: SKScene {
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
-	let numbers = [SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold"),
-		SKLabelNode(fontNamed: ".AppleSystemUIFontBold")]
-	let sparksUp = [SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!,
-		SKEmitterNode(fileNamed: "SparksUp")!]
-	let sparksDown = [SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!,
-		SKEmitterNode(fileNamed: "SparksDown")!]
+	var numbers = [SKLabelNode]()
+	var sparksUp = [SKEmitterNode]()
+	var sparksDown = [SKEmitterNode]()
+	var imageSparks = [[SKEmitterNode]]()
+	
+	let ibmSparks = ["ibm-i", "ibm-b", "ibm-m"]
+	let academicSparks = ["mortarboard", "mortarboard", "mortarboard"]
+	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
+	
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -57,25 +42,49 @@ class TestScene: SKScene {
 		self.leds = leds
 		
 		self.backgroundColor = NSColor.blackColor()
-		for (index, node) in numbers.enumerate() {
-			node.fontColor = NSColor.blueColor()
-			node.fontSize = 170.0
-			node.horizontalAlignmentMode = .Center
-			node.verticalAlignmentMode = .Center
-			node.text = String(index + 1)
-			node.position = CGPoint(x: (index * 190) + 105, y: 540)
-			node.zPosition = 2
-			self.addChild(node)
-		}
-		for (index, node) in sparksUp.enumerate() {
-			node.position = CGPoint(x: (index * 190) + 105, y: 655)
-			node.zPosition = 1
-			self.addChild(node)
-		}
-		for (index, node) in sparksDown.enumerate() {
-			node.position = CGPoint(x: (index * 190) + 105, y: 425)
-			node.zPosition = 1
-			self.addChild(node)
+		
+		for i in 0...9 {
+			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			numberNode.fontSize = 170.0
+			numberNode.horizontalAlignmentMode = .Center
+			numberNode.verticalAlignmentMode = .Center
+			numberNode.text = String(i + 1)
+			numberNode.position = CGPoint(x: (i * 190) + 105, y: 540)
+			numberNode.zPosition = 3
+			numbers.append(numberNode)
+			self.addChild(numberNode)
+		
+			let sparksUpNode = SKEmitterNode(fileNamed: "SparksUp")!
+			sparksUpNode.position = CGPoint(x: (i * 190) + 105, y: 655)
+			sparksUpNode.zPosition = 2
+			sparksUp.append(sparksUpNode)
+			self.addChild(sparksUpNode)
+
+			let sparksDownNode = SKEmitterNode(fileNamed: "SparksDown")!
+			sparksDownNode.position = CGPoint(x: (i * 190) + 105, y: 425)
+			sparksDownNode.zPosition = 2
+			sparksDown.append(sparksDownNode)
+			self.addChild(sparksDownNode)
+			
+			var imageSparksNodes = [SKEmitterNode]()
+			
+			for j in 0...2 {
+				let imageSparksUpNode = SKEmitterNode(fileNamed: "SparksUpImage")!
+				imageSparksUpNode.position = CGPoint(x: (i * 190) + 105, y: 655)
+				imageSparksUpNode.zPosition = 1
+				imageSparksUpNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
+				imageSparksNodes.append(imageSparksUpNode)
+				self.addChild(imageSparksUpNode)
+				
+				let imageSparksDownNode = SKEmitterNode(fileNamed: "SparksDownImage")!
+				imageSparksDownNode.position = CGPoint(x: (i * 190) + 105, y: 425)
+				imageSparksDownNode.zPosition = 1
+				imageSparksDownNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
+				imageSparksNodes.append(imageSparksDownNode)
+				self.addChild(imageSparksDownNode)
+			}
+			
+			imageSparks.append(imageSparksNodes)
 		}
 	}
 	
@@ -93,6 +102,11 @@ class TestScene: SKScene {
 		for node in sparksDown {
 			node.particleBirthRate = 0
 		}
+		for team in imageSparks {
+			for node in team {
+				node.particleBirthRate = 0
+			}
+		}
 	}
 	
 	func buzzerPressed(team: Int) {
@@ -100,6 +114,10 @@ class TestScene: SKScene {
 		leds?.buzzerOn(team)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
+		
+		for node in imageSparks[team] {
+			node.particleBirthRate = 3
+		}
 		
 		if team == 7 {
 			self.runAction(eightSound)
@@ -111,5 +129,26 @@ class TestScene: SKScene {
 		leds?.buzzerOff(team)
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
+		
+		for node in imageSparks[team] {
+			node.particleBirthRate = 0
+		}
+	}
+	
+	func setTeamType(team: Int, type: TeamType) {
+		var images: [String]
+		
+		switch type {
+		case .Christmas:
+			images = christmasSparks
+		case .Academic:
+			images = academicSparks
+		case .Ibm:
+			images = ibmSparks
+		}
+		
+		for (i, node) in imageSparks[team].enumerate() {
+			node.particleTexture = SKTexture(imageNamed: images[i / 2])
+		}
 	}
 }

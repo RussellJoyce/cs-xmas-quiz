@@ -131,4 +131,7 @@ class SpriteKitViewController: NSViewController {
 		timerScene.timerDecrement();
 	}
 	
+	func setTeamType(team: Int, type: TeamType) {
+		testScene.setTeamType(team, type: type)
+	}
 }

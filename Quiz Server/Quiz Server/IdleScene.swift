@@ -15,6 +15,7 @@ class IdleScene: SKScene {
 	var snowmojis = [SKEmitterNode]()
 	var leds: QuizLeds?
 	private var setUp = false
+	let emoji = ["tree", "santa", "snowcloud", "mortarboard", "snowman", "snowflake", "floppydisk", "robot", "present", "poop"]
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -44,7 +45,7 @@ class IdleScene: SKScene {
 		
 		for i in 0...9 {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
-			snowmoji.particleTexture = SKTexture(imageNamed: "snowmoji\(i)")
+			snowmoji.particleTexture = SKTexture(imageNamed: emoji[i])
 			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
 			snowmoji.zPosition = CGFloat(i + 1)
 			snowmojis.append(snowmoji)
