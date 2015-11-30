@@ -44,7 +44,7 @@ class TrueFalseViewController: NSViewController {
 		topView.topLabel = topLabel
 		teams.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
 		for i in 0..<teams.count {
-			teams[i].setTeam(i, leds: leds)
+			teams[i].setTeam(i)
 		}
     }
 	
@@ -57,6 +57,7 @@ class TrueFalseViewController: NSViewController {
 		for team in teams {
 			team.setNeutral()
 		}
+		leds?.buzzersOff()
 		counted = false
 		
 		🔊.prepareToPlay()
@@ -66,6 +67,12 @@ class TrueFalseViewController: NSViewController {
 	func start() {
 		if (counting) {
 			return
+		}
+		
+		for i in 0..<teams.count {
+			if(teamEnabled[i]) {
+				leds?.buzzerOn(i)
+			}
 		}
 		
 		objc_sync_enter(🔒)
@@ -98,6 +105,9 @@ class TrueFalseViewController: NSViewController {
 				self.🔊end.currentTime = 0
 				self.🔊end.play()
 				objc_sync_exit(self.🔒)
+				
+				self.leds?.buzzersOff()
+				
 				//Now set the team colours based on who pressed what
 				for (i, team) in self.teams.enumerate() {
 					if(self.teamEnabled[i]) {
@@ -173,9 +183,8 @@ class TrueFalseTeamView : NSView {
 	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
 	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).CGColor
 	
-	func setTeam(team : Int, leds : QuizLeds?) {
+	func setTeam(team : Int) {
 		teamno = team
-		self.leds = leds
 		
 		label.editable = false
 		label.drawsBackground = false
@@ -226,14 +235,12 @@ class TrueFalseTeamView : NSView {
 		label.textColor = textColStd
 		self.layer?.backgroundColor = bgColStd
 		label.stringValue = "Team \(teamno + 1)"
-		leds?.buzzerOn(teamno)
 	}
 	
 	func setTeamOut() {
 		label.textColor = textColOut
 		self.layer?.backgroundColor = bgColOut
 		label.stringValue = "Team \(teamno + 1) OUT"
-		leds?.buzzerOff(teamno)
 	}
 	
 	required init?(coder: NSCoder) {super.init(coder: coder)}

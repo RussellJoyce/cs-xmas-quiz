@@ -90,10 +90,9 @@ class TestScene: SKScene {
 	
 	func reset() {
 		leds?.stringOff()
-		leds?.buzzersOff()
-		for (_, team) in numbers.enumerate() {
+		leds?.buzzersOn()
+		for team in numbers {
 			team.fontColor = NSColor.whiteColor()
-			leds?.stringOff()
 		}
 		
 		for node in sparksUp {
@@ -111,7 +110,6 @@ class TestScene: SKScene {
 	
 	func buzzerPressed(team: Int) {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		leds?.buzzerOn(team)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		
@@ -126,7 +124,6 @@ class TestScene: SKScene {
 	
 	func buzzerReleased(team: Int) {
 		numbers[team].fontColor = NSColor.whiteColor()
-		leds?.buzzerOff(team)
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
 		
