@@ -58,6 +58,13 @@ class IdleScene: SKScene {
 		garySnow.particleRotationSpeed = 1.0
 		garySnow.particleBirthRate = 0.05
 		
+		let eggSnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		eggSnow.particleTexture = SKTexture(imageNamed: "egg")
+		eggSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
+		eggSnow.zPosition = 11
+		eggSnow.particleRotationSpeed = 2.0
+		eggSnow.particleBirthRate = 0.01
+		
 		let text1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text1.text = "Computer Science"
 		text1.fontSize = 140
@@ -133,6 +140,7 @@ class IdleScene: SKScene {
 		self.addChild(textShadow)
 		self.addChild(lights)
 		self.addChild(garySnow)
+		self.addChild(eggSnow)
 	}
 	
 	func reset() {
