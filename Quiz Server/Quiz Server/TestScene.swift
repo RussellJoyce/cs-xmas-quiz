@@ -112,6 +112,7 @@ class TestScene: SKScene {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
+		leds?.stringTestOn(team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3
@@ -126,6 +127,7 @@ class TestScene: SKScene {
 		numbers[team].fontColor = NSColor.whiteColor()
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
+		leds?.stringTestOff(team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 0

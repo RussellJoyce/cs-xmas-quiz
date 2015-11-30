@@ -10,6 +10,8 @@
 #define LEDS_TEAM    0x20
 #define LEDS_TEAMC   0x30
 #define LEDS_COL     0x40
+#define LEDS_TESTON  0x50
+#define LEDS_TESTOFF 0x60
 #define LEDS_POINTW  0x80
 #define LEDS_POINTC  0x90
 

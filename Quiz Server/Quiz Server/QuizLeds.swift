@@ -8,12 +8,14 @@
 
 import Cocoa
 
-let LEDS_ANIM   = 0x10 as UInt8
-let LEDS_TEAM   = 0x20 as UInt8
-let LEDS_TEAMC  = 0x30 as UInt8
-let LEDS_COL    = 0x40 as UInt8
-let LEDS_POINTW = 0x80 as UInt8
-let LEDS_POINTC = 0x90 as UInt8
+let LEDS_ANIM    = 0x10 as UInt8
+let LEDS_TEAM    = 0x20 as UInt8
+let LEDS_TEAMC   = 0x30 as UInt8
+let LEDS_COL     = 0x40 as UInt8
+let LEDS_TESTON  = 0x50 as UInt8
+let LEDS_TESTOFF = 0x60 as UInt8
+let LEDS_POINTW  = 0x80 as UInt8
+let LEDS_POINTC  = 0x90 as UInt8
 
 let LED_ON     = 0xA0 as UInt8
 let LED_OFF    = 0xB0 as UInt8
@@ -113,6 +115,24 @@ class QuizLeds: NSObject {
 	func stringFixedColour(colour: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
 		return serial.sendData(NSData(bytes: [LEDS_COL + UInt8(colour)], length: 1));
+	}
+	
+	/// Turn on test LEDs for team
+	///
+	/// - parameter team: The team number (0-9)
+	/// - returns: true if data sent successfully, false otherwise
+	func stringTestOn(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
+		return serial.sendData(NSData(bytes: [LEDS_TESTON + UInt8(team)], length: 1));
+	}
+	
+	/// Turn off test LEDs for team
+	///
+	/// - parameter team: The team number (0-9)
+	/// - returns: true if data sent successfully, false otherwise
+	func stringTestOff(team: Int) -> Bool {
+		NSThread.sleepForTimeInterval(0.01)
+		return serial.sendData(NSData(bytes: [LEDS_TESTOFF + UInt8(team)], length: 1));
 	}
 	
 	/// Reset the Pointless LEDs

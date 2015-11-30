@@ -8,6 +8,7 @@
 
 #include "FastLED.h"
 #include "boardconfig.h"
+#include "ledmapping.h"
 #include "library.h"
 #include "twinkle.h"
 #include "megamas.h"
@@ -143,6 +144,18 @@ inline void setPointlessCorrect() {
     pointlessAnim = 2;
 }
 
+inline void setTestOn(int team) {
+    if (team < 0 || team >= NUM_TEAMS) return;
+    for (int i = team; i < NUM_LEDS; i+=team) leds[ledlookup[i]] = teamcol[team];
+    FastLED.show();
+}
+
+inline void setTestOff(int team) {
+    if (team < 0 || team >= NUM_TEAMS) return;
+    for (int i = team; i < NUM_LEDS; i+=team) leds[ledlookup[i]] = CRGB::Black;
+    FastLED.show();
+}
+
 
 void updateTick() {
     // Handle any data on serial port
@@ -163,6 +176,12 @@ void updateTick() {
                 break;
             case LEDS_COL:
                 set_string_colour(serialParam);
+                break;
+            case LEDS_TESTON:
+                setTestOn(serialParam);
+                break;
+            case LEDS_TESTOFF:
+                setTestOff(serialParam);
                 break;
             case LEDS_POINTW:
                 setPointlessWrong();
