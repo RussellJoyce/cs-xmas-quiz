@@ -265,6 +265,11 @@ void setup() {
     animations[1] = twinkle;
     animations[2] = megamas;
 
+    // Flash some LEDs to say we're on
+    setBuzzerLeds(0x03FF);
+    delay(500);
+    setBuzzerLeds(0x0000);
+
     // Set up serial (Teensy implicity uses full USB bandwidth of 12Mb/s)
     Serial.begin(0);
 
