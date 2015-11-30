@@ -98,18 +98,25 @@ class QuizLeds: NSObject {
     }
 
 	/// Set LED string to team colour
+	///
+	/// - parameter team: The team number (0-9)
+	/// - returns: true if data sent successfully, false otherwise
 	func stringTeamColour(team: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
 		return serial.sendData(NSData(bytes: [LEDS_TEAMC + UInt8(team)], length: 1));
 	}
 
-	/// Set LED string team LEDs to a given fixed colour
-	func stringFixedColour(team: Int) -> Bool {
+	/// Set LED string to a given fixed colour
+	///
+	/// - parameter colour: The colour (red, green, blue, cyan, magenta, yellow, white, black)
+	/// - returns: true if data sent successfully, false otherwise
+	func stringFixedColour(colour: Int) -> Bool {
 		NSThread.sleepForTimeInterval(0.01)
-		return serial.sendData(NSData(bytes: [LEDS_COL + UInt8(team)], length: 1));
+		return serial.sendData(NSData(bytes: [LEDS_COL + UInt8(colour)], length: 1));
 	}
 	
 	/// Reset the Pointless LEDs
+	///
 	/// - returns: true if data sent successfully, false otherwise
 	func stringPointlessReset() -> Bool {
 		return serial.sendData(NSData(bytes: [LED_POINT_STATE + UInt8(0)], length: 1));
