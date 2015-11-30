@@ -33,15 +33,15 @@ class IdleScene: SKScene {
 		let snowmenImage = SKSpriteNode(imageNamed: "background1-snowmen")
 		snowmenImage.position = self.centrePoint
 		snowmenImage.size = self.size
-		snowmenImage.zPosition = 11
+		snowmenImage.zPosition = 12
 		let snowImage = SKSpriteNode(imageNamed: "background1-snow")
 		snowImage.position = self.centrePoint
 		snowImage.size = self.size
-		snowImage.zPosition = 13
+		snowImage.zPosition = 14
 		
 		snow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
 		snow.particleBirthRate = 40
-		snow.zPosition = 12
+		snow.zPosition = 13
 		
 		for i in 0...9 {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
@@ -51,13 +51,20 @@ class IdleScene: SKScene {
 			snowmojis.append(snowmoji)
 		}
 		
+		let garySnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		garySnow.particleTexture = SKTexture(imageNamed: "gary")
+		garySnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
+		garySnow.zPosition = 11
+		garySnow.particleRotationSpeed = 1.0
+		garySnow.particleBirthRate = 0.05
+		
 		let text1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text1.text = "Computer Science"
 		text1.fontSize = 140
 		text1.horizontalAlignmentMode = .Center
 		text1.verticalAlignmentMode = .Center
 		text1.position = CGPoint(x: 0, y: 72)
-		text1.zPosition = 16
+		text1.zPosition = 17
 		text1.fontColor = NSColor.whiteColor()
 		
 		let text2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -66,12 +73,12 @@ class IdleScene: SKScene {
 		text2.horizontalAlignmentMode = .Center
 		text2.verticalAlignmentMode = .Center
 		text2.position = CGPoint(x: 0, y: -85)
-		text2.zPosition = 16
+		text2.zPosition = 18
 		text2.fontColor = NSColor.whiteColor()
 		
 		let text = SKNode()
 		text.position = CGPoint(x: 960, y: 820)
-		text.zPosition = 16
+		text.zPosition = 17
 		text.addChild(text1)
 		text.addChild(text2)
 		
@@ -82,7 +89,7 @@ class IdleScene: SKScene {
 		shadowText1.horizontalAlignmentMode = .Center
 		shadowText1.verticalAlignmentMode = .Center
 		shadowText1.position = CGPoint(x: 0, y: 72)
-		shadowText1.zPosition = 15
+		shadowText1.zPosition = 16
 		
 		let shadowText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		shadowText2.text = "Christmas Quiz 2015"
@@ -91,12 +98,12 @@ class IdleScene: SKScene {
 		shadowText2.horizontalAlignmentMode = .Center
 		shadowText2.verticalAlignmentMode = .Center
 		shadowText2.position = CGPoint(x: 0, y: -85)
-		shadowText2.zPosition = 15
+		shadowText2.zPosition = 16
 		
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
-		textShadow.zPosition = 15
+		textShadow.zPosition = 16
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
 		filter?.setValue(25, forKey: "inputRadius")
@@ -107,7 +114,7 @@ class IdleScene: SKScene {
 		
 		let lights = SKSpriteNode(imageNamed: "lights")
 		lights.position = CGPoint(x: 960, y: 985)
-		lights.zPosition = 14
+		lights.zPosition = 15
 		var lightsTextures = [SKTexture]()
 		for i in 1...4 {
 			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
@@ -125,6 +132,7 @@ class IdleScene: SKScene {
 		self.addChild(text)
 		self.addChild(textShadow)
 		self.addChild(lights)
+		self.addChild(garySnow)
 	}
 	
 	func reset() {
