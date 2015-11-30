@@ -113,6 +113,7 @@ class TestScene: SKScene {
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		leds?.stringTestOn(team)
+		leds?.buzzerOff(team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3
@@ -128,6 +129,7 @@ class TestScene: SKScene {
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
 		leds?.stringTestOff(team)
+		leds?.buzzerOn(team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 0
