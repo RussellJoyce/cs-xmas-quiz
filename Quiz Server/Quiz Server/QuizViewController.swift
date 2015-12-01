@@ -158,11 +158,11 @@ class QuizViewController: NSViewController {
 		pointlessGame.resetTeam()
 	}
 	
-    func setPointlessScore(score: Int) -> Bool {
+	func setPointlessScore(score: Int, animated: Bool) -> Bool {
         if currentRound != RoundType.Pointless || score < 0 || score > 100 {
             return false
         }
-		pointlessGame.setScore(score)
+		pointlessGame.setScore(score, animated: animated)
 		return true
     }
     

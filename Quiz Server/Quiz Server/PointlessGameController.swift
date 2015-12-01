@@ -46,12 +46,19 @@ class PointlessGameController: NSViewController {
 		pv.reset()
 	}
 	
-	func setScore(score: Int) {
-		pv.setScore(score, callback: {
+	func setScore(score: Int, animated: Bool) {
+		if (animated) {
+			pv.setScore(score, callback: {
+				if(self.lastTeam < self.labels.count)	{
+					self.labels[self.lastTeam].setText(String(score))
+				}
+			})
+		}
+		else {
 			if(self.lastTeam < self.labels.count)	{
 				self.labels[self.lastTeam].setText(String(score))
 			}
-		})
+		}
 	}
 	
 	func wrong() {

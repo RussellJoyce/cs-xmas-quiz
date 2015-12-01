@@ -150,10 +150,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.setPointlessWrong()
         }
         else if let score = Int(pointlessScore.stringValue) {
-            quizView.setPointlessScore(score)
+            quizView.setPointlessScore(score, animated: true)
         }
     }
-    
+	
+	@IBAction func setPointlessScoreValueImmediate(sender: AnyObject) {
+		if pointlessScore.stringValue.lowercaseString == "w" {
+			quizView.setPointlessWrong()
+		}
+		else if let score = Int(pointlessScore.stringValue) {
+			quizView.setPointlessScore(score, animated: false)
+		}
+	}
+	
 	@IBAction func pointlessTeamPress(sender: NSButton) {
 		quizView.setPointlessTeam(sender.tag)
 	}
