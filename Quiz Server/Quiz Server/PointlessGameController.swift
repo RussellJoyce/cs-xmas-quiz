@@ -23,17 +23,17 @@ class PointlessGameController: NSViewController {
 		for i in 1...10 {
 			let v = PGLabelView(teamno: i)
 			labels.append(v)
-			labelstack.addView(v, inGravity: NSStackViewGravity.Center)
+			labelstack.addView(v, in: NSStackViewGravity.center)
 		}
 		
 		pv.layer!.borderWidth = 4
-		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
+		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).cgColor
         
         pv?.leds = leds
     }
 	
 	
-	func setCurrentTeam(team: Int) {
+	func setCurrentTeam(_ team: Int) {
         leds?.buzzersOff()
         leds?.buzzerOn(team)
         leds?.stringOff()
@@ -46,7 +46,7 @@ class PointlessGameController: NSViewController {
 		pv.reset()
 	}
 	
-	func setScore(score: Int, animated: Bool) {
+	func setScore(_ score: Int, animated: Bool) {
 		if (animated) {
 			pv.setScore(score, callback: {
 				if(self.lastTeam < self.labels.count)	{
@@ -102,8 +102,8 @@ class PGLabelView : NSView {
 	let teamno : Int
 	let label = NSTextField()
 	
-	let bgCol = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).CGColor
-	let bgColHighlight = NSColor(red: 1, green: 1, blue: 1, alpha: 0.9).CGColor
+	let bgCol = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
+	let bgColHighlight = NSColor(red: 1, green: 1, blue: 1, alpha: 0.9).cgColor
 	
 	let textCol = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let textColHighlight = NSColor(red: 0, green: 0, blue: 0, alpha: 1)
@@ -116,9 +116,9 @@ class PGLabelView : NSView {
 		self.layerUsesCoreImageFilters = true
 		self.layer!.backgroundColor = bgCol
 		
-		label.editable = false
+		label.isEditable = false
 		label.drawsBackground = false
-		label.bezeled = false
+		label.isBezeled = false
 		label.font = NSFont(name: "DIN Alternate Bold", size: 52)
 		label.stringValue = "Team " + String(teamno) + ":"
 		label.translatesAutoresizingMaskIntoConstraints = false
@@ -129,35 +129,35 @@ class PGLabelView : NSView {
 
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(600)))
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(80)))
 		
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.CenterY,
+			attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal,
+			toItem: self, attribute: NSLayoutAttribute.centerY,
 			multiplier: 1, constant: -5))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.Leading,
+			attribute: NSLayoutAttribute.leading, relatedBy: NSLayoutRelation.equal,
+			toItem: self, attribute: NSLayoutAttribute.leading,
 			multiplier: 1, constant: 50))
 		
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(280)))
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(60)))
 
 	}
@@ -169,7 +169,7 @@ class PGLabelView : NSView {
 		sweep.fromValue = bgCol
 		sweep.toValue = bgColHighlight
 		sweep.duration = 0.5
-		self.layer?.addAnimation(sweep, forKey: "sweep")
+		self.layer?.add(sweep, forKey: "sweep")
 		self.layer!.backgroundColor = bgColHighlight
 	}
 	
@@ -180,11 +180,11 @@ class PGLabelView : NSView {
 		sweep.fromValue = bgColHighlight
 		sweep.toValue = bgCol
 		sweep.duration = 0.5
-		self.layer?.addAnimation(sweep, forKey: "sweep")
+		self.layer?.add(sweep, forKey: "sweep")
 		self.layer!.backgroundColor = bgCol
 	}
 	
-	func setText(text : String) {
+	func setText(_ text : String) {
 		label.stringValue = "Team " + String(teamno) + ": " + text
 	}
 	
@@ -202,8 +202,8 @@ class PGLabelView : NSView {
 
 class PGMainView: NSView {
 	let bgImage = NSImage(named: "purple-texture-blurred")
-	override func drawRect(dirtyRect: NSRect) {
-		bgImage?.drawInRect(dirtyRect)
+	override func draw(_ dirtyRect: NSRect) {
+		bgImage?.draw(in: dirtyRect)
 	}
 }
 

@@ -27,7 +27,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode: Bool = true
-    var buzzersEnabled = [Bool](count: 10, repeatedValue: true)
+    var buzzersEnabled = [Bool](repeating: true, count: 10)
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
     
@@ -40,7 +40,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         
         // Open serial port
         quizLeds?.openSerial()
-        quizView.quizLeds = quizLeds
+        quizView?.quizLeds = quizLeds
 		
         // Open game controller
         quizBuzzers?.setDelegate(self)
@@ -48,7 +48,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         
         if (testMode) {
             // Show quiz view in floating window
-            quizWindow = NSWindow(contentViewController: quizView)
+            quizWindow = NSWindow(contentViewController: quizView!)
             quizWindow?.title = "Quiz Test"
             quizWindow?.styleMask = NSTitledWindowMask
             quizWindow?.makeKeyAndOrderFront(self)
@@ -56,21 +56,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
         else {
             // Show quiz view on selected screen (resized to fit)
-            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-                toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            quizView?.view.addConstraint(NSLayoutConstraint(item: quizView?.view,
+                attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
+                toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
                 multiplier: 1, constant: quizScreen!.frame.width))
-            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
-                toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+            quizView?.view.addConstraint(NSLayoutConstraint(item: quizView?.view,
+                attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal,
+                toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
                 multiplier: 1, constant: quizScreen!.frame.height))
-            quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
+            quizView?.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
         
         buzzerButtons += [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
     }
     
-    func windowWillClose(notification: NSNotification) {
+    func windowWillClose(_ notification: Notification) {
         // Turn off all buzzer and animation LEDs
         quizLeds?.buzzersOff()
         quizLeds?.stringOff()
@@ -80,21 +80,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizBuzzers?.stopListening()
     }
     
-    @IBAction func pressedNumber(sender: NSButton) {
+    @IBAction func pressedNumber(_ sender: NSButton) {
         // If buzzers are not connected, buttons will act as virtual buzzers,
         //  otherwise, buttons will disable buzzers
         if quizBuzzers == nil {
             if (sender.state == NSOnState) {
-                quizView.buzzerPressed(sender.tag)
+                quizView?.buzzerPressed(sender.tag)
             }
             else {
-                quizView.buzzerReleased(sender.tag)
+                quizView?.buzzerReleased(sender.tag)
             }
         }
         else {
             if (sender.state == NSOnState) {
                 buzzersEnabled[sender.tag] = false
-                quizView.buzzerReleased(sender.tag)
+                quizView?.buzzerReleased(sender.tag)
             }
             else {
                 buzzersEnabled[sender.tag] = true
@@ -102,135 +102,135 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
     
-    @IBAction func disableAllBuzzers(sender: NSButton) {
+    @IBAction func disableAllBuzzers(_ sender: NSButton) {
         if (sender.state == NSOnState) {
             buzzersDisabled = true
             for i in 0...9 {
-                quizView.buzzerReleased(i)
-                buzzerButtons[i].enabled = false
+                quizView?.buzzerReleased(i)
+                buzzerButtons[i].isEnabled = false
             }
         }
         else {
             buzzersDisabled = false
             for button in buzzerButtons {
-                button.enabled = true
+                button.isEnabled = true
             }
         }
     }
 
     
-    func tabView(tabView: NSTabView, didSelectTabViewItem tabViewItem: NSTabViewItem?) {
+    func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
         let index = tabView.indexOfTabViewItem(tabViewItem!)
         
         switch index {
         case 0:
-            quizView.setRound(RoundType.Idle)
+            quizView?.setRound(RoundType.idle)
         case 1:
-            quizView.setRound(RoundType.Test)
+            quizView?.setRound(RoundType.test)
         case 2:
-            quizView.setRound(RoundType.Buzzers)
+            quizView?.setRound(RoundType.buzzers)
         case 3:
-            quizView.setRound(RoundType.TrueFalse)
+            quizView?.setRound(RoundType.trueFalse)
         case 4:
-            quizView.setRound(RoundType.Pointless)
+            quizView?.setRound(RoundType.pointless)
 		case 5:
-			quizView.setRound(RoundType.Timer)
+			quizView?.setRound(RoundType.timer)
         default:
             break
         }
     }
     
 
-    @IBAction func resetRound(sender: AnyObject) {
-        quizView.resetRound()
+    @IBAction func resetRound(_ sender: AnyObject) {
+        quizView?.resetRound()
     }
     
-    @IBAction func setPointlessScoreValue(sender: AnyObject) {
-        if pointlessScore.stringValue.lowercaseString == "w" {
-            quizView.setPointlessWrong()
+    @IBAction func setPointlessScoreValue(_ sender: AnyObject) {
+        if pointlessScore.stringValue.lowercased() == "w" {
+            quizView?.setPointlessWrong()
         }
         else if let score = Int(pointlessScore.stringValue) {
-            quizView.setPointlessScore(score, animated: true)
+            quizView?.setPointlessScore(score, animated: true)
         }
     }
 	
-	@IBAction func setPointlessScoreValueImmediate(sender: AnyObject) {
-		if pointlessScore.stringValue.lowercaseString == "w" {
-			quizView.setPointlessWrong()
+	@IBAction func setPointlessScoreValueImmediate(_ sender: AnyObject) {
+		if pointlessScore.stringValue.lowercased() == "w" {
+			quizView?.setPointlessWrong()
 		}
 		else if let score = Int(pointlessScore.stringValue) {
-			quizView.setPointlessScore(score, animated: false)
+			quizView?.setPointlessScore(score, animated: false)
 		}
 	}
 	
-	@IBAction func pointlessTeamPress(sender: NSButton) {
-		quizView.setPointlessTeam(sender.tag)
+	@IBAction func pointlessTeamPress(_ sender: NSButton) {
+		quizView?.setPointlessTeam(sender.tag)
 	}
 	
-	@IBAction func pointlessResetTeam(sender: AnyObject) {
-		quizView.pointlessResetCurrentTeam()
+	@IBAction func pointlessResetTeam(_ sender: AnyObject) {
+		quizView?.pointlessResetCurrentTeam()
 	}
 
-    @IBAction func pointlessWrong(sender: AnyObject) {
-        quizView.setPointlessWrong()
+    @IBAction func pointlessWrong(_ sender: AnyObject) {
+        quizView?.setPointlessWrong()
     }
     
-	@IBAction func trueFalseStart(sender: NSButton) {
-		quizView.trueFalseStart()
+	@IBAction func trueFalseStart(_ sender: NSButton) {
+		quizView?.trueFalseStart()
 	}
 	
-	@IBAction func trueFalseTrue(sender: NSButton) {
-		quizView.trueFalseAnswer(true)
+	@IBAction func trueFalseTrue(_ sender: NSButton) {
+		quizView?.trueFalseAnswer(true)
 	}
 	
-	@IBAction func trueFalseFalse(sender: NSButton) {
-		quizView.trueFalseAnswer(false)
+	@IBAction func trueFalseFalse(_ sender: NSButton) {
+		quizView?.trueFalseAnswer(false)
 	}
 	
-    @IBAction func buzzersNextTeam(sender: AnyObject) {
-        quizView.buzzersNextTeam()
+    @IBAction func buzzersNextTeam(_ sender: AnyObject) {
+        quizView?.buzzersNextTeam()
     }
     
-	@IBAction func startTimer(sender: AnyObject) {
-		quizView.startTimer()
+	@IBAction func startTimer(_ sender: AnyObject) {
+		quizView?.startTimer()
 	}
 	
-	@IBAction func stopTimer(sender: AnyObject) {
-		quizView.stopTimer()
+	@IBAction func stopTimer(_ sender: AnyObject) {
+		quizView?.stopTimer()
 	}
 	
-	@IBAction func timerIncrement(sender: AnyObject) {
-		quizView.timerIncrement()
+	@IBAction func timerIncrement(_ sender: AnyObject) {
+		quizView?.timerIncrement()
 	}
 	
-	@IBAction func timerDecrement(sender: AnyObject) {
-		quizView.timerDecrement()
+	@IBAction func timerDecrement(_ sender: AnyObject) {
+		quizView?.timerDecrement()
 	}
 	
-	@IBAction func setTeamType(sender: NSPopUpButton) {
+	@IBAction func setTeamType(_ sender: NSPopUpButton) {
 		switch sender.indexOfSelectedItem {
 		case 0:
-			quizView.setTeamType(sender.tag, type: .Christmas)
+			quizView?.setTeamType(sender.tag, type: .christmas)
 		case 1:
-			quizView.setTeamType(sender.tag, type: .Academic)
+			quizView?.setTeamType(sender.tag, type: .academic)
 		case 2:
-			quizView.setTeamType(sender.tag, type: .Ibm)
+			quizView?.setTeamType(sender.tag, type: .ibm)
 		default:
-			quizView.setTeamType(sender.tag, type: .Christmas)
+			quizView?.setTeamType(sender.tag, type: .christmas)
 		}
 	}
 	
-    override func ddhidJoystick(joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
+    override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)
         if (!buzzersDisabled && buzzersEnabled[button]) {
-            quizView.buzzerPressed(button)
+            quizView?.buzzerPressed(button)
         }
     }
     
-    override func ddhidJoystick(joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
+    override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
         let button = Int(buttonNumber)
         if (!buzzersDisabled && buzzersEnabled[button]) {
-            quizView.buzzerReleased(button)
+            quizView?.buzzerReleased(button)
         }
     }
 

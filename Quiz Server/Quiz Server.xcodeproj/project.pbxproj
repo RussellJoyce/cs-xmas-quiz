@@ -474,9 +474,11 @@
 				TargetAttributes = {
 					46056EB31A19624E00C37628 = {
 						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0800;
 					};
 					46B025531A1BF4EC0088294B = {
 						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -711,6 +713,7 @@
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -729,6 +732,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -753,6 +757,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.dribin.dave.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -775,6 +780,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.dribin.dave.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};

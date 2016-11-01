@@ -21,44 +21,44 @@ class BuzzerTeamNode: SKNode {
 		let glowColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		let bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
 		
-		let scale = SKAction.scaleTo(1, duration: 0.2)
-		scale.timingMode = .EaseOut
-		let fade = SKAction.fadeInWithDuration(0.2)
-		fade.timingMode = .EaseOut
+		let scale = SKAction.scale(to: 1, duration: 0.2)
+		scale.timingMode = .easeOut
+		let fade = SKAction.fadeIn(withDuration: 0.2)
+		fade.timingMode = .easeOut
 		let entranceGroup = SKAction.group([fade, scale])
 		
 		let mainNode = SKNode()
-		mainNode.position = CGPointZero
+		mainNode.position = CGPoint.zero
 		
-		let bgBox = SKShapeNode(rectOfSize: CGSize(width: width, height: height))
+		let bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
 		bgBox.zPosition = 4
-		bgBox.position = CGPointZero
+		bgBox.position = CGPoint.zero
 		bgBox.fillColor = bgColour
 		bgBox.lineWidth = 0.0
 		
-		let shadow = SKShapeNode(rectOfSize: CGSize(width: width + 20, height: height + 20))
+		let shadow = SKShapeNode(rectOf: CGSize(width: width + 20, height: height + 20))
 		shadow.zPosition = 3
-		shadow.position = CGPointZero
+		shadow.position = CGPoint.zero
 		shadow.fillColor = NSColor(white: 0.1, alpha: 0.5)
 		shadow.lineWidth = 0.0
 		
 		let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text.text = "Team \(team + 1)"
 		text.fontSize = fontSize
-		text.fontColor = NSColor.whiteColor()
-		text.horizontalAlignmentMode = .Center
-		text.verticalAlignmentMode = .Center
+		text.fontColor = NSColor.white
+		text.horizontalAlignmentMode = .center
+		text.verticalAlignmentMode = .center
 		text.zPosition = 6
-		text.position = CGPointZero
+		text.position = CGPoint.zero
 		
 		let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		shadowText.text = "Team \(team + 1)"
 		shadowText.fontSize = fontSize
 		shadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
-		shadowText.horizontalAlignmentMode = .Center
-		shadowText.verticalAlignmentMode = .Center
+		shadowText.horizontalAlignmentMode = .center
+		shadowText.verticalAlignmentMode = .center
 		shadowText.zPosition = 5
-		shadowText.position = CGPointZero
+		shadowText.position = CGPoint.zero
 		
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
@@ -118,7 +118,7 @@ class BuzzerTeamNode: SKNode {
 		particles4.numParticlesToEmit = 800
 		particles4.removeWhenDone()
 		
-		glow.position = CGPointZero
+		glow.position = CGPoint.zero
 		glow.particlePositionRange = CGVector(dx: Double(width) * 1.2, dy: Double(height) * 1.2)
 		glow.zPosition = 1
 		glow.particleColor = glowColour
@@ -139,7 +139,7 @@ class BuzzerTeamNode: SKNode {
 		
 		self.addChild(mainNode)
 		
-		mainNode.runAction(entranceGroup)
+		mainNode.run(entranceGroup)
 		
 		self.addChild(particles1)
 		self.addChild(particles2)
@@ -161,9 +161,9 @@ class BuzzerTeamNode: SKNode {
 extension SKEmitterNode {
 	func removeWhenDone() {
 		if (self.numParticlesToEmit != 0) {
-			let ttl = NSTimeInterval((CGFloat(self.numParticlesToEmit) / self.particleBirthRate) + (self.particleLifetime + (self.particleLifetimeRange / 2.0)))
-			let removeAction = SKAction.sequence([SKAction.waitForDuration(ttl), SKAction.removeFromParent()])
-			self.runAction(removeAction)
+			let ttl = TimeInterval((CGFloat(self.numParticlesToEmit) / self.particleBirthRate) + (self.particleLifetime + (self.particleLifetimeRange / 2.0)))
+			let removeAction = SKAction.sequence([SKAction.wait(forDuration: ttl), SKAction.removeFromParent()])
+			self.run(removeAction)
 		}
 	}
 }

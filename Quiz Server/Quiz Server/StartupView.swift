@@ -8,6 +8,26 @@
 
 import Cocoa
 import DDHidLib
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class StartupView: NSViewController {
     
@@ -26,7 +46,7 @@ class StartupView: NSViewController {
         super.viewDidLoad()
         
         allScreens = NSScreen.screens() as [NSScreen]?
-		allScreens!.sortInPlace({$0.frame.width > $1.frame.width})
+		allScreens!.sort(by: {$0.frame.width > $1.frame.width})
 		
         if let screens = allScreens {
             let numScreens = screens.count
@@ -34,11 +54,11 @@ class StartupView: NSViewController {
             
             if numScreens > 0 {
                 screenSelector.removeAllItems()
-                screenSelector.enabled = true
+                screenSelector.isEnabled = true
 
-                for (index, screen) in screens.enumerate() {
+                for (index, screen) in screens.enumerated() {
                     print("  \(screen.frame)")
-                    screenSelector.addItemWithTitle("Screen \(index) - \(Int(screen.frame.width))x\(Int(screen.frame.height)) \(screen.frame.origin)")
+                    screenSelector.addItem(withTitle: "Screen \(index) - \(Int(screen.frame.width))x\(Int(screen.frame.height)) \(screen.frame.origin)")
                 }
             }
         }
@@ -57,15 +77,15 @@ class StartupView: NSViewController {
                 
                 for controller in controllers {
                     print("  \(controller.manufacturer()) - \(controller.productName())")
-                    controllerSelector.addItemWithTitle(controller.productName())
+                    controllerSelector.addItem(withTitle: controller.productName())
                 }
                 
-                controllerSelector.enabled = true
+                controllerSelector.isEnabled = true
             }
         }
         
         
-        let serialPortManager = ORSSerialPortManager.sharedSerialPortManager()
+        let serialPortManager = ORSSerialPortManager.shared()
         allPorts = serialPortManager.availablePorts as [ORSSerialPort]
         
         if let ports = allPorts {
@@ -76,25 +96,25 @@ class StartupView: NSViewController {
                 
                 for port in ports {
                     print("  \(port.name)")
-                    serialSelector.addItemWithTitle(port.name)
+                    serialSelector.addItem(withTitle: port.name)
                 }
                 
-                serialSelector.enabled = true
+                serialSelector.isEnabled = true
             }
         }
 
         
-        startButton.enabled = true
+        startButton.isEnabled = true
     }
     
     
-    @IBAction func startQuiz(sender: AnyObject) {
+    @IBAction func startQuiz(_ sender: AnyObject) {
         let screen = (allScreens?.count > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
         let controller = (allControllers?.count > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
         let serial = (allPorts?.count > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSOnState;
         
-        let delegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        let delegate = NSApplication.shared().delegate as! AppDelegate
         delegate.startQuiz(screen, buzzers: controller, serial: serial, testMode: test)
     }
 }

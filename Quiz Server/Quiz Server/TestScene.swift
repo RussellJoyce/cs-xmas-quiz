@@ -10,15 +10,15 @@ import Cocoa
 import SpriteKit
 
 enum TeamType {
-	case Christmas
-	case Academic
-	case Ibm
+	case christmas
+	case academic
+	case ibm
 }
 
 class TestScene: SKScene {
 	
 	var leds: QuizLeds?
-	private var setUp = false
+	fileprivate var setUp = false
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
@@ -32,7 +32,7 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
 	
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -41,13 +41,13 @@ class TestScene: SKScene {
 		self.size = size
 		self.leds = leds
 		
-		self.backgroundColor = NSColor.blackColor()
+		self.backgroundColor = NSColor.black
 		
 		for i in 0...9 {
 			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 			numberNode.fontSize = 170.0
-			numberNode.horizontalAlignmentMode = .Center
-			numberNode.verticalAlignmentMode = .Center
+			numberNode.horizontalAlignmentMode = .center
+			numberNode.verticalAlignmentMode = .center
 			numberNode.text = String(i + 1)
 			numberNode.position = CGPoint(x: (i * 190) + 105, y: 540)
 			numberNode.zPosition = 3
@@ -92,7 +92,7 @@ class TestScene: SKScene {
 		leds?.stringOff()
 		leds?.buzzersOn()
 		for team in numbers {
-			team.fontColor = NSColor.whiteColor()
+			team.fontColor = NSColor.white
 		}
 		
 		for node in sparksUp {
@@ -108,7 +108,7 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(_ team: Int) {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
@@ -120,12 +120,12 @@ class TestScene: SKScene {
 		}
 		
 		if team == 7 {
-			self.runAction(eightSound)
+			self.run(eightSound)
 		}
 	}
 	
-	func buzzerReleased(team: Int) {
-		numbers[team].fontColor = NSColor.whiteColor()
+	func buzzerReleased(_ team: Int) {
+		numbers[team].fontColor = NSColor.white
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
 		leds?.stringTestOff(team)
@@ -136,19 +136,19 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func setTeamType(team: Int, type: TeamType) {
+	func setTeamType(_ team: Int, type: TeamType) {
 		var images: [String]
 		
 		switch type {
-		case .Christmas:
+		case .christmas:
 			images = christmasSparks
-		case .Academic:
+		case .academic:
 			images = academicSparks
-		case .Ibm:
+		case .ibm:
 			images = ibmSparks
 		}
 		
-		for (i, node) in imageSparks[team].enumerate() {
+		for (i, node) in imageSparks[team].enumerated() {
 			node.particleTexture = SKTexture(imageNamed: images[i / 2])
 		}
 	}

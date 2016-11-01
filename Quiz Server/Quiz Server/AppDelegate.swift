@@ -17,21 +17,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
     
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
     
-    func applicationDidChangeScreenParameters(notification: NSNotification) {
+    func applicationDidChangeScreenParameters(_ notification: Notification) {
         // Screens changed - figure out how the changes affect us
         print("Screens changed!")
     }
     
     
-    func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
+    func startQuiz(_ screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
         window.close()
         
         controllerWindow.testMode = testMode

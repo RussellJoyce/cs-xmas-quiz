@@ -14,10 +14,10 @@ class IdleScene: SKScene {
 	let snow = SKEmitterNode(fileNamed: "Snow")!
 	var snowmojis = [SKEmitterNode]()
 	var leds: QuizLeds?
-	private var setUp = false
+	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "snowcloud", "mortarboard", "snowman", "snowflake", "floppydisk", "robot", "present", "poop"]
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -68,20 +68,20 @@ class IdleScene: SKScene {
 		let text1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text1.text = "Computer Science"
 		text1.fontSize = 140
-		text1.horizontalAlignmentMode = .Center
-		text1.verticalAlignmentMode = .Center
+		text1.horizontalAlignmentMode = .center
+		text1.verticalAlignmentMode = .center
 		text1.position = CGPoint(x: 0, y: 72)
 		text1.zPosition = 17
-		text1.fontColor = NSColor.whiteColor()
+		text1.fontColor = NSColor.white
 		
 		let text2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text2.text = "Christmas Quiz 2015"
 		text2.fontSize = 140
-		text2.horizontalAlignmentMode = .Center
-		text2.verticalAlignmentMode = .Center
+		text2.horizontalAlignmentMode = .center
+		text2.verticalAlignmentMode = .center
 		text2.position = CGPoint(x: 0, y: -85)
 		text2.zPosition = 18
-		text2.fontColor = NSColor.whiteColor()
+		text2.fontColor = NSColor.white
 		
 		let text = SKNode()
 		text.position = CGPoint(x: 960, y: 820)
@@ -93,8 +93,8 @@ class IdleScene: SKScene {
 		shadowText1.text = "Computer Science"
 		shadowText1.fontSize = 140
 		shadowText1.fontColor = NSColor(white: 0.0, alpha: 0.8)
-		shadowText1.horizontalAlignmentMode = .Center
-		shadowText1.verticalAlignmentMode = .Center
+		shadowText1.horizontalAlignmentMode = .center
+		shadowText1.verticalAlignmentMode = .center
 		shadowText1.position = CGPoint(x: 0, y: 72)
 		shadowText1.zPosition = 16
 		
@@ -102,8 +102,8 @@ class IdleScene: SKScene {
 		shadowText2.text = "Christmas Quiz 2015"
 		shadowText2.fontSize = 140
 		shadowText2.fontColor = NSColor(white: 0.0, alpha: 0.8)
-		shadowText2.horizontalAlignmentMode = .Center
-		shadowText2.verticalAlignmentMode = .Center
+		shadowText2.horizontalAlignmentMode = .center
+		shadowText2.verticalAlignmentMode = .center
 		shadowText2.position = CGPoint(x: 0, y: -85)
 		shadowText2.zPosition = 16
 		
@@ -126,8 +126,8 @@ class IdleScene: SKScene {
 		for i in 1...4 {
 			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
 		}
-		let lightsAction = SKAction.repeatActionForever(SKAction.animateWithTextures(lightsTextures, timePerFrame: 1.0))
-		lights.runAction(lightsAction)
+		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
+		lights.run(lightsAction)
 		
 		for node in snowmojis {
 			self.addChild(node)
@@ -150,11 +150,11 @@ class IdleScene: SKScene {
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(_ team: Int) {
 		snowmojis[team].particleBirthRate = 20
 	}
 	
-	func buzzerReleased(team: Int) {
+	func buzzerReleased(_ team: Int) {
 		snowmojis[team].particleBirthRate = 0
 	}
 }

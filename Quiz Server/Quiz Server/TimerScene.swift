@@ -15,13 +15,13 @@ import Darwin
 class TimerScene: SKScene {
 
 	var leds: QuizLeds?
-	private var setUp = false
-	private var correct: Int = 0
-	private var time: Int = 60
-	private var timer: NSTimer?
-	private var pulseAction: SKAction?
-	private let filternode = SKEffectNode()
-	private var ledcount : Float = 0;
+	fileprivate var setUp = false
+	fileprivate var correct: Int = 0
+	fileprivate var time: Int = 60
+	fileprivate var timer: Timer?
+	fileprivate var pulseAction: SKAction?
+	fileprivate let filternode = SKEffectNode()
+	fileprivate var ledcount : Float = 0;
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -35,7 +35,7 @@ class TimerScene: SKScene {
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -48,7 +48,7 @@ class TimerScene: SKScene {
 		
 		let bgImage = SKSpriteNode(imageNamed: "3")
 		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		
 		let exfilter = CIFilter(name: "CIExposureAdjust")
@@ -61,24 +61,24 @@ class TimerScene: SKScene {
 		
 		
 		
-		let pulseupaction = SKAction.customActionWithDuration(0.15, actionBlock: {(node, time) -> Void in
+		let pulseupaction = SKAction.customAction(withDuration: 0.15, actionBlock: {(node, time) -> Void in
 			(node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: "inputEV")
 		})
 		
-		let pulsednaction = SKAction.customActionWithDuration(0.25, actionBlock: {(node, time) -> Void in
+		let pulsednaction = SKAction.customAction(withDuration: 0.25, actionBlock: {(node, time) -> Void in
 			(node as! SKEffectNode).filter!.setValue(1 + (0.25 - time)*3, forKey: "inputEV")
 		})
 		
-		pulseupaction.timingMode = .EaseInEaseOut
-		pulsednaction.timingMode = .EaseInEaseOut
+		pulseupaction.timingMode = .easeInEaseOut
+		pulsednaction.timingMode = .easeInEaseOut
 		
 		pulseAction = SKAction.sequence([
-			SKAction.runBlock({ () -> Void in
+			SKAction.run({ () -> Void in
 				self.filternode.shouldRasterize = false
 			}),
 			pulseupaction,
 			tickSound,
-			SKAction.runBlock({ () -> Void in
+			SKAction.run({ () -> Void in
 				self.ledcount = self.ledcount + (5/3)
 				let ledstodec = Int(floor(self.ledcount))
 				for _ in 0..<ledstodec {
@@ -86,11 +86,11 @@ class TimerScene: SKScene {
 				}
 				self.ledcount -= floor(self.ledcount)
 				
-				self.time--
+				self.time -= 1
 				self.updateTime()
 				if(self.time == 0) {
 					self.timer?.invalidate()
-					self.runAction(self.hornSound)
+					self.run(self.hornSound)
 					leds?.stringPointlessCorrect()
 					let p = SKEmitterNode(fileNamed: "SparksUp2")!
 					p.position = CGPoint(x: self.centrePoint.x, y: 0)
@@ -100,7 +100,7 @@ class TimerScene: SKScene {
 				}
 			}),
 			pulsednaction,
-			SKAction.runBlock({ () -> Void in
+			SKAction.run({ () -> Void in
 				self.filternode.shouldRasterize = true
 			})
 		])
@@ -109,17 +109,17 @@ class TimerScene: SKScene {
 		countmainNode.position = CGPoint(x: 460, y: self.size.height - 700)
 		
 		text.fontSize = 300
-		text.fontColor = NSColor.whiteColor()
-		text.horizontalAlignmentMode = .Left
-		text.verticalAlignmentMode = .Baseline
+		text.fontColor = NSColor.white
+		text.horizontalAlignmentMode = .left
+		text.verticalAlignmentMode = .baseline
 		text.zPosition = 6
-		text.position = CGPointZero
+		text.position = CGPoint.zero
 		shadowText.fontSize = 300
 		shadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
-		shadowText.horizontalAlignmentMode = .Left
-		shadowText.verticalAlignmentMode = .Baseline
+		shadowText.horizontalAlignmentMode = .left
+		shadowText.verticalAlignmentMode = .baseline
 		shadowText.zPosition = 5
-		shadowText.position = CGPointZero
+		shadowText.position = CGPoint.zero
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
@@ -131,17 +131,17 @@ class TimerScene: SKScene {
 		textShadow.addChild(shadowText)
 		
 		counttext.fontSize = 200
-		counttext.fontColor = NSColor.whiteColor()
-		counttext.horizontalAlignmentMode = .Left
-		counttext.verticalAlignmentMode = .Baseline
+		counttext.fontColor = NSColor.white
+		counttext.horizontalAlignmentMode = .left
+		counttext.verticalAlignmentMode = .baseline
 		counttext.zPosition = 6
-		counttext.position = CGPointZero
+		counttext.position = CGPoint.zero
 		countshadowText.fontSize = 200
 		countshadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
-		countshadowText.horizontalAlignmentMode = .Left
-		countshadowText.verticalAlignmentMode = .Baseline
+		countshadowText.horizontalAlignmentMode = .left
+		countshadowText.verticalAlignmentMode = .baseline
 		countshadowText.zPosition = 5
-		countshadowText.position = CGPointZero
+		countshadowText.position = CGPoint.zero
 		let counttextShadow = SKEffectNode()
 		counttextShadow.shouldEnableEffects = true
 		counttextShadow.shouldRasterize = true
@@ -175,11 +175,11 @@ class TimerScene: SKScene {
 		}
 		
 		timer?.invalidate()
-		timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("tick"), userInfo: nil, repeats: true)
+		timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TimerScene.tick), userInfo: nil, repeats: true)
 	}
 	
 	func tick() {
-		filternode.runAction(pulseAction!)
+		filternode.run(pulseAction!)
 	}
 	
 	func stopTimer() {
@@ -187,8 +187,8 @@ class TimerScene: SKScene {
 	}
 	
 	func timerIncrement() {
-		correct++
-		self.runAction(blopSound)
+		correct += 1
+		self.run(blopSound)
 		
 		/*let sprayEmitter = SKEmitterNode(fileNamed: "TimerSpray")!
 		sprayEmitter.position = CGPoint(x: 1430, y: self.size.height - 650)
@@ -218,7 +218,7 @@ class TimerScene: SKScene {
 	}
 	
 	func timerDecrement() {
-		correct--
+		correct -= 1
 		updateAnswers()
 	}
 	

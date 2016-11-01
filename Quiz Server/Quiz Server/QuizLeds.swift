@@ -50,38 +50,38 @@ class QuizLeds: NSObject {
     ///
     /// - returns: true if data sent successfully, false otherwise
     func buzzersOff() -> Bool {
-        return serial.sendData(NSData(bytes: [LED_ALLOFF], length: 1));
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ALLOFF]), count: 1));
     }
     
     /// Turn all buzzer LEDs on
     ///
     /// - returns: true if data sent successfully, false otherwise
     func buzzersOn() -> Bool {
-        return serial.sendData(NSData(bytes: [LED_ALLON], length: 1));
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ALLON]), count: 1));
     }
     
     /// Turn a specific buzzer LED off
     ///
     /// - parameter team: The team's LED to to turn on (0-9)
     /// - returns: true if data sent successfully, false otherwise
-    func buzzerOff(team: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LED_OFF + UInt8(team)], length: 1));
+    func buzzerOff(_ team: Int) -> Bool {
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_OFF + UInt8(team)]), count: 1));
     }
     
     /// Turn a specific buzzer LED on
     ///
     /// - parameter team: The team's LED to to turn on (0-9)
     /// - returns: true if data sent successfully, false otherwise
-    func buzzerOn(team: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LED_ON + UInt8(team)], length: 1));
+    func buzzerOn(_ team: Int) -> Bool {
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ON + UInt8(team)]), count: 1));
     }
     
     /// Set animation on LED string
     ///
     /// - parameter animation: The animation number (0-15)
     /// - returns: true if data sent successfully, false otherwise
-    func stringAnimation(animation: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LEDS_ANIM + UInt8(animation)], length: 1));
+    func stringAnimation(_ animation: Int) -> Bool {
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_ANIM + UInt8(animation)]), count: 1));
     }
     
     /// Turn LED string off (set to animation 0)
@@ -95,58 +95,58 @@ class QuizLeds: NSObject {
     ///
     /// - parameter team: The team number (0-9)
     /// - returns: true if data sent successfully, false otherwise
-    func stringTeamAnimate(team: Int) -> Bool {
-        return serial.sendData(NSData(bytes: [LEDS_TEAM + UInt8(team)], length: 1));
+    func stringTeamAnimate(_ team: Int) -> Bool {
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAM + UInt8(team)]), count: 1));
     }
 
 	/// Set LED string to team colour
 	///
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
-	func stringTeamColour(team: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-		return serial.sendData(NSData(bytes: [LEDS_TEAMC + UInt8(team)], length: 1));
+	func stringTeamColour(_ team: Int) -> Bool {
+		Thread.sleep(forTimeInterval: 0.01)
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMC + UInt8(team)]), count: 1));
 	}
 
 	/// Set LED string to a given fixed colour
 	///
 	/// - parameter colour: The colour (red, green, blue, cyan, magenta, yellow, white, black)
 	/// - returns: true if data sent successfully, false otherwise
-	func stringFixedColour(colour: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-		return serial.sendData(NSData(bytes: [LEDS_COL + UInt8(colour)], length: 1));
+	func stringFixedColour(_ colour: Int) -> Bool {
+		Thread.sleep(forTimeInterval: 0.01)
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_COL + UInt8(colour)]), count: 1));
 	}
 	
 	/// Turn on test LEDs for team
 	///
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
-	func stringTestOn(team: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-		return serial.sendData(NSData(bytes: [LEDS_TESTON + UInt8(team)], length: 1));
+	func stringTestOn(_ team: Int) -> Bool {
+		Thread.sleep(forTimeInterval: 0.01)
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTON + UInt8(team)]), count: 1));
 	}
 	
 	/// Turn off test LEDs for team
 	///
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
-	func stringTestOff(team: Int) -> Bool {
-		NSThread.sleepForTimeInterval(0.01)
-		return serial.sendData(NSData(bytes: [LEDS_TESTOFF + UInt8(team)], length: 1));
+	func stringTestOff(_ team: Int) -> Bool {
+		Thread.sleep(forTimeInterval: 0.01)
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTOFF + UInt8(team)]), count: 1));
 	}
 	
 	/// Reset the Pointless LEDs
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	func stringPointlessReset() -> Bool {
-		return serial.sendData(NSData(bytes: [LED_POINT_STATE + UInt8(0)], length: 1));
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_POINT_STATE + UInt8(0)]), count: 1));
 	}
 	
 	/// Decrement the Pointless LEDs
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	func stringPointlessDec() -> Bool {
-		return serial.sendData(NSData(bytes: [LED_POINT_STATE + UInt8(1)], length: 1));
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_POINT_STATE + UInt8(1)]), count: 1));
 	}
 
 	
@@ -154,13 +154,13 @@ class QuizLeds: NSObject {
     ///
     /// - returns: true if data sent successfully, false otherwise
     func stringPointlessWrong() -> Bool {
-        return serial.sendData(NSData(bytes: [LEDS_POINTW], length: 1));
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTW]), count: 1));
     }
     
     /// Play Pointless correct animation on LED string
     ///
     /// - returns: true if data sent successfully, false otherwise
     func stringPointlessCorrect() -> Bool {
-        return serial.sendData(NSData(bytes: [LEDS_POINTC], length: 1));
+        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTC]), count: 1));
     }
 }

@@ -12,17 +12,17 @@ import SpriteKit
 class BuzzerScene: SKScene {
 	
 	var leds: QuizLeds?
-	private var setUp = false
+	fileprivate var setUp = false
 	
 	var buzzNumber = 0
-	var firstBuzzTime: NSDate?
-	var teamEnabled = [Bool](count: 10, repeatedValue: true)
+	var firstBuzzTime: Date?
+	var teamEnabled = [Bool](repeating: true, count: 10)
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -33,7 +33,7 @@ class BuzzerScene: SKScene {
 		
 		let bgImage = SKSpriteNode(imageNamed: "2")
 		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		
 		self.addChild(bgImage)
@@ -41,7 +41,7 @@ class BuzzerScene: SKScene {
 	
 	func reset() {
 		leds?.buzzersOn()
-		teamEnabled = [Bool](count: 10, repeatedValue: true)
+		teamEnabled = [Bool](repeating: true, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0
@@ -52,7 +52,7 @@ class BuzzerScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(_ team: Int) {
 		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
 			leds?.buzzerOff(team)
@@ -60,8 +60,8 @@ class BuzzerScene: SKScene {
 			buzzes.append(team)
 			
 			if buzzNumber == 0 {
-				firstBuzzTime = NSDate()
-				self.runAction(buzzNoise)
+				firstBuzzTime = Date()
+				self.run(buzzNoise)
 				leds?.stringTeamAnimate(team)
 				nextTeamNumber = 1
 				
@@ -79,7 +79,7 @@ class BuzzerScene: SKScene {
 				self.addChild(box)
 			}
 			
-			buzzNumber++
+			buzzNumber += 1
 		}
 		
 		if buzzes.count == 5 {
@@ -89,12 +89,12 @@ class BuzzerScene: SKScene {
 	
 	func nextTeam() {
 		if nextTeamNumber < buzzes.count {
-			teamBoxes[nextTeamNumber-1].runAction(SKAction.fadeAlphaTo(0.3, duration: 0.5))
+			teamBoxes[nextTeamNumber-1].run(SKAction.fadeAlpha(to: 0.3, duration: 0.5))
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
 			leds?.stringTeamColour(team)
-			nextTeamNumber++
+			nextTeamNumber += 1
 		}
 	}
 }
@@ -102,6 +102,6 @@ class BuzzerScene: SKScene {
 
 extension SKNode {
 	var centrePoint: CGPoint {
-		return CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+		return CGPoint(x:self.frame.midX, y:self.frame.midY)
 	}
 }

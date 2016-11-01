@@ -18,7 +18,7 @@ class SpriteKitViewController: NSViewController {
 	let buzzerScene = BuzzerScene()
 	let timerScene = TimerScene()
 	var leds: QuizLeds?
-	var currentRound = RoundType.None
+	var currentRound = RoundType.none
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -33,80 +33,80 @@ class SpriteKitViewController: NSViewController {
 		timerScene.setUpScene(skView.bounds.size, leds: leds)
 	}
 	
-	func setRound(round: RoundType) {
+	func setRound(_ round: RoundType) {
 		currentRound = round
 
 		switch (currentRound) {
-		case .None:
+		case .none:
 			skView.presentScene(nil)
-		case .Idle:
+		case .idle:
 			skView.presentScene(idleScene)
-		case .Test:
+		case .test:
 			skView.presentScene(testScene)
-		case .Buzzers:
+		case .buzzers:
 			skView.presentScene(buzzerScene)
-		case .Timer:
+		case .timer:
 			skView.presentScene(timerScene)
-		case .TrueFalse:
+		case .trueFalse:
 			skView.presentScene(nil)
-		case .Pointless:
+		case .pointless:
 			skView.presentScene(nil)
 		}
 	}
 	
 	func reset() {
 		switch (currentRound) {
-		case .None:
+		case .none:
 			break
-		case .Idle:
+		case .idle:
 			idleScene.reset()
-		case .Test:
+		case .test:
 			testScene.reset()
-		case .Buzzers:
+		case .buzzers:
 			buzzerScene.reset()
-		case .Timer:
+		case .timer:
 			timerScene.reset()
-		case .TrueFalse:
+		case .trueFalse:
 			break
-		case .Pointless:
+		case .pointless:
 			break
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(_ team: Int) {
 		switch (currentRound) {
-		case .None:
+		case .none:
 			break
-		case .Idle:
+		case .idle:
 			idleScene.buzzerPressed(team)
-		case .Test:
+		case .test:
 			testScene.buzzerPressed(team)
-		case .Buzzers:
+		case .buzzers:
 			buzzerScene.buzzerPressed(team)
-		case .Timer:
+		case .timer:
 			break
-		case .TrueFalse:
+		case .trueFalse:
 			break
-		case .Pointless:
+		case .pointless:
 			break
 		}
 	}
 	
-	func buzzerReleased(team: Int) {
+	func buzzerReleased(_ team: Int) {
 		switch (currentRound) {
-		case .None:
+		case .none:
 			break
-		case .Idle:
+		case .idle:
 			idleScene.buzzerReleased(team)
-		case .Test:
+		case .test:
 			testScene.buzzerReleased(team)
-		case .Timer:
+		case .timer:
 			break
-		case .Buzzers:
+		case .buzzers:
 			break
-		case .TrueFalse:
+		case .trueFalse:
 			break
-		case .Pointless:
+		case .pointless:
 			break
 		}
 	}
@@ -131,7 +131,7 @@ class SpriteKitViewController: NSViewController {
 		timerScene.timerDecrement();
 	}
 	
-	func setTeamType(team: Int, type: TeamType) {
+	func setTeamType(_ team: Int, type: TeamType) {
 		testScene.setTeamType(team, type: type)
 	}
 }

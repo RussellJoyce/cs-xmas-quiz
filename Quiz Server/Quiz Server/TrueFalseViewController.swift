@@ -29,20 +29,20 @@ class TrueFalseViewController: NSViewController {
 	var counting = false
 	var counted = false
 	var pressed = [Int]()
-	var teamEnabled = [Bool](count: 10, repeatedValue: true)
+	var teamEnabled = [Bool](repeating: true, count: 10)
 	var leds: QuizLeds?
 	
 	var teams = [TrueFalseTeamView]()
 	
 	let 🔊 = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timer", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "timer", ofType: "wav")!))
 	let 🔊end = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("timerend", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "timerend", ofType: "wav")!))
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		topView.topLabel = topLabel
-		teams.appendContentsOf([team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
+		teams.append(contentsOf: [team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
 		for i in 0..<teams.count {
 			teams[i].setTeam(i)
 		}
@@ -53,7 +53,7 @@ class TrueFalseViewController: NSViewController {
 		counting = false
 		pressed = [Int]()
 		objc_sync_exit(🔒)
-		teamEnabled = [Bool](count: 10, repeatedValue: true)
+		teamEnabled = [Bool](repeating: true, count: 10)
 		for team in teams {
 			team.setNeutral()
 		}
@@ -81,10 +81,10 @@ class TrueFalseViewController: NSViewController {
 		leds?.stringPointlessReset()
 		objc_sync_exit(🔒)
 		
-		dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
-			for(var i = 5; i >= 0; i--) {
+		DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
+			for(var i = 5; i >= 0; i -= 1) {
 				if(i != 5) {
-					NSThread.sleepForTimeInterval(1.0)
+					Thread.sleep(forTimeInterval: 1.0)
 					for _ in 0...19 {
 						self.leds?.stringPointlessDec()
 					}
@@ -92,14 +92,14 @@ class TrueFalseViewController: NSViewController {
 						return
 					}
 				}
-				dispatch_sync(dispatch_get_main_queue(), {
+				DispatchQueue.main.sync(execute: {
 					self.topView.setVal(i)
 					self.🔊.currentTime = 0
 					self.🔊.play()
 				})
 			}
 			
-			dispatch_sync(dispatch_get_main_queue(), {
+			DispatchQueue.main.sync(execute: {
 				objc_sync_enter(self.🔒)
 				self.counting = false
 				self.🔊end.currentTime = 0
@@ -109,7 +109,7 @@ class TrueFalseViewController: NSViewController {
 				self.leds?.buzzersOff()
 				
 				//Now set the team colours based on who pressed what
-				for (i, team) in self.teams.enumerate() {
+				for (i, team) in self.teams.enumerated() {
 					if(self.teamEnabled[i]) {
 						if self.pressed.contains(i) {
 							team.setPressedTrue()
@@ -123,7 +123,7 @@ class TrueFalseViewController: NSViewController {
 		})
 	}
 	
-	func answer(ans : Bool) {
+	func answer(_ ans : Bool) {
 		if (!counted) {
 			return
 		}
@@ -134,7 +134,7 @@ class TrueFalseViewController: NSViewController {
 			leds?.stringFixedColour(0);
 		}
 		
-		for (i, team) in teams.enumerate() {
+		for (i, team) in teams.enumerated() {
 			if(self.teamEnabled[i]) {
 				if(self.pressed.contains(i) == ans) {
 					team.setNeutral()
@@ -148,7 +148,7 @@ class TrueFalseViewController: NSViewController {
 		counted = false
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(_ team: Int) {
 		objc_sync_enter(🔒)
 		if(counting && teamEnabled[team]) {
 			if !pressed.contains(team) {
@@ -161,8 +161,8 @@ class TrueFalseViewController: NSViewController {
 
 class TFMainView: NSView {
 	let bgImage = NSImage(named: "dark-purple-background-blurred")
-	override func drawRect(dirtyRect: NSRect) {
-		bgImage?.drawInRect(dirtyRect)
+	override func draw(_ dirtyRect: NSRect) {
+		bgImage?.draw(in: dirtyRect)
 	}
 }
 
@@ -174,47 +174,47 @@ class TrueFalseTeamView : NSView {
 	var leds: QuizLeds?
 	
 	let textColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
-	let bgColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).CGColor
+	let bgColStd = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
 	let textColOut = NSColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1)
-	let bgColOut = NSColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.3).CGColor
+	let bgColOut = NSColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.3).cgColor
 	
 	let textColTrue = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1)
-	let bgColTrue = NSColor(red: 0.5, green: 1, blue: 0.5, alpha: 0.3).CGColor
+	let bgColTrue = NSColor(red: 0.5, green: 1, blue: 0.5, alpha: 0.3).cgColor
 	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
-	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).CGColor
+	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).cgColor
 	
-	func setTeam(team : Int) {
+	func setTeam(_ team : Int) {
 		teamno = team
 		
-		label.editable = false
+		label.isEditable = false
 		label.drawsBackground = false
-		label.bezeled = false
+		label.isBezeled = false
 		label.font = NSFont(name: "DIN Alternate Bold", size: 70)
 		label.stringValue = "Team " + String(teamno + 1)
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.textColor = textColStd
-		label.alignment = NSTextAlignment.Center
+		label.alignment = NSTextAlignment.center
 		
 		self.addSubview(label)
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(280)))
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
+			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(60)))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.CenterY,
+			attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal,
+			toItem: self, attribute: NSLayoutAttribute.centerY,
 			multiplier: 1, constant: -5))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.CenterX,
+			attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal,
+			toItem: self, attribute: NSLayoutAttribute.centerX,
 			multiplier: 1, constant: 0))
 		
 	}
@@ -268,7 +268,7 @@ class TFTopView : NSView {
 	
 	var topLabel : NSTextField?
 	
-	func setVal(val : Int) {
+	func setVal(_ val : Int) {
 		topLabel?.stringValue = String(val)
 		
 		let fade = CABasicAnimation()
@@ -283,8 +283,8 @@ class TFTopView : NSView {
 		unblur.toValue = 0
 		unblur.duration = 1.3
 
-		self.layer?.addAnimation(fade, forKey: "fade")
-		self.layer?.addAnimation(unblur, forKey: "unblur")
+		self.layer?.add(fade, forKey: "fade")
+		self.layer?.add(unblur, forKey: "unblur")
 	}
 	
 	required init?(coder: NSCoder) {super.init(coder: coder)}
@@ -294,7 +294,7 @@ class TFTopView : NSView {
 		
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
-		self.layer?.backgroundColor = NSColor(red: 1, green: 1, blue: 1, alpha: 0.8).CGColor
+		self.layer?.backgroundColor = NSColor(red: 1, green: 1, blue: 1, alpha: 0.8).cgColor
 		
 		self.alphaValue = 0
 		

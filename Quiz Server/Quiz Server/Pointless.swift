@@ -26,13 +26,13 @@ class PointlessView: NSView {
 	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
 	
 	let counterSound = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_soft_end", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_soft_end", ofType: "wav")!))
 	let endStingSound = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_score100", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_score100", ofType: "wav")!))
 	let endPointlessSound = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_sting", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_sting", ofType: "wav")!))
 	let wrongSound = try! AVAudioPlayer(
-		contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("counter_wrong", ofType: "wav")!))
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_wrong", ofType: "wav")!))
 	
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
@@ -58,24 +58,24 @@ class PointlessView: NSView {
 		constrainToSizeOfContainer(pvc!.view, container: imgView)
 	}
 	
-	func setScore(score: Int, callback: (()->Void)! = nil) {
+	func setScore(_ score: Int, callback: (()->Void)! = nil) {
 		if score <= 100 {
 			leds?.stringPointlessReset()
 			counterSound.currentTime = 0
 			counterSound.play()
 			self.pvc!.resetBars()
-			dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), {
+			DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
 				if(score < 100) {
 					for i in 0...(99-score) {
-						NSThread.sleepForTimeInterval(sleepTimeInterval)
-						dispatch_async(dispatch_get_main_queue(), {
+						Thread.sleep(forTimeInterval: sleepTimeInterval)
+						DispatchQueue.main.async(execute: {
 							self.pvc!.disappearBar(i, delay: 0)
 							self.pvc!.mainLabel.stringValue = String(99-i)
 							self.leds?.stringPointlessDec()
 						})
 					}
 				}
-				dispatch_async(dispatch_get_main_queue(), {
+				DispatchQueue.main.async(execute: {
 					self.counterSound.stop()
 					
 					if(score == 0) {
@@ -132,22 +132,22 @@ class PointlessStackViewController: NSViewController {
 		//Add the bars
 		for _ in 0..<numBars {
 			let container = PointlessBarContainer()
-			stack.addView(container, inGravity: NSStackViewGravity.Bottom)
+			stack.addView(container, in: NSStackViewGravity.bottom)
 			
 			let bar = PointlessBar()
 			container.addSubview(bar)
 			
 			//Set the container to the same width as the stack
-			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal, toItem: stack, attribute: NSLayoutAttribute.Width, multiplier: 1, constant: 0))
+			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: stack, attribute: NSLayoutAttribute.width, multiplier: 1, constant: 0))
 			
 			//Set container's height to be at least the size of the bar it contains
-			container.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.GreaterThanOrEqual, toItem: bar, attribute: NSLayoutAttribute.Height, multiplier: 1, constant: 0))
+			container.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual, toItem: bar, attribute: NSLayoutAttribute.height, multiplier: 1, constant: 0))
 			
 			//Centre align bar in container
-			container.addConstraint(NSLayoutConstraint(item: bar, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: container, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0))
+			container.addConstraint(NSLayoutConstraint(item: bar, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: container, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
 			
 			//Centre align container in stack
-			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.CenterX, relatedBy: NSLayoutRelation.Equal, toItem: stack, attribute: NSLayoutAttribute.CenterX, multiplier: 1, constant: 0))
+			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: stack, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
 			
 			bars.append(bar)
 			barContainers.append(container)
@@ -155,7 +155,7 @@ class PointlessStackViewController: NSViewController {
 	}
 	
 	
-	func disappearBar(num: Int, delay : CFTimeInterval) {
+	func disappearBar(_ num: Int, delay : CFTimeInterval) {
 		let blur = CABasicAnimation()
 		blur.keyPath = "filters.motion.inputRadius"
 		blur.fromValue = 0
@@ -179,9 +179,9 @@ class PointlessStackViewController: NSViewController {
 		move.beginTime = CACurrentMediaTime() + delay
 		move.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
 		
-		barContainers[num].layer?.addAnimation(blur, forKey: "blur")
-		barContainers[num].layer?.addAnimation(fade, forKey: "fade")
-		barContainers[num].layer?.addAnimation(move, forKey: "move")
+		barContainers[num].layer?.add(blur, forKey: "blur")
+		barContainers[num].layer?.add(fade, forKey: "fade")
+		barContainers[num].layer?.add(move, forKey: "move")
 		
 		barContainers[num].alphaValue = 0
 	}
@@ -204,8 +204,8 @@ class PointlessBar: NSImageView {
 		setMinSize(self, width: 300, height: 6)
 	}
 	
-	override func drawRect(dirtyRect: NSRect) {
-		bgImage?.drawInRect(dirtyRect)
+	override func draw(_ dirtyRect: NSRect) {
+		bgImage?.draw(in: dirtyRect)
 	}
 	
 	override init(frame frameRect: NSRect) {super.init(frame: frameRect)}
@@ -243,7 +243,7 @@ class PointlessBackgroundImage: NSImageView {
 		super.init(frame: NSRect())
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
-		self.layer?.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
+		self.layer?.backgroundColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).cgColor
 		
 		let pulse = CIFilter(name: "CIExposureAdjust")!
 		pulse.setDefaults()
@@ -258,11 +258,11 @@ class PointlessBackgroundImage: NSImageView {
 		self.layer?.filters = [pulse, wp]
 	}
 	
-	override func drawRect(dirtyRect: NSRect) {
-		bgImage?.drawInRect(dirtyRect)
+	override func draw(_ dirtyRect: NSRect) {
+		bgImage?.draw(in: dirtyRect)
 	}
 	
-	func pulse(score: Int) {
+	func pulse(_ score: Int) {
 		let rampUpTime = 0.1
 		var ev: Float
 		var fadeTime: CFTimeInterval
@@ -297,8 +297,8 @@ class PointlessBackgroundImage: NSImageView {
 		pulsedn.beginTime = CACurrentMediaTime() + rampUpTime
 		pulsedn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
 		
-		self.layer?.addAnimation(pulseup, forKey: "pulseup")
-		self.layer?.addAnimation(pulsedn, forKey: "pulsedn")
+		self.layer?.add(pulseup, forKey: "pulseup")
+		self.layer?.add(pulsedn, forKey: "pulsedn")
 	}
 	
 	func wrongpulse() {
@@ -339,10 +339,10 @@ class PointlessBackgroundImage: NSImageView {
 		wpdn.beginTime = CACurrentMediaTime() + rampUpTime * 2
 		wpdn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
 		
-		self.layer?.addAnimation(pulseup, forKey: "pulseup")
-		self.layer?.addAnimation(pulsedn, forKey: "pulsedn")
-		self.layer?.addAnimation(wpup, forKey: "wpup")
-		self.layer?.addAnimation(wpdn, forKey: "wpdn")
+		self.layer?.add(pulseup, forKey: "pulseup")
+		self.layer?.add(pulsedn, forKey: "pulsedn")
+		self.layer?.add(wpup, forKey: "wpup")
+		self.layer?.add(wpdn, forKey: "wpdn")
 	}
 	
 	override init(frame frameRect: NSRect) {super.init(frame: frameRect)}
@@ -360,60 +360,60 @@ class PointlessBackgroundImage: NSImageView {
 /// target must be a subview of container!
 ///- parameter target: The view to have constraints applied to it
 ///- parameter container: The view into which constraints are added. Must contain target as a subview
-func constrainToSizeOfContainer(target: NSView, container: NSView) {
+func constrainToSizeOfContainer(_ target: NSView, container: NSView) {
 	target.frame = container.bounds
 	target.translatesAutoresizingMaskIntoConstraints = false
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.Top,
-		relatedBy: NSLayoutRelation.Equal,
-		toItem: container, attribute: NSLayoutAttribute.Top,
+		item: target, attribute: NSLayoutAttribute.top,
+		relatedBy: NSLayoutRelation.equal,
+		toItem: container, attribute: NSLayoutAttribute.top,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.Leading,
-		relatedBy: NSLayoutRelation.Equal,
-		toItem: container, attribute: NSLayoutAttribute.Leading,
+		item: target, attribute: NSLayoutAttribute.leading,
+		relatedBy: NSLayoutRelation.equal,
+		toItem: container, attribute: NSLayoutAttribute.leading,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.Bottom,
-		relatedBy: NSLayoutRelation.Equal,
-		toItem: container, attribute: NSLayoutAttribute.Bottom,
+		item: target, attribute: NSLayoutAttribute.bottom,
+		relatedBy: NSLayoutRelation.equal,
+		toItem: container, attribute: NSLayoutAttribute.bottom,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.Trailing,
-		relatedBy: NSLayoutRelation.Equal,
-		toItem: container, attribute: NSLayoutAttribute.Trailing,
+		item: target, attribute: NSLayoutAttribute.trailing,
+		relatedBy: NSLayoutRelation.equal,
+		toItem: container, attribute: NSLayoutAttribute.trailing,
 		multiplier: 1, constant: 0))
 }
 
 
-func setMinSize(view: NSView, width: Int, height: Int) {
+func setMinSize(_ view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: .Width, relatedBy: .GreaterThanOrEqual,
-		toItem: nil, attribute: .NotAnAttribute,
+		attribute: .width, relatedBy: .greaterThanOrEqual,
+		toItem: nil, attribute: .notAnAttribute,
 		multiplier: 1, constant: CGFloat(width)))
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: .Height, relatedBy: .GreaterThanOrEqual,
-		toItem: nil, attribute: .NotAnAttribute,
+		attribute: .height, relatedBy: .greaterThanOrEqual,
+		toItem: nil, attribute: .notAnAttribute,
 		multiplier: 1, constant: CGFloat(height)))
 }
 
 
-func setMaxSize(view: NSView, width: Int, height: Int) {
+func setMaxSize(_ view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: .Width, relatedBy: .LessThanOrEqual,
-		toItem: nil, attribute: .NotAnAttribute,
+		attribute: .width, relatedBy: .lessThanOrEqual,
+		toItem: nil, attribute: .notAnAttribute,
 		multiplier: 1, constant: CGFloat(width)))
 	view.addConstraint(NSLayoutConstraint(item: view,
-		attribute: .Height, relatedBy: .LessThanOrEqual,
-		toItem: nil, attribute: .NotAnAttribute,
+		attribute: .height, relatedBy: .lessThanOrEqual,
+		toItem: nil, attribute: .notAnAttribute,
 		multiplier: 1, constant: CGFloat(height)))
 }
 
