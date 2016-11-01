@@ -22,7 +22,7 @@ class BuzzerScene: SKScene {
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
-	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -52,17 +52,17 @@ class BuzzerScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(_ team: Int) {
+	func buzzerPressed(team: Int) {
 		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
-			leds?.buzzerOff(team)
+			leds?.buzzerOff(team: team)
 			
 			buzzes.append(team)
 			
 			if buzzNumber == 0 {
 				firstBuzzTime = Date()
 				self.run(buzzNoise)
-				leds?.stringTeamAnimate(team)
+				leds?.stringTeamAnimate(team: team)
 				nextTeamNumber = 1
 				
 				let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
@@ -93,7 +93,7 @@ class BuzzerScene: SKScene {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			leds?.stringTeamColour(team)
+			leds?.stringTeamColour(team: team)
 			nextTeamNumber += 1
 		}
 	}

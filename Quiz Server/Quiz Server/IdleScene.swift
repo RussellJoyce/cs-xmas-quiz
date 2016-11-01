@@ -17,7 +17,7 @@ class IdleScene: SKScene {
 	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "snowcloud", "mortarboard", "snowman", "snowflake", "floppydisk", "robot", "present", "poop"]
 	
-	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -144,17 +144,17 @@ class IdleScene: SKScene {
 	}
 	
 	func reset() {
-		leds?.stringAnimation(2)
+		leds?.stringAnimation(animation: 2)
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}
 	}
 	
-	func buzzerPressed(_ team: Int) {
+	func buzzerPressed(team: Int) {
 		snowmojis[team].particleBirthRate = 20
 	}
 	
-	func buzzerReleased(_ team: Int) {
+	func buzzerReleased(team: Int) {
 		snowmojis[team].particleBirthRate = 0
 	}
 }

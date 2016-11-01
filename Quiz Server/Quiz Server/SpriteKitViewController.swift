@@ -27,13 +27,13 @@ class SpriteKitViewController: NSViewController {
 		//skView.showsFPS = true
 		//skView.showsNodeCount = true
 		
-		idleScene.setUpScene(skView.bounds.size, leds: leds)
-		testScene.setUpScene(skView.bounds.size, leds: leds)
-		buzzerScene.setUpScene(skView.bounds.size, leds: leds)
-		timerScene.setUpScene(skView.bounds.size, leds: leds)
+		idleScene.setUpScene(size: skView.bounds.size, leds: leds)
+		testScene.setUpScene(size: skView.bounds.size, leds: leds)
+		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds)
+		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 	}
 	
-	func setRound(_ round: RoundType) {
+	func setRound(round: RoundType) {
 		currentRound = round
 
 		switch (currentRound) {
@@ -73,16 +73,16 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func buzzerPressed(_ team: Int) {
+	func buzzerPressed(team: Int) {
 		switch (currentRound) {
 		case .none:
 			break
 		case .idle:
-			idleScene.buzzerPressed(team)
+			idleScene.buzzerPressed(team: team)
 		case .test:
-			testScene.buzzerPressed(team)
+			testScene.buzzerPressed(team: team)
 		case .buzzers:
-			buzzerScene.buzzerPressed(team)
+			buzzerScene.buzzerPressed(team: team)
 		case .timer:
 			break
 		case .trueFalse:
@@ -92,14 +92,14 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func buzzerReleased(_ team: Int) {
+	func buzzerReleased(team: Int) {
 		switch (currentRound) {
 		case .none:
 			break
 		case .idle:
-			idleScene.buzzerReleased(team)
+			idleScene.buzzerReleased(team: team)
 		case .test:
-			testScene.buzzerReleased(team)
+			testScene.buzzerReleased(team: team)
 		case .timer:
 			break
 		case .buzzers:
@@ -131,7 +131,7 @@ class SpriteKitViewController: NSViewController {
 		timerScene.timerDecrement();
 	}
 	
-	func setTeamType(_ team: Int, type: TeamType) {
-		testScene.setTeamType(team, type: type)
+	func setTeamType(team: Int, type: TeamType) {
+		testScene.setTeamType(team: team, type: type)
 	}
 }

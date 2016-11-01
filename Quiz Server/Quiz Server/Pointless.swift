@@ -51,14 +51,14 @@ class PointlessView: NSView {
 	
 	func initialise() {
 		self.addSubview(imgView)
-		constrainToSizeOfContainer(imgView, container: self)
+		constrainToSizeOfContainer(target: imgView, container: self)
 		
 		//On top of the background image, add an instance of the stackview
 		imgView.addSubview(pvc!.view)
-		constrainToSizeOfContainer(pvc!.view, container: imgView)
+		constrainToSizeOfContainer(target: pvc!.view, container: imgView)
 	}
 	
-	func setScore(_ score: Int, callback: (()->Void)! = nil) {
+	func setScore(score: Int, callback: (()->Void)! = nil) {
 		if score <= 100 {
 			leds?.stringPointlessReset()
 			counterSound.currentTime = 0
@@ -69,7 +69,7 @@ class PointlessView: NSView {
 					for i in 0...(99-score) {
 						Thread.sleep(forTimeInterval: sleepTimeInterval)
 						DispatchQueue.main.async(execute: {
-							self.pvc!.disappearBar(i, delay: 0)
+							self.pvc!.disappearBar(num: i, delay: 0)
 							self.pvc!.mainLabel.stringValue = String(99-i)
 							self.leds?.stringPointlessDec()
 						})
@@ -86,7 +86,7 @@ class PointlessView: NSView {
 						self.endStingSound.play()
 					}
 					
-					self.imgView.pulse(score)
+					self.imgView.pulse(score: score)
 					if(callback != nil) {
 						callback()
 					}
@@ -155,7 +155,7 @@ class PointlessStackViewController: NSViewController {
 	}
 	
 	
-	func disappearBar(_ num: Int, delay : CFTimeInterval) {
+	func disappearBar(num: Int, delay : CFTimeInterval) {
 		let blur = CABasicAnimation()
 		blur.keyPath = "filters.motion.inputRadius"
 		blur.fromValue = 0
@@ -201,7 +201,7 @@ class PointlessBar: NSImageView {
 	init() {
 		super.init(frame: NSRect())
 		self.translatesAutoresizingMaskIntoConstraints = false
-		setMinSize(self, width: 300, height: 6)
+		setMinSize(view: self, width: 300, height: 6)
 	}
 	
 	override func draw(_ dirtyRect: NSRect) {
@@ -262,7 +262,7 @@ class PointlessBackgroundImage: NSImageView {
 		bgImage?.draw(in: dirtyRect)
 	}
 	
-	func pulse(_ score: Int) {
+	func pulse(score: Int) {
 		let rampUpTime = 0.1
 		var ev: Float
 		var fadeTime: CFTimeInterval
@@ -360,7 +360,7 @@ class PointlessBackgroundImage: NSImageView {
 /// target must be a subview of container!
 ///- parameter target: The view to have constraints applied to it
 ///- parameter container: The view into which constraints are added. Must contain target as a subview
-func constrainToSizeOfContainer(_ target: NSView, container: NSView) {
+func constrainToSizeOfContainer(target: NSView, container: NSView) {
 	target.frame = container.bounds
 	target.translatesAutoresizingMaskIntoConstraints = false
 	
@@ -390,7 +390,7 @@ func constrainToSizeOfContainer(_ target: NSView, container: NSView) {
 }
 
 
-func setMinSize(_ view: NSView, width: Int, height: Int) {
+func setMinSize(view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
@@ -404,7 +404,7 @@ func setMinSize(_ view: NSView, width: Int, height: Int) {
 }
 
 
-func setMaxSize(_ view: NSView, width: Int, height: Int) {
+func setMaxSize(view: NSView, width: Int, height: Int) {
 	view.translatesAutoresizingMaskIntoConstraints = false
 	
 	view.addConstraint(NSLayoutConstraint(item: view,
@@ -416,12 +416,3 @@ func setMaxSize(_ view: NSView, width: Int, height: Int) {
 		toItem: nil, attribute: .notAnAttribute,
 		multiplier: 1, constant: CGFloat(height)))
 }
-
-
-
-
-
-
-
-
-

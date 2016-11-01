@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     
-    func startQuiz(_ screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
+    func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
         window.close()
         
         controllerWindow.testMode = testMode
@@ -45,4 +45,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
 }
-

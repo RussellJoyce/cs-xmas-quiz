@@ -41,7 +41,7 @@ class QuizViewController: NSViewController {
         pointlessGame.view.frame = view.bounds
 		trueFalseView.view.frame = view.bounds
         
-        setRound(RoundType.idle)
+        setRound(round: RoundType.idle)
     }
     
     func resetRound() {
@@ -61,12 +61,12 @@ class QuizViewController: NSViewController {
         }
     }
     
-    func setRound(_ round: RoundType) {
+    func setRound(round: RoundType) {
         if currentRound != round {
             let lastRoundView = currentRoundView
             resetRound()
             currentRound = round
-			spriteKitView.setRound(round)
+			spriteKitView.setRound(round: round)
             resetRound()
             
             switch (currentRound) {
@@ -99,14 +99,14 @@ class QuizViewController: NSViewController {
     /// Called when buzzer has been pressed down
     ///
     /// - parameter team: Team number (0-7)
-    func buzzerPressed(_ team: Int) {
+    func buzzerPressed(team: Int) {
         switch (currentRound) {
         case .none:
             break // Do nothing
         case .idle, .test, .buzzers, .timer:
-            spriteKitView.buzzerPressed(team)
+            spriteKitView.buzzerPressed(team: team)
         case .trueFalse:
-			trueFalseView.buzzerPressed(team)
+			trueFalseView.buzzerPressed(team: team)
         case .pointless:
             break // Do nothing
         }
@@ -115,14 +115,14 @@ class QuizViewController: NSViewController {
     /// Called when buzzer has been released
     ///
     /// - parameter team: Team number (0-7)
-    func buzzerReleased(_ team: Int) {
+    func buzzerReleased(team: Int) {
         switch (currentRound) {
         case .none:
             break // Do nothing
         case .idle:
-            spriteKitView.buzzerReleased(team)
+            spriteKitView.buzzerReleased(team: team)
         case .test:
-            spriteKitView.buzzerReleased(team)
+            spriteKitView.buzzerReleased(team: team)
 		case .timer:
 			break
         case .buzzers:
@@ -150,43 +150,39 @@ class QuizViewController: NSViewController {
 		spriteKitView.timerDecrement();
 	}
 	
-	func setPointlessTeam(_ team: Int) {
-		pointlessGame.setCurrentTeam(team)
+	func setPointlessTeam(team: Int) {
+		pointlessGame.setCurrentTeam(team: team)
 	}
 	
 	func pointlessResetCurrentTeam() {
 		pointlessGame.resetTeam()
 	}
 	
-	func setPointlessScore(_ score: Int, animated: Bool) -> Bool {
-        if currentRound != RoundType.pointless || score < 0 || score > 100 {
-            return false
+	func setPointlessScore(score: Int, animated: Bool) {
+        if currentRound == RoundType.pointless && score >= 0 && score <= 100 {
+            pointlessGame.setScore(score: score, animated: animated)
         }
-		pointlessGame.setScore(score, animated: animated)
-		return true
     }
     
-    func setPointlessWrong() -> Bool {
-        if currentRound != RoundType.pointless {
-            return false
+    func setPointlessWrong() {
+        if currentRound == RoundType.pointless {
+            pointlessGame.wrong()
         }
-		pointlessGame.wrong()
-		return true
     }
 	
 	func trueFalseStart() {
 		trueFalseView.start()
 	}
 	
-	func trueFalseAnswer(_ ans : Bool) {
-		trueFalseView.answer(ans)
+	func trueFalseAnswer(ans : Bool) {
+		trueFalseView.answer(ans: ans)
 	}
     
     func buzzersNextTeam() {
         spriteKitView.nextBuzzerTeam()
     }
 	
-	func setTeamType(_ team: Int, type: TeamType) {
-		spriteKitView.setTeamType(team, type: type)
+	func setTeamType(team: Int, type: TeamType) {
+		spriteKitView.setTeamType(team: team, type: type)
 	}
 }

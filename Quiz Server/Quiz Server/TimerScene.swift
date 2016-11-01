@@ -35,7 +35,7 @@ class TimerScene: SKScene {
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	
-	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}

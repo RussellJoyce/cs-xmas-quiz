@@ -33,9 +33,9 @@ class PointlessGameController: NSViewController {
     }
 	
 	
-	func setCurrentTeam(_ team: Int) {
+	func setCurrentTeam(team: Int) {
         leds?.buzzersOff()
-        leds?.buzzerOn(team)
+        leds?.buzzerOn(team: team)
         leds?.stringOff()
 
 		labels[team].setActive()
@@ -46,17 +46,17 @@ class PointlessGameController: NSViewController {
 		pv.reset()
 	}
 	
-	func setScore(_ score: Int, animated: Bool) {
+	func setScore(score: Int, animated: Bool) {
 		if (animated) {
-			pv.setScore(score, callback: {
+			pv.setScore(score: score, callback: {
 				if(self.lastTeam < self.labels.count)	{
-					self.labels[self.lastTeam].setText(String(score))
+					self.labels[self.lastTeam].setText(text: String(score))
 				}
 			})
 		}
 		else {
 			if(self.lastTeam < self.labels.count)	{
-				self.labels[self.lastTeam].setText(String(score))
+				self.labels[self.lastTeam].setText(text: String(score))
 			}
 		}
 	}
@@ -66,13 +66,13 @@ class PointlessGameController: NSViewController {
 		pv.wrong()
 		if(lastTeam < labels.count)	{
 			switch(arc4random_uniform(6)) {
-			case 0: labels[lastTeam].setText("❌")
-			case 1: labels[lastTeam].setText("❌")
-			case 2: labels[lastTeam].setText("❌")
-			case 3: labels[lastTeam].setText("😩")
-			case 4: labels[lastTeam].setText("😟")
-			case 5: labels[lastTeam].setText("👎")
-			default: labels[lastTeam].setText("❌")
+			case 0: labels[lastTeam].setText(text: "❌")
+			case 1: labels[lastTeam].setText(text: "❌")
+			case 2: labels[lastTeam].setText(text: "❌")
+			case 3: labels[lastTeam].setText(text: "😩")
+			case 4: labels[lastTeam].setText(text: "😟")
+			case 5: labels[lastTeam].setText(text: "👎")
+			default: labels[lastTeam].setText(text: "❌")
 			}
 		}
 	}
@@ -80,14 +80,14 @@ class PointlessGameController: NSViewController {
 	func resetTeam() {
 		pv.reset()
 		if(lastTeam < labels.count)	{
-			labels[lastTeam].setText("")
+			labels[lastTeam].setText(text: "")
 		}
 	}
 	
 	func reset() {
 		pv.reset()
 		for i in 0...9 {
-			labels[i].setText("")
+			labels[i].setText(text: "")
 		}
 		if(lastTeam < labels.count) {
 			labels[lastTeam].setInactive()
@@ -184,7 +184,7 @@ class PGLabelView : NSView {
 		self.layer!.backgroundColor = bgCol
 	}
 	
-	func setText(_ text : String) {
+	func setText(text : String) {
 		label.stringValue = "Team " + String(teamno) + ": " + text
 	}
 	

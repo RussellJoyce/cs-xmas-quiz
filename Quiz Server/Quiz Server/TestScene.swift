@@ -32,7 +32,7 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
 	
 	
-	func setUpScene(_ size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
 			return
 		}
@@ -108,12 +108,12 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func buzzerPressed(_ team: Int) {
+	func buzzerPressed(team: Int) {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
-		leds?.stringTestOn(team)
-		leds?.buzzerOff(team)
+		leds?.stringTestOn(team: team)
+		leds?.buzzerOff(team: team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3
@@ -124,19 +124,19 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func buzzerReleased(_ team: Int) {
+	func buzzerReleased(team: Int) {
 		numbers[team].fontColor = NSColor.white
 		sparksUp[team].particleBirthRate = 0
 		sparksDown[team].particleBirthRate = 0
-		leds?.stringTestOff(team)
-		leds?.buzzerOn(team)
+		leds?.stringTestOff(team: team)
+		leds?.buzzerOn(team: team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 0
 		}
 	}
 	
-	func setTeamType(_ team: Int, type: TeamType) {
+	func setTeamType(team: Int, type: TeamType) {
 		var images: [String]
 		
 		switch type {

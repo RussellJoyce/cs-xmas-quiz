@@ -44,7 +44,7 @@ class TrueFalseViewController: NSViewController {
 		topView.topLabel = topLabel
 		teams.append(contentsOf: [team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
 		for i in 0..<teams.count {
-			teams[i].setTeam(i)
+			teams[i].setTeam(team: i)
 		}
     }
 	
@@ -71,7 +71,7 @@ class TrueFalseViewController: NSViewController {
 		
 		for i in 0..<teams.count {
 			if(teamEnabled[i]) {
-				leds?.buzzerOn(i)
+				leds?.buzzerOn(team: i)
 			}
 		}
 		
@@ -82,7 +82,7 @@ class TrueFalseViewController: NSViewController {
 		objc_sync_exit(🔒)
 		
 		DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
-			for(var i = 5; i >= 0; i -= 1) {
+			for i in (0...5).reversed() {
 				if(i != 5) {
 					Thread.sleep(forTimeInterval: 1.0)
 					for _ in 0...19 {
@@ -93,7 +93,7 @@ class TrueFalseViewController: NSViewController {
 					}
 				}
 				DispatchQueue.main.sync(execute: {
-					self.topView.setVal(i)
+					self.topView.setVal(val: i)
 					self.🔊.currentTime = 0
 					self.🔊.play()
 				})
@@ -123,15 +123,15 @@ class TrueFalseViewController: NSViewController {
 		})
 	}
 	
-	func answer(_ ans : Bool) {
+	func answer(ans : Bool) {
 		if (!counted) {
 			return
 		}
 		
 		if(ans) {
-			leds?.stringFixedColour(1);
+			leds?.stringFixedColour(colour: 1);
 		} else {
-			leds?.stringFixedColour(0);
+			leds?.stringFixedColour(colour: 0);
 		}
 		
 		for (i, team) in teams.enumerated() {
@@ -148,7 +148,7 @@ class TrueFalseViewController: NSViewController {
 		counted = false
 	}
 	
-	func buzzerPressed(_ team: Int) {
+	func buzzerPressed(team: Int) {
 		objc_sync_enter(🔒)
 		if(counting && teamEnabled[team]) {
 			if !pressed.contains(team) {
@@ -183,7 +183,7 @@ class TrueFalseTeamView : NSView {
 	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
 	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).cgColor
 	
-	func setTeam(_ team : Int) {
+	func setTeam(team : Int) {
 		teamno = team
 		
 		label.isEditable = false
@@ -268,7 +268,7 @@ class TFTopView : NSView {
 	
 	var topLabel : NSTextField?
 	
-	func setVal(_ val : Int) {
+	func setVal(val : Int) {
 		topLabel?.stringValue = String(val)
 		
 		let fade = CABasicAnimation()
