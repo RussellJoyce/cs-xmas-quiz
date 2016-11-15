@@ -8,9 +8,9 @@
 
 import Cocoa
 import DDHidLib
+import Starscream
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate {
-    
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
     @IBOutlet weak var buzzerButton3: NSButton!
@@ -33,8 +33,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil)!
     var quizWindow: NSWindow?
-    
-    
+	
+	let socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
+	
     override func windowDidLoad() {
         super.windowDidLoad()
         
@@ -45,7 +46,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Open game controller
         quizBuzzers?.setDelegate(self)
         quizBuzzers?.startListening()
-        
+		
+		//Connect to Node server
+		socket.delegate = self
+		socket.connect()
+		
         if (testMode) {
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
@@ -233,5 +238,44 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.buzzerReleased(team: button)
         }
     }
+	
+	
+	public func websocketDidConnect(socket: WebSocket) {
+		print("Websocket connected.")
+	}
+	
+	public func websocketDidReceiveData(socket: WebSocket, data: Data) {
+		//print("Got data: " . data)
+	}
+	
+	public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+		print("Websocket disconnected.")
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+			socket.connect()
+		}
+	}
+	
+	public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+		if(text.characters.count >= 3) {
+			switch(String(text.characters.prefix(2))) {
+				case "co":
+					break;
+				case "zz":
+					if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
+						if (!buzzersDisabled && buzzersEnabled[idx - 1]) {
+							quizView.buzzerPressed(team: idx - 1)
+							DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+								self.quizView.buzzerReleased(team: idx - 1)
+							}
+						}
+					}
+					break;
+				default:
+					print("Unknown message: " + text)
+					break;
+			}
+		}
+	}
 
 }
