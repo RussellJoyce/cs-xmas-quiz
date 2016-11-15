@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
         <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
@@ -21,14 +21,12 @@
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="5dV-tf-4RZ" customClass="PointlessView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="116" y="83" width="859" height="915"/>
-                    <animations/>
                 </customView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="XAt-Fg-45y">
                     <rect key="frame" x="1072" y="83" width="819" height="915"/>
                     <subviews>
                         <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="JeB-6P-ehh">
                             <rect key="frame" x="0.0" y="0.0" width="819" height="915"/>
-                            <animations/>
                         </stackView>
                     </subviews>
                     <constraints>
@@ -37,7 +35,6 @@
                         <constraint firstItem="JeB-6P-ehh" firstAttribute="leading" secondItem="XAt-Fg-45y" secondAttribute="leading" id="ntT-42-Cyf"/>
                         <constraint firstAttribute="bottom" secondItem="JeB-6P-ehh" secondAttribute="bottom" id="pTX-PU-Xrk"/>
                     </constraints>
-                    <animations/>
                 </customView>
             </subviews>
             <constraints>
@@ -50,7 +47,6 @@
                 <constraint firstItem="XAt-Fg-45y" firstAttribute="bottom" secondItem="5dV-tf-4RZ" secondAttribute="bottom" id="x1I-Lw-TVa"/>
                 <constraint firstItem="XAt-Fg-45y" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="82" id="yVT-uR-Wnh"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="1088" y="809"/>
         </customView>
     </objects>

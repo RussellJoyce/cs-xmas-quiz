@@ -23,7 +23,6 @@
 		3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF571A306820003DEA9F /* counter_sting.wav */; };
 		3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5C1A30687F003DEA9F /* Pointless.swift */; };
 		3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */; };
-		3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF601A3068DA003DEA9F /* Tests.storyboard */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
 		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
@@ -134,7 +133,6 @@
 		3CD1DF571A306820003DEA9F /* counter_sting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_sting.wav; sourceTree = "<group>"; };
 		3CD1DF5C1A30687F003DEA9F /* Pointless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointless.swift; sourceTree = "<group>"; };
 		3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessStackView.xib; sourceTree = "<group>"; };
-		3CD1DF601A3068DA003DEA9F /* Tests.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Tests.storyboard; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
 		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
@@ -260,7 +258,6 @@
 			isa = PBXGroup;
 			children = (
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
-				3CD1DF601A3068DA003DEA9F /* Tests.storyboard */,
 				46056EBB1A19624E00C37628 /* Images.xcassets */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46056EB71A19624E00C37628 /* Supporting Files */,
@@ -533,7 +530,6 @@
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
-				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 				3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */,
