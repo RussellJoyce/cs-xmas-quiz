@@ -99,10 +99,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         else {
             if (sender.state == NSOnState) {
                 buzzersEnabled[sender.tag] = false
+				if(socket.isConnected) {
+					socket.write(string: "of" + String(sender.tag + 1))
+				}
                 quizView.buzzerReleased(team: sender.tag)
             }
             else {
                 buzzersEnabled[sender.tag] = true
+				if(socket.isConnected) {
+					socket.write(string: "on" + String(sender.tag + 1))
+				}
             }
         }
     }
@@ -113,12 +119,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             for i in 0...9 {
                 quizView.buzzerReleased(team: i)
                 buzzerButtons[i].isEnabled = false
+				if(socket.isConnected) {
+					socket.write(string: "of" + String(i + 1))
+				}
             }
         }
         else {
             buzzersDisabled = false
-            for button in buzzerButtons {
-                button.isEnabled = true
+			for i in 0...9 {
+                buzzerButtons[i].isEnabled = true
+				if(socket.isConnected) {
+					socket.write(string: "on" + String(i + 1))
+				}
             }
         }
     }
