@@ -313,14 +313,14 @@
         </menu>
         <window title="Quiz Server" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES"/>
-            <rect key="contentRect" x="335" y="390" width="566" height="170"/>
+            <rect key="contentRect" x="335" y="390" width="566" height="195"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="566" height="170"/>
+                <rect key="frame" x="0.0" y="0.0" width="566" height="195"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
-                        <rect key="frame" x="165" y="126" width="384" height="26"/>
+                        <rect key="frame" x="165" y="151" width="384" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="379" id="wEV-pR-Swr"/>
                         </constraints>
@@ -335,18 +335,18 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4o8-pD-iQK">
-                        <rect key="frame" x="18" y="106" width="143" height="17"/>
+                        <rect key="frame" x="18" y="131" width="143" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="139" id="Sa9-yY-Vvw"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz buzzer controller:" id="Vnc-xz-H7T">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Quiz buzzer controller:" id="Vnc-xz-H7T">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-Ch-lHI">
-                        <rect key="frame" x="165" y="100" width="384" height="26"/>
+                        <rect key="frame" x="165" y="125" width="384" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="379" id="A80-ki-bAA"/>
                         </constraints>
@@ -361,18 +361,15 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qxb-yY-gad">
-                        <rect key="frame" x="43" y="78" width="118" height="17"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="114" id="eOZ-ou-kZd"/>
-                        </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz buzzer serial:" id="TXh-Nq-8lF">
+                        <rect key="frame" x="18" y="104" width="143" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Quiz buzzer serial:" id="TXh-Nq-8lF">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
-                        <rect key="frame" x="165" y="72" width="384" height="26"/>
+                        <rect key="frame" x="165" y="97" width="384" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="379" id="cbz-5g-8jd"/>
                         </constraints>
@@ -387,11 +384,8 @@
                         </popUpButtonCell>
                     </popUpButton>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qsu-Et-3OI">
-                        <rect key="frame" x="32" y="133" width="129" height="17"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="125" id="qAN-N8-FIL"/>
-                        </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz display screen:" id="tnL-c4-Ipy">
+                        <rect key="frame" x="18" y="158" width="143" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Quiz display screen:" id="tnL-c4-Ipy">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -424,27 +418,69 @@ DQ
                             <action selector="startQuiz:" target="9BG-lO-pnL" id="CXo-DS-23r"/>
                         </connections>
                     </button>
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KA9-gd-q2U">
+                        <rect key="frame" x="165" y="69" width="384" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="379" id="b12-SJ-UK2"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="379" id="p2k-aM-VL4"/>
+                        </constraints>
+                        <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="PS2-CU-TcM" id="Bfg-TT-FeV">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="menu"/>
+                            <menu key="menu" id="xyB-wg-Pja">
+                                <items>
+                                    <menuItem title="10" state="on" id="PS2-CU-TcM"/>
+                                    <menuItem title="9" id="wWx-aU-NIc"/>
+                                    <menuItem title="8" id="ihA-Ky-dag"/>
+                                    <menuItem title="7" id="pIU-yH-W43"/>
+                                    <menuItem title="6" id="OMA-6f-9Gb"/>
+                                    <menuItem title="5" id="vIX-k6-Jy5"/>
+                                    <menuItem title="4" id="Rpg-Kn-diM"/>
+                                    <menuItem title="3" id="9Xn-jQ-hB8"/>
+                                    <menuItem title="2" id="4Dj-3A-bDE"/>
+                                    <menuItem title="1" id="zzp-Tg-3Dt"/>
+                                </items>
+                            </menu>
+                        </popUpButtonCell>
+                    </popUpButton>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VcX-dQ-cip">
+                        <rect key="frame" x="18" y="75" width="143" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Number of teams:" id="wpP-uH-Qei">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="qxb-yY-gad" firstAttribute="top" secondItem="4o8-pD-iQK" secondAttribute="bottom" constant="11" id="1Ru-EG-F8V"/>
+                    <constraint firstItem="9Zo-H4-VCv" firstAttribute="leading" secondItem="Qsu-Et-3OI" secondAttribute="trailing" constant="8" id="2m2-Rk-eNL"/>
+                    <constraint firstItem="Qsu-Et-3OI" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="3yb-gw-7FT"/>
+                    <constraint firstItem="qxb-yY-gad" firstAttribute="top" secondItem="4o8-pD-iQK" secondAttribute="bottom" constant="10" id="4u3-jl-C5B"/>
                     <constraint firstItem="7Fx-Ch-lHI" firstAttribute="top" secondItem="9Zo-H4-VCv" secondAttribute="bottom" constant="5" id="5fW-7b-m5f"/>
                     <constraint firstAttribute="trailing" secondItem="AUn-q1-hZ0" secondAttribute="trailing" constant="20" symbolic="YES" id="70a-cB-fSp"/>
-                    <constraint firstItem="Qsu-Et-3OI" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="Gf9-YH-LHe"/>
+                    <constraint firstItem="KA9-gd-q2U" firstAttribute="top" secondItem="AUn-q1-hZ0" secondAttribute="bottom" constant="7" id="9fN-gV-IeD"/>
                     <constraint firstAttribute="trailing" secondItem="9Zo-H4-VCv" secondAttribute="trailing" constant="20" symbolic="YES" id="Haa-HE-EdN"/>
-                    <constraint firstItem="AUn-q1-hZ0" firstAttribute="leading" secondItem="qxb-yY-gad" secondAttribute="trailing" constant="8" id="Lll-vf-FWy"/>
+                    <constraint firstItem="7Fx-Ch-lHI" firstAttribute="leading" secondItem="4o8-pD-iQK" secondAttribute="trailing" constant="8" id="I94-m6-xjf"/>
+                    <constraint firstItem="Qsu-Et-3OI" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="KiX-K0-t3L"/>
+                    <constraint firstItem="KA9-gd-q2U" firstAttribute="leading" secondItem="VcX-dQ-cip" secondAttribute="trailing" constant="8" id="KoK-6N-peM"/>
                     <constraint firstItem="7Fx-Ch-lHI" firstAttribute="leading" secondItem="4o8-pD-iQK" secondAttribute="trailing" constant="8" id="M3y-G6-Jab"/>
                     <constraint firstAttribute="trailing" secondItem="7Fx-Ch-lHI" secondAttribute="trailing" constant="20" symbolic="YES" id="Nn2-0S-DeA"/>
                     <constraint firstItem="BzV-d4-VFP" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="Tbp-Wt-UPn"/>
+                    <constraint firstAttribute="trailing" secondItem="KA9-gd-q2U" secondAttribute="trailing" constant="20" symbolic="YES" id="W7k-zu-qWO"/>
                     <constraint firstAttribute="bottom" secondItem="BzV-d4-VFP" secondAttribute="bottom" constant="24" id="WaO-GL-JaZ"/>
+                    <constraint firstItem="4o8-pD-iQK" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="X5p-ML-GAe"/>
                     <constraint firstItem="9Zo-H4-VCv" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="aoq-Eq-isZ"/>
+                    <constraint firstItem="VcX-dQ-cip" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="bfy-BC-m3h"/>
                     <constraint firstAttribute="trailing" secondItem="3ly-hv-dYY" secondAttribute="trailing" constant="20" symbolic="YES" id="cO9-T0-jhS"/>
-                    <constraint firstItem="9Zo-H4-VCv" firstAttribute="leading" secondItem="Qsu-Et-3OI" secondAttribute="trailing" constant="8" id="cQG-QL-cWm"/>
                     <constraint firstAttribute="bottom" secondItem="3ly-hv-dYY" secondAttribute="bottom" constant="20" symbolic="YES" id="dLN-GD-y3S"/>
-                    <constraint firstItem="4o8-pD-iQK" firstAttribute="top" secondItem="Qsu-Et-3OI" secondAttribute="bottom" constant="10" id="dON-na-CRJ"/>
+                    <constraint firstItem="4o8-pD-iQK" firstAttribute="top" secondItem="Qsu-Et-3OI" secondAttribute="bottom" constant="10" id="gk9-QJ-a0Q"/>
+                    <constraint firstItem="qxb-yY-gad" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="iS4-fI-4Eu"/>
+                    <constraint firstItem="AUn-q1-hZ0" firstAttribute="leading" secondItem="qxb-yY-gad" secondAttribute="trailing" constant="8" id="mtx-tI-2b4"/>
+                    <constraint firstItem="VcX-dQ-cip" firstAttribute="top" secondItem="qxb-yY-gad" secondAttribute="bottom" constant="12" id="uZ4-NQ-9Pr"/>
                     <constraint firstItem="AUn-q1-hZ0" firstAttribute="top" secondItem="7Fx-Ch-lHI" secondAttribute="bottom" constant="7" id="vjC-VQ-YP3"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="71" y="-149"/>
+            <point key="canvasLocation" x="71" y="-136.5"/>
         </window>
         <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
