@@ -8,26 +8,6 @@
 
 import Cocoa
 import DDHidLib
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
-fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l > r
-  default:
-    return rhs < lhs
-  }
-}
-
 
 class StartupView: NSViewController {
     
@@ -109,11 +89,11 @@ class StartupView: NSViewController {
     
     
     @IBAction func startQuiz(_ sender: AnyObject) {
-        let screen = (allScreens?.count > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
-        let controller = (allControllers?.count > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
-        let serial = (allPorts?.count > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
+		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
+        let controller = (allControllers != nil && (allControllers?.count)! > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
+        let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSOnState;
-        
+		
         let delegate = NSApplication.shared().delegate as! AppDelegate
         delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test)
     }
