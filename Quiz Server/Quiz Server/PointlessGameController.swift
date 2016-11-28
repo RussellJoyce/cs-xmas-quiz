@@ -16,11 +16,12 @@ class PointlessGameController: NSViewController {
 	var labels = [PGLabelView]()
 	var lastTeam = 100
     var leds: QuizLeds?
+	var numTeams = 10
 
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		for i in 1...10 {
+		for i in 1...numTeams {
 			let v = PGLabelView(teamno: i)
 			labels.append(v)
 			labelstack.addView(v, in: NSStackViewGravity.center)
@@ -86,7 +87,7 @@ class PointlessGameController: NSViewController {
 	
 	func reset() {
 		pv.reset()
-		for i in 0...9 {
+		for i in 0..<numTeams {
 			labels[i].setText(text: "")
 		}
 		if(lastTeam < labels.count) {

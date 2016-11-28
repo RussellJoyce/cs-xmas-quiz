@@ -37,6 +37,7 @@ class QuizViewController: NSViewController {
         pointlessGame.leds = quizLeds
 		
 		spriteKitView.numTeams = numTeams
+		pointlessGame.numTeams = numTeams
         
         spriteKitView.view.frame = view.bounds
         pointlessGame.view.frame = view.bounds
