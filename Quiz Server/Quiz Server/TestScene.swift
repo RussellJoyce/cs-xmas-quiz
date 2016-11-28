@@ -20,6 +20,7 @@ class TestScene: SKScene {
 	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 10
+	var buzzerPresses = [Int]()
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
@@ -90,6 +91,8 @@ class TestScene: SKScene {
 			}
 			
 			imageSparks.append(imageSparksNodes)
+			
+			buzzerPresses.append(0)
 		}
 	}
 	
@@ -111,6 +114,8 @@ class TestScene: SKScene {
 				node.particleBirthRate = 0
 			}
 		}
+		
+		buzzerPresses = [Int](repeating: 0, count: numTeams)
 	}
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {
@@ -127,9 +132,39 @@ class TestScene: SKScene {
 		if team == 7 {
 			self.run(eightSound)
 		}
+		
+		if type == .websocket {
+			buzzerPresses[team] += 1
+		}
 	}
 	
 	func buzzerReleased(team: Int, type: BuzzerType) {
+		if type == .websocket {
+			let currentPresses = buzzerPresses[team]
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+				if currentPresses == self.buzzerPresses[team] {
+					self.numbers[team].fontColor = NSColor.white
+					self.sparksUp[team].particleBirthRate = 0
+					self.sparksDown[team].particleBirthRate = 0
+					self.leds?.stringTestOff(team: team)
+					self.leds?.buzzerOn(team: team)
+					
+					for node in self.imageSparks[team] {
+						node.particleBirthRate = 0
+					}
+				}
+			}
+		}
+		else {
+			self.numbers[team].fontColor = NSColor.white
+			self.sparksUp[team].particleBirthRate = 0
+			self.sparksDown[team].particleBirthRate = 0
+			self.leds?.stringTestOff(team: team)
+			self.leds?.buzzerOn(team: team)
+			
+			for node in self.imageSparks[team] {
+				node.particleBirthRate = 0
+			}
 		}
 	}
 	
