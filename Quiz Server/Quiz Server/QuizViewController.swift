@@ -101,13 +101,14 @@ class QuizViewController: NSViewController {
 	
     /// Called when buzzer has been pressed down
     ///
-    /// - parameter team: Team number (0-7)
-    func buzzerPressed(team: Int) {
+    /// - parameter team: Team number (0-9)
+	/// - parameter type: Type of buzzer that was pressed (test button, physical button, or websocket)
+	func buzzerPressed(team: Int, type: BuzzerType) {
         switch (currentRound) {
         case .none:
             break // Do nothing
         case .idle, .test, .buzzers, .timer:
-            spriteKitView.buzzerPressed(team: team)
+            spriteKitView.buzzerPressed(team: team, type: type)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
         case .pointless:
@@ -117,15 +118,14 @@ class QuizViewController: NSViewController {
     
     /// Called when buzzer has been released
     ///
-    /// - parameter team: Team number (0-7)
-    func buzzerReleased(team: Int) {
+	/// - parameter team: Team number (0-9)
+	/// - parameter type: Type of buzzer that was pressed (test button, physical button, or websocket)
+    func buzzerReleased(team: Int, type: BuzzerType) {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle:
-            spriteKitView.buzzerReleased(team: team)
-        case .test:
-            spriteKitView.buzzerReleased(team: team)
+        case .idle, .test:
+            spriteKitView.buzzerReleased(team: team, type: type)
 		case .timer:
 			break
         case .buzzers:

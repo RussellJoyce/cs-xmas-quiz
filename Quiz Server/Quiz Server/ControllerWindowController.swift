@@ -10,6 +10,13 @@ import Cocoa
 import DDHidLib
 import Starscream
 
+enum BuzzerType {
+	case test
+	case button
+	case websocket
+	case disabled
+}
+
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
@@ -101,10 +108,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         //  otherwise, buttons will disable buzzers
         if quizBuzzers == nil {
             if (sender.state == NSOnState) {
-                quizView.buzzerPressed(team: sender.tag)
+                quizView.buzzerPressed(team: sender.tag, type: .test)
             }
             else {
-                quizView.buzzerReleased(team: sender.tag)
+                quizView.buzzerReleased(team: sender.tag, type: .test)
             }
         }
         else {
@@ -113,7 +120,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if(socket.isConnected) {
 					socket.write(string: "of" + String(sender.tag + 1))
 				}
-                quizView.buzzerReleased(team: sender.tag)
+                quizView.buzzerReleased(team: sender.tag, type: .disabled)
             }
             else {
                 buzzersEnabled[sender.tag] = true
@@ -128,7 +135,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         if (sender.state == NSOnState) {
             buzzersDisabled = true
             for i in 0..<numTeams {
-                quizView.buzzerReleased(team: i)
+                quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
 				if(socket.isConnected) {
 					socket.write(string: "of" + String(i + 1))
@@ -257,14 +264,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)
         if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
-            quizView.buzzerPressed(team: button)
+            quizView.buzzerPressed(team: button, type: .button)
         }
     }
     
     override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
         let button = Int(buttonNumber)
         if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
-            quizView.buzzerReleased(team: button)
+            quizView.buzzerReleased(team: button, type: .button)
         }
     }
 	
@@ -294,9 +301,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
 						let team = idx - 1 // Make zero-indexed
 						if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
-							quizView.buzzerPressed(team: team)
+							quizView.buzzerPressed(team: team, type: .websocket)
 							DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-								self.quizView.buzzerReleased(team: team)
+								self.quizView.buzzerReleased(team: team, type: .websocket)
 							}
 						}
 					}

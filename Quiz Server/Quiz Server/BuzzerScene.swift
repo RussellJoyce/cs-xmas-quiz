@@ -52,7 +52,7 @@ class BuzzerScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(team: Int, type: BuzzerType) {
 		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
 			leds?.buzzerOff(team: team)

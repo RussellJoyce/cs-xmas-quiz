@@ -74,16 +74,16 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(team: Int, type: BuzzerType) {
 		switch (currentRound) {
 		case .none:
 			break
 		case .idle:
-			idleScene.buzzerPressed(team: team)
+			idleScene.buzzerPressed(team: team, type: type)
 		case .test:
-			testScene.buzzerPressed(team: team)
+			testScene.buzzerPressed(team: team, type: type)
 		case .buzzers:
-			buzzerScene.buzzerPressed(team: team)
+			buzzerScene.buzzerPressed(team: team, type: type)
 		case .timer:
 			break
 		case .trueFalse:
@@ -93,14 +93,14 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func buzzerReleased(team: Int) {
+	func buzzerReleased(team: Int, type: BuzzerType) {
 		switch (currentRound) {
 		case .none:
 			break
 		case .idle:
-			idleScene.buzzerReleased(team: team)
+			idleScene.buzzerReleased(team: team, type: type)
 		case .test:
-			testScene.buzzerReleased(team: team)
+			testScene.buzzerReleased(team: team, type: type)
 		case .timer:
 			break
 		case .buzzers:

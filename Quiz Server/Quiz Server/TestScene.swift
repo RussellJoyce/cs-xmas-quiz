@@ -113,7 +113,7 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(team: Int, type: BuzzerType) {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
@@ -129,15 +129,7 @@ class TestScene: SKScene {
 		}
 	}
 	
-	func buzzerReleased(team: Int) {
-		numbers[team].fontColor = NSColor.white
-		sparksUp[team].particleBirthRate = 0
-		sparksDown[team].particleBirthRate = 0
-		leds?.stringTestOff(team: team)
-		leds?.buzzerOn(team: team)
-		
-		for node in imageSparks[team] {
-			node.particleBirthRate = 0
+	func buzzerReleased(team: Int, type: BuzzerType) {
 		}
 	}
 	

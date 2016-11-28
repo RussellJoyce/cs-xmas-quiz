@@ -150,11 +150,11 @@ class IdleScene: SKScene {
 		}
 	}
 	
-	func buzzerPressed(team: Int) {
+	func buzzerPressed(team: Int, type: BuzzerType) {
 		snowmojis[team].particleBirthRate = 20
 	}
 	
-	func buzzerReleased(team: Int) {
+	func buzzerReleased(team: Int, type: BuzzerType) {
 		snowmojis[team].particleBirthRate = 0
 	}
 }
