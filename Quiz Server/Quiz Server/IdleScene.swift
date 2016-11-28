@@ -15,7 +15,7 @@ class IdleScene: SKScene {
 	var snowmojis = [SKEmitterNode]()
 	var leds: QuizLeds?
 	fileprivate var setUp = false
-	let emoji = ["tree", "santa", "snowcloud", "mortarboard", "snowman", "snowflake", "floppydisk", "robot", "present", "poop"]
+	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "mortarboard", "poop"]
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -46,24 +46,38 @@ class IdleScene: SKScene {
 		for i in 0...9 {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
 			snowmoji.particleTexture = SKTexture(imageNamed: emoji[i])
-			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
+			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
 			snowmoji.zPosition = CGFloat(i + 1)
 			snowmojis.append(snowmoji)
 		}
 		
 		let garySnow = SKEmitterNode(fileNamed: "Snowmoji")!
 		garySnow.particleTexture = SKTexture(imageNamed: "gary")
-		garySnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
+		garySnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
 		garySnow.zPosition = 11
 		garySnow.particleRotationSpeed = 1.0
-		garySnow.particleBirthRate = 0.05
+		garySnow.particleBirthRate = 0.04
 		
 		let eggSnow = SKEmitterNode(fileNamed: "Snowmoji")!
 		eggSnow.particleTexture = SKTexture(imageNamed: "egg")
-		eggSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 32)
+		eggSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
 		eggSnow.zPosition = 11
-		eggSnow.particleRotationSpeed = 2.0
-		eggSnow.particleBirthRate = 0.01
+		eggSnow.particleRotationSpeed = 1.0
+		eggSnow.particleBirthRate = 0.006
+		
+		let ooSnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		ooSnow.particleTexture = SKTexture(imageNamed: "oo")
+		ooSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
+		ooSnow.zPosition = 11
+		ooSnow.particleRotationSpeed = 2.0
+		ooSnow.particleBirthRate = 0.03
+		
+		let nootSnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		nootSnow.particleTexture = SKTexture(imageNamed: "nootnoot")
+		nootSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
+		nootSnow.zPosition = 11
+		nootSnow.particleRotationSpeed = 1.0
+		nootSnow.particleBirthRate = 0.009
 		
 		let text1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		text1.text = "Computer Science"
@@ -141,6 +155,8 @@ class IdleScene: SKScene {
 		self.addChild(lights)
 		self.addChild(garySnow)
 		self.addChild(eggSnow)
+		self.addChild(ooSnow)
+		self.addChild(nootSnow)
 	}
 	
 	func reset() {
