@@ -75,7 +75,7 @@ class IdleScene: SKScene {
 		text1.fontColor = NSColor.white
 		
 		let text2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		text2.text = "Christmas Quiz 2015"
+		text2.text = "Christmas Quiz 2016!"
 		text2.fontSize = 140
 		text2.horizontalAlignmentMode = .center
 		text2.verticalAlignmentMode = .center
@@ -99,7 +99,7 @@ class IdleScene: SKScene {
 		shadowText1.zPosition = 16
 		
 		let shadowText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		shadowText2.text = "Christmas Quiz 2015"
+		shadowText2.text = "Christmas Quiz 2016!"
 		shadowText2.fontSize = 140
 		shadowText2.fontColor = NSColor(white: 0.0, alpha: 0.8)
 		shadowText2.horizontalAlignmentMode = .center
