@@ -424,14 +424,14 @@ DQ
                             <constraint firstAttribute="width" constant="379" id="b12-SJ-UK2"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="379" id="p2k-aM-VL4"/>
                         </constraints>
-                        <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="PS2-CU-TcM" id="Bfg-TT-FeV">
+                        <popUpButtonCell key="cell" type="push" title="8" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ihA-Ky-dag" id="Bfg-TT-FeV">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" id="xyB-wg-Pja">
                                 <items>
-                                    <menuItem title="10" state="on" id="PS2-CU-TcM"/>
+                                    <menuItem title="10" id="PS2-CU-TcM"/>
                                     <menuItem title="9" id="wWx-aU-NIc"/>
-                                    <menuItem title="8" id="ihA-Ky-dag"/>
+                                    <menuItem title="8" state="on" id="ihA-Ky-dag"/>
                                     <menuItem title="7" id="pIU-yH-W43"/>
                                     <menuItem title="6" id="OMA-6f-9Gb"/>
                                     <menuItem title="5" id="vIX-k6-Jy5"/>
