@@ -25,16 +25,16 @@ function connect() {
                 myid = event.data[2];
                 buzzer.innerHTML = "TEAM " + myid;
                 console.log("Server gave us ID " + myid);
-                buzzer.className = "theButton buttonOn";
+                buzzer.className = "view theButton buttonOn";
                 break;
             case "on":
                 //Buzzer turned on
-                buzzer.className = "theButton buttonOn";
+                buzzer.className = "view theButton buttonOn";
                 console.log("button on");
                 break;
             case "of":
                 //Buzzer turned off
-                buzzer.className = "theButton buttonOff";
+                buzzer.className = "view theButton buttonOff";
                 console.log("button off");
                 break;
             case "vi":

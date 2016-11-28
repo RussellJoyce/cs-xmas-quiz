@@ -50,7 +50,7 @@ body {
     border:2px solid #bab1ba;  
 }
 
-.theButton {
+.view {
     /* Centre everthing */
     position: absolute;
     top: 50%;
@@ -71,7 +71,9 @@ body {
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
+}
 
+.theButton {
     -moz-border-radius:13px;
     -webkit-border-radius:13px;
     border-radius:13px;
