@@ -19,6 +19,7 @@ class TestScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
+	var numTeams = 10
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
@@ -32,7 +33,7 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
 	
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
 		}
@@ -40,28 +41,32 @@ class TestScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.numTeams = numTeams
 		
 		self.backgroundColor = NSColor.black
 		
-		for i in 0...9 {
+		for i in 0..<numTeams {
+			
+			let xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.0));
+			
 			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 			numberNode.fontSize = 170.0
 			numberNode.horizontalAlignmentMode = .center
 			numberNode.verticalAlignmentMode = .center
 			numberNode.text = String(i + 1)
-			numberNode.position = CGPoint(x: (i * 190) + 105, y: 540)
+			numberNode.position = CGPoint(x: xPos, y: 540)
 			numberNode.zPosition = 3
 			numbers.append(numberNode)
 			self.addChild(numberNode)
 		
 			let sparksUpNode = SKEmitterNode(fileNamed: "SparksUp")!
-			sparksUpNode.position = CGPoint(x: (i * 190) + 105, y: 655)
+			sparksUpNode.position = CGPoint(x: xPos, y: 655)
 			sparksUpNode.zPosition = 2
 			sparksUp.append(sparksUpNode)
 			self.addChild(sparksUpNode)
 
 			let sparksDownNode = SKEmitterNode(fileNamed: "SparksDown")!
-			sparksDownNode.position = CGPoint(x: (i * 190) + 105, y: 425)
+			sparksDownNode.position = CGPoint(x: xPos, y: 425)
 			sparksDownNode.zPosition = 2
 			sparksDown.append(sparksDownNode)
 			self.addChild(sparksDownNode)
@@ -70,14 +75,14 @@ class TestScene: SKScene {
 			
 			for j in 0...2 {
 				let imageSparksUpNode = SKEmitterNode(fileNamed: "SparksUpImage")!
-				imageSparksUpNode.position = CGPoint(x: (i * 190) + 105, y: 655)
+				imageSparksUpNode.position = CGPoint(x: xPos, y: 655)
 				imageSparksUpNode.zPosition = 1
 				imageSparksUpNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
 				imageSparksNodes.append(imageSparksUpNode)
 				self.addChild(imageSparksUpNode)
 				
 				let imageSparksDownNode = SKEmitterNode(fileNamed: "SparksDownImage")!
-				imageSparksDownNode.position = CGPoint(x: (i * 190) + 105, y: 425)
+				imageSparksDownNode.position = CGPoint(x: xPos, y: 425)
 				imageSparksDownNode.zPosition = 1
 				imageSparksDownNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
 				imageSparksNodes.append(imageSparksDownNode)

@@ -29,7 +29,7 @@ class SpriteKitViewController: NSViewController {
 		//skView.showsNodeCount = true
 		
 		idleScene.setUpScene(size: skView.bounds.size, leds: leds)
-		testScene.setUpScene(size: skView.bounds.size, leds: leds)
+		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 	}
