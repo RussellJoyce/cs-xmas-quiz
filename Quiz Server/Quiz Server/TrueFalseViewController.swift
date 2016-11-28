@@ -29,8 +29,9 @@ class TrueFalseViewController: NSViewController {
 	var counting = false
 	var counted = false
 	var pressed = [Int]()
-	var teamEnabled = [Bool](repeating: true, count: 10)
+	var teamEnabled = [Bool]()
 	var leds: QuizLeds?
+	var numTeams = 10
 	
 	var teams = [TrueFalseTeamView]()
 	
@@ -42,9 +43,14 @@ class TrueFalseViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		topView.topLabel = topLabel
-		teams.append(contentsOf: [team1, team2, team3, team4, team5, team6, team7, team8, team9, team10])
-		for i in 0..<teams.count {
+		
+		// Trim number of views down to match number of teams
+		let allTeams : [TrueFalseTeamView] = [team1, team2, team3, team4, team5, team6, team7, team8, team9, team10]
+		for i in 0..<numTeams {
+			teams.append(allTeams[i])
+			teams[i].isHidden = false
 			teams[i].setTeam(team: i)
+			teamEnabled.append(true)
 		}
     }
 	
@@ -53,7 +59,7 @@ class TrueFalseViewController: NSViewController {
 		counting = false
 		pressed = [Int]()
 		objc_sync_exit(🔒)
-		teamEnabled = [Bool](repeating: true, count: 10)
+		teamEnabled = [Bool](repeating: true, count: numTeams)
 		for team in teams {
 			team.setNeutral()
 		}
