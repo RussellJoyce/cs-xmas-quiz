@@ -19,6 +19,7 @@ class SpriteKitViewController: NSViewController {
 	let timerScene = TimerScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
+	var numTeams = 10
 
 	override func viewDidLoad() {
 		super.viewDidLoad()

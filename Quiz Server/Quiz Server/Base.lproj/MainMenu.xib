@@ -488,6 +488,7 @@ DQ
                 <outlet property="screenSelector" destination="9Zo-H4-VCv" id="g6C-QK-QJa"/>
                 <outlet property="serialSelector" destination="AUn-q1-hZ0" id="sYk-9V-eVQ"/>
                 <outlet property="startButton" destination="3ly-hv-dYY" id="LeE-DQ-bWy"/>
+                <outlet property="teamsSelector" destination="KA9-gd-q2U" id="Ise-Cl-k69"/>
                 <outlet property="testMode" destination="BzV-d4-VFP" id="hd1-4Q-fNA"/>
                 <outlet property="view" destination="EiT-Mj-1SZ" id="nHa-hc-OfF"/>
             </connections>

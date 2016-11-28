@@ -16,6 +16,7 @@ class StartupView: NSViewController {
     @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var testMode: NSButton!
+	@IBOutlet weak var teamsSelector: NSPopUpButton!
     
     var allScreens: [NSScreen]?
     var allControllers: [DDHidJoystick]?
@@ -93,8 +94,9 @@ class StartupView: NSViewController {
         let controller = (allControllers != nil && (allControllers?.count)! > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
         let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSOnState;
+		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
         let delegate = NSApplication.shared().delegate as! AppDelegate
-        delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test)
+        delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams)
     }
 }

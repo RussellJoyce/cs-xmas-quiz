@@ -20,15 +20,14 @@ enum RoundType {
 
 class QuizViewController: NSViewController {
     
-    var currentRound = RoundType.none
-    
     let spriteKitView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)!
     let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)!
 	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)!
-    
+	
+	var currentRound = RoundType.none
     var currentRoundView: NSView?
-    
     var quizLeds: QuizLeds?
+	var numTeams = 10
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +35,8 @@ class QuizViewController: NSViewController {
         spriteKitView.leds = quizLeds
         trueFalseView.leds = quizLeds
         pointlessGame.leds = quizLeds
+		
+		spriteKitView.numTeams = numTeams
         
         spriteKitView.view.frame = view.bounds
         pointlessGame.view.frame = view.bounds

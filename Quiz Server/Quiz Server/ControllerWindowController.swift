@@ -26,8 +26,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
-    var testMode: Bool = true
-    var buzzersEnabled = [Bool](repeating: true, count: 10)
+    var testMode = true
+	var numTeams = 10
+    var buzzersEnabled = [Bool]()
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
     
@@ -51,6 +52,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socket.delegate = self
 		socket.connect()
 		
+		// Trim number of buttons down to match number of teams
+		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
+		for i in 0..<numTeams {
+			buzzerButtons.append(allBuzzerButtons[i])
+			buzzerButtons[i].isEnabled = true
+			buzzersEnabled.append(true)
+		}
+		
+		quizView.numTeams = numTeams
+		
         if (testMode) {
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
@@ -71,8 +82,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 multiplier: 1, constant: quizScreen!.frame.height))
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
-        
-        buzzerButtons += [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
+		
+		
     }
     
     func windowWillClose(_ notification: Notification) {
@@ -116,7 +127,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func disableAllBuzzers(_ sender: NSButton) {
         if (sender.state == NSOnState) {
             buzzersDisabled = true
-            for i in 0...9 {
+            for i in 0..<numTeams {
                 quizView.buzzerReleased(team: i)
                 buzzerButtons[i].isEnabled = false
 				if(socket.isConnected) {
@@ -126,7 +137,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
         else {
             buzzersDisabled = false
-			for i in 0...9 {
+			for i in 0..<numTeams {
                 buzzerButtons[i].isEnabled = true
 				if(socket.isConnected) {
 					socket.write(string: "on" + String(i + 1))
@@ -181,7 +192,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func pointlessTeamPress(_ sender: NSButton) {
-		quizView.setPointlessTeam(team: sender.tag)
+		let team = sender.tag
+		if (team < numTeams) {
+			quizView.setPointlessTeam(team: team)
+		}
 	}
 	
 	@IBAction func pointlessResetTeam(_ sender: AnyObject) {
@@ -225,28 +239,31 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func setTeamType(_ sender: NSPopUpButton) {
-		switch sender.indexOfSelectedItem {
-		case 0:
-			quizView.setTeamType(team: sender.tag, type: .christmas)
-		case 1:
-			quizView.setTeamType(team: sender.tag, type: .academic)
-		case 2:
-			quizView.setTeamType(team: sender.tag, type: .ibm)
-		default:
-			quizView.setTeamType(team: sender.tag, type: .christmas)
+		let team = sender.tag
+		if (team < numTeams) {
+			switch sender.indexOfSelectedItem {
+			case 0:
+				quizView.setTeamType(team: team, type: .christmas)
+			case 1:
+				quizView.setTeamType(team: team, type: .academic)
+			case 2:
+				quizView.setTeamType(team: team, type: .ibm)
+			default:
+				quizView.setTeamType(team: team, type: .christmas)
+			}
 		}
 	}
 	
     override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
         let button = Int(buttonNumber)
-        if (!buzzersDisabled && buzzersEnabled[button]) {
+        if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
             quizView.buzzerPressed(team: button)
         }
     }
     
     override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
         let button = Int(buttonNumber)
-        if (!buzzersDisabled && buzzersEnabled[button]) {
+        if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
             quizView.buzzerReleased(team: button)
         }
     }
@@ -275,10 +292,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					break;
 				case "zz":
 					if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
-						if (!buzzersDisabled && buzzersEnabled[idx - 1]) {
-							quizView.buzzerPressed(team: idx - 1)
+						let team = idx - 1 // Make zero-indexed
+						if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
+							quizView.buzzerPressed(team: team)
 							DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-								self.quizView.buzzerReleased(team: idx - 1)
+								self.quizView.buzzerReleased(team: team)
 							}
 						}
 					}

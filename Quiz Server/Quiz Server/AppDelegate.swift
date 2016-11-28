@@ -31,14 +31,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     
-    func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool) {
+	func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int) {
         window.close()
-        
+		
+		controllerWindow.numTeams = numberOfTeams
         controllerWindow.testMode = testMode
         controllerWindow.quizScreen = screen
         controllerWindow.quizBuzzers = buzzers
-        if let optSerial = serial {
-            controllerWindow.quizLeds = QuizLeds(serialPort: optSerial)
+        if let serial = serial {
+            controllerWindow.quizLeds = QuizLeds(serialPort: serial)
         }
         
         controllerWindow.showWindow(self)
