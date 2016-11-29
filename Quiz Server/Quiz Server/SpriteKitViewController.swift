@@ -17,6 +17,8 @@ class SpriteKitViewController: NSViewController {
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
 	let timerScene = TimerScene()
+	let timedScoresScene = TimedScoresScene()
+	let geographyScene = GeographyScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
@@ -32,14 +34,14 @@ class SpriteKitViewController: NSViewController {
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
+		timedScoresScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 	}
 	
 	func setRound(round: RoundType) {
 		currentRound = round
 
 		switch (currentRound) {
-		case .none:
-			skView.presentScene(nil)
 		case .idle:
 			skView.presentScene(idleScene)
 		case .test:
@@ -48,17 +50,17 @@ class SpriteKitViewController: NSViewController {
 			skView.presentScene(buzzerScene)
 		case .timer:
 			skView.presentScene(timerScene)
-		case .trueFalse:
-			skView.presentScene(nil)
-		case .pointless:
+		case .timedScores:
+			skView.presentScene(timedScoresScene)
+		case .geography:
+			skView.presentScene(geographyScene)
+		default:
 			skView.presentScene(nil)
 		}
 	}
 	
 	func reset() {
 		switch (currentRound) {
-		case .none:
-			break
 		case .idle:
 			idleScene.reset()
 		case .test:
@@ -67,17 +69,17 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.reset()
 		case .timer:
 			timerScene.reset()
-		case .trueFalse:
-			break
-		case .pointless:
+		case .timedScores:
+			timedScoresScene.reset()
+		case .geography:
+			geographyScene.reset()
+		default:
 			break
 		}
 	}
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {
 		switch (currentRound) {
-		case .none:
-			break
 		case .idle:
 			idleScene.buzzerPressed(team: team, type: type)
 		case .test:
@@ -86,28 +88,30 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.buzzerPressed(team: team, type: type)
 		case .timer:
 			break
-		case .trueFalse:
+		case .timedScores:
 			break
-		case .pointless:
+		case .geography:
+			break
+		default:
 			break
 		}
 	}
 	
 	func buzzerReleased(team: Int, type: BuzzerType) {
 		switch (currentRound) {
-		case .none:
-			break
 		case .idle:
 			idleScene.buzzerReleased(team: team, type: type)
 		case .test:
 			testScene.buzzerReleased(team: team, type: type)
-		case .timer:
-			break
 		case .buzzers:
 			break
-		case .trueFalse:
+		case .timer:
 			break
-		case .pointless:
+		case .timedScores:
+			break
+		case .geography:
+			break
+		default:
 			break
 		}
 	}

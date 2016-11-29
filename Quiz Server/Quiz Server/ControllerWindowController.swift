@@ -170,6 +170,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.setRound(round: RoundType.pointless)
 		case 5:
 			quizView.setRound(round: RoundType.timer)
+		case 6:
+			quizView.setRound(round: RoundType.timedScores)
+		case 7:
+			quizView.setRound(round: RoundType.geography)
         default:
             break
         }
