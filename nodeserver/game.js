@@ -86,7 +86,7 @@ function setView(id) {
 
 
 //When the buzzer is clicked, send a message to the server
-buzzer.addEventListener('click', function(event) {
+buzzer.addEventListener('mousedown', function(event) {
     if(myid > 0 && myid <= 10) { //Valid team ids are 1 to 10
         ws.send('zz' + myid);
     }
