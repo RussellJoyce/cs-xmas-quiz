@@ -1,4 +1,6 @@
 var buzzer = document.getElementById("buzzer");
+var geoimg = document.getElementById("geoimg");
+
 var ws;
 var myid = 0;
 
@@ -23,17 +25,27 @@ function connect() {
                 myid = event.data[2];
                 buzzer.innerHTML = "TEAM " + myid;
                 console.log("Server gave us ID " + myid);
-                buzzer.className = "theButton buttonOn";
+                toggleState(true);
                 break;
             case "on":
-                //Buzzer turned on
-                buzzer.className = "theButton buttonOn";
+                toggleState(true);
                 console.log("button on");
                 break;
             case "of":
-                //Buzzer turned off
-                buzzer.className = "theButton buttonOff";
+                toggleState(false);
                 console.log("button off");
+                break;
+            case "vi":
+                //Set our view
+                console.log("Setting view: " + event.data.slice(2));
+                toggleState(true);
+                setView(event.data.slice(2));
+                break;
+            case "im":
+                //Set the geo image
+                console.log("Setting geo image: " + event.data.slice(2));
+                toggleState(true);
+                geoimg.src = "images/" + event.data.slice(2);
                 break;
         }
     }
@@ -62,11 +74,45 @@ document.ontouchmove = function(event){
 }
 
 
+
+function toggleState(on) {
+    if(on) {
+        buzzer.className = "view theButton buttonOn";
+        geoimg.className = "";
+    } else {
+        buzzer.className = "view theButton buttonOff";
+        geoimg.className = "imageDisabled";
+    }
+}
+
+
+function setView(id) {
+    var elements = document.getElementsByClassName('view')
+    for (var i = 0; i < elements.length; i++){
+        elements[i].style.display = 'none';
+    }
+
+    var view = document.getElementById(id);
+    view.style.display = 'flex';
+}
+
+
 //When the buzzer is clicked, send a message to the server
-buzzer.addEventListener('click', function(event) {
+buzzer.addEventListener('mousedown', function(event) {
     if(myid > 0 && myid <= 10) { //Valid team ids are 1 to 10
-        ws.send('zz');
+        ws.send('zz' + myid);
     }
 });
 
+
+//When the image is clicked send the coords to the server
+geoimg.addEventListener('mousedown', function(event) {
+    var rect = geoimg.getBoundingClientRect();
+    var x = (event.clientX - rect.left) / rect.width * 100;
+    var y = (event.clientY - rect.top) / rect.height * 100;
+    ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
+});
+
+
+setView('buzzer');
 connect();

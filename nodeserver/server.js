@@ -34,7 +34,7 @@ wserver.on('connection', function(ws) {
     ws.on('message', function incoming(message) {
         //Messages from the quiz software to the clients
         try {
-            if(message.length >= 3) { //All valid messages are 3 characters long
+            if(message.length >= 3) { //All valid messages are 3 or more characters long
                 switch(message.slice(0,2)) {
                     case "on":
                         if(id = parseInt(message[2])) {
@@ -51,6 +51,13 @@ wserver.on('connection', function(ws) {
                                 c.sock.send("of");
                             } //else client not connected
                         }
+                        break;
+                    default:
+                        //Else just forward it on to all clients
+                        console.log("To all: " + message);
+                        wclient.clients.forEach(function each(c) {
+                            c.send(message);
+                        });
                         break;
                 }
             }
@@ -84,19 +91,12 @@ wclient.on('connection', function connection(ws) {
                         //Client wants an ID
                         ws.send('ok' + clients[client].id);
                         break;
-                    case "zz":
-                        //Client buzzing
-                        if(clients.hasOwnProperty(client)) {
-                            console.log("Buzz from team " + clients[client].id);
-                            wserver.clients.forEach(function each(c) {
-                                c.send("zz" + clients[client].id);
-                            });
-                        } else {
-                            console.log("Buzz from unknown client " + client);
-                        }                   
-                        break;
                     default:
-                        console.log('from client: %s', message);
+                        //Else just forward it on
+                        console.log("Client: " + message);
+                        wserver.clients.forEach(function each(c) {
+                            c.send(message);
+                        });
                         break;
                 }
             }
