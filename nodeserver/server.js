@@ -107,6 +107,6 @@ wclient.on('connection', function connection(ws) {
 });
 
 
-connect().use(serveStatic(__dirname)).listen(8080, function(){
+connect().use(serveStatic(__dirname+'/static')).listen(8080, function(){
     console.log('Quiz Server running on 8080...');
 });
