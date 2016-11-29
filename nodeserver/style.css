@@ -87,6 +87,12 @@ body {
 }
 
 
+.imageDisabled {
+    filter: blur(5px) grayscale(100%);
+    transition: 0.8s;
+}
+
+
 #geoimg {
     height:100%;
     width:100%;

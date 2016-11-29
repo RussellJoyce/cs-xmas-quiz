@@ -22,5 +22,8 @@ server.on('open', function open() {
 
 server.on('message', function(data, flags) {
     console.log("server: %s", data);
+    if(data.slice(0,2) == "ii") {
+        server.send("of1");
+    }
 });
 
