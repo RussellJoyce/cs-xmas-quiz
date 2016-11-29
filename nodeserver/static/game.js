@@ -1,9 +1,65 @@
 var buzzer = document.getElementById("buzzer");
 var geoimg = document.getElementById("geoimg");
 
+
 var ws;
 var myid = 0;
 
+var word = "";
+
+function boggleLetterEV(event) {
+  //is the cell clickable at all?
+  var boggleLetter = event.target;
+  if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
+  if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
+
+  //is the cell valid to be clicked next (adjacent to previous click)
+
+
+  //Ok, let's do it.
+  boggleLetter.className += " isSelected";
+  word += boggleLetter.innerHTML;
+  console.log(word);
+}
+
+function boggleSetGrid(grid) {
+
+  var pgrid=grid.split(",");
+
+  //Clear last word
+  //Clear score
+  //Set all button contents
+  //Clear current word
+
+  for (var x=1; x<=9; x++) {
+    for (var y=1; y<=4; y++) {
+      var boggleLetter = document.getElementById("boggleLetter-"+x+"x"+y);
+      var gridLetter = pgrid[y-1][x-1];
+
+      boggleLetter.innerHTML = gridLetter;
+      if (gridLetter == ' ') {
+        if (boggleLetter.className.indexOf("isEmpty")==-1) boggleLetter.className+=" isEmpty";
+      } else {
+        boggleLetter.className = boggleLetter.className.replace("isEmpty", "");
+      }
+
+      boggleLetter.removeEventListener('mousedown', boggleLetterEV);
+      boggleLetter.addEventListener('mousedown', boggleLetterEV);
+
+    }
+  }
+
+  //disable all input
+
+}
+
+function boggleDisable() {
+
+}
+
+function boggleEnable() {
+
+}
 
 /*
 When we connect to the server we set up a websocket with the appropriate handlers.
@@ -20,7 +76,7 @@ function connect() {
     ws.onmessage = function (event) {
         //Messages from the server:
         switch(event.data.slice(0,2)) {
-            case "ok": 
+            case "ok":
                 //We are told what team we are
                 myid = event.data[2];
                 buzzer.innerHTML = "TEAM " + myid;
@@ -46,6 +102,15 @@ function connect() {
                 console.log("Setting geo image: " + event.data.slice(2));
                 toggleState(true);
                 geoimg.src = "images/" + event.data.slice(2);
+                break;
+            case "bg":
+                //Boggle stuff
+                var payload = JSON.parse(event.data.slice(2));
+                switch (payload.cmd) {
+                  case "setGrid":
+                    boggleSetGrid(payload.grid);
+                    break;
+                }
                 break;
         }
     }
@@ -79,9 +144,11 @@ function toggleState(on) {
     if(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
+        boggleEnable();
     } else {
         buzzer.className = "view theButton buttonOff";
         geoimg.className = "imageDisabled";
+        boggleDisable();
     }
 }
 
@@ -114,5 +181,8 @@ geoimg.addEventListener('mousedown', function(event) {
 });
 
 
-setView('buzzer');
+boggleSetGrid("         ,         ,         ,         ");
+boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
+
+setView('boggle');
 connect();
