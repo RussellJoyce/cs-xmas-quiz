@@ -22,6 +22,7 @@ class SpriteKitViewController: NSViewController {
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
+	var transitions = [SKTransition]()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -36,26 +37,95 @@ class SpriteKitViewController: NSViewController {
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		timedScoresScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		
+		let transitionDuration = 1.0
+		
+		var transition = SKTransition.doorsCloseVertical(withDuration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.doorsOpenVertical(withDuration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.doorway(withDuration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.flipHorizontal(withDuration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.flipVertical(withDuration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.moveIn(with: .down, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.moveIn(with: .up, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.push(with: .down, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.push(with: .up, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.reveal(with: .down, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
+		transition = SKTransition.reveal(with: .up, duration: transitionDuration)
+		transition.pausesIncomingScene = false
+		transition.pausesOutgoingScene = false
+		transitions.append(transition)
+		
 	}
 	
 	func setRound(round: RoundType) {
 		currentRound = round
+		
+		var scene : SKScene?
 
 		switch (currentRound) {
 		case .idle:
-			skView.presentScene(idleScene)
+			scene = idleScene
 		case .test:
-			skView.presentScene(testScene)
+			scene = testScene
 		case .buzzers:
-			skView.presentScene(buzzerScene)
+			scene = buzzerScene
 		case .timer:
-			skView.presentScene(timerScene)
+			scene = timerScene
 		case .timedScores:
-			skView.presentScene(timedScoresScene)
+			scene = timedScoresScene
 		case .geography:
-			skView.presentScene(geographyScene)
+			scene = geographyScene
 		default:
-			skView.presentScene(nil)
+			scene = nil
+		}
+		
+		if let scene = scene, transitions.count > 0 {
+			let randomIndex = Int(arc4random_uniform(UInt32(transitions.count)))
+			let transition = transitions[randomIndex]
+			skView.presentScene(scene, transition: transition)
+		}
+		else {
+			skView.presentScene(scene)
 		}
 	}
 	
