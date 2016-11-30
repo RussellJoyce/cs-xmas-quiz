@@ -16,7 +16,7 @@ function boggleLetterEV(event) {
   var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(n => parseInt(n));
 
   //is the cell valid to be clicked next (adjacent to previous click)
-  if (boggleLastSelected) {
+  if (boggleLastSelected) { //(if nothing is selected then it's always 'ok')
     for (var dim=0; dim<=1; dim++) {
       if (attemptCoord[dim]==boggleLastSelected[dim]-1 ||
           attemptCoord[dim]==boggleLastSelected[dim] ||
@@ -27,6 +27,10 @@ function boggleLetterEV(event) {
         return;
       }
     }
+  } else {
+    //If there was nothing selected currently, clear the boggleWord as it might be showing the status of the previous submission.
+    boggleWord.innerHTML = "";
+    boggleSubmitStatus.innerHTML = "";
   }
 
   //Ok, let's do it.
@@ -42,6 +46,10 @@ function boggleSetGrid(grid) {
 
   boggleCurrentGrid=grid.split(",");
 
+  //Clear current word
+  boggleWord.innerHTML = "";
+  boggleSubmitStatus.innerHTML = "";
+
   //Clear score
   boggleScore.innerHTML = "0";
 
@@ -51,8 +59,6 @@ function boggleSetGrid(grid) {
 }
 
 function boggleResetGrid() {
-  //Clear current word
-  boggleWord.innerHTML = "";
 
   //clear the last-selected recorder.
   boggleLastSelected = null;
@@ -135,12 +141,30 @@ function connect() {
                   case "set":
                     boggleSetGrid(payload.grid);
                     break;
+                  case "good":
+                    boggleScore.innerHTML = payload.score;
+                    boggleWord.innerHTML = '<span class="boggleCorrect">'+boggleWord.innerHTML+'<span>';
+                    boggleSubmitStatus.innerHTML = "✅🎉";
+                    boggleResetGrid();
+                    break;
+                  case "bad":
+                    boggleWord.innerHTML = '<span class="boggleIncorrect">'+boggleWord.innerHTML+'<span>';
+                    boggleSubmitStatus.innerHTML = "📖❌😨"
+                    boggleResetGrid();
+                    break;
+                  case "duplicate":
+                    boggleWord.innerHTML = '<span class="boggleDuplicate">'+boggleWord.innerHTML+'<span>';
+                    boggleSubmitStatus.innerHTML = "📖🔁"
+                    boggleResetGrid();
+                    break;
+
                 }
                 break;
         }
     }
 
     ws.onclose = function(event) {
+        setView("buzzer");
         console.log("Disconnected");
         buzzer.innerHTML = "NO CONNECTION";
         buzzer.className = "theButton buttonOff";
@@ -206,11 +230,17 @@ geoimg.addEventListener('mousedown', function(event) {
 });
 
 boggleCancel.addEventListener('mousedown', function(event) {
+  //Clear current word
+  boggleWord.innerHTML = "";
+  boggleSubmitStatus.innerHTML = "";
   boggleResetGrid();
 });
 
 boggleSubmit.addEventListener('mousedown', function(event) {
-  if (boggleWord.innerHTML!="") ws.send("bw"+boggleWord.innerHTML);
+  if (boggleWord.innerHTML!="" && boggleSubmitStatus.innerHTML=="") {
+    ws.send("bw"+boggleWord.innerHTML);
+    boggleSubmitStatus.innerHTML = "⌛️";
+  }
 });
 
 boggleSetGrid("         ,         ,         ,         ");

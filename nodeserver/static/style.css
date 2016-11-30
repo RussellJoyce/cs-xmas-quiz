@@ -280,6 +280,20 @@ body {
     background-color:#e4685d;
 }
 
+.boggleCorrect {
+  color:#228B22;
+  font-style: italic;
+}
+
+.boggleDuplicate {
+  color:#0000CD;
+  font-style: italic;
+}
+
+.boggleIncorrect {
+  color:#FF4500;
+  font-style: italic;
+}
 
 #geoimg {
     height:100%;
