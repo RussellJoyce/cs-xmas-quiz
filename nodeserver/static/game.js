@@ -13,7 +13,7 @@ function boggleLetterEV(event) {
   if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
   if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
 
-  var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(n => parseInt(n));
+  var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(function(n) {return parseInt(n)});
 
   //is the cell valid to be clicked next (adjacent to previous click)
   if (boggleLastSelected) { //(if nothing is selected then it's always 'ok')

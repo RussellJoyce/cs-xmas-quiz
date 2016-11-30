@@ -39,10 +39,11 @@ function boggleTestWord(word, client) {
 }
 
 function boggleReset() {
-  for (var i=0; i<clients.length; i++) {
-    clients[i].words = {};
-    clients[i].boggleScore = 0;
-  }
+    console.log("Resetting Boggle");
+    _.forEach(clients, c => {
+        c.words = {};
+        c.boggleScore = 0;
+    });
 }
 
 function boggleDigest() {
@@ -59,7 +60,7 @@ function boggleDigest() {
 
 
 function getClientByID(id) {
-    for(c in clients) {
+    for(var c in clients) {
         if(clients[c].hasOwnProperty("id")) {
             if(clients[c].id == id) {
                 return clients[c];
@@ -87,7 +88,7 @@ wserver.on('connection', function(ws) {
     ws.on('message', function incoming(message) {
         //Messages from the quiz software to the clients
         try {
-            if(message.length >= 3) { //All valid messages are 3 or more characters long
+            if(message.length >= 2) { //All valid messages are 2 or more characters long
                 switch(message.slice(0,2)) {
                     case "on":
                         if(id = parseInt(message[2])) {
