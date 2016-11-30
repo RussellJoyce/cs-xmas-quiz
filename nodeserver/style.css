@@ -90,6 +90,7 @@ body {
 .imageDisabled {
     filter: blur(5px) grayscale(100%);
     transition: 0.8s;
+    opacity: 0.5;
 }
 
 
