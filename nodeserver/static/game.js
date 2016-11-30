@@ -5,7 +5,7 @@ var geoimg = document.getElementById("geoimg");
 var ws;
 var myid = 0;
 
-var word = "";
+var boggleLastSelected = null;
 
 function boggleLetterEV(event) {
   //is the cell clickable at all?
@@ -13,28 +13,55 @@ function boggleLetterEV(event) {
   if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
   if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
 
-  //is the cell valid to be clicked next (adjacent to previous click)
+  var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(n => parseInt(n));
 
+  //is the cell valid to be clicked next (adjacent to previous click)
+  if (boggleLastSelected) {
+    for (var dim=0; dim<=1; dim++) {
+      if (attemptCoord[dim]==boggleLastSelected[dim]-1 ||
+          attemptCoord[dim]==boggleLastSelected[dim] ||
+          attemptCoord[dim]==boggleLastSelected[dim]+1 ) {
+        //ok. This is an acceptable variance in this dimension
+      } else {
+        //BOOO NOT COOL. DISQUALIFIED
+        return;
+      }
+    }
+  }
 
   //Ok, let's do it.
   boggleLetter.className += " isSelected";
-  word += boggleLetter.innerHTML;
-  console.log(word);
+  boggleLastSelected = attemptCoord;
+
+  boggleWord.innerHTML+=boggleLetter.innerHTML;
 }
+
+var boggleCurrentGrid = null;
 
 function boggleSetGrid(grid) {
 
-  var pgrid=grid.split(",");
+  boggleCurrentGrid=grid.split(",");
 
-  //Clear last word
   //Clear score
-  //Set all button contents
-  //Clear current word
+  boggleScore.innerHTML = "0";
 
+  boggleResetGrid();
+
+  boggleDisable();
+}
+
+function boggleResetGrid() {
+  //Clear current word
+  boggleWord.innerHTML = "";
+
+  //clear the last-selected recorder.
+  boggleLastSelected = null;
+
+  //Set all button contents
   for (var x=1; x<=9; x++) {
     for (var y=1; y<=4; y++) {
       var boggleLetter = document.getElementById("boggleLetter-"+x+"x"+y);
-      var gridLetter = pgrid[y-1][x-1];
+      var gridLetter = boggleCurrentGrid[y-1][x-1];
 
       boggleLetter.innerHTML = gridLetter;
       if (gridLetter == ' ') {
@@ -43,14 +70,12 @@ function boggleSetGrid(grid) {
         boggleLetter.className = boggleLetter.className.replace("isEmpty", "");
       }
 
+      boggleLetter.className = boggleLetter.className.replace("isSelected", "");
+
       boggleLetter.removeEventListener('mousedown', boggleLetterEV);
       boggleLetter.addEventListener('mousedown', boggleLetterEV);
-
     }
   }
-
-  //disable all input
-
 }
 
 function boggleDisable() {
@@ -107,7 +132,7 @@ function connect() {
                 //Boggle stuff
                 var payload = JSON.parse(event.data.slice(2));
                 switch (payload.cmd) {
-                  case "setGrid":
+                  case "set":
                     boggleSetGrid(payload.grid);
                     break;
                 }
@@ -180,6 +205,13 @@ geoimg.addEventListener('mousedown', function(event) {
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
 
+boggleCancel.addEventListener('mousedown', function(event) {
+  boggleResetGrid();
+});
+
+boggleSubmit.addEventListener('mousedown', function(event) {
+  if (boggleWord.innerHTML!="") ws.send("bw"+boggleWord.innerHTML);
+});
 
 boggleSetGrid("         ,         ,         ,         ");
 boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
