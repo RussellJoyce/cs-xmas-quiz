@@ -163,6 +163,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         case 1:
             quizView.setRound(round: RoundType.test)
         case 2:
+			if(socket.isConnected) {
+				socket.write(string: "vibuzzer")
+			}
             quizView.setRound(round: RoundType.buzzers)
         case 3:
             quizView.setRound(round: RoundType.trueFalse)
@@ -171,8 +174,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case 5:
 			quizView.setRound(round: RoundType.timer)
 		case 6:
+			if(socket.isConnected) {
+				socket.write(string: "viboggle")
+			}
 			quizView.setRound(round: RoundType.timedScores)
 		case 7:
+			if(socket.isConnected) {
+				socket.write(string: "vigeo")
+			}
 			quizView.setRound(round: RoundType.geography)
         default:
             break
