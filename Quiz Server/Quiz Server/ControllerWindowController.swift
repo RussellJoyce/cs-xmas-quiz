@@ -327,6 +327,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						}
 					}
 					break;
+				case "ii":
+					var details = String(text)!
+					details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
+					let vals = details.components(separatedBy: ",")
+					if(vals.count >= 3) {
+						if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
+							quizView.geoTeamAnswered(team: team - 1, x: x, y: y) //make zero indexed
+						}
+					}
+					break;
 				default:
 					print("Unknown message: " + text)
 					break;
