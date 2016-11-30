@@ -279,6 +279,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
 	
+	@IBOutlet var geoAnswerX: NSTextField!
+	@IBOutlet var geoAnswerY: NSTextField!
+	@IBOutlet var geoQuestionNumber: NSTextField!
+	@IBOutlet var geoStepper: NSStepper!
+	@IBAction func geoStepperChange(_ sender: Any) {
+		geoQuestionNumber.stringValue = geoStepper.stringValue
+	}
+	
+	@IBAction func geoStartQuestion(_ sender: Any) {
+		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
+	}
+	
+	@IBAction func geoShowWinner(_ sender: Any) {
+		quizView.geoShowWinner(x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
+	}
 	
 	public func websocketDidConnect(socket: WebSocket) {
 		print("Websocket connected.")

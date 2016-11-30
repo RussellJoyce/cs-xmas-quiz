@@ -55,18 +55,18 @@ class GeographyScene: SKScene {
 	}
 	
 	func setQuestion(question: Int) {
-		
+		print("Question " + String(question))
 	}
 	
-	func go() {
-		
+	func showWinner(answerx: Int, answery: Int) {
+		print("Show Winner " + String(answerx) + " " + String(answery))
 	}
 	
 	func teamAnswered(team: Int, x: Int, y: Int) {
-		
+		print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
 	}
 	
 	func reset() {
-		
+		print("Geo reset")
 	}
 }

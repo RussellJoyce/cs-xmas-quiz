@@ -182,6 +182,18 @@ class QuizViewController: NSViewController {
     func buzzersNextTeam() {
         spriteKitView.nextBuzzerTeam()
     }
+
+	func geoStartQuestion(question: Int) {
+		spriteKitView.geographyScene.setQuestion(question: question)
+	}
+	
+	func geoShowWinner(x: Int, y: Int) {
+		spriteKitView.geographyScene.showWinner(answerx: x, answery: y)
+	}
+	
+	func geoTeamAnswered(team: Int, x: Int, y: Int) {
+		spriteKitView.geographyScene.teamAnswered(team: team, x: x, y: y)
+	}
 	
 	func setTeamType(team: Int, type: TeamType) {
 		spriteKitView.setTeamType(team: team, type: type)
