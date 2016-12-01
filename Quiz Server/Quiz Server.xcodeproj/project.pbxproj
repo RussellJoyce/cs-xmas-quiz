@@ -13,6 +13,8 @@
 		3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7082121A35FE38006DB763 /* PointlessGameController.swift */; };
 		3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C7082131A35FE38006DB763 /* PointlessGameController.xib */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
+		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
+		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
 		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
 		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
 		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
@@ -50,7 +52,7 @@
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
 		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
-		466B46CE1DEC98C100428CDC /* TimedScoresScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46CD1DEC98C100428CDC /* TimedScoresScene.swift */; };
+		466B46CE1DEC98C100428CDC /* BoggleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46CD1DEC98C100428CDC /* BoggleScene.swift */; };
 		466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46D41DEC98E400428CDC /* GeographyScene.swift */; };
 		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
 		46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */; };
@@ -177,6 +179,8 @@
 		3C7082121A35FE38006DB763 /* PointlessGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointlessGameController.swift; sourceTree = "<group>"; };
 		3C7082131A35FE38006DB763 /* PointlessGameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessGameController.xib; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
+		3C77C8A11DEF69E10088B36A /* location.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = location.sks; sourceTree = "<group>"; };
+		3C77C8A21DEF69E10088B36A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
 		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
 		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
@@ -220,7 +224,7 @@
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
 		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
-		466B46CD1DEC98C100428CDC /* TimedScoresScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimedScoresScene.swift; sourceTree = "<group>"; };
+		466B46CD1DEC98C100428CDC /* BoggleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoggleScene.swift; sourceTree = "<group>"; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
 		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
 		46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpriteKitViewController.xib; sourceTree = "<group>"; };
@@ -349,7 +353,7 @@
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
-				466B46CD1DEC98C100428CDC /* TimedScoresScene.swift */,
+				466B46CD1DEC98C100428CDC /* BoggleScene.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
@@ -363,6 +367,8 @@
 				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
 				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
 				46596C821A38E04800822FB7 /* spark.png */,
+				3C77C8A11DEF69E10088B36A /* location.sks */,
+				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -632,6 +638,7 @@
 				3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */,
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */,
+				3C77C8A31DEF69E10088B36A /* location.sks in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
@@ -656,6 +663,7 @@
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
+				3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */,
 				3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -689,7 +697,7 @@
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
-				466B46CE1DEC98C100428CDC /* TimedScoresScene.swift in Sources */,
+				466B46CE1DEC98C100428CDC /* BoggleScene.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,

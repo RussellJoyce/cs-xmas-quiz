@@ -246,5 +246,5 @@ boggleSubmit.addEventListener('mousedown', function(event) {
 boggleSetGrid("         ,         ,         ,         ");
 boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
 
-setView('boggle');
+setView('buzzer');
 connect();

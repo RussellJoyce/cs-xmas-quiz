@@ -177,9 +177,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			if(socket.isConnected) {
 				socket.write(string: "viboggle")
 			}
-			quizView.setRound(round: RoundType.timedScores)
+			quizView.setRound(round: RoundType.boggle)
 		case 7:
 			if(socket.isConnected) {
+				socket.write(string: "imstart.jpg")
 				socket.write(string: "vigeo")
 			}
 			quizView.setRound(round: RoundType.geography)
@@ -297,6 +298,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
+		socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 	}
 	
