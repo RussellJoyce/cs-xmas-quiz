@@ -16,7 +16,7 @@ enum RoundType {
     case trueFalse
     case pointless
 	case timer
-	case timedScores
+	case boggle
 	case geography
 }
 
@@ -57,7 +57,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle, .test, .buzzers, .timer, .timedScores, .geography:
+        case .idle, .test, .buzzers, .timer, .boggle, .geography:
             spriteKitView.reset()
         case .trueFalse:
             trueFalseView.reset()
@@ -77,7 +77,7 @@ class QuizViewController: NSViewController {
             switch (currentRound) {
             case .none:
                 currentRoundView = nil
-            case .idle, .test, .buzzers, .timer, .timedScores, .geography:
+            case .idle, .test, .buzzers, .timer, .boggle, .geography:
                 currentRoundView = spriteKitView.view
             case .trueFalse:
                 currentRoundView = trueFalseView.view
@@ -109,7 +109,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .timedScores, .geography:
+		case .idle, .test, .buzzers, .timer, .boggle, .geography:
             spriteKitView.buzzerPressed(team: team, type: type)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
@@ -126,7 +126,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .timedScores, .geography:
+		case .idle, .test, .buzzers, .timer, .boggle, .geography:
             spriteKitView.buzzerReleased(team: team, type: type)
         case .trueFalse:
             break // Do nothing

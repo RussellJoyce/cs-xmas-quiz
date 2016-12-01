@@ -177,7 +177,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			if(socket.isConnected) {
 				socket.write(string: "viboggle")
 			}
-			quizView.setRound(round: RoundType.timedScores)
+			quizView.setRound(round: RoundType.boggle)
 		case 7:
 			if(socket.isConnected) {
 				socket.write(string: "imstart.jpg")

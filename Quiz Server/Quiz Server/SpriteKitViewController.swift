@@ -17,7 +17,7 @@ class SpriteKitViewController: NSViewController {
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
 	let timerScene = TimerScene()
-	let timedScoresScene = TimedScoresScene()
+	let boggleScene = BoggleScene()
 	let geographyScene = GeographyScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
@@ -35,7 +35,7 @@ class SpriteKitViewController: NSViewController {
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
-		timedScoresScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		boggleScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		
 		let transitionDuration = 1.0
@@ -111,8 +111,8 @@ class SpriteKitViewController: NSViewController {
 			scene = buzzerScene
 		case .timer:
 			scene = timerScene
-		case .timedScores:
-			scene = timedScoresScene
+		case .boggle:
+			scene = boggleScene
 		case .geography:
 			scene = geographyScene
 		default:
@@ -139,8 +139,8 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.reset()
 		case .timer:
 			timerScene.reset()
-		case .timedScores:
-			timedScoresScene.reset()
+		case .boggle:
+			boggleScene.reset()
 		case .geography:
 			geographyScene.reset()
 		default:
@@ -158,7 +158,7 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.buzzerPressed(team: team, type: type)
 		case .timer:
 			break
-		case .timedScores:
+		case .boggle:
 			break
 		case .geography:
 			break
@@ -177,7 +177,7 @@ class SpriteKitViewController: NSViewController {
 			break
 		case .timer:
 			break
-		case .timedScores:
+		case .boggle:
 			break
 		case .geography:
 			break

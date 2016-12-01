@@ -9,7 +9,7 @@
 import Cocoa
 import SpriteKit
 
-class TimedScoresScene: SKScene {
+class BoggleScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
