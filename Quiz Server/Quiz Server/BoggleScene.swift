@@ -19,8 +19,8 @@ class BoggleScene: SKScene {
 	private var time: Int = 120
 	private var timer: Timer?
 	
-	let timerText = SKLabelNode(fontNamed: "Menlo")
-	let timerShadowText = SKLabelNode(fontNamed: "Menlo")
+	let timerText = SKLabelNode(fontNamed: "Electronic Highway Sign")
+	let timerShadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
 	let timerTextNode = SKNode()
 	
 	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
@@ -47,16 +47,16 @@ class BoggleScene: SKScene {
 		bgImage.size = self.size
 		self.addChild(bgImage)
 		
-		timerTextNode.position = CGPoint(x: self.size.width / 2, y: self.size.height - 360)
+		timerTextNode.position = CGPoint(x: (self.size.width / 2) - (897.0 / 2), y: self.size.height - 270)
 		timerText.fontSize = 300
 		timerText.fontColor = NSColor.white
-		timerText.horizontalAlignmentMode = .center
+		timerText.horizontalAlignmentMode = .left
 		timerText.verticalAlignmentMode = .baseline
 		timerText.zPosition = 6
 		timerText.position = CGPoint.zero
 		timerShadowText.fontSize = 300
-		timerShadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
-		timerShadowText.horizontalAlignmentMode = .center
+		timerShadowText.fontColor = NSColor(white: 0.1, alpha: 1.0)
+		timerShadowText.horizontalAlignmentMode = .left
 		timerShadowText.verticalAlignmentMode = .baseline
 		timerShadowText.zPosition = 5
 		timerShadowText.position = CGPoint.zero
@@ -66,7 +66,7 @@ class BoggleScene: SKScene {
 		textShadow.zPosition = 5
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
-		filter?.setValue(350 / 5.8, forKey: "inputRadius")
+		filter?.setValue(350 / 15, forKey: "inputRadius")
 		textShadow.filter = filter;
 		textShadow.addChild(timerShadowText)
 		timerTextNode.addChild(timerText)
@@ -76,8 +76,8 @@ class BoggleScene: SKScene {
 	
 	func reset() {
 		teamScores = [Int](repeating: 0, count: numTeams)
-		updateTime(seconds: 120)
 		timer?.invalidate()
+		updateTime(seconds: 10)
 		//leds?.stringPointlessReset()
 	}
 	
@@ -91,6 +91,10 @@ class BoggleScene: SKScene {
 		
 		timerText.text = timeString
 		timerShadowText.text = timeString
+		
+		for node in timerTextNode.children {
+			print(node.frame.size)
+		}
 	}
 	
 	func startTimer() {
@@ -109,5 +113,11 @@ class BoggleScene: SKScene {
 	
 	func timerTick() {
 		updateTime(seconds: time - 1);
+		
+		if time == 0 {
+			stopTimer()
+			
+			self.run(hornSound)
+		}
 	}
 }
