@@ -191,11 +191,25 @@ class SpriteKitViewController: NSViewController {
 	}
 	
 	func startTimer() {
-		timerScene.startTimer();
+		switch (currentRound) {
+		case .timer:
+			timerScene.startTimer()
+		case .boggle:
+			boggleScene.startTimer()
+		default:
+			break
+		}
 	}
 	
 	func stopTimer() {
-		timerScene.stopTimer();
+		switch (currentRound) {
+		case .timer:
+			timerScene.stopTimer()
+		case .boggle:
+			boggleScene.stopTimer()
+		default:
+			break
+		}
 	}
 	
 	func timerIncrement() {
