@@ -29,6 +29,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton9: NSButton!
 	@IBOutlet weak var buzzerButton10: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
+	@IBOutlet var tabView: NSTabView!
     
     var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
@@ -192,6 +193,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
     @IBAction func resetRound(_ sender: AnyObject) {
         quizView.resetRound()
+		
+		if (tabView.indexOfTabViewItem(tabView.selectedTabViewItem!) == 7) {
+			socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
+			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
+		}
     }
     
     @IBAction func setPointlessScoreValue(_ sender: AnyObject) {
@@ -298,6 +304,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
+		quizView.resetRound()
 		socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 	}
