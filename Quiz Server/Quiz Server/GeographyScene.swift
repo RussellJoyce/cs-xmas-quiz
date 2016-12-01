@@ -58,7 +58,10 @@ class GeographyScene: SKScene {
 	}
 	
 	func setQuestion(question: Int) {
-		print("Question " + String(question))
+		if(question > 0 && question <= 10) {
+			print("Question " + String(question))
+			mainImage.texture = SKTexture(imageNamed:"geo" + String(question))
+		}
 	}
 	
 	

@@ -130,6 +130,16 @@ wserver.on('connection', function(ws) {
     });
 });
 
+wleds.on('connection', function(ws) {
+    console.log("LEDS connected")
+    ws.send('{"cmd": "setanimation", "animation": "idle"}');
+
+    ws.on('message', function incoming(message) {
+        ws.send(message);
+    })
+})
+
+
 wclient.on('connection', function connection(ws) {
     //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
     var client = ws.upgradeReq.connection.remoteAddress;
