@@ -113,8 +113,9 @@ wserver.on('connection', function(ws) {
                     case "le":
                         console.log("To LEDs: " + message);
                         wleds.clients.forEach(function each(c) {
-                            c.send(message);
+                            c.send(message.slice(2));
                         });
+                        break;
                     default:
                         //Else just forward it on to all clients
                         console.log("To all: " + message);
