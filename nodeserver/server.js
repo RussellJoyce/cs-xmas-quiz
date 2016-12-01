@@ -54,6 +54,7 @@ function boggleDigest() {
   }
   try {
     controllerWs.send("bs"+JSON.stringify(summary));
+    console.log("Sending: " + JSON.stringify(summary));
   } catch (e) {
     console.log(e);
   }

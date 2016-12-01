@@ -325,32 +325,33 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
 		if(text.characters.count >= 3) {
 			switch(String(text.characters.prefix(2))) {
-				case "co":
-					break;
-				case "zz":
-					if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
-						let team = idx - 1 // Make zero-indexed
-						if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
-							quizView.buzzerPressed(team: team, type: .websocket)
-							DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-								self.quizView.buzzerReleased(team: team, type: .websocket)
-							}
+			case "co":
+				break;
+			case "zz":
+				if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
+					let team = idx - 1 // Make zero-indexed
+					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
+						quizView.buzzerPressed(team: team, type: .websocket)
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+							self.quizView.buzzerReleased(team: team, type: .websocket)
 						}
 					}
-					break;
-				case "ii":
-					var details = String(text)!
-					details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
-					let vals = details.components(separatedBy: ",")
-					if(vals.count >= 3) {
-						if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-							quizView.geoTeamAnswered(team: team - 1, x: x, y: y) //make zero indexed
-						}
+				}
+			case "ii":
+				var details = String(text)!
+				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
+				let vals = details.components(separatedBy: ",")
+				if(vals.count >= 3) {
+					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
+						quizView.geoTeamAnswered(team: team - 1, x: x, y: y) //make zero indexed
 					}
-					break;
+				}
+			case "bs":
+				var details = String(text)!
+				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
+				print("Boggle message: \(details)")
 				default:
 					print("Unknown message: " + text)
-					break;
 			}
 		}
 	}

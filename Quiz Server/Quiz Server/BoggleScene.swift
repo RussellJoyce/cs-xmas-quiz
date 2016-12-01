@@ -16,11 +16,13 @@ class BoggleScene: SKScene {
 	var numTeams = 10
 	
 	private var teamScores = [Int]()
+	private var teamNodes = [SKNode]()
 	private var time: Int = 120
 	private var timer: Timer?
+	private var active = false
 	
 	let timerText = SKLabelNode(fontNamed: "Electronic Highway Sign")
-	let timerShadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
+	let timerShadowText = SKLabelNode(fontNa  med: "Electronic Highway Sign")
 	let timerTextNode = SKNode()
 	
 	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
@@ -66,35 +68,50 @@ class BoggleScene: SKScene {
 		textShadow.zPosition = 5
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
-		filter?.setValue(350 / 15, forKey: "inputRadius")
+		filter?.setValue(20, forKey: "inputRadius")
 		textShadow.filter = filter;
 		textShadow.addChild(timerShadowText)
 		timerTextNode.addChild(timerText)
 		timerTextNode.addChild(textShadow)
 		self.addChild(timerTextNode)
+		
+		for i in 0..<numTeams {
+			let teamNameText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamNameText.horizontalAlignmentMode = .right
+			teamNameText.verticalAlignmentMode = .baseline
+			teamNameText.position = CGPoint.zero
+			teamNameText.zPosition = 5
+			teamNameText.text = "Team \(i + 1):"
+			
+			let teamScoreText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamScoreText.horizontalAlignmentMode = .left
+			teamScoreText.verticalAlignmentMode = .baseline
+			teamScoreText.position = CGPoint(x: 10.0, y: 0.0)
+			teamScoreText.zPosition = 5
+			teamScoreText.text = "000"
+			
+			let teamTextNode = SKNode()
+			teamTextNode.position = CGPoint(x: 200, y: 800 - (70 * i))
+			teamTextNode.addChild(teamNameText)
+			teamTextNode.addChild(teamScoreText)
+			teamNodes.append(teamTextNode)
+			self.addChild(teamTextNode)
+		}
 	}
 	
 	func reset() {
 		teamScores = [Int](repeating: 0, count: numTeams)
-		timer?.invalidate()
+		stopTimer()
 		updateTime(seconds: 10)
-		//leds?.stringPointlessReset()
 	}
 	
 	func updateTime(seconds : Int) {
-		time = seconds;
-		
+		time = seconds
 		let secs = time % 60
 		let mins = time / 60
-		
 		let timeString = String(format: "%02d:%02d", mins, secs)
-		
 		timerText.text = timeString
 		timerShadowText.text = timeString
-		
-		for node in timerTextNode.children {
-			print(node.frame.size)
-		}
 	}
 	
 	func startTimer() {
@@ -105,9 +122,12 @@ class BoggleScene: SKScene {
 		timer?.invalidate()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
 		RunLoop.main.add(timer!, forMode: .commonModes)
+		
+		active = true
 	}
 	
 	func stopTimer() {
+		active = false
 		timer?.invalidate()
 	}
 	
@@ -118,6 +138,16 @@ class BoggleScene: SKScene {
 			stopTimer()
 			
 			self.run(hornSound)
+		}
+	}
+	
+	func clearTeamScores() {
+		for
+	}
+	
+	func setTeamScore() {
+		if (active) {
+			
 		}
 	}
 }
