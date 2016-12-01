@@ -14,7 +14,7 @@ class GeographyScene: SKScene {
 	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 8
-	
+	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -96,15 +96,8 @@ class GeographyScene: SKScene {
 		if(answerx > 100 || answery > 100) {
 			return;
 		}
+		answering = true;
 		mainImage.removeAllChildren()
-		
-		
-		//DEBUG
-		teamguesses[0] = (x: 10, y: 80)
-		teamguesses[1] = (x: 10, y: 10)
-		teamguesses[2] = (x: 30, y: 30)
-		teamguesses[3] = (x: 60, y: 60)
-		
 		
 		var distances : [(d : Double, team : Int)] = []
 		for i in 0 ..< teamguesses.count {
@@ -155,11 +148,13 @@ class GeographyScene: SKScene {
 	
 	
 	func teamAnswered(team: Int, x: Int, y: Int) {
-		print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
-		if(team < teamguesses.count) {
-			teamguesses[team] = (x, y)
+		if !answering {
+			print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
+			if(team < teamguesses.count) {
+				teamguesses[team] = (x, y)
+			}
+			updateText()
 		}
-		updateText()
 	}
 	
 	
@@ -173,6 +168,7 @@ class GeographyScene: SKScene {
 	}
 	
 	func reset() {
+		answering = false
 		teamguesses = []
 		for _ in 0 ..< numTeams {
 			teamguesses += [nil]
