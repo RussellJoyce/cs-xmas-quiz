@@ -18,7 +18,7 @@ class GeographyScene: SKScene {
 	var teamguesses : [(x : Int, y: Int)?] = []
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-	let mainImage = SKSpriteNode(imageNamed: "2")
+	let mainImage = SKSpriteNode(imageNamed: "geostart")
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
@@ -78,9 +78,9 @@ class GeographyScene: SKScene {
 		psplash.zPosition = 10.0
 		psplash.particleColor = col
 		psplash.particleColorSequence = nil
-		psplash.particleSpeed = 100
+		psplash.particleSpeed = 150
 		psplash.particleBirthRate = 4000
-		psplash.numParticlesToEmit = 1000
+		psplash.numParticlesToEmit = 2000
 		psplash.removeWhenDone()
 		mainImage.addChild(psplash)
 	}
@@ -102,6 +102,15 @@ class GeographyScene: SKScene {
 		answering = true;
 		mainImage.removeAllChildren()
 		
+		teamguesses[0] = (10, 10)
+		teamguesses[1] = (20, 20)
+		teamguesses[2] = (30, 30)
+		teamguesses[3] = (40, 40)
+		teamguesses[4] = (10, 50)
+		teamguesses[5] = (20, 50)
+		teamguesses[6] = (30, 60)
+		teamguesses[7] = (40, 70)
+		
 		var distances : [(d : Double, team : Int)] = []
 		for i in 0 ..< teamguesses.count {
 			if let g = teamguesses[i] {
@@ -121,22 +130,42 @@ class GeographyScene: SKScene {
 		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
 		addSplash(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
 		
-		
+		text.fontSize = 70
+		text.text = "The answer is..."
 		
 		for i in 0 ..< sorted.count {
 			let timer = Timer(fireAt: Date().addingTimeInterval(Double((i*2) + 4)), interval: 0, target: self,
 			                  selector: #selector(teamAnswer),
-			                  userInfo: sorted[i], repeats: false)
+			                  userInfo: (sorted[i].d, sorted[i].team, sorted.count - i, sorted.count), repeats: false)
 			RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
+		}
+	}
+	
+	func prefix(_ num : Int) -> String {
+		switch(num) {
+		case 1:
+			return String(num) + "st"
+		case 2:
+			return String(num) + "nd"
+		case 3:
+			return String(num) + "rd"
+		default:
+			return String(num) + "th"
 		}
 	}
 	
 	
 	func teamAnswer(timer : Timer) {
-		let team : (d : Double, team : Int) = timer.userInfo as! (d : Double, team : Int)
-		
-		text.text = "Team " + String(team.team + 1) + " with distance " + String.localizedStringWithFormat("%.2f", team.d)
+		let team : (d : Double, team : Int, order : Int, count : Int) = timer.userInfo as! (Double, Int, Int, Int)
 
+		if(team.order == team.count) {
+			text.fontSize = 35
+			text.text = prefix(team.order) + ": Team " + String(team.team + 1)
+			//+ " with distance " + String.localizedStringWithFormat("%.2f", team.d)
+		} else {
+			text.text! += "   " + prefix(team.order) + ": Team " + String(team.team + 1)
+		}
+		
 		let teampos = percentToCoords(coord : (
 			x: (teamguesses[team.team]?.x)!,
 			y: (teamguesses[team.team]?.y)!
@@ -162,6 +191,7 @@ class GeographyScene: SKScene {
 	
 	
 	func updateText() {
+		text.fontSize = 70
 		text.text = "Teams Remaining: "
 		for i in 0 ..< numTeams {
 			if teamguesses[i] == nil {
