@@ -49,9 +49,9 @@ function boggleReset() {
 
 function boggleDigest() {
   var summary = {};
-  for (var i=0; i<clients.length; i++) {
-    summary[i] = clients[i].boggleScore;
-  }
+  _.forEach(clients, c => {
+    summary[c.id] = c.boggleScore;
+  });
   try {
     controllerWs.send("bs"+JSON.stringify(summary));
     console.log("Sending: " + JSON.stringify(summary));

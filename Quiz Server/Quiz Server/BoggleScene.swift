@@ -22,7 +22,7 @@ class BoggleScene: SKScene {
 	private var active = false
 	
 	let timerText = SKLabelNode(fontNamed: "Electronic Highway Sign")
-	let timerShadowText = SKLabelNode(fontNa  med: "Electronic Highway Sign")
+	let timerShadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
 	let timerTextNode = SKNode()
 	
 	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
@@ -142,7 +142,7 @@ class BoggleScene: SKScene {
 	}
 	
 	func clearTeamScores() {
-		for
+		
 	}
 	
 	func setTeamScore() {
