@@ -1,6 +1,6 @@
 var buzzer = document.getElementById("buzzer");
 var geoimg = document.getElementById("geoimg");
-
+var geomark = document.getElementById("geomark");
 
 var ws;
 var myid = 0;
@@ -188,12 +188,12 @@ document.ontouchmove = function(event){
 }
 
 
-
 function toggleState(on) {
     if(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
         boggleEnable();
+        geomark.style.display = "none";
     } else {
         buzzer.className = "view theButton buttonOff";
         geoimg.className = "imageDisabled";
@@ -223,10 +223,15 @@ buzzer.addEventListener('mousedown', function(event) {
 
 //When the image is clicked send the coords to the server
 geoimg.addEventListener('mousedown', function(event) {
-    var rect = geoimg.getBoundingClientRect();
-    var x = (event.clientX - rect.left) / rect.width * 100;
-    var y = (event.clientY - rect.top) / rect.height * 100;
-    ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
+  var rect = geoimg.getBoundingClientRect();
+  var x = (event.clientX - rect.left) / rect.width * 100;
+  var y = (event.clientY - rect.top) / rect.height * 100;
+
+  geomark.style.top = event.clientY - 30;
+  geomark.style.left = event.clientX - 30;
+  geomark.style.display = "block";
+
+  ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
 
 boggleCancel.addEventListener('mousedown', function(event) {

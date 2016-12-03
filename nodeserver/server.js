@@ -114,8 +114,9 @@ wserver.on('connection', function(ws) {
                     case "le":
                         console.log("To LEDs: " + message);
                         wleds.clients.forEach(function each(c) {
-                            c.send(message);
+                            c.send(message.slice(2));
                         });
+                        break;
                     default:
                         //Else just forward it on to all clients
                         console.log("To all: " + message);
@@ -130,6 +131,16 @@ wserver.on('connection', function(ws) {
         }
     });
 });
+
+wleds.on('connection', function(ws) {
+    console.log("LEDS connected")
+    ws.send('{"cmd": "setanimation", "animation": "idle"}');
+
+    ws.on('message', function incoming(message) {
+        ws.send(message);
+    })
+})
+
 
 wclient.on('connection', function connection(ws) {
     //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
