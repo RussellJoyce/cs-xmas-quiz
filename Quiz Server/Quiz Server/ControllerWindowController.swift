@@ -348,10 +348,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				}
 			case "bs":
 				var details = String(text)!
-				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
+				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2))
 				print("Boggle message: \(details)")
-				default:
-					print("Unknown message: " + text)
+				if let dataFromString = details.data(using: .utf8, allowLossyConversion: false) {
+					let json = JSON(data: dataFromString)
+					for (key, subJson) : (String, JSON) in json {
+						let team = Int(key)
+						let score = subJson.int
+						if let team = team, let score = score {
+							quizView.setBoggleScore(team: team - 1, score: score)
+						}
+						else {
+							print("Bad Boggle score data: key \(key), subJson \(subJson)")
+						}
+					}
+				}
+			default:
+				print("Unknown message: " + text)
 			}
 		}
 	}

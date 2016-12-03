@@ -198,4 +198,8 @@ class QuizViewController: NSViewController {
 	func setTeamType(team: Int, type: TeamType) {
 		spriteKitView.setTeamType(team: team, type: type)
 	}
+	
+	func setBoggleScore(team: Int, score: Int) {
+		spriteKitView.boggleScene.setTeamScore(team: team, score: score)
+	}
 }

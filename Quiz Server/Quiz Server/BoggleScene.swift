@@ -81,6 +81,7 @@ class BoggleScene: SKScene {
 			teamNameText.verticalAlignmentMode = .baseline
 			teamNameText.position = CGPoint.zero
 			teamNameText.zPosition = 5
+			teamNameText.name = "teamNameText"
 			teamNameText.text = "Team \(i + 1):"
 			
 			let teamScoreText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -88,6 +89,7 @@ class BoggleScene: SKScene {
 			teamScoreText.verticalAlignmentMode = .baseline
 			teamScoreText.position = CGPoint(x: 10.0, y: 0.0)
 			teamScoreText.zPosition = 5
+			teamScoreText.name = "teamScoreText"
 			teamScoreText.text = "000"
 			
 			let teamTextNode = SKNode()
@@ -100,9 +102,9 @@ class BoggleScene: SKScene {
 	}
 	
 	func reset() {
-		teamScores = [Int](repeating: 0, count: numTeams)
+		clearTeamScores()
 		stopTimer()
-		updateTime(seconds: 10)
+		updateTime(seconds: 120)
 	}
 	
 	func updateTime(seconds : Int) {
@@ -115,7 +117,7 @@ class BoggleScene: SKScene {
 	}
 	
 	func startTimer() {
-		if (time == 0) {
+		if time == 0 {
 			reset()
 		}
 		
@@ -142,12 +144,21 @@ class BoggleScene: SKScene {
 	}
 	
 	func clearTeamScores() {
-		
+		teamScores = [Int](repeating: 0, count: numTeams)
+		updateScores()
 	}
 	
-	func setTeamScore() {
-		if (active) {
-			
+	func setTeamScore(team: Int, score: Int) {
+		if active && teamScores[team] != score {
+			teamScores[team] = score
+			updateScores()
+		}
+	}
+	
+	func updateScores() {
+		for i in 0..<numTeams {
+			let teamNode = teamNodes[i].childNode(withName: "teamScoreText") as! SKLabelNode?
+			teamNode?.text = String(teamScores[i])
 		}
 	}
 }
