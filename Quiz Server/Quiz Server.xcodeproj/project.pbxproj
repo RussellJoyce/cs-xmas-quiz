@@ -94,6 +94,7 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
+		46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBC4571DF383F400C41112 /* SwiftyJSON.swift */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
@@ -276,6 +277,7 @@
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
+		46BBC4571DF383F400C41112 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 			isa = PBXGroup;
 			children = (
 				3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */,
+				46BBC4561DF383F400C41112 /* SwiftyJSON */,
 				46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */,
 				46B025551A1BF4EC0088294B /* DDHidLib */,
 				46B0254C1A1BF0590088294B /* Frameworks */,
@@ -465,6 +468,14 @@
 			children = (
 			);
 			name = DDHidLib;
+			sourceTree = "<group>";
+		};
+		46BBC4561DF383F400C41112 /* SwiftyJSON */ = {
+			isa = PBXGroup;
+			children = (
+				46BBC4571DF383F400C41112 /* SwiftyJSON.swift */,
+			);
+			path = SwiftyJSON;
 			sourceTree = "<group>";
 		};
 		46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */ = {
@@ -700,6 +711,7 @@
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
 				4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
+				46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
