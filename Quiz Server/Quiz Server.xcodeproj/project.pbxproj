@@ -95,6 +95,7 @@
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
 		46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBC4571DF383F400C41112 /* SwiftyJSON.swift */; };
+		46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BBC4601DF39AA000C41112 /* Boggle.plist */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
@@ -278,6 +279,7 @@
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
 		46BBC4571DF383F400C41112 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
+		46BBC4601DF39AA000C41112 /* Boggle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Boggle.plist; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
@@ -404,6 +406,7 @@
 				3CD1DF561A306820003DEA9F /* counter_soft_end.wav */,
 				3CD1DF571A306820003DEA9F /* counter_sting.wav */,
 				46056EB81A19624E00C37628 /* Info.plist */,
+				46BBC4601DF39AA000C41112 /* Boggle.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -664,6 +667,7 @@
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */,
 				3C77C8A31DEF69E10088B36A /* location.sks in Resources */,
+				46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,

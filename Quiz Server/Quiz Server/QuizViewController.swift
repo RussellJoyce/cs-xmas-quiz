@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Starscream
 
 enum RoundType {
     case none
@@ -29,6 +30,7 @@ class QuizViewController: NSViewController {
 	var currentRound = RoundType.none
     var currentRoundView: NSView?
     var quizLeds: QuizLeds?
+	var webSocket: WebSocket?
 	var numTeams = 10
     
     override func viewDidLoad() {
@@ -41,6 +43,8 @@ class QuizViewController: NSViewController {
 		spriteKitView.numTeams = numTeams
 		pointlessGame.numTeams = numTeams
 		trueFalseView.numTeams = numTeams
+		
+		spriteKitView.boggleScene.webSocket = webSocket
         
         spriteKitView.view.frame = view.bounds
         pointlessGame.view.frame = view.bounds

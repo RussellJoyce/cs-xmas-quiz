@@ -8,10 +8,12 @@
 
 import Cocoa
 import SpriteKit
+import Starscream
 
 class BoggleScene: SKScene {
 	
 	var leds: QuizLeds?
+	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	var numTeams = 10
 	
@@ -29,6 +31,9 @@ class BoggleScene: SKScene {
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	
+	var idleGrids = [String]()
+	var questionGrids = [String]()
+	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
@@ -40,6 +45,11 @@ class BoggleScene: SKScene {
 		self.numTeams = numTeams
 		
 		teamScores = [Int](repeating: 0, count: numTeams)
+		
+		let plist = Bundle.main.path(forResource: "Boggle", ofType:"plist")
+		let grids = NSDictionary(contentsOfFile:plist!)
+		idleGrids = grids?.value(forKey: "IdleGrids") as! [String]
+		questionGrids = grids?.value(forKey: "QuestionGrids") as! [String]
 		
 		self.backgroundColor = NSColor.black
 		
@@ -101,13 +111,34 @@ class BoggleScene: SKScene {
 		}
 	}
 	
-	func reset() {
+	func reset(setGrid: Bool = true) {
 		clearTeamScores()
 		stopTimer()
 		updateTime(seconds: 120)
+		if setGrid {
+			sendIdleGrid()
+		}
 	}
 	
-	func updateTime(seconds : Int) {
+	func sendIdleGrid() {
+		let index = Int(arc4random_uniform(UInt32(idleGrids.count)))
+		let grid = idleGrids[index]
+		sendGrid(grid: grid)
+	}
+	
+	func sendQuestionGrid(index: Int) {
+		let grid = questionGrids[index]
+		sendGrid(grid: grid)
+	}
+	
+	func sendGrid(grid: String) {
+		if let webSocket = webSocket, webSocket.isConnected {
+			webSocket.write(string: "br") // Reset Boggle on Node server
+			webSocket.write(string: "bg{\"cmd\":\"set\",\"grid\":\"\(grid)\"}") // Send grid to clients
+		}
+	}
+	
+	func updateTime(seconds: Int) {
 		time = seconds
 		let secs = time % 60
 		let mins = time / 60
@@ -117,21 +148,24 @@ class BoggleScene: SKScene {
 	}
 	
 	func startTimer() {
-		if time == 0 {
-			reset()
+		if !active {
+			reset(setGrid: false)
+			
+			sendQuestionGrid(index: 0)
+			
+			timer?.invalidate()
+			timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
+			RunLoop.main.add(timer!, forMode: .commonModes)
+			
+			active = true
 		}
-		
-		timer?.invalidate()
-		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
-		RunLoop.main.add(timer!, forMode: .commonModes)
-		
-		active = true
 	}
 	
 	func stopTimer() {
 		if active {
 			active = false
 			timer?.invalidate()
+			sendIdleGrid()
 			self.run(hornSound)
 			leds?.stringPointlessCorrect()
 			let p = SKEmitterNode(fileNamed: "SparksUp2")!

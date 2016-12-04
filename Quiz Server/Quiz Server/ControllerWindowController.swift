@@ -69,6 +69,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		quizView.numTeams = numTeams
+		quizView.webSocket = socket
 		
         if (testMode) {
             // Show quiz view in floating window
