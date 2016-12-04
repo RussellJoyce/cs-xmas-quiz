@@ -87,7 +87,7 @@ function boggleResetGrid() {
 }
 
 function boggleDisable() {
-
+    boggleSetGrid("         ,         ,         ,         ");
 }
 
 function boggleEnable() {
@@ -171,7 +171,7 @@ function connect() {
         setView("buzzer");
         console.log("Disconnected");
         buzzer.innerHTML = "NO CONNECTION";
-        buzzer.className = "theButton buttonOff";
+        buzzer.className = "theButton buttonOff view";
         ws = null;
 
         /* Attempt to reconnect every second */
