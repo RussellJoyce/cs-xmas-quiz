@@ -5,83 +5,85 @@ var geomark = document.getElementById("geomark");
 var ws;
 var myid = 0;
 
+//Remembers the last view that we were set to, in the event that we are disconnected
+//This also therefore sets the initial view
+var lastview = "buzzer";
+
 var boggleLastSelected = null;
 
 function boggleLetterEV(event) {
-  //is the cell clickable at all?
-  var boggleLetter = event.target;
-  if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
-  if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
+    //is the cell clickable at all?
+    var boggleLetter = event.target;
+    if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
+    if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
 
-  var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(function(n) {return parseInt(n)});
+    var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(function(n) {return parseInt(n)});
 
-  //is the cell valid to be clicked next (adjacent to previous click)
-  if (boggleLastSelected) { //(if nothing is selected then it's always 'ok')
-    for (var dim=0; dim<=1; dim++) {
-      if (attemptCoord[dim]==boggleLastSelected[dim]-1 ||
-          attemptCoord[dim]==boggleLastSelected[dim] ||
-          attemptCoord[dim]==boggleLastSelected[dim]+1 ) {
-        //ok. This is an acceptable variance in this dimension
-      } else {
-        //BOOO NOT COOL. DISQUALIFIED
-        return;
-      }
+    //is the cell valid to be clicked next (adjacent to previous click)
+    if (boggleLastSelected) { //(if nothing is selected then it's always 'ok')
+        for (var dim=0; dim<=1; dim++) {
+            if (attemptCoord[dim]==boggleLastSelected[dim]-1 ||
+                attemptCoord[dim]==boggleLastSelected[dim] ||
+                attemptCoord[dim]==boggleLastSelected[dim]+1 ) {
+                //ok. This is an acceptable variance in this dimension
+            } else {
+                //BOOO NOT COOL. DISQUALIFIED
+                return;
+            }
+        }
+    } else {
+        //If there was nothing selected currently, clear the boggleWord as it might be showing the status of the previous submission.
+        boggleWord.innerHTML = "";
+        boggleSubmitStatus.innerHTML = "";
     }
-  } else {
-    //If there was nothing selected currently, clear the boggleWord as it might be showing the status of the previous submission.
-    boggleWord.innerHTML = "";
-    boggleSubmitStatus.innerHTML = "";
-  }
 
-  //Ok, let's do it.
-  boggleLetter.className += " isSelected";
-  boggleLastSelected = attemptCoord;
+    //Ok, let's do it.
+    boggleLetter.className += " isSelected";
+    boggleLastSelected = attemptCoord;
 
-  boggleWord.innerHTML+=boggleLetter.innerHTML;
+    boggleWord.innerHTML+=boggleLetter.innerHTML;
 }
 
 var boggleCurrentGrid = null;
 
 function boggleSetGrid(grid) {
+    boggleCurrentGrid=grid.split(",");
 
-  boggleCurrentGrid=grid.split(",");
+    //Clear current word
+    boggleWord.innerHTML = "";
+    boggleSubmitStatus.innerHTML = "";
 
-  //Clear current word
-  boggleWord.innerHTML = "";
-  boggleSubmitStatus.innerHTML = "";
+    //Clear score
+    boggleScore.innerHTML = "0";
 
-  //Clear score
-  boggleScore.innerHTML = "0";
+    boggleResetGrid();
 
-  boggleResetGrid();
-
-  boggleDisable();
+    boggleDisable();
 }
 
 function boggleResetGrid() {
+    //clear the last-selected recorder.
+    boggleLastSelected = null;
 
-  //clear the last-selected recorder.
-  boggleLastSelected = null;
+    //Set all button contents
+    for (var x=1; x<=9; x++) {
+        for (var y=1; y<=4; y++) {
+            var boggleLetter = document.getElementById("boggleLetter-"+x+"x"+y);
+            var gridLetter = boggleCurrentGrid[y-1][x-1];
 
-  //Set all button contents
-  for (var x=1; x<=9; x++) {
-    for (var y=1; y<=4; y++) {
-      var boggleLetter = document.getElementById("boggleLetter-"+x+"x"+y);
-      var gridLetter = boggleCurrentGrid[y-1][x-1];
+            boggleLetter.innerHTML = gridLetter;
+            if (gridLetter == ' ') {
+                if (boggleLetter.className.indexOf("isEmpty")==-1) boggleLetter.className+=" isEmpty";
+            } else {
+                boggleLetter.className = boggleLetter.className.replace("isEmpty", "");
+            }
 
-      boggleLetter.innerHTML = gridLetter;
-      if (gridLetter == ' ') {
-        if (boggleLetter.className.indexOf("isEmpty")==-1) boggleLetter.className+=" isEmpty";
-      } else {
-        boggleLetter.className = boggleLetter.className.replace("isEmpty", "");
-      }
+            boggleLetter.className = boggleLetter.className.replace("isSelected", "");
 
-      boggleLetter.className = boggleLetter.className.replace("isSelected", "");
-
-      boggleLetter.removeEventListener('mousedown', boggleLetterEV);
-      boggleLetter.addEventListener('mousedown', boggleLetterEV);
+            boggleLetter.removeEventListener('mousedown', boggleLetterEV);
+            boggleLetter.addEventListener('mousedown', boggleLetterEV);
+        }
     }
-  }
 }
 
 function boggleDisable() {
@@ -102,6 +104,8 @@ function connect() {
     ws.onopen = function(event) {
         //We we have connected, ask which team we are
         ws.send('re');
+        console.log("(Re)connected. Setting view to " + lastview);
+        setView(lastview);
     };
 
     ws.onmessage = function (event) {
@@ -124,7 +128,8 @@ function connect() {
                 break;
             case "vi":
                 //Set our view
-                console.log("Setting view: " + event.data.slice(2));
+                console.log("Server requests setting view: " + event.data.slice(2));
+                lastview = event.data.slice(2);
                 toggleState(true);
                 setView(event.data.slice(2));
                 break;
@@ -167,7 +172,7 @@ function connect() {
         setView("buzzer");
         console.log("Disconnected");
         buzzer.innerHTML = "NO CONNECTION";
-        buzzer.className = "theButton buttonOff";
+        buzzer.className = "theButton buttonOff view";
         ws = null;
 
         /* Attempt to reconnect every second */
@@ -214,42 +219,50 @@ function setView(id) {
 
 
 //When the buzzer is clicked, send a message to the server
-buzzer.addEventListener('mousedown', function(event) {
+function buzzhandler(event) {
     if(myid > 0 && myid <= 10) { //Valid team ids are 1 to 10
         ws.send('zz' + myid);
     }
-});
-
+}
+/*
+ * So 'touchstart' is the better event to use on iOS because it will fire even if the user is "gesturing".
+ * However it is not supported on IE, of course. We shouldn't add both, so this detects whether touchstart is
+ * available and if not resorts to mousedown, which on IE actually behaves better than on iOS for touch events.
+*/
+if ('ontouchstart' in document.documentElement) {
+    buzzer.addEventListener('touchstart', buzzhandler);
+} else {
+    buzzer.addEventListener('mousedown', buzzhandler);
+}
 
 //When the image is clicked send the coords to the server
 geoimg.addEventListener('mousedown', function(event) {
-  var rect = geoimg.getBoundingClientRect();
-  var x = (event.clientX - rect.left) / rect.width * 100;
-  var y = (event.clientY - rect.top) / rect.height * 100;
+    var rect = geoimg.getBoundingClientRect();
+    var x = (event.clientX - rect.left) / rect.width * 100;
+    var y = (event.clientY - rect.top) / rect.height * 100;
 
-  geomark.style.top = event.clientY - 30;
-  geomark.style.left = event.clientX - 30;
-  geomark.style.display = "block";
+    geomark.style.top = (event.clientY - rect.top) - 30;
+    geomark.style.left = (event.clientX - rect.left) - 30;
+    geomark.style.display = "block";
 
-  ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
+    ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
 
 boggleCancel.addEventListener('mousedown', function(event) {
-  //Clear current word
-  boggleWord.innerHTML = "";
-  boggleSubmitStatus.innerHTML = "";
-  boggleResetGrid();
+    //Clear current word
+    boggleWord.innerHTML = "";
+    boggleSubmitStatus.innerHTML = "";
+    boggleResetGrid();
 });
 
 boggleSubmit.addEventListener('mousedown', function(event) {
-  if (boggleWord.innerHTML!="" && boggleSubmitStatus.innerHTML=="") {
-    ws.send("bw"+boggleWord.innerHTML);
-    boggleSubmitStatus.innerHTML = "⌛️";
-  }
+    if (boggleWord.innerHTML!="" && boggleSubmitStatus.innerHTML=="") {
+        ws.send("bw"+boggleWord.innerHTML);
+        boggleSubmitStatus.innerHTML = "⌛️";
+    }
 });
 
 boggleSetGrid("         ,         ,         ,         ");
 boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
 
-setView('buzzer');
 connect();

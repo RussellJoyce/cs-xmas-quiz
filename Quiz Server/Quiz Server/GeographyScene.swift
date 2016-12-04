@@ -102,14 +102,14 @@ class GeographyScene: SKScene {
 		answering = true;
 		mainImage.removeAllChildren()
 		
-		teamguesses[0] = (10, 10)
+		/*teamguesses[0] = (10, 10)
 		teamguesses[1] = (20, 20)
 		teamguesses[2] = (30, 30)
 		teamguesses[3] = (40, 40)
 		teamguesses[4] = (10, 50)
 		teamguesses[5] = (20, 50)
 		teamguesses[6] = (30, 60)
-		teamguesses[7] = (40, 70)
+		teamguesses[7] = (40, 70)*/
 		
 		var distances : [(d : Double, team : Int)] = []
 		for i in 0 ..< teamguesses.count {
@@ -126,6 +126,11 @@ class GeographyScene: SKScene {
 
 		let homecoords = percentToCoords(coord: (x: answerx, y: answery))
 		
+		let pstar = SKEmitterNode(fileNamed: "locationstar")!
+		pstar.position = homecoords
+		pstar.zPosition = 5.0
+		mainImage.addChild(pstar)
+		
 		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0))
 		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
 		addSplash(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
@@ -136,7 +141,7 @@ class GeographyScene: SKScene {
 		for i in 0 ..< sorted.count {
 			let timer = Timer(fireAt: Date().addingTimeInterval(Double((i*2) + 4)), interval: 0, target: self,
 			                  selector: #selector(teamAnswer),
-			                  userInfo: (sorted[i].d, sorted[i].team, sorted.count - i, sorted.count), repeats: false)
+			                  userInfo: (sorted[i].team, sorted.count - i, sorted.count), repeats: false)
 			RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
 		}
 	}
@@ -156,25 +161,28 @@ class GeographyScene: SKScene {
 	
 	
 	func teamAnswer(timer : Timer) {
-		let team : (d : Double, team : Int, order : Int, count : Int) = timer.userInfo as! (Double, Int, Int, Int)
+		let team : (id : Int, order : Int, count : Int) = timer.userInfo as! (Int, Int, Int)
 
 		if(team.order == team.count) {
 			text.fontSize = 35
-			text.text = prefix(team.order) + ": Team " + String(team.team + 1)
-			//+ " with distance " + String.localizedStringWithFormat("%.2f", team.d)
+			text.text = prefix(team.order) + ": Team " + String(team.id + 1)
 		} else {
-			text.text! += "   " + prefix(team.order) + ": Team " + String(team.team + 1)
+			text.text! += "   " + prefix(team.order) + ": Team " + String(team.id + 1)
 		}
 		
-		let teampos = percentToCoords(coord : (
-			x: (teamguesses[team.team]?.x)!,
-			y: (teamguesses[team.team]?.y)!
-		))
-		let teamHue = CGFloat(team.team) / 10.0
-		let pcol = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		
-		addPositionMarker(point: teampos, col: pcol)
-		addSplash(point: teampos, col: pcol)
+		if teamguesses[team.id] != nil {
+			let teampos = percentToCoords(coord : (
+				x: (teamguesses[team.id]?.x)!,
+				y: (teamguesses[team.id]?.y)!
+			))
+			let teamHue = CGFloat(team.id) / 10.0
+			let pcol = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+			
+			addPositionMarker(point: teampos, col: pcol)
+			addSplash(point: teampos, col: pcol)
+		} else {
+			print("ERROR teamguesses[team.id] is nil")
+		}
 	}
 	
 	

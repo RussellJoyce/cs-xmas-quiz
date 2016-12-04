@@ -15,6 +15,7 @@
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
+		3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C7F5E581DF454AA008075B8 /* locationstar.sks */; };
 		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
 		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
 		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
@@ -194,6 +195,7 @@
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
 		3C77C8A11DEF69E10088B36A /* location.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = location.sks; sourceTree = "<group>"; };
 		3C77C8A21DEF69E10088B36A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3C7F5E581DF454AA008075B8 /* locationstar.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationstar.sks; sourceTree = "<group>"; };
 		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
 		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
 		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
@@ -385,6 +387,7 @@
 				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
 				46596C821A38E04800822FB7 /* spark.png */,
 				3C77C8A11DEF69E10088B36A /* location.sks */,
+				3C7F5E581DF454AA008075B8 /* locationstar.sks */,
 				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
 			);
 			path = "Quiz Server";
@@ -667,6 +670,7 @@
 				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */,
 				3C77C8A31DEF69E10088B36A /* location.sks in Resources */,
+				3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */,
 				46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
