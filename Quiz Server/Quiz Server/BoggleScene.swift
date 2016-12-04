@@ -129,8 +129,17 @@ class BoggleScene: SKScene {
 	}
 	
 	func stopTimer() {
-		active = false
-		timer?.invalidate()
+		if active {
+			active = false
+			timer?.invalidate()
+			self.run(hornSound)
+			leds?.stringPointlessCorrect()
+			let p = SKEmitterNode(fileNamed: "SparksUp2")!
+			p.position = CGPoint(x: self.centrePoint.x, y: 0)
+			p.zPosition = 10
+			p.removeWhenDone()
+			self.addChild(p)
+		}
 	}
 	
 	func timerTick() {
@@ -138,8 +147,6 @@ class BoggleScene: SKScene {
 		
 		if time == 0 {
 			stopTimer()
-			
-			self.run(hornSound)
 		}
 	}
 	
@@ -151,6 +158,7 @@ class BoggleScene: SKScene {
 	func setTeamScore(team: Int, score: Int) {
 		if active && teamScores[team] != score {
 			teamScores[team] = score
+			self.run(blopSound)
 			updateScores()
 		}
 	}
