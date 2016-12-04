@@ -84,6 +84,8 @@ body {
     height:80%;
     width:80%;
 
+    display: none;
+
     /* Prevent the user from selecting the text in the middle of the buzzer */
     -webkit-user-select: none;
     -moz-user-select: none;
