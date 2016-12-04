@@ -306,7 +306,7 @@ body {
   font-size: 50px;
   /*height: 100px;
   width: 100px;*/
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   display:none;

@@ -232,8 +232,8 @@ geoimg.addEventListener('mousedown', function(event) {
     var x = (event.clientX - rect.left) / rect.width * 100;
     var y = (event.clientY - rect.top) / rect.height * 100;
 
-    geomark.style.top = event.clientY - 30;
-    geomark.style.left = event.clientX - 30;
+    geomark.style.top = (event.clientY - rect.top) - 30;
+    geomark.style.left = (event.clientX - rect.left) - 30;
     geomark.style.display = "block";
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
