@@ -219,12 +219,21 @@ function setView(id) {
 
 
 //When the buzzer is clicked, send a message to the server
-buzzer.addEventListener('mousedown', function(event) {
+function buzzhandler(event) {
     if(myid > 0 && myid <= 10) { //Valid team ids are 1 to 10
         ws.send('zz' + myid);
     }
-});
-
+}
+/*
+ * So 'touchstart' is the better event to use on iOS because it will fire even if the user is "gesturing".
+ * However it is not supported on IE, of course. We shouldn't add both, so this detects whether touchstart is
+ * available and if not resorts to mousedown, which on IE actually behaves better than on iOS for touch events.
+*/
+if ('ontouchstart' in document.documentElement) {
+    buzzer.addEventListener('touchstart', buzzhandler);
+} else {
+    buzzer.addEventListener('mousedown', buzzhandler);
+}
 
 //When the image is clicked send the coords to the server
 geoimg.addEventListener('mousedown', function(event) {
