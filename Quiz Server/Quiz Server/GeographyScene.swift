@@ -126,6 +126,11 @@ class GeographyScene: SKScene {
 
 		let homecoords = percentToCoords(coord: (x: answerx, y: answery))
 		
+		let pstar = SKEmitterNode(fileNamed: "locationstar")!
+		pstar.position = homecoords
+		pstar.zPosition = 5.0
+		mainImage.addChild(pstar)
+		
 		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0))
 		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
 		addSplash(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
