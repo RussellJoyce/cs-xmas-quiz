@@ -87,7 +87,7 @@ function boggleResetGrid() {
 }
 
 function boggleDisable() {
-    boggleSetGrid("         ,         ,         ,         ");
+
 }
 
 function boggleEnable() {
@@ -104,6 +104,7 @@ function connect() {
     ws.onopen = function(event) {
         //We we have connected, ask which team we are
         ws.send('re');
+        console.log("(Re)connected. Setting view to " + lastview);
         setView(lastview);
     };
 
@@ -127,7 +128,7 @@ function connect() {
                 break;
             case "vi":
                 //Set our view
-                console.log("Setting view: " + event.data.slice(2));
+                console.log("Server requests setting view: " + event.data.slice(2));
                 lastview = event.data.slice(2);
                 toggleState(true);
                 setView(event.data.slice(2));
