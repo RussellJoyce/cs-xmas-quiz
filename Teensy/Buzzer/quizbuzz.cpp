@@ -1,18 +1,26 @@
 #include "quizbuzz.h"
 #include "ledmapping.h"
 
-// Team colours as 36 degrees apart on the hue spectrum
+// Team colours as 45 degrees apart on the hue spectrum
 CHSV teamcol[NUM_TEAMS] = {
-	CHSV(  0, 255, 255), // Team 1  (  0)
-	CHSV( 25, 255, 255), // Team 2  ( 36)
-	CHSV( 51, 255, 255), // Team 3  ( 72)
-	CHSV( 76, 255, 255), // Team 4  (108)
-	CHSV(102, 255, 255), // Team 5  (144)
-	CHSV(128, 255, 255), // Team 6  (180)
-	CHSV(153, 255, 255), // Team 7  (216)
-	CHSV(179, 255, 255), // Team 8  (252)
-	CHSV(204, 255, 255), // Team 9  (288)
-	CHSV(230, 255, 255), // Team 10 (324)
+//	CHSV(  0, 255, 255), // Team 1  (  0)
+//	CHSV( 25, 255, 255), // Team 2  ( 36)
+//	CHSV( 51, 255, 255), // Team 3  ( 72)
+//	CHSV( 76, 255, 255), // Team 4  (108)
+//	CHSV(102, 255, 255), // Team 5  (144)
+//	CHSV(128, 255, 255), // Team 6  (180)
+//	CHSV(153, 255, 255), // Team 7  (216)
+//	CHSV(179, 255, 255), // Team 8  (252)
+//	CHSV(204, 255, 255), // Team 9  (288)
+//	CHSV(230, 255, 255), // Team 10 (324)
+  CHSV(  0, 255, 255), // Team 1  (  0)
+  CHSV( 31, 255, 255), // Team 2  ( 45)
+  CHSV( 63, 255, 255), // Team 3  ( 90)
+  CHSV( 95, 255, 255), // Team 4  (135)
+  CHSV(127, 255, 255), // Team 5  (180)
+  CHSV(159, 255, 255), // Team 6  (225)
+  CHSV(191, 255, 255), // Team 7  (270)
+  CHSV(223, 255, 255), // Team 8  (315)
 };
 
 //Animation prototypes
@@ -50,9 +58,10 @@ void colourwipe_base(int team, bool fromleft, bool usemappings) {
 	for(int x = 0; x < NUM_LEDS; x++) {
 		int y = x;
 		if(!fromleft) y = NUM_LEDS - y;
-		if(usemappings) y = ledlookup[y];
 		leds[y] = teamcol[team];
-		FastLED.show();
+		if(x%3 == 0) {
+		  FastLED.show();
+		}
 	}
 }
 
@@ -75,7 +84,7 @@ void build(int team) {
 	for(int i = 0; i < NUM_LEDS; i++) values[i] = 0;
 
 	for(int frame = 0; frame < 200; frame++) {
-		for(int x = 0; x < 10; x++) {
+		for(int x = 0; x < 30; x++) {
 			int led = random(NUM_LEDS);
 			values[led] += 30;
 			values[led] = constrain(values[led], 0, 255);
@@ -112,26 +121,26 @@ void fadeToHue(int hue, bool fromwhite) {
 			int v = constrain(frame * fadespeed[x] * 2, 0, 255);
 			if(fromwhite) 
 				//Fade saturation (so from white to target colour)
-				leds[ledlookup[x]] = CHSV(hue, v, 255);
+				leds[x] = CHSV(hue, v, 255);
 			else
 				//Fade Value (so from black to target colour)
-				leds[ledlookup[x]] = CHSV(hue, 255, v);
+				leds[x] = CHSV(hue, 255, v);
 		}
 		FastLED.show();
-		delay(1);
+		//delay(1);
 	}
 }
 
 void sparklesweep(int team, bool fromleft) {
 	clearLEDs();
-	for(int x = 0; x < NUM_LEDS; x += 2) {
+	for(int x = 0; x < NUM_LEDS; x += 4) {
 		int y = constrain(x + ((int) random(20) - 10), 0, NUM_LEDS);
 		int hue = (teamcol[team].hue + (random(64) - 32)) % 360;
 
 		if(fromleft)
-			leds[ledlookup[y]] = CHSV(hue, 255, 255);
+			leds[y] = CHSV(hue, 255, 255);
 		else
-			leds[ledlookup[NUM_LEDS-y]] = CHSV(hue, 255, 255);
+			leds[NUM_LEDS-y] = CHSV(hue, 255, 255);
 
 		fadeAllLeds(4);
 		FastLED.show();
@@ -161,10 +170,10 @@ void sweeptocentre(int team) {
 			else 
 				brightness = (frame * 2) - (NUM_LEDS - x);
 			brightness = constrain(brightness, 0, 255);
-			leds[ledlookup[x]] = CRGB(brightness, brightness, brightness);
+			leds[x] = CRGB(brightness, brightness, brightness);
 		}
 		FastLED.show();
-		delay(0);
+		//delay(0);
 	}
 	fadeToHue(teamcol[team].hue, true);
 }
@@ -215,7 +224,7 @@ void pointless_state(int cmd) {
 	
 	for(int x = 0; x < NUM_LEDS; x++) leds[x] = CRGB(0, 0, 0);
 	for(int x = 0; x < round((float) state / 100.0f * (float) NUM_LEDS); x++) {
-		leds[ledlookup[x]] = CRGB(255, 255, 0);
+		leds[x] = CRGB(255, 255, 0);
 	}
 	FastLED.show();
 }

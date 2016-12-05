@@ -3,7 +3,7 @@
 Megamas *megamas = new Megamas();
 
 #define SPEED         4  // Speed of change
-#define NUMBER       10  // Number of LEDs to change
+#define NUMBER       20  // Number of LEDs to change
 #define TRANS_SPEED   3  // Transition speed
 
 
