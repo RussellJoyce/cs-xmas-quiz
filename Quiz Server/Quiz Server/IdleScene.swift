@@ -34,6 +34,9 @@ class IdleScene: SKScene {
 		snowmenImage.position = self.centrePoint
 		snowmenImage.size = self.size
 		snowmenImage.zPosition = 12
+		let treeImage = SKSpriteNode(imageNamed: "xmastree")
+		treeImage.position = CGPoint(x: 1680, y: 380)
+		treeImage.zPosition = 1
 		let snowImage = SKSpriteNode(imageNamed: "background1-snow")
 		snowImage.position = self.centrePoint
 		snowImage.size = self.size
@@ -47,7 +50,7 @@ class IdleScene: SKScene {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
 			snowmoji.particleTexture = SKTexture(imageNamed: emoji[i])
 			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
-			snowmoji.zPosition = CGFloat(i + 1)
+			snowmoji.zPosition = 2
 			snowmojis.append(snowmoji)
 		}
 		
@@ -148,6 +151,7 @@ class IdleScene: SKScene {
 		}
 		self.addChild(bgImage)
 		self.addChild(snowmenImage)
+		self.addChild(treeImage)
 		self.addChild(snowImage)
 		self.addChild(snow)
 		self.addChild(text)
