@@ -31,8 +31,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var pointlessScore: NSTextField!
 	@IBOutlet weak var boggleQuestions: NSPopUpButton!
 	@IBOutlet weak var bogglePreview: NSTextField!
-	@IBOutlet var tabView: NSTabView!
-    
     var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
@@ -43,6 +41,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzerButtons = [NSButton]()
 	var boggleGrids = [String]()
     
+	@IBOutlet var tabitemtruefalse: NSTabViewItem!
+	@IBOutlet var tabitemPointless: NSTabViewItem!
+	@IBOutlet var tabitemTimer: NSTabViewItem!
+	@IBOutlet var tabView: NSTabView!
+	
+	@IBOutlet var tabitemIdle: NSTabViewItem!
+	@IBOutlet var tabitemTest: NSTabViewItem!
+	@IBOutlet var tabitemBuzzers: NSTabViewItem!
+	@IBOutlet var tabitemBoggle: NSTabViewItem!
+	@IBOutlet var tabitemGeography: NSTabViewItem!
+	
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil)!
     var quizWindow: NSWindow?
 	
@@ -108,8 +117,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 multiplier: 1, constant: quizScreen!.frame.height))
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
+		
+		tabView.removeTabViewItem(tabitemPointless)
+		tabView.removeTabViewItem(tabitemTimer)
+		tabView.removeTabViewItem(tabitemtruefalse)
     }
-    
+	
     func windowWillClose(_ notification: Notification) {
         // Turn off all buzzer and animation LEDs
         quizLeds?.buzzersOff()
@@ -170,47 +183,44 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
     }
 
-    
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
-        let index = tabView.indexOfTabViewItem(tabViewItem!)
-        
-        switch index {
-        case 0:
-            quizView.setRound(round: RoundType.idle)
-        case 1:
-            quizView.setRound(round: RoundType.test)
-        case 2:
+		switch(tabViewItem!) {
+		case tabitemIdle:
+			quizView.setRound(round: RoundType.idle)
+		case tabitemTest:
+			quizView.setRound(round: RoundType.test)
+		case tabitemBuzzers:
 			if(socket.isConnected) {
 				socket.write(string: "vibuzzer")
 			}
-            quizView.setRound(round: RoundType.buzzers)
-        case 3:
-            quizView.setRound(round: RoundType.trueFalse)
-        case 4:
-            quizView.setRound(round: RoundType.pointless)
-		case 5:
+			quizView.setRound(round: RoundType.buzzers)
+		case tabitemtruefalse:
+			quizView.setRound(round: RoundType.trueFalse)
+		case tabitemPointless:
+			quizView.setRound(round: RoundType.pointless)
+		case tabitemTimer:
 			quizView.setRound(round: RoundType.timer)
-		case 6:
+		case tabitemBoggle:
 			if(socket.isConnected) {
 				socket.write(string: "viboggle")
 			}
 			quizView.setRound(round: RoundType.boggle)
-		case 7:
+		case tabitemGeography:
 			if(socket.isConnected) {
 				socket.write(string: "imstart.jpg")
 				socket.write(string: "vigeo")
 			}
 			quizView.setRound(round: RoundType.geography)
-        default:
-            break
-        }
+		default:
+			break
+		}
     }
     
 
     @IBAction func resetRound(_ sender: AnyObject) {
         quizView.resetRound()
-		
-		if (tabView.indexOfTabViewItem(tabView.selectedTabViewItem!) == 7) {
+
+		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
 			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 		}
