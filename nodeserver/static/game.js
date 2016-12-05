@@ -143,27 +143,29 @@ function connect() {
                 //Boggle stuff
                 var payload = JSON.parse(event.data.slice(2));
                 switch (payload.cmd) {
-                  case "set":
-                    boggleSetGrid(payload.grid);
-                    break;
-                  case "good":
-                    boggleScore.innerHTML = payload.score;
-                    boggleWord.innerHTML = '<span class="boggleCorrect">'+boggleWord.innerHTML+'<span>';
-                    boggleSubmitStatus.innerHTML = "✅🎉";
-                    boggleResetGrid();
-                    break;
-                  case "bad":
-                    boggleWord.innerHTML = '<span class="boggleIncorrect">'+boggleWord.innerHTML+'<span>';
-                    boggleSubmitStatus.innerHTML = "📖❌😨"
-                    boggleResetGrid();
-                    break;
-                  case "duplicate":
-                    boggleWord.innerHTML = '<span class="boggleDuplicate">'+boggleWord.innerHTML+'<span>';
-                    boggleSubmitStatus.innerHTML = "📖🔁"
-                    boggleResetGrid();
-                    break;
-
+                    case "set":
+                        boggleSetGrid(payload.grid);
+                        break;
+                    case "good":
+                        boggleScore.innerHTML = payload.score;
+                        boggleWord.innerHTML = '<span class="boggleCorrect">'+boggleWord.innerHTML+'<span>';
+                        boggleSubmitStatus.innerHTML = "✅🎉";
+                        boggleResetGrid();
+                        break;
+                    case "bad":
+                        boggleWord.innerHTML = '<span class="boggleIncorrect">'+boggleWord.innerHTML+'<span>';
+                        boggleSubmitStatus.innerHTML = "📖❌😨"
+                        boggleResetGrid();
+                        break;
+                    case "duplicate":
+                        boggleWord.innerHTML = '<span class="boggleDuplicate">'+boggleWord.innerHTML+'<span>';
+                        boggleSubmitStatus.innerHTML = "📖🔁"
+                        boggleResetGrid();
+                        break;
                 }
+                break;
+            case "pb":
+                console.log("Ping back");
                 break;
         }
     }
@@ -264,5 +266,13 @@ boggleSubmit.addEventListener('mousedown', function(event) {
 
 boggleSetGrid("         ,         ,         ,         ");
 boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
+
+//Set up a periodic timer to keep the connection to the client alive
+//client -> "pi" -> server. server -> "pb" -> client
+setInterval(function() {
+    console.log("ping...");
+    ws.send("pi");
+}, 10000) //ten seconds
+
 
 connect();

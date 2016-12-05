@@ -170,8 +170,11 @@ wclient.on('connection', function connection(ws) {
                         ws.send('ok' + clients[client].id);
                         break;
                     case "bw": //boggle words
-                      boggleTestWord(message.slice(2), clients[client]);
-                      break;
+                        boggleTestWord(message.slice(2), clients[client]);
+                        break;
+                    case "pi": //ping from client
+                        ws.send("pb");
+                        break;
                     default:
                         //Else just forward it on
                         console.log("Client: " + message);
