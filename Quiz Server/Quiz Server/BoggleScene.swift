@@ -10,6 +10,11 @@ import Cocoa
 import SpriteKit
 import Starscream
 
+struct BoggleQuestion {
+	let grid: String
+	let score: Int
+}
+
 class BoggleScene: SKScene {
 	
 	var leds: QuizLeds?
@@ -32,7 +37,8 @@ class BoggleScene: SKScene {
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	
 	var idleGrids = [String]()
-	var questionGrids = [String]()
+	var questions = [BoggleQuestion]()
+	var currentQuestion = 0
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
@@ -48,8 +54,14 @@ class BoggleScene: SKScene {
 		
 		let plist = Bundle.main.path(forResource: "Boggle", ofType:"plist")
 		let grids = NSDictionary(contentsOfFile:plist!)
-		idleGrids = grids?.value(forKey: "IdleGrids") as! [String]
-		questionGrids = grids?.value(forKey: "QuestionGrids") as! [String]
+		idleGrids = grids?.value(forKey: "idleGrids") as! [String]
+		let questionGrids = grids?.value(forKey: "questionGrids") as! [NSDictionary]
+		for gridItem in questionGrids {
+			let score = gridItem.value(forKey: "score") as! Int
+			let grid = gridItem.value(forKey: "grid") as! String
+			let question = BoggleQuestion(grid: grid, score: score)
+			questions.append(question)
+		}
 		
 		self.backgroundColor = NSColor.black
 		
@@ -126,8 +138,8 @@ class BoggleScene: SKScene {
 		sendGrid(grid: grid)
 	}
 	
-	func sendQuestionGrid(index: Int) {
-		let grid = questionGrids[index]
+	func sendQuestionGrid() {
+		let grid = questions[currentQuestion].grid
 		sendGrid(grid: grid)
 	}
 	
@@ -150,13 +162,10 @@ class BoggleScene: SKScene {
 	func startTimer() {
 		if !active {
 			reset(setGrid: false)
-			
-			sendQuestionGrid(index: 0)
-			
+			sendQuestionGrid()
 			timer?.invalidate()
 			timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
 			RunLoop.main.add(timer!, forMode: .commonModes)
-			
 			active = true
 		}
 	}
