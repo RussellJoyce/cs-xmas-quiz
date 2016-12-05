@@ -53,7 +53,9 @@ function boggleDigest() {
     summary[c.id] = c.boggleScore;
   });
   try {
-    controllerWs.send("bs"+JSON.stringify(summary));
+    wserver.clients.forEach(function each(c) {
+        c.send("bs"+JSON.stringify(summary));
+    });
     console.log("Sending: " + JSON.stringify(summary));
   } catch (e) {
     console.log(e);
@@ -80,11 +82,8 @@ function getUnusedClientID() {
     return id;
 }
 
-var controllerWs;
-
 wserver.on('connection', function(ws) {
     console.log("Quiz software connected")
-    controllerWs = ws;
     ws.send('connected');
 
     ws.on('message', function incoming(message) {
