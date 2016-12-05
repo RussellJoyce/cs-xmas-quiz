@@ -59,7 +59,7 @@ void colourwipe_base(int team, bool fromleft, bool usemappings) {
 		int y = x;
 		if(!fromleft) y = NUM_LEDS - y;
 		leds[y] = teamcol[team];
-		if(x%3 == 0) {
+		if(x%5 == 0) {
 		  FastLED.show();
 		}
 	}
@@ -83,7 +83,7 @@ void build(int team) {
 	int values[NUM_LEDS];
 	for(int i = 0; i < NUM_LEDS; i++) values[i] = 0;
 
-	for(int frame = 0; frame < 200; frame++) {
+	for(int frame = 0; frame < 100; frame++) {
 		for(int x = 0; x < 30; x++) {
 			int led = random(NUM_LEDS);
 			values[led] += 30;
@@ -100,8 +100,8 @@ void pulses(int team) {
 		int hue = random(255);
 		for(int i = 0; i < NUM_LEDS; i++) leds[i] = CHSV(hue, 255, 255);
 		FastLED.show();
-		for(int fadeframes = 0; fadeframes < 20; fadeframes++) {
-			fadeAllLeds(5);
+		for(int fadeframes = 0; fadeframes < 15; fadeframes++) {
+			fadeAllLeds(8);
 			FastLED.show();
 		}
 	}
@@ -116,9 +116,9 @@ void fadeToHue(int hue, bool fromwhite) {
 		fadespeed[x] = random(4) + 1;
 	}
 
-	for(int frame = 0; frame < 127; frame++) {
+	for(int frame = 0; frame < 85; frame++) {
 		for(int x = 0; x < NUM_LEDS; x++) {
-			int v = constrain(frame * fadespeed[x] * 2, 0, 255);
+			int v = constrain(frame * fadespeed[x] * 3, 0, 255);
 			if(fromwhite) 
 				//Fade saturation (so from white to target colour)
 				leds[x] = CHSV(hue, v, 255);
@@ -127,13 +127,12 @@ void fadeToHue(int hue, bool fromwhite) {
 				leds[x] = CHSV(hue, 255, v);
 		}
 		FastLED.show();
-		//delay(1);
 	}
 }
 
 void sparklesweep(int team, bool fromleft) {
 	clearLEDs();
-	for(int x = 0; x < NUM_LEDS; x += 4) {
+	for(int x = 0; x < NUM_LEDS; x += 5) {
 		int y = constrain(x + ((int) random(20) - 10), 0, NUM_LEDS);
 		int hue = (teamcol[team].hue + (random(64) - 32)) % 360;
 
@@ -162,13 +161,13 @@ void sweeptocentre(int team) {
 	if(team < 0 || team >= NUM_TEAMS) return;
 
 	//Fade in
-	for(int frame = 0; frame < 170; frame++) {
+	for(int frame = 0; frame < 85; frame++) {
 		int brightness;
 		for(int x = 0; x < NUM_LEDS; x++) {
 			if(x < NUM_LEDS/2) 
-				brightness = (frame * 2) - x;
+				brightness = (frame * 3) - x;
 			else 
-				brightness = (frame * 2) - (NUM_LEDS - x);
+				brightness = (frame * 3) - (NUM_LEDS - x);
 			brightness = constrain(brightness, 0, 255);
 			leds[x] = CRGB(brightness, brightness, brightness);
 		}
