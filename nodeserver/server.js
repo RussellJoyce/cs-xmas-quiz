@@ -16,7 +16,7 @@ wclient = new WebSocketServer({ port: 8090 });
 wserver = new WebSocketServer({ port: 8091 });
 wleds = new WebSocketServer({ port: 8092 });
 
-var wordScores = [0,0,0,1,1,2,3,5,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11];
+var wordScores = [0,0,0,1,1,2,3,5,11,13,15,19,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21];
 
 function boggleTestWord(word, client) {
   console.log(client.words);
