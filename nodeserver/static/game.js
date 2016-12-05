@@ -80,8 +80,8 @@ function boggleResetGrid() {
 
             boggleLetter.className = boggleLetter.className.replace("isSelected", "");
 
-            boggleLetter.removeEventListener('mousedown', boggleLetterEV);
-            boggleLetter.addEventListener('mousedown', boggleLetterEV);
+            boggleLetter.removeEventListener(eventtouse, boggleLetterEV);
+            boggleLetter.addEventListener(eventtouse, boggleLetterEV);
         }
     }
 }
@@ -231,11 +231,15 @@ function buzzhandler(event) {
  * However it is not supported on IE, of course. We shouldn't add both, so this detects whether touchstart is
  * available and if not resorts to mousedown, which on IE actually behaves better than on iOS for touch events.
 */
+var eventtouse = "";
 if ('ontouchstart' in document.documentElement) {
-    buzzer.addEventListener('touchstart', buzzhandler);
+    eventtouse = 'touchstart';
 } else {
-    buzzer.addEventListener('mousedown', buzzhandler);
+    eventtouse = 'mousedown';
 }
+
+buzzer.addEventListener(eventtouse, buzzhandler);
+
 
 //When the image is clicked send the coords to the server
 geoimg.addEventListener('mousedown', function(event) {
@@ -243,21 +247,26 @@ geoimg.addEventListener('mousedown', function(event) {
     var x = (event.clientX - rect.left) / rect.width * 100;
     var y = (event.clientY - rect.top) / rect.height * 100;
 
-    geomark.style.top = (event.clientY - rect.top) - 30;
-    geomark.style.left = (event.clientX - rect.left) - 30;
+    if ('ontouchstart' in document.documentElement) {
+        geomark.style.top = (event.clientY - rect.top) - 40;
+        geomark.style.left = (event.clientX - rect.left) - 10;
+    } else {
+        geomark.style.top = (event.clientY - rect.top) - 30;
+        geomark.style.left = (event.clientX - rect.left) - 30;
+    }
     geomark.style.display = "block";
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
 
-boggleCancel.addEventListener('mousedown', function(event) {
+boggleCancel.addEventListener(eventtouse, function(event) {
     //Clear current word
     boggleWord.innerHTML = "";
     boggleSubmitStatus.innerHTML = "";
     boggleResetGrid();
 });
 
-boggleSubmit.addEventListener('mousedown', function(event) {
+boggleSubmit.addEventListener(eventtouse, function(event) {
     if (boggleWord.innerHTML!="" && boggleSubmitStatus.innerHTML=="") {
         ws.send("bw"+boggleWord.innerHTML);
         boggleSubmitStatus.innerHTML = "⌛️";
