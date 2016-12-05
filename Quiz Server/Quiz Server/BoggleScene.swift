@@ -132,6 +132,10 @@ class BoggleScene: SKScene {
 		}
 	}
 	
+	func setQuestion(questionNum: Int) {
+		currentQuestion = questionNum
+	}
+	
 	func sendIdleGrid() {
 		let index = Int(arc4random_uniform(UInt32(idleGrids.count)))
 		let grid = idleGrids[index]

@@ -206,4 +206,8 @@ class QuizViewController: NSViewController {
 	func setBoggleScore(team: Int, score: Int) {
 		spriteKitView.boggleScene.setTeamScore(team: team, score: score)
 	}
+	
+	func setBoggleQuestion(questionNum: Int) {
+		spriteKitView.boggleScene.setQuestion(questionNum: questionNum)
+	}
 }

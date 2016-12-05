@@ -29,6 +29,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton9: NSButton!
 	@IBOutlet weak var buzzerButton10: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
+	@IBOutlet weak var boggleQuestions: NSPopUpButton!
+	@IBOutlet weak var bogglePreview: NSTextField!
 	@IBOutlet var tabView: NSTabView!
     
     var quizScreen: NSScreen?
@@ -39,6 +41,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzersEnabled = [Bool]()
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
+	var boggleGrids = [String]()
     
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil)!
     var quizWindow: NSWindow?
@@ -71,6 +74,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.numTeams = numTeams
 		quizView.webSocket = socket
 		
+		// Load entries into Boggle questions list from plist
+		let plist = Bundle.main.path(forResource: "Boggle", ofType:"plist")
+		let grids = NSDictionary(contentsOfFile:plist!)
+		let questionGrids = grids?.value(forKey: "questionGrids") as! [NSDictionary]
+		for (i, gridItem) in questionGrids.enumerated() {
+			let number = i + 1
+			let score = gridItem.value(forKey: "score") as! Int
+			let grid = gridItem.value(forKey: "grid") as! String
+			let title = "Question \(number):  score \(score)  '\(grid)'"
+			boggleQuestions.addItem(withTitle: title)
+			boggleGrids.append(grid.replacingOccurrences(of: ",", with: "\n"))
+		}
+		setBoggleQuestion(boggleQuestions)
+		
         if (testMode) {
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
@@ -91,8 +108,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 multiplier: 1, constant: quizScreen!.frame.height))
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
-		
-		
     }
     
     func windowWillClose(_ notification: Notification) {
@@ -328,6 +343,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
 			socket.connect()
 		}
+	}
+	
+	@IBAction func setBoggleQuestion(_ sender: NSPopUpButton) {
+		let index = sender.indexOfSelectedItem
+		quizView.setBoggleQuestion(questionNum: index)
+		bogglePreview.stringValue = boggleGrids[index]
 	}
 	
 	public func websocketDidReceiveMessage(socket: WebSocket, text: String) {

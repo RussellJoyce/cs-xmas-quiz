@@ -8,6 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ControllerWindowController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="bogglePreview" destination="NLW-gT-0ZI" id="ONW-Cc-1bN"/>
+                <outlet property="boggleQuestions" destination="Rfc-4a-oPx" id="9w4-cu-tG4"/>
                 <outlet property="buzzerButton1" destination="ydL-7h-C5l" id="mmk-NY-PgF"/>
                 <outlet property="buzzerButton10" destination="eRY-MI-FOA" id="v1d-NT-Mrg"/>
                 <outlet property="buzzerButton2" destination="WaF-fQ-3vN" id="sEJ-aj-kre"/>
@@ -32,7 +34,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1157,12 +1159,24 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Boggle" identifier="" id="K1V-7b-KbS">
-                                <view key="view" id="1j9-0D-JPp">
+                                <view key="view" ambiguous="YES" id="1j9-0D-JPp">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rfc-4a-oPx">
+                                            <rect key="frame" x="15" y="122" width="482" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="sYW-mg-KDj">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="menu"/>
+                                                <menu key="menu" id="DO2-U6-EuH"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="setBoggleQuestion:" target="-2" id="tI0-Ys-D5B"/>
+                                            </connections>
+                                        </popUpButton>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TQJ-4B-a9t">
-                                            <rect key="frame" x="469" y="154" width="128" height="50"/>
+                                            <rect key="frame" x="683" y="53" width="198" height="50"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Stop Timer" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5ZR-qc-kwW">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1173,9 +1187,9 @@ DQ
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2M4-XS-gpo">
-                                            <rect key="frame" x="299" y="154" width="128" height="50"/>
+                                            <rect key="frame" x="683" y="115" width="198" height="103"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Start Timer" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XTP-AH-wBp">
+                                            <buttonCell key="cell" type="bevel" title="Start Question" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XTP-AH-wBp">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="systemBold" size="19"/>
                                             </buttonCell>
@@ -1183,11 +1197,29 @@ DQ
                                                 <action selector="startTimer:" target="-2" id="Zjz-gK-1OD"/>
                                             </connections>
                                         </button>
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NLW-gT-0ZI">
+                                            <rect key="frame" x="521" y="59" width="137" height="130"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="--------- --------- --------- ---------" drawsBackground="YES" id="Jda-7x-W7h">
+                                                <font key="font" size="22" name="Menlo-Bold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d8M-34-pi1">
+                                            <rect key="frame" x="519" y="197" width="85" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Grid preview:" id="BNh-Q8-RZL">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Geography!" identifier="" id="MCw-dI-hrf">
-                                <view key="view" ambiguous="YES" id="lUs-bc-P7k">
+                                <view key="view" id="lUs-bc-P7k">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
