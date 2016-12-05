@@ -33,7 +33,7 @@ class SpriteKitViewController: NSViewController {
 		
 		idleScene.setUpScene(size: skView.bounds.size, leds: leds)
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds)
+		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		boggleScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)

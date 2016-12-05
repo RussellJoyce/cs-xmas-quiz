@@ -13,6 +13,7 @@ class BuzzerScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
+	var numTeams = 10
 	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
@@ -22,7 +23,7 @@ class BuzzerScene: SKScene {
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
 		}
@@ -30,6 +31,7 @@ class BuzzerScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.numTeams = numTeams
 		
 		let bgImage = SKSpriteNode(imageNamed: "2")
 		bgImage.zPosition = 0
@@ -65,14 +67,14 @@ class BuzzerScene: SKScene {
 				leds?.stringTeamAnimate(team: team)
 				nextTeamNumber = 1
 				
-				let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
+				let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, maxTeams: numTeams)
 				box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
 				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
 				
 			} else {
-				let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
+				let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false, maxTeams: numTeams)
 				box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
 				box.zPosition = 1
 				teamBoxes.append(box)
