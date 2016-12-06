@@ -23,7 +23,7 @@ class BoggleScene: SKScene {
 	var numTeams = 10
 	
 	private var teamScores = [Int]()
-	private var teamNodes = [SKNode]()
+	private var teamScoreNodes = [SKLabelNode]()
 	private var time: Int = 120
 	private var timer: Timer?
 	private var active = false
@@ -32,7 +32,6 @@ class BoggleScene: SKScene {
 	let timerShadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
 	let timerTextNode = SKNode()
 	
-	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	
@@ -79,7 +78,7 @@ class BoggleScene: SKScene {
 		timerText.zPosition = 6
 		timerText.position = CGPoint.zero
 		timerShadowText.fontSize = 300
-		timerShadowText.fontColor = NSColor(white: 0.1, alpha: 1.0)
+		timerShadowText.fontColor = NSColor.black
 		timerShadowText.horizontalAlignmentMode = .left
 		timerShadowText.verticalAlignmentMode = .baseline
 		timerShadowText.zPosition = 5
@@ -97,29 +96,76 @@ class BoggleScene: SKScene {
 		timerTextNode.addChild(textShadow)
 		self.addChild(timerTextNode)
 		
+		let scorePath = CGMutablePath()
+		let scoreLine = SKShapeNode(path:scorePath)
+		scorePath.move(to: CGPoint(x: 100.0, y: 620.0))
+		scorePath.addLine(to: CGPoint(x: 1820.0, y: 620.0))
+		scoreLine.path = scorePath
+		scoreLine.strokeColor = SKColor.green
+		scoreLine.lineWidth = 6.0
+		scoreLine.zPosition = 20
+		self.addChild(scoreLine)
+		
+		let bonusPath = CGMutablePath()
+		let bonusLine = SKShapeNode(path:bonusPath)
+		bonusPath.move(to: CGPoint(x: 100.0, y: 745.0))
+		bonusPath.addLine(to: CGPoint(x: 1820.0, y: 745.0))
+		bonusLine.path = bonusPath
+		bonusLine.strokeColor = SKColor.yellow
+		bonusLine.lineWidth = 6.0
+		bonusLine.zPosition = 20
+		self.addChild(bonusLine)
+		
+		let basePath = CGMutablePath()
+		let baseLine = SKShapeNode(path:basePath)
+		basePath.move(to: CGPoint(x: 100.0, y: 120.0))
+		basePath.addLine(to: CGPoint(x: 1820.0, y: 120.0))
+		baseLine.path = basePath
+		baseLine.strokeColor = SKColor.white
+		baseLine.lineWidth = 6.0
+		baseLine.zPosition = 20
+		self.addChild(baseLine)
+		
 		for i in 0..<numTeams {
-			let teamNameText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-			teamNameText.horizontalAlignmentMode = .right
-			teamNameText.verticalAlignmentMode = .baseline
-			teamNameText.position = CGPoint.zero
-			teamNameText.zPosition = 5
-			teamNameText.name = "teamNameText"
-			teamNameText.text = "Team \(i + 1):"
+			let x = 100.0 + ((1720.0 * (Double(i) + 0.5)) / Double(numTeams))
 			
 			let teamScoreText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-			teamScoreText.horizontalAlignmentMode = .left
+			teamScoreText.horizontalAlignmentMode = .center
 			teamScoreText.verticalAlignmentMode = .baseline
-			teamScoreText.position = CGPoint(x: 10.0, y: 0.0)
+			teamScoreText.position = CGPoint(x: x, y: 130)
 			teamScoreText.zPosition = 5
-			teamScoreText.name = "teamScoreText"
 			teamScoreText.text = "000"
+			teamScoreNodes.append(teamScoreText)
+			self.addChild(teamScoreText)
 			
-			let teamTextNode = SKNode()
-			teamTextNode.position = CGPoint(x: 200, y: 800 - (70 * i))
-			teamTextNode.addChild(teamNameText)
-			teamTextNode.addChild(teamScoreText)
-			teamNodes.append(teamTextNode)
-			self.addChild(teamTextNode)
+			let teamNameText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamNameText.fontSize = 48
+			teamNameText.horizontalAlignmentMode = .center
+			teamNameText.verticalAlignmentMode = .baseline
+			teamNameText.position = CGPoint(x: x, y: 65)
+			teamNameText.zPosition = 5
+			teamNameText.text = "Team \(i + 1)"
+			self.addChild(teamNameText)
+			
+			let teamNameShadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamNameShadowText.fontSize = 48
+			teamNameShadowText.fontColor = NSColor.black
+			teamNameShadowText.horizontalAlignmentMode = .center
+			teamNameShadowText.verticalAlignmentMode = .baseline
+			teamNameShadowText.position = CGPoint.zero
+			teamNameShadowText.zPosition = 4
+			teamNameShadowText.text = "Team \(i + 1)"
+			let teamNameShadow = SKEffectNode()
+			teamNameShadow.shouldEnableEffects = true
+			teamNameShadow.shouldRasterize = true
+			teamNameShadow.zPosition = 4
+			let filter = CIFilter(name: "CIGaussianBlur")
+			filter?.setDefaults()
+			filter?.setValue(10, forKey: "inputRadius")
+			teamNameShadow.filter = filter;
+			teamNameShadow.addChild(teamNameShadowText)
+			teamNameShadow.position = CGPoint(x: x, y: 65)
+			self.addChild(teamNameShadow)
 		}
 	}
 	
@@ -212,8 +258,7 @@ class BoggleScene: SKScene {
 	
 	func updateScores() {
 		for i in 0..<numTeams {
-			let teamNode = teamNodes[i].childNode(withName: "teamScoreText") as! SKLabelNode?
-			teamNode?.text = String(teamScores[i])
+			teamScoreNodes[i].text = String(teamScores[i])
 		}
 	}
 }
