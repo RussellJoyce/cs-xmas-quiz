@@ -4,8 +4,8 @@
 <dict>
 	<key>idleGrids</key>
 	<array>
-		<string>         ,         ,         ,         </string>
-		<string>TESTTEST ,TESTTEST ,TESTTEST ,TESTTEST </string>
+		<string> Q       ,   U     ,     I   ,       Z </string>
+		<string>       Z ,     I   ,   U     , Q       </string>
 	</array>
 	<key>questionGrids</key>
 	<array>
@@ -19,7 +19,7 @@
 			<key>grid</key>
 			<string>ABCDEFGHI,JKLMNOPQR,STUVWXYZA,BCDEFGHIJ</string>
 			<key>score</key>
-			<integer>6</integer>
+			<integer>5</integer>
 		</dict>
 	</array>
 </dict>
