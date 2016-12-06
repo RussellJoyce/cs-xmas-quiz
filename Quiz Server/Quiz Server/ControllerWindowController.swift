@@ -55,7 +55,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     let quizView = QuizViewController(nibName: "QuizView", bundle: nil)!
     var quizWindow: NSWindow?
 	
-	let socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
+	var socket : WebSocket?
 	
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -69,8 +69,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizBuzzers?.startListening()
 		
 		//Connect to Node server
-		socket.delegate = self
-		socket.connect()
+		socket?.delegate = self
+		socket?.connect()
 		
 		// Trim number of buttons down to match number of teams
 		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
@@ -118,10 +118,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
 		
-		if(socket.isConnected) {
-			socket.write(string: "vibuzzer")
+		if let s = socket, s.isConnected {
+			s.write(string: "vibuzzer")
 		}
-		
+
 		tabView.removeTabViewItem(tabitemPointless)
 		tabView.removeTabViewItem(tabitemTimer)
 		tabView.removeTabViewItem(tabitemtruefalse)
@@ -151,15 +151,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         else {
             if (sender.state == NSOnState) {
                 buzzersEnabled[sender.tag] = false
-				if(socket.isConnected) {
-					socket.write(string: "of" + String(sender.tag + 1))
+				if let s = socket, s.isConnected {
+					s.write(string: "of" + String(sender.tag + 1))
 				}
                 quizView.buzzerReleased(team: sender.tag, type: .disabled)
             }
             else {
                 buzzersEnabled[sender.tag] = true
-				if(socket.isConnected) {
-					socket.write(string: "on" + String(sender.tag + 1))
+				if let s = socket, s.isConnected {
+					s.write(string: "on" + String(sender.tag + 1))
 				}
             }
         }
@@ -171,8 +171,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             for i in 0..<numTeams {
                 quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
-				if(socket.isConnected) {
-					socket.write(string: "of" + String(i + 1))
+				if let s = socket, s.isConnected {
+					s.write(string: "of" + String(i + 1))
 				}
             }
         }
@@ -180,8 +180,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             buzzersDisabled = false
 			for i in 0..<numTeams {
                 buzzerButtons[i].isEnabled = true
-				if(socket.isConnected) {
-					socket.write(string: "on" + String(i + 1))
+				if let s = socket, s.isConnected {
+					s.write(string: "on" + String(i + 1))
 				}
             }
         }
@@ -190,18 +190,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		switch(tabViewItem!) {
 		case tabitemIdle:
-			if(socket.isConnected) {
-				socket.write(string: "vibuzzer")
+			if let s = socket, s.isConnected {
+				s.write(string: "vibuzzer")
 			}
 			quizView.setRound(round: RoundType.idle)
 		case tabitemTest:
-			if(socket.isConnected) {
-				socket.write(string: "vibuzzer")
+			if let s = socket, s.isConnected {
+				s.write(string: "vibuzzer")
 			}
 			quizView.setRound(round: RoundType.test)
 		case tabitemBuzzers:
-			if(socket.isConnected) {
-				socket.write(string: "vibuzzer")
+			if let s = socket, s.isConnected {
+				s.write(string: "vibuzzer")
 			}
 			quizView.setRound(round: RoundType.buzzers)
 		case tabitemtruefalse:
@@ -211,14 +211,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemTimer:
 			quizView.setRound(round: RoundType.timer)
 		case tabitemBoggle:
-			if(socket.isConnected) {
-				socket.write(string: "viboggle")
+			if let s = socket, s.isConnected {
+				s.write(string: "viboggle")
 			}
 			quizView.setRound(round: RoundType.boggle)
 		case tabitemGeography:
-			if(socket.isConnected) {
-				socket.write(string: "imstart.jpg")
-				socket.write(string: "vigeo")
+			if let s = socket, s.isConnected {
+				s.write(string: "imstart.jpg")
+				s.write(string: "vigeo")
 			}
 			quizView.setRound(round: RoundType.geography)
 		default:
@@ -231,7 +231,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.resetRound()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
-			socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
+			if let s = socket, s.isConnected {
+				s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
+			}
 			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 		}
     }
@@ -341,7 +343,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizView.resetRound()
-		socket.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
+		if let s = socket, s.isConnected {
+			s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
+		}
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 	}
 	

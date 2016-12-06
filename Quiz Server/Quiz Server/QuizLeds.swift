@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Starscream
 
 let LEDS_ANIM    = 0x10 as UInt8
 let LEDS_TEAM    = 0x20 as UInt8
@@ -26,12 +27,14 @@ let LED_POINT_STATE = 0xE0 as UInt8
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
 class QuizLeds: NSObject {
     let serial: ORSSerialPort
+	let webSocket : WebSocket
     
     /// Initialise LEDs connected via serial port
     ///
     /// - parameter serialPort: Serial port of the buzzer system
-    init(serialPort: ORSSerialPort) {
+	init(serialPort: ORSSerialPort, webSocket : WebSocket) {
         serial = serialPort
+		self.webSocket = webSocket
     }
     
     /// Open associated serial port (required once before use)
@@ -96,6 +99,20 @@ class QuizLeds: NSObject {
     /// - parameter team: The team number (0-9)
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringTeamAnimate(team: Int) -> Bool {
+		
+		var teamHue = CGFloat(team) / 8.0
+		if teamHue > 1.0 {
+			teamHue -= 1.0
+		}
+		let col = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+		let red = Int(col.redComponent * 255)
+		let green = Int(col.greenComponent * 255)
+		let blue = Int(col.blueComponent * 255)
+		
+		if webSocket.isConnected {
+			webSocket.write(string: "le{\"cmd\":\"buzz\",\"r\":\(red),\"g\":\(green),\"b\":\(blue)}")
+		}
+			
         return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAM + UInt8(team)]), count: 1));
     }
 

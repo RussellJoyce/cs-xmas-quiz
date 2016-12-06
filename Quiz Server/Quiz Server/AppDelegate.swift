@@ -8,6 +8,7 @@
 
 import Cocoa
 import DDHidLib
+import Starscream
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -15,7 +16,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet weak var window: NSWindow!
     
     let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
-    
+	
+	let webSocket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -29,6 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Screens changed - figure out how the changes affect us
         print("Screens changed!")
     }
+	
+	
     
     
 	func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int) {
@@ -39,9 +43,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         controllerWindow.quizScreen = screen
         controllerWindow.quizBuzzers = buzzers
         if let serial = serial {
-            controllerWindow.quizLeds = QuizLeds(serialPort: serial)
+            controllerWindow.quizLeds = QuizLeds(serialPort: serial, webSocket: webSocket)
         }
-        
+		
+		controllerWindow.socket = webSocket;
         controllerWindow.showWindow(self)
     }
 
