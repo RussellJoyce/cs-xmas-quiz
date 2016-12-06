@@ -118,6 +118,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
         }
 		
+		if(socket.isConnected) {
+			socket.write(string: "vibuzzer")
+		}
+		
 		tabView.removeTabViewItem(tabitemPointless)
 		tabView.removeTabViewItem(tabitemTimer)
 		tabView.removeTabViewItem(tabitemtruefalse)
@@ -186,8 +190,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		switch(tabViewItem!) {
 		case tabitemIdle:
+			if(socket.isConnected) {
+				socket.write(string: "vibuzzer")
+			}
 			quizView.setRound(round: RoundType.idle)
 		case tabitemTest:
+			if(socket.isConnected) {
+				socket.write(string: "vibuzzer")
+			}
 			quizView.setRound(round: RoundType.test)
 		case tabitemBuzzers:
 			if(socket.isConnected) {
