@@ -13,10 +13,13 @@ class BuzzerTeamNode: SKNode {
 	
 	let glow = SKEmitterNode(fileNamed: "BuzzGlow")!
 	
-	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool, maxTeams: Int) {
+	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool) {
 		self.init()
 		
-		let teamHue = CGFloat(team) / CGFloat(maxTeams)
+		var teamHue = CGFloat(team) / 8.0
+		if teamHue > 1.0 {
+			teamHue -= 1.0
+		}
 		let particleColour = NSColor(calibratedHue: teamHue, saturation: 0.6, brightness: 1.0, alpha: 1.0)
 		let glowColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		let bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
