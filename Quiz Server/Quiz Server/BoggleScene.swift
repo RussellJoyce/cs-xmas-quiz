@@ -13,6 +13,7 @@ import Starscream
 struct BoggleQuestion {
 	let grid: String
 	let score: Int
+	let bonus: Int
 }
 
 class BoggleScene: SKScene {
@@ -23,7 +24,8 @@ class BoggleScene: SKScene {
 	var numTeams = 10
 	
 	private var teamScores = [Int]()
-	private var teamScoreNodes = [SKLabelNode]()
+	private var teamScoreLabels = [SKNode]()
+	private var teamBars = [SKShapeNode]()
 	private var time: Int = 120
 	private var timer: Timer?
 	private var active = false
@@ -58,7 +60,7 @@ class BoggleScene: SKScene {
 		for gridItem in questionGrids {
 			let score = gridItem.value(forKey: "score") as! Int
 			let grid = gridItem.value(forKey: "grid") as! String
-			let question = BoggleQuestion(grid: grid, score: score)
+			let question = BoggleQuestion(grid: grid, score: score, bonus: Int(Double(score) * 1.25))
 			questions.append(question)
 		}
 		
@@ -98,8 +100,8 @@ class BoggleScene: SKScene {
 		
 		let scorePath = CGMutablePath()
 		let scoreLine = SKShapeNode(path:scorePath)
-		scorePath.move(to: CGPoint(x: 100.0, y: 620.0))
-		scorePath.addLine(to: CGPoint(x: 1820.0, y: 620.0))
+		scorePath.move(to: CGPoint(x: 100.0, y: 630.0))
+		scorePath.addLine(to: CGPoint(x: 1820.0, y: 630.0))
 		scoreLine.path = scorePath
 		scoreLine.strokeColor = SKColor.green
 		scoreLine.lineWidth = 6.0
@@ -108,8 +110,8 @@ class BoggleScene: SKScene {
 		
 		let bonusPath = CGMutablePath()
 		let bonusLine = SKShapeNode(path:bonusPath)
-		bonusPath.move(to: CGPoint(x: 100.0, y: 745.0))
-		bonusPath.addLine(to: CGPoint(x: 1820.0, y: 745.0))
+		bonusPath.move(to: CGPoint(x: 100.0, y: 755.0))
+		bonusPath.addLine(to: CGPoint(x: 1820.0, y: 755.0))
 		bonusLine.path = bonusPath
 		bonusLine.strokeColor = SKColor.yellow
 		bonusLine.lineWidth = 6.0
@@ -118,8 +120,8 @@ class BoggleScene: SKScene {
 		
 		let basePath = CGMutablePath()
 		let baseLine = SKShapeNode(path:basePath)
-		basePath.move(to: CGPoint(x: 100.0, y: 120.0))
-		basePath.addLine(to: CGPoint(x: 1820.0, y: 120.0))
+		basePath.move(to: CGPoint(x: 100.0, y: 130.0))
+		basePath.addLine(to: CGPoint(x: 1820.0, y: 130.0))
 		baseLine.path = basePath
 		baseLine.strokeColor = SKColor.white
 		baseLine.lineWidth = 6.0
@@ -130,19 +132,44 @@ class BoggleScene: SKScene {
 			let x = 100.0 + ((1720.0 * (Double(i) + 0.5)) / Double(numTeams))
 			
 			let teamScoreText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamScoreText.fontSize = 60
 			teamScoreText.horizontalAlignmentMode = .center
 			teamScoreText.verticalAlignmentMode = .baseline
-			teamScoreText.position = CGPoint(x: x, y: 130)
+			teamScoreText.position = CGPoint.zero
 			teamScoreText.zPosition = 5
 			teamScoreText.text = "000"
-			teamScoreNodes.append(teamScoreText)
-			self.addChild(teamScoreText)
+			
+			let teamScoreShadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+			teamScoreShadowText.fontSize = 60
+			teamScoreShadowText.fontColor = NSColor.black
+			teamScoreShadowText.horizontalAlignmentMode = .center
+			teamScoreShadowText.verticalAlignmentMode = .baseline
+			teamScoreShadowText.position = CGPoint.zero
+			teamScoreShadowText.zPosition = 4
+			teamScoreShadowText.text = "000"
+			let teamScoreShadow = SKEffectNode()
+			teamScoreShadow.shouldEnableEffects = true
+			teamScoreShadow.shouldRasterize = true
+			teamScoreShadow.zPosition = 4
+			let filter = CIFilter(name: "CIGaussianBlur")
+			filter?.setDefaults()
+			filter?.setValue(10, forKey: "inputRadius")
+			teamScoreShadow.filter = filter;
+			teamScoreShadow.addChild(teamScoreShadowText)
+			
+			let teamScoreLabel = SKNode()
+			teamScoreLabel.position = CGPoint(x: x, y: 150)
+			teamScoreLabel.zPosition = 5
+			teamScoreLabel.addChild(teamScoreText)
+			teamScoreLabel.addChild(teamScoreShadow)
+			teamScoreLabels.append(teamScoreLabel)
+			self.addChild(teamScoreLabel)
 			
 			let teamNameText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 			teamNameText.fontSize = 48
 			teamNameText.horizontalAlignmentMode = .center
 			teamNameText.verticalAlignmentMode = .baseline
-			teamNameText.position = CGPoint(x: x, y: 65)
+			teamNameText.position = CGPoint(x: x, y: 70)
 			teamNameText.zPosition = 5
 			teamNameText.text = "Team \(i + 1)"
 			self.addChild(teamNameText)
@@ -159,12 +186,9 @@ class BoggleScene: SKScene {
 			teamNameShadow.shouldEnableEffects = true
 			teamNameShadow.shouldRasterize = true
 			teamNameShadow.zPosition = 4
-			let filter = CIFilter(name: "CIGaussianBlur")
-			filter?.setDefaults()
-			filter?.setValue(10, forKey: "inputRadius")
 			teamNameShadow.filter = filter;
 			teamNameShadow.addChild(teamNameShadowText)
-			teamNameShadow.position = CGPoint(x: x, y: 65)
+			teamNameShadow.position = CGPoint(x: x, y: 70)
 			self.addChild(teamNameShadow)
 		}
 	}
@@ -258,7 +282,19 @@ class BoggleScene: SKScene {
 	
 	func updateScores() {
 		for i in 0..<numTeams {
-			teamScoreNodes[i].text = String(teamScores[i])
+			let score = String(teamScores[i])
+			for node in teamScoreLabels[i].children {
+				if let label = node as? SKLabelNode {
+					label.text = score
+				}
+				else if let effect = node as? SKEffectNode {
+					for node2 in effect.children {
+						if let label = node2 as? SKLabelNode {
+							label.text = score
+						}
+					}
+				}
+			}
 		}
 	}
 }
