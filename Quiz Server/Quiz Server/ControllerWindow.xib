@@ -1167,7 +1167,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Boggle" identifier="" id="K1V-7b-KbS">
-                                <view key="view" ambiguous="YES" id="1j9-0D-JPp">
+                                <view key="view" id="1j9-0D-JPp">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1238,7 +1238,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Geography!" identifier="" id="MCw-dI-hrf">
-                                <view key="view" id="lUs-bc-P7k">
+                                <view key="view" ambiguous="YES" id="lUs-bc-P7k">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1273,7 +1273,7 @@ DQ
                                         <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5z5-BU-AUP">
                                             <rect key="frame" x="56" y="177" width="49" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="1" drawsBackground="YES" id="Hhl-nm-Z3U">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="6" drawsBackground="YES" id="Hhl-nm-Z3U">
                                                 <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="0vv-Cz-QPM"/>
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
