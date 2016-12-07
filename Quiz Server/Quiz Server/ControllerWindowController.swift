@@ -232,6 +232,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			if let s = socket, s.isConnected {
+				s.write(string: "vigeo")
 				s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
 			}
 			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
@@ -348,6 +349,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizView.resetRound()
 		if let s = socket, s.isConnected {
+			s.write(string: "vigeo")
 			s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
 		}
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
