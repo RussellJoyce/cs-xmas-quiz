@@ -61,6 +61,23 @@ class IdleScene: SKScene {
 		garySnow.particleRotationSpeed = 1.0
 		garySnow.particleBirthRate = 0.04
 		
+		let ianSnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		ianSnow.particleTexture = SKTexture(imageNamed: "ian")
+		ianSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
+		ianSnow.zPosition = 11
+		ianSnow.particleRotationSpeed = 1.0
+		ianSnow.particleScale = 0.1
+		ianSnow.particleScaleSpeed = 0
+		ianSnow.particleScaleRange = 0.05
+		ianSnow.particleBirthRate = 0.04
+		
+		let richardSnow = SKEmitterNode(fileNamed: "Snowmoji")!
+		richardSnow.particleTexture = SKTexture(imageNamed: "richard")
+		richardSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
+		richardSnow.zPosition = 11
+		richardSnow.particleRotationSpeed = 1.0
+		richardSnow.particleBirthRate = 0.04
+		
 		let eggSnow = SKEmitterNode(fileNamed: "Snowmoji")!
 		eggSnow.particleTexture = SKTexture(imageNamed: "egg")
 		eggSnow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
@@ -158,6 +175,8 @@ class IdleScene: SKScene {
 		self.addChild(textShadow)
 		self.addChild(lights)
 		self.addChild(garySnow)
+		self.addChild(ianSnow)
+		self.addChild(richardSnow)
 		self.addChild(eggSnow)
 		self.addChild(ooSnow)
 		self.addChild(nootSnow)
