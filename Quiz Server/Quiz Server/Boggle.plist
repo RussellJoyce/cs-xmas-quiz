@@ -11,7 +11,31 @@
 	<array>
 		<dict>
 			<key>grid</key>
+			<string>ABCDEFGHI,JKLMNOPQR,STUVWXYZA,BCDEFGHIJ</string>
+			<key>target</key>
+			<integer>5</integer>
+		</dict>
+		<dict>
+			<key>grid</key>
 			<string>   EBAP  ,   OCED  ,   TNEW  ,   SLNL  </string>
+			<key>target</key>
+			<integer>12</integer>
+		</dict>
+		<dict>
+			<key>grid</key>
+			<string>   AOCA  ,   TUID  ,   THET  ,   OYHN  </string>
+			<key>target</key>
+			<integer>15</integer>
+		</dict>
+		<dict>
+			<key>grid</key>
+			<string>   EAH   ,   SOI   ,   ELS   ,         </string>
+			<key>target</key>
+			<integer>15</integer>
+		</dict>
+		<dict>
+			<key>grid</key>
+			<string>  ADIU   , EEINOE  ,IWT  RLAS,EN     SH</string>
 			<key>target</key>
 			<integer>20</integer>
 		</dict>
@@ -19,7 +43,13 @@
 			<key>grid</key>
 			<string>DAKS CORB,OTTREGYOA,NFATTERAT,TEOT CNTH</string>
 			<key>target</key>
-			<integer>20</integer>
+			<integer>40</integer>
+		</dict>
+		<dict>
+			<key>grid</key>
+			<string>BLINGIEST,CHRISTMAS,QUIZ EVER, YOLOSWAG</string>
+			<key>target</key>
+			<integer>40</integer>
 		</dict>
 	</array>
 </dict>
