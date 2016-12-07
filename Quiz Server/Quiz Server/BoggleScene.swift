@@ -302,9 +302,8 @@ class BoggleScene: SKScene {
 			if teamHue > 1.0 {
 				teamHue -= 1.0
 			}
-			let barColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 			
-			let bar = SKSpriteNode(texture: nil, color: barColour, size: CGSize(width: barWidth, height: 0.0))
+			let bar = SKSpriteNode(texture: nil, color: .darkGray, size: CGSize(width: barWidth, height: 0.0))
 			bar.anchorPoint = .zero
 			bar.zPosition = 13
 			bar.name = "bar"
@@ -402,7 +401,7 @@ class BoggleScene: SKScene {
 			leds?.stringPointlessCorrect()
 			let p = SKEmitterNode(fileNamed: "SparksUp2")!
 			p.position = CGPoint(x: self.centrePoint.x, y: 0)
-			p.zPosition = 10
+			p.zPosition = 100
 			p.removeWhenDone()
 			self.addChild(p)
 		}
@@ -484,6 +483,20 @@ class BoggleScene: SKScene {
 						bar.run(growBar)
 						if bar.name == "bar" {
 							bar.color = colour
+							if colour == .green {
+								let p = SKEmitterNode(fileNamed: "BoggleSparks")!
+								p.position = CGPoint(x: teamBars[i].position.x + node.centrePoint.x, y: barHeight + teamBars[i].position.y)
+								p.zPosition = 11
+								p.removeWhenDone()
+								self.addChild(p)
+							}
+							else if colour == .yellow {
+								let p = SKEmitterNode(fileNamed: "BoggleSparksBonus")!
+								p.position = CGPoint(x: teamBars[i].position.x + node.centrePoint.x, y: barHeight + teamBars[i].position.y)
+								p.zPosition = 11
+								p.removeWhenDone()
+								self.addChild(p)
+							}
 						}
 					}
 				}

@@ -39,6 +39,8 @@
 		4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E31BF926E200D2599B /* BuzzParticles.sks */; };
 		4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4606F5E41BF926E200D2599B /* BuzzGlow.sks */; };
 		461672391DF838150049C8D1 /* locationnumber.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672381DF838150049C8D1 /* locationnumber.sks */; };
+		461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672421DF87C470049C8D1 /* BoggleSparks.sks */; };
+		4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */; };
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Snowmoji.sks */; };
@@ -221,6 +223,8 @@
 		4606F5E31BF926E200D2599B /* BuzzParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzParticles.sks; sourceTree = "<group>"; };
 		4606F5E41BF926E200D2599B /* BuzzGlow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BuzzGlow.sks; sourceTree = "<group>"; };
 		461672381DF838150049C8D1 /* locationnumber.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationnumber.sks; sourceTree = "<group>"; };
+		461672421DF87C470049C8D1 /* BoggleSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparks.sks; sourceTree = "<group>"; };
+		461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparksBonus.sks; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Snowmoji.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snowmoji.sks; sourceTree = "<group>"; };
@@ -391,6 +395,8 @@
 				3C77C8A11DEF69E10088B36A /* location.sks */,
 				3C7F5E581DF454AA008075B8 /* locationstar.sks */,
 				461672381DF838150049C8D1 /* locationnumber.sks */,
+				461672421DF87C470049C8D1 /* BoggleSparks.sks */,
+				461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */,
 				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
 			);
 			path = "Quiz Server";
@@ -679,6 +685,7 @@
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
+				4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */,
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
@@ -698,6 +705,7 @@
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
+				461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 				461672391DF838150049C8D1 /* locationnumber.sks in Resources */,
 				3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */,
