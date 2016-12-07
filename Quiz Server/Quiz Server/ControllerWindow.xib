@@ -1167,7 +1167,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Boggle" identifier="" id="K1V-7b-KbS">
-                                <view key="view" id="1j9-0D-JPp">
+                                <view key="view" ambiguous="YES" id="1j9-0D-JPp">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1238,14 +1238,14 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Geography!" identifier="" id="MCw-dI-hrf">
-                                <view key="view" ambiguous="YES" id="lUs-bc-P7k">
+                                <view key="view" id="lUs-bc-P7k">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PD7-GT-IDE">
                                             <rect key="frame" x="100" y="175" width="19" height="27"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="10" doubleValue="1" id="X7Z-sg-Om3"/>
+                                            <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="10" doubleValue="6" id="X7Z-sg-Om3"/>
                                             <connections>
                                                 <action selector="geoStepperChange:" target="-2" id="9WG-P2-nj5"/>
                                             </connections>
@@ -1270,7 +1270,7 @@ DQ
                                                 <action selector="geoStartQuestion:" target="-2" id="nL3-cg-u44"/>
                                             </connections>
                                         </button>
-                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5z5-BU-AUP">
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" tag="11" translatesAutoresizingMaskIntoConstraints="NO" id="5z5-BU-AUP">
                                             <rect key="frame" x="56" y="177" width="49" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="6" drawsBackground="YES" id="Hhl-nm-Z3U">
