@@ -85,13 +85,21 @@ class GeographyScene: SKScene {
 		mainImage.addChild(psplash)
 	}
 	
-	func addPositionMarker(point : CGPoint, col : NSColor) {
+	func addPositionMarker(point: CGPoint, col: NSColor, team: Int) {
 		let p = SKEmitterNode(fileNamed: "location")!
 		p.position = point
 		p.zPosition = 10.0
 		p.particleColor = col
 		p.particleColorSequence = nil
 		mainImage.addChild(p)
+		
+		if team > 0 && team <= 10 {
+			let numbers = SKEmitterNode(fileNamed: "locationnumber")!
+			numbers.position = point
+			numbers.zPosition = 9.0
+			numbers.particleTexture = SKTexture(imageNamed: "number\(team)")
+			mainImage.addChild(numbers)
+		}
 	}
 	
 	
@@ -131,8 +139,8 @@ class GeographyScene: SKScene {
 		pstar.zPosition = 5.0
 		mainImage.addChild(pstar)
 		
-		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0))
-		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
+		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0), team: 0)
+		addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0), team: 0)
 		addSplash(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0))
 		
 		text.fontSize = 70
@@ -175,10 +183,13 @@ class GeographyScene: SKScene {
 				x: (teamguesses[team.id]?.x)!,
 				y: (teamguesses[team.id]?.y)!
 			))
-			let teamHue = CGFloat(team.id) / 10.0
+			var teamHue = CGFloat(team.id) / 8.0
+			if teamHue > 1.0 {
+				teamHue -= 1.0
+			}
 			let pcol = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 			
-			addPositionMarker(point: teampos, col: pcol)
+			addPositionMarker(point: teampos, col: pcol, team: team.id+1)
 			addSplash(point: teampos, col: pcol)
 		} else {
 			print("ERROR teamguesses[team.id] is nil")
