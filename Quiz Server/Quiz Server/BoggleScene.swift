@@ -30,6 +30,7 @@ class BoggleScene: SKScene {
 	private var time: Int = 120
 	private var timer: Timer?
 	private var active = false
+	private var ledcount = 0.0
 	
 	let timerText = SKLabelNode(fontNamed: "Electronic Highway Sign")
 	let timerShadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
@@ -344,6 +345,7 @@ class BoggleScene: SKScene {
 		stopTimer()
 		updateTime(seconds: 120)
 		updateTargetString(target: "👑", shadow: false)
+		leds?.stringPointlessReset()
 		if setGrid {
 			sendIdleGrid()
 		}
@@ -409,6 +411,13 @@ class BoggleScene: SKScene {
 	
 	func timerTick() {
 		updateTime(seconds: time - 1);
+		
+		ledcount += 5.0/6.0
+		let ledstodec = Int(floor(ledcount))
+		for _ in 0..<ledstodec {
+			leds?.stringPointlessDec()
+		}
+		ledcount -= floor(ledcount)
 		
 		if time == 0 {
 			stopTimer()
