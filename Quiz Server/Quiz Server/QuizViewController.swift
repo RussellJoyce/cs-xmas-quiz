@@ -143,6 +143,10 @@ class QuizViewController: NSViewController {
 		spriteKitView.startTimer();
 	}
 	
+	func boggleDisplayGrid() {
+		spriteKitView.boggleDisplayGrid();
+	}
+	
 	func stopTimer() {
 		spriteKitView.stopTimer();
 	}

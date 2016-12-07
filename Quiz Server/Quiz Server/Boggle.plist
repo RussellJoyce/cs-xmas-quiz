@@ -4,22 +4,22 @@
 <dict>
 	<key>idleGrids</key>
 	<array>
-		<string> Q       ,   U     ,     I   ,       Z </string>
-		<string>       Z ,     I   ,   U     , Q       </string>
+		<string>xxxxxxxxx,xxxxxxxxx,xxxxxxxxx,xxxxxxxxx</string>
+		<string>xxxxxxxxx,xxxxxxxxx,xxxxxxxxx,xxxxxxxxx</string>
 	</array>
 	<key>questionGrids</key>
 	<array>
 		<dict>
 			<key>grid</key>
-			<string>   EBSA  ,   OTLV  ,   TEET  ,   STMN  </string>
+			<string>   EBAP  ,   OCED  ,   TNEW  ,   SLNL  </string>
 			<key>target</key>
-			<integer>6</integer>
+			<integer>20</integer>
 		</dict>
 		<dict>
 			<key>grid</key>
-			<string>ABCDEFGHI,JKLMNOPQR,STUVWXYZA,BCDEFGHIJ</string>
+			<string>DAKS CORB,OTTREGYOA,NFATTERAT,TEOT CNTH</string>
 			<key>target</key>
-			<integer>4</integer>
+			<integer>20</integer>
 		</dict>
 	</array>
 </dict>

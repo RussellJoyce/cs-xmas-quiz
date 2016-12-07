@@ -201,6 +201,10 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
+	func boggleDisplayGrid() {
+		boggleScene.sendQuestionGrid()
+	}
+	
 	func stopTimer() {
 		switch (currentRound) {
 		case .timer:
