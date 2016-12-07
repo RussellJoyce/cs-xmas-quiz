@@ -89,9 +89,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		let questionGrids = grids?.value(forKey: "questionGrids") as! [NSDictionary]
 		for (i, gridItem) in questionGrids.enumerated() {
 			let number = i + 1
-			let score = gridItem.value(forKey: "score") as! Int
+			let target = gridItem.value(forKey: "target") as! Int
 			let grid = gridItem.value(forKey: "grid") as! String
-			let title = "Question \(number):  score \(score)  '\(grid)'"
+			let title = "Question \(number):  target \(target)  '\(grid)'"
 			boggleQuestions.addItem(withTitle: title)
 			boggleGrids.append(grid.replacingOccurrences(of: ",", with: "\n"))
 		}

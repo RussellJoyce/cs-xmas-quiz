@@ -12,7 +12,7 @@ import Starscream
 
 struct BoggleQuestion {
 	let grid: String
-	let score: Int
+	let target: Int
 	let bonus: Int
 }
 
@@ -25,7 +25,8 @@ class BoggleScene: SKScene {
 	
 	private var teamScores = [Int]()
 	private var teamScoreLabels = [SKNode]()
-	private var teamBars = [SKShapeNode]()
+	private var teamBars = [SKNode]()
+	private var targetLabel = SKNode()
 	private var time: Int = 120
 	private var timer: Timer?
 	private var active = false
@@ -58,9 +59,9 @@ class BoggleScene: SKScene {
 		idleGrids = grids?.value(forKey: "idleGrids") as! [String]
 		let questionGrids = grids?.value(forKey: "questionGrids") as! [NSDictionary]
 		for gridItem in questionGrids {
-			let score = gridItem.value(forKey: "score") as! Int
+			let target = gridItem.value(forKey: "target") as! Int
 			let grid = gridItem.value(forKey: "grid") as! String
-			let question = BoggleQuestion(grid: grid, score: score, bonus: Int(Double(score) * 1.25))
+			let question = BoggleQuestion(grid: grid, target: target, bonus: Int(ceil(Double(target) * 1.25)))
 			questions.append(question)
 		}
 		
@@ -77,18 +78,18 @@ class BoggleScene: SKScene {
 		timerText.fontColor = NSColor.white
 		timerText.horizontalAlignmentMode = .left
 		timerText.verticalAlignmentMode = .baseline
-		timerText.zPosition = 6
+		timerText.zPosition = 50
 		timerText.position = CGPoint.zero
 		timerShadowText.fontSize = 300
 		timerShadowText.fontColor = NSColor.black
 		timerShadowText.horizontalAlignmentMode = .left
 		timerShadowText.verticalAlignmentMode = .baseline
-		timerShadowText.zPosition = 5
+		timerShadowText.zPosition = 49
 		timerShadowText.position = CGPoint.zero
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
-		textShadow.zPosition = 5
+		textShadow.zPosition = 49
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
 		filter?.setValue(20, forKey: "inputRadius")
@@ -98,68 +99,174 @@ class BoggleScene: SKScene {
 		timerTextNode.addChild(textShadow)
 		self.addChild(timerTextNode)
 		
-		let scorePath = CGMutablePath()
-		let scoreLine = SKShapeNode(path:scorePath)
-		scorePath.move(to: CGPoint(x: 100.0, y: 630.0))
-		scorePath.addLine(to: CGPoint(x: 1820.0, y: 630.0))
-		scoreLine.path = scorePath
-		scoreLine.strokeColor = SKColor.green
-		scoreLine.lineWidth = 6.0
-		scoreLine.zPosition = 20
-		self.addChild(scoreLine)
+		let lineShadowFilter = CIFilter(name: "CIGaussianBlur")
+		lineShadowFilter?.setDefaults()
+		lineShadowFilter?.setValue(30, forKey: "inputRadius")
 		
 		let bonusPath = CGMutablePath()
+		bonusPath.move(to: CGPoint(x: 120.0, y: 755.0))
+		bonusPath.addLine(to: CGPoint(x: 1800.0, y: 755.0))
 		let bonusLine = SKShapeNode(path:bonusPath)
-		bonusPath.move(to: CGPoint(x: 100.0, y: 755.0))
-		bonusPath.addLine(to: CGPoint(x: 1820.0, y: 755.0))
-		bonusLine.path = bonusPath
-		bonusLine.strokeColor = SKColor.yellow
-		bonusLine.lineWidth = 6.0
-		bonusLine.zPosition = 20
+		bonusLine.strokeColor = .yellow
+		bonusLine.lineWidth = 8.0
+		bonusLine.zPosition = 10
 		self.addChild(bonusLine)
+		let bonusLineShadow = SKShapeNode(path:bonusPath)
+		bonusLineShadow.strokeColor = .black
+		bonusLineShadow.lineWidth = 8.0
+		bonusLineShadow.zPosition = 9
+		let bonusLineShadowEffect = SKEffectNode()
+		bonusLineShadowEffect.shouldEnableEffects = true
+		bonusLineShadowEffect.shouldRasterize = true
+		bonusLineShadowEffect.zPosition = 9
+		bonusLineShadowEffect.filter = lineShadowFilter;
+		bonusLineShadowEffect.addChild(bonusLineShadow)
+		bonusLineShadowEffect.position = .zero
+		self.addChild(bonusLineShadowEffect)
+		
+		let scorePath = CGMutablePath()
+		scorePath.move(to: CGPoint(x: 120.0, y: 630.0))
+		scorePath.addLine(to: CGPoint(x: 1800.0, y: 630.0))
+		let scoreLine = SKShapeNode(path:scorePath)
+		scoreLine.strokeColor = .green
+		scoreLine.lineWidth = 8.0
+		scoreLine.zPosition = 10
+		self.addChild(scoreLine)
+		let scoreLineShadow = SKShapeNode(path:scorePath)
+		scoreLineShadow.strokeColor = .black
+		scoreLineShadow.lineWidth = 8.0
+		scoreLineShadow.zPosition = 9
+		let scoreLineShadowEffect = SKEffectNode()
+		scoreLineShadowEffect.shouldEnableEffects = true
+		scoreLineShadowEffect.shouldRasterize = true
+		scoreLineShadowEffect.zPosition = 9
+		scoreLineShadowEffect.filter = lineShadowFilter;
+		scoreLineShadowEffect.addChild(scoreLineShadow)
+		scoreLineShadowEffect.position = .zero
+		self.addChild(scoreLineShadowEffect)
 		
 		let basePath = CGMutablePath()
+		basePath.move(to: CGPoint(x: 120.0, y: 130.0))
+		basePath.addLine(to: CGPoint(x: 1800.0, y: 130.0))
 		let baseLine = SKShapeNode(path:basePath)
-		basePath.move(to: CGPoint(x: 100.0, y: 130.0))
-		basePath.addLine(to: CGPoint(x: 1820.0, y: 130.0))
-		baseLine.path = basePath
-		baseLine.strokeColor = SKColor.white
-		baseLine.lineWidth = 6.0
-		baseLine.zPosition = 20
+		baseLine.strokeColor = .white
+		baseLine.lineWidth = 8.0
+		baseLine.zPosition = 40
 		self.addChild(baseLine)
+		let baseLineShadow = SKShapeNode(path:basePath)
+		baseLineShadow.strokeColor = .black
+		baseLineShadow.lineWidth = 8.0
+		baseLineShadow.zPosition = 1
+		let baseLineShadowEffect = SKEffectNode()
+		baseLineShadowEffect.shouldEnableEffects = true
+		baseLineShadowEffect.shouldRasterize = true
+		baseLineShadowEffect.zPosition = 1
+		baseLineShadowEffect.filter = lineShadowFilter;
+		baseLineShadowEffect.addChild(baseLineShadow)
+		baseLineShadowEffect.position = .zero
+		self.addChild(baseLineShadowEffect)
+		
+		let targetLabelText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		targetLabelText.fontSize = 70
+		targetLabelText.horizontalAlignmentMode = .right
+		targetLabelText.verticalAlignmentMode = .center
+		targetLabelText.position = CGPoint(x: 105, y: 630)
+		targetLabelText.zPosition = 22
+		targetLabelText.text = "👑"
+		let targetShadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		targetShadowText.fontSize = 70
+		targetShadowText.fontColor = NSColor.black
+		targetShadowText.horizontalAlignmentMode = .right
+		targetShadowText.verticalAlignmentMode = .center
+		targetShadowText.position = CGPoint(x: 105, y: 630)
+		targetShadowText.zPosition = 21
+		targetShadowText.text = ""
+		let targetShadow = SKEffectNode()
+		targetShadow.shouldEnableEffects = true
+		targetShadow.shouldRasterize = true
+		targetShadow.zPosition = 21
+		targetShadow.filter = filter;
+		targetShadow.addChild(targetShadowText)
+		let targetLabelText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		targetLabelText2.fontSize = 70
+		targetLabelText2.horizontalAlignmentMode = .left
+		targetLabelText2.verticalAlignmentMode = .center
+		targetLabelText2.position = CGPoint(x: 1815, y: 630)
+		targetLabelText2.zPosition = 22
+		targetLabelText2.text = "👑"
+		let targetShadowText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		targetShadowText2.fontSize = 70
+		targetShadowText2.fontColor = NSColor.black
+		targetShadowText2.horizontalAlignmentMode = .left
+		targetShadowText2.verticalAlignmentMode = .center
+		targetShadowText2.position = CGPoint(x: 1815, y: 630)
+		targetShadowText2.zPosition = 21
+		targetShadowText2.text = ""
+		let targetShadow2 = SKEffectNode()
+		targetShadow2.shouldEnableEffects = true
+		targetShadow2.shouldRasterize = true
+		targetShadow2.zPosition = 21
+		targetShadow2.filter = filter;
+		targetShadow2.addChild(targetShadowText2)
+		targetLabel.zPosition = 22
+		targetLabel.addChild(targetLabelText)
+		targetLabel.addChild(targetShadow)
+		targetLabel.addChild(targetLabelText2)
+		targetLabel.addChild(targetShadow2)
+		self.addChild(targetLabel)
+		
+		let bonusLabelText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		bonusLabelText.fontSize = 70
+		bonusLabelText.horizontalAlignmentMode = .right
+		bonusLabelText.verticalAlignmentMode = .center
+		bonusLabelText.position = CGPoint(x: 105, y: 755)
+		bonusLabelText.zPosition = 22
+		bonusLabelText.text = "🚀"
+		self.addChild(bonusLabelText)
+		
+		let bonusLabelText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		bonusLabelText2.fontSize = 70
+		bonusLabelText2.horizontalAlignmentMode = .left
+		bonusLabelText2.verticalAlignmentMode = .center
+		bonusLabelText2.position = CGPoint(x: 1815, y: 755)
+		bonusLabelText2.zPosition = 22
+		bonusLabelText2.text = "🚀"
+		self.addChild(bonusLabelText2)
 		
 		for i in 0..<numTeams {
-			let x = 100.0 + ((1720.0 * (Double(i) + 0.5)) / Double(numTeams))
+			let width = 1680.0 / Double(numTeams)
+			let barWidth = width * 0.8
+			let x = 120.0 + (width * (Double(i) + 0.5))
 			
 			let teamScoreText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-			teamScoreText.fontSize = 60
+			teamScoreText.fontSize = 72
 			teamScoreText.horizontalAlignmentMode = .center
 			teamScoreText.verticalAlignmentMode = .baseline
 			teamScoreText.position = CGPoint.zero
-			teamScoreText.zPosition = 5
+			teamScoreText.zPosition = 15
 			teamScoreText.text = "000"
 			
 			let teamScoreShadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-			teamScoreShadowText.fontSize = 60
+			teamScoreShadowText.fontSize = 72
 			teamScoreShadowText.fontColor = NSColor.black
 			teamScoreShadowText.horizontalAlignmentMode = .center
 			teamScoreShadowText.verticalAlignmentMode = .baseline
 			teamScoreShadowText.position = CGPoint.zero
-			teamScoreShadowText.zPosition = 4
+			teamScoreShadowText.zPosition = 14
 			teamScoreShadowText.text = "000"
 			let teamScoreShadow = SKEffectNode()
 			teamScoreShadow.shouldEnableEffects = true
 			teamScoreShadow.shouldRasterize = true
-			teamScoreShadow.zPosition = 4
+			teamScoreShadow.zPosition = 14
 			let filter = CIFilter(name: "CIGaussianBlur")
 			filter?.setDefaults()
-			filter?.setValue(10, forKey: "inputRadius")
+			filter?.setValue(18, forKey: "inputRadius")
 			teamScoreShadow.filter = filter;
 			teamScoreShadow.addChild(teamScoreShadowText)
 			
 			let teamScoreLabel = SKNode()
 			teamScoreLabel.position = CGPoint(x: x, y: 150)
-			teamScoreLabel.zPosition = 5
+			teamScoreLabel.zPosition = 15
 			teamScoreLabel.addChild(teamScoreText)
 			teamScoreLabel.addChild(teamScoreShadow)
 			teamScoreLabels.append(teamScoreLabel)
@@ -170,7 +277,7 @@ class BoggleScene: SKScene {
 			teamNameText.horizontalAlignmentMode = .center
 			teamNameText.verticalAlignmentMode = .baseline
 			teamNameText.position = CGPoint(x: x, y: 70)
-			teamNameText.zPosition = 5
+			teamNameText.zPosition = 15
 			teamNameText.text = "Team \(i + 1)"
 			self.addChild(teamNameText)
 			
@@ -180,16 +287,56 @@ class BoggleScene: SKScene {
 			teamNameShadowText.horizontalAlignmentMode = .center
 			teamNameShadowText.verticalAlignmentMode = .baseline
 			teamNameShadowText.position = CGPoint.zero
-			teamNameShadowText.zPosition = 4
+			teamNameShadowText.zPosition = 14
 			teamNameShadowText.text = "Team \(i + 1)"
 			let teamNameShadow = SKEffectNode()
 			teamNameShadow.shouldEnableEffects = true
 			teamNameShadow.shouldRasterize = true
-			teamNameShadow.zPosition = 4
+			teamNameShadow.zPosition = 14
 			teamNameShadow.filter = filter;
 			teamNameShadow.addChild(teamNameShadowText)
 			teamNameShadow.position = CGPoint(x: x, y: 70)
 			self.addChild(teamNameShadow)
+			
+			var teamHue = CGFloat(i) / 8.0
+			if teamHue > 1.0 {
+				teamHue -= 1.0
+			}
+			let barColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+			
+			let bar = SKSpriteNode(texture: nil, color: barColour, size: CGSize(width: barWidth, height: 0.0))
+			bar.anchorPoint = .zero
+			bar.zPosition = 13
+			bar.name = "bar"
+			
+			let barBorder = SKSpriteNode(texture: nil, color: .white, size: CGSize(width: barWidth + 6, height: 0.0))
+			barBorder.position = CGPoint(x: -3.0, y: 3.0)
+			barBorder.anchorPoint = .zero
+			barBorder.zPosition = 12
+			
+			let barShadow = SKSpriteNode(texture: nil, color: .black, size: CGSize(width: barWidth + 6, height: 0.0))
+			barShadow.position = CGPoint(x: -3.0, y: 3.0)
+			barShadow.anchorPoint = .zero
+			barShadow.zPosition = 1
+			let barShadowEffect = SKEffectNode()
+			barShadowEffect.shouldEnableEffects = true
+			barShadowEffect.shouldRasterize = true
+			barShadowEffect.zPosition = 1
+			let barShadowFilter = CIFilter(name: "CIGaussianBlur")
+			barShadowFilter?.setDefaults()
+			barShadowFilter?.setValue(40, forKey: "inputRadius")
+			barShadowEffect.filter = barShadowFilter;
+			barShadowEffect.addChild(barShadow)
+			barShadowEffect.position = .zero
+			
+			let barContainer = SKNode()
+			barContainer.position = CGPoint(x: x - barWidth/2, y: 130.0)
+			barContainer.addChild(bar)
+			barContainer.addChild(barBorder)
+			barContainer.addChild(barShadowEffect)
+			
+			teamBars.append(barContainer)
+			self.addChild(barContainer)
 		}
 	}
 	
@@ -197,6 +344,7 @@ class BoggleScene: SKScene {
 		clearTeamScores()
 		stopTimer()
 		updateTime(seconds: 120)
+		updateTargetString(target: "👑", shadow: false)
 		if setGrid {
 			sendIdleGrid()
 		}
@@ -237,6 +385,7 @@ class BoggleScene: SKScene {
 		if !active {
 			reset(setGrid: false)
 			sendQuestionGrid()
+			updateTargetString(target: String(questions[currentQuestion].target), shadow: true)
 			timer?.invalidate()
 			timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
 			RunLoop.main.add(timer!, forMode: .commonModes)
@@ -267,6 +416,26 @@ class BoggleScene: SKScene {
 		}
 	}
 	
+	func updateTargetString(target: String, shadow: Bool) {
+		for node in targetLabel.children {
+			if let label = node as? SKLabelNode {
+				label.text = target
+			}
+			else if let effect = node as? SKEffectNode {
+				for node2 in effect.children {
+					if let label = node2 as? SKLabelNode {
+						if (shadow) {
+							label.text = target
+						}
+						else {
+							label.text = ""
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	func clearTeamScores() {
 		teamScores = [Int](repeating: 0, count: numTeams)
 		updateScores()
@@ -282,15 +451,48 @@ class BoggleScene: SKScene {
 	
 	func updateScores() {
 		for i in 0..<numTeams {
-			let score = String(teamScores[i])
+			let question = questions[currentQuestion]
+			let score = teamScores[i]
+			let scoreString = String(score)
+			let progress = Double(teamScores[i]) / Double(question.target)
+			let barHeight = CGFloat(progress * 500.0)
+			var colour = SKColor.darkGray
+			if score >= question.bonus {
+				colour = .yellow
+			}
+			else if score >= question.target {
+				colour = .green
+			}
+			let growBar = SKAction.resize(toHeight: barHeight, duration: 0.4)
+			growBar.timingMode = .easeOut
+			
 			for node in teamScoreLabels[i].children {
 				if let label = node as? SKLabelNode {
-					label.text = score
+					label.text = scoreString
 				}
 				else if let effect = node as? SKEffectNode {
 					for node2 in effect.children {
 						if let label = node2 as? SKLabelNode {
-							label.text = score
+							label.text = scoreString
+						}
+					}
+				}
+			}
+			for node in teamBars[i].children {
+				if let bar = node as? SKSpriteNode {
+					if bar.size.height != barHeight {
+						bar.run(growBar)
+						if bar.name == "bar" {
+							bar.color = colour
+						}
+					}
+				}
+				else if let effect = node as? SKEffectNode {
+					for node2 in effect.children {
+						if let bar = node2 as? SKSpriteNode {
+							if bar.size.height != barHeight {
+								bar.run(growBar)
+							}
 						}
 					}
 				}

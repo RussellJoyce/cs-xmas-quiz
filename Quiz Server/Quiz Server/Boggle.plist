@@ -12,14 +12,14 @@
 		<dict>
 			<key>grid</key>
 			<string>   EBSA  ,   OTLV  ,   TEET  ,   STMN  </string>
-			<key>score</key>
+			<key>target</key>
 			<integer>6</integer>
 		</dict>
 		<dict>
 			<key>grid</key>
 			<string>ABCDEFGHI,JKLMNOPQR,STUVWXYZA,BCDEFGHIJ</string>
-			<key>score</key>
-			<integer>5</integer>
+			<key>target</key>
+			<integer>4</integer>
 		</dict>
 	</array>
 </dict>
