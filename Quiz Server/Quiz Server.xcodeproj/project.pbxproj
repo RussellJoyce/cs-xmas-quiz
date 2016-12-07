@@ -100,6 +100,7 @@
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
 		46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBC4571DF383F400C41112 /* SwiftyJSON.swift */; };
 		46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BBC4601DF39AA000C41112 /* Boggle.plist */; };
+		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
@@ -184,6 +185,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */,
+				46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +227,7 @@
 		461672381DF838150049C8D1 /* locationnumber.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationnumber.sks; sourceTree = "<group>"; };
 		461672421DF87C470049C8D1 /* BoggleSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparks.sks; sourceTree = "<group>"; };
 		461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparksBonus.sks; sourceTree = "<group>"; };
+		4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NeutraDisp Titling.otf"; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Snowmoji.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snowmoji.sks; sourceTree = "<group>"; };
@@ -406,6 +409,7 @@
 			isa = PBXGroup;
 			children = (
 				46BBC4461DF0725600C41112 /* EHSMB.TTF */,
+				4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */,
 				3C872EB51C03D53000A2B397 /* airhorn.mp3 */,
 				3C872EB31C03D47A00A2B397 /* blop.mp3 */,
 				3C872EB11C03D35100A2B397 /* tick.mp3 */,

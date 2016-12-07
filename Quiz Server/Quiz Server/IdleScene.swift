@@ -99,7 +99,7 @@ class IdleScene: SKScene {
 		nootSnow.particleRotationSpeed = 1.0
 		nootSnow.particleBirthRate = 0.009
 		
-		let text1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let text1 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		text1.text = "Computer Science"
 		text1.fontSize = 140
 		text1.horizontalAlignmentMode = .center
@@ -108,7 +108,7 @@ class IdleScene: SKScene {
 		text1.zPosition = 17
 		text1.fontColor = NSColor.white
 		
-		let text2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let text2 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		text2.text = "Christmas Quiz 2016!"
 		text2.fontSize = 140
 		text2.horizontalAlignmentMode = .center
@@ -123,7 +123,7 @@ class IdleScene: SKScene {
 		text.addChild(text1)
 		text.addChild(text2)
 		
-		let shadowText1 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let shadowText1 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		shadowText1.text = "Computer Science"
 		shadowText1.fontSize = 140
 		shadowText1.fontColor = NSColor(white: 0.0, alpha: 0.8)
@@ -132,7 +132,7 @@ class IdleScene: SKScene {
 		shadowText1.position = CGPoint(x: 0, y: 72)
 		shadowText1.zPosition = 16
 		
-		let shadowText2 = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let shadowText2 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		shadowText2.text = "Christmas Quiz 2016!"
 		shadowText2.fontSize = 140
 		shadowText2.fontColor = NSColor(white: 0.0, alpha: 0.8)
