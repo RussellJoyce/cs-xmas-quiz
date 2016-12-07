@@ -102,14 +102,14 @@ class GeographyScene: SKScene {
 		answering = true;
 		mainImage.removeAllChildren()
 		
-		/*teamguesses[0] = (10, 10)
+		teamguesses[0] = (10, 10)
 		teamguesses[1] = (20, 20)
 		teamguesses[2] = (30, 30)
 		teamguesses[3] = (40, 40)
 		teamguesses[4] = (10, 50)
 		teamguesses[5] = (20, 50)
 		teamguesses[6] = (30, 60)
-		teamguesses[7] = (40, 70)*/
+		teamguesses[7] = (40, 70)
 		
 		var distances : [(d : Double, team : Int)] = []
 		for i in 0 ..< teamguesses.count {

@@ -303,6 +303,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.timerDecrement()
 	}
 	
+	@IBAction func boggleDisplayGrid(_ sender: Any) {
+		quizView.boggleDisplayGrid()
+	}
+	
 	@IBAction func setTeamType(_ sender: NSPopUpButton) {
 		let team = sender.tag
 		if (team < numTeams) {
