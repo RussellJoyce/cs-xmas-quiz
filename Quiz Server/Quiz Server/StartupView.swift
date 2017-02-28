@@ -8,6 +8,30 @@
 
 import Cocoa
 import DDHidLib
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class StartupView: NSViewController {
     
@@ -29,71 +53,71 @@ class StartupView: NSViewController {
         
         if let screens = allScreens {
             let numScreens = screens.count
-            println("Found \(numScreens) screen(s):")
+            print("Found \(numScreens) screen(s):")
             
             if numScreens > 0 {
                 screenSelector.removeAllItems()
-                screenSelector.enabled = true
+                screenSelector.isEnabled = true
 
-                for (index, screen) in enumerate(screens) {
-                    println("  \(screen.frame)")
-                    screenSelector.addItemWithTitle("Screen \(index) - \(screen.frame)")
+                for (index, screen) in screens.enumerated() {
+                    print("  \(screen.frame)")
+                    screenSelector.addItem(withTitle: "Screen \(index) - \(screen.frame)")
                 }
             }
         }
         else {
-            println("Error enumerating screens");
+            print("Error enumerating screens");
         }
         
         
         allControllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
         
         if let controllers = allControllers {
-            println("Found \(controllers.count) game controller(s):")
+            print("Found \(controllers.count) game controller(s):")
             
             if controllers.count > 0 {
                 controllerSelector.removeAllItems()
                 
                 for controller in controllers {
-                    println("  \(controller.manufacturer()) - \(controller.productName())")
-                    controllerSelector.addItemWithTitle(controller.productName())
+                    print("  \(controller.manufacturer()) - \(controller.productName())")
+                    controllerSelector.addItem(withTitle: controller.productName())
                 }
                 
-                controllerSelector.enabled = true
+                controllerSelector.isEnabled = true
             }
         }
         
-        
-        let serialPortManager = ORSSerialPortManager.sharedSerialPortManager()
-        allPorts = serialPortManager.availablePorts as? [ORSSerialPort]
+		
+        let serialPortManager = ORSSerialPortManager.shared()
+        allPorts = serialPortManager?.availablePorts as? [ORSSerialPort]
         
         if let ports = allPorts {
-            println("Found \(ports.count) serial port(s):")
+            print("Found \(ports.count) serial port(s):")
             
             if ports.count > 0 {
                 serialSelector.removeAllItems()
                 
                 for port in ports {
-                    println("  \(port.name)")
-                    serialSelector.addItemWithTitle(port.name)
+                    print("  \(port.name)")
+                    serialSelector.addItem(withTitle: port.name)
                 }
                 
-                serialSelector.enabled = true
+                serialSelector.isEnabled = true
             }
         }
 
         
-        startButton.enabled = true
+        startButton.isEnabled = true
     }
     
     
-    @IBAction func startQuiz(sender: AnyObject) {
+    @IBAction func startQuiz(_ sender: AnyObject) {
         let screen = (allScreens?.count > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
         let controller = (allControllers?.count > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
         let serial = (allPorts?.count > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSOnState;
         
-        let delegate = NSApplication.sharedApplication().delegate as AppDelegate
+        let delegate = NSApplication.shared().delegate as! AppDelegate
         delegate.startQuiz(screen, buzzers: controller, serial: serial, testMode: test)
     }
 }

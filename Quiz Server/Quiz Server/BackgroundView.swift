@@ -9,9 +9,9 @@
 import Cocoa
 
 class BackgroundView: NSView {
-    override func drawRect(dirtyRect: NSRect) {
-        NSColor.blackColor().setFill()
+    override func draw(_ dirtyRect: NSRect) {
+        NSColor.black.setFill()
         NSRectFill(dirtyRect)
-        super.drawRect(dirtyRect)
+        super.draw(dirtyRect)
     }
 }

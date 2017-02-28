@@ -20,25 +20,15 @@
 		3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */; };
 		3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF601A3068DA003DEA9F /* Tests.storyboard */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
-		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
-		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
 		460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460012371A376C0D0039AF86 /* BuzzerViewController.swift */; };
 		4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 460012381A376C0D0039AF86 /* BuzzerView.xib */; };
-		4600123D1A3786AD0039AF86 /* IdleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4600123B1A3786AD0039AF86 /* IdleViewController.swift */; };
-		4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4600123C1A3786AD0039AF86 /* IdleView.xib */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
 		46056ED61A1974A800C37628 /* StartupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056ED51A1974A800C37628 /* StartupView.swift */; };
 		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
-		463FDE821A39039500FA9B3F /* Poo.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Poo.sks */; };
-		46498C811A3F352400CAFACC /* poo.png in Resources */ = {isa = PBXBuildFile; fileRef = 46498C801A3F352400CAFACC /* poo.png */; };
-		46498C831A3F366700CAFACC /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46498C821A3F366700CAFACC /* Snow.sks */; };
-		4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4656CA1A1A39100200A70F91 /* SparksDown.sks */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
-		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
-		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
 		46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; };
@@ -81,10 +71,6 @@
 		46DAD0741A2F690C00A7D9AF /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0701A2F690C00A7D9AF /* ORSSerialPortManager.m */; };
 		46DAD0751A2F690C00A7D9AF /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
-		46F180A11A41DD8E00D2FF1D /* tree.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F1809F1A41DD8E00D2FF1D /* tree.png */; };
-		46F180A21A41DD8E00D2FF1D /* santa.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A01A41DD8E00D2FF1D /* santa.png */; };
-		46F180A51A41DDCE00D2FF1D /* Santa.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A31A41DDCE00D2FF1D /* Santa.sks */; };
-		46F180A61A41DDCE00D2FF1D /* Tree.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46F180A41A41DDCE00D2FF1D /* Tree.sks */; };
 		46F6F8BA1A406DE700C4180C /* lights.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B51A406DE700C4180C /* lights.png */; };
 		46F6F8BC1A406DE700C4180C /* lights2.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B71A406DE700C4180C /* lights2.png */; };
 		46F6F8BD1A406DE700C4180C /* lights3.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F6F8B81A406DE700C4180C /* lights3.png */; };
@@ -130,12 +116,8 @@
 		3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessStackView.xib; sourceTree = "<group>"; };
 		3CD1DF601A3068DA003DEA9F /* Tests.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Tests.storyboard; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
-		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
 		460012371A376C0D0039AF86 /* BuzzerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerViewController.swift; sourceTree = "<group>"; };
 		460012381A376C0D0039AF86 /* BuzzerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BuzzerView.xib; sourceTree = "<group>"; };
-		4600123B1A3786AD0039AF86 /* IdleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleViewController.swift; sourceTree = "<group>"; };
-		4600123C1A3786AD0039AF86 /* IdleView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IdleView.xib; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46056EB81A19624E00C37628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46056EB91A19624E00C37628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -145,13 +127,7 @@
 		46056ED51A1974A800C37628 /* StartupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupView.swift; sourceTree = "<group>"; };
 		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
-		463FDE811A39039500FA9B3F /* Poo.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Poo.sks; sourceTree = "<group>"; };
-		46498C801A3F352400CAFACC /* poo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = poo.png; sourceTree = "<group>"; };
-		46498C821A3F366700CAFACC /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
-		4656CA1A1A39100200A70F91 /* SparksDown.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDown.sks; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
-		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
-		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		46B025541A1BF4EC0088294B /* DDHidLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DDHidLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,10 +173,6 @@
 		46DAD0711A2F690C00A7D9AF /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
 		46DAD0721A2F690C00A7D9AF /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
-		46F1809F1A41DD8E00D2FF1D /* tree.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tree.png; sourceTree = "<group>"; };
-		46F180A01A41DD8E00D2FF1D /* santa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = santa.png; sourceTree = "<group>"; };
-		46F180A31A41DDCE00D2FF1D /* Santa.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Santa.sks; sourceTree = "<group>"; };
-		46F180A41A41DDCE00D2FF1D /* Tree.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Tree.sks; sourceTree = "<group>"; };
 		46F6F8B51A406DE700C4180C /* lights.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights.png; sourceTree = "<group>"; };
 		46F6F8B71A406DE700C4180C /* lights2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights2.png; sourceTree = "<group>"; };
 		46F6F8B81A406DE700C4180C /* lights3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lights3.png; sourceTree = "<group>"; };
@@ -273,22 +245,8 @@
 				46B607DF1A353F7200A53E59 /* TestView.xib */,
 				3C7082121A35FE38006DB763 /* PointlessGameController.swift */,
 				3C7082131A35FE38006DB763 /* PointlessGameController.xib */,
-				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
-				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
 				460012371A376C0D0039AF86 /* BuzzerViewController.swift */,
 				460012381A376C0D0039AF86 /* BuzzerView.xib */,
-				4600123B1A3786AD0039AF86 /* IdleViewController.swift */,
-				4600123C1A3786AD0039AF86 /* IdleView.xib */,
-				463FDE811A39039500FA9B3F /* Poo.sks */,
-				46F180A31A41DDCE00D2FF1D /* Santa.sks */,
-				46F180A41A41DDCE00D2FF1D /* Tree.sks */,
-				46498C821A3F366700CAFACC /* Snow.sks */,
-				46596C811A38E04800822FB7 /* SparksUp.sks */,
-				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
-				46498C801A3F352400CAFACC /* poo.png */,
-				46F1809F1A41DD8E00D2FF1D /* tree.png */,
-				46F180A01A41DD8E00D2FF1D /* santa.png */,
-				46596C821A38E04800822FB7 /* spark.png */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -465,6 +423,7 @@
 				TargetAttributes = {
 					46056EB31A19624E00C37628 = {
 						CreatedOnToolsVersion = 6.1;
+						LastSwiftMigration = 0820;
 					};
 					46B025531A1BF4EC0088294B = {
 						CreatedOnToolsVersion = 6.1;
@@ -499,31 +458,19 @@
 				465FDFE81A372E5E00734431 /* eight.wav in Resources */,
 				4600123A1A376C0D0039AF86 /* BuzzerView.xib in Resources */,
 				46F6F8C01A40991600C4180C /* lights1.png in Resources */,
-				46498C831A3F366700CAFACC /* Snow.sks in Resources */,
 				46B607E11A353F7200A53E59 /* TestView.xib in Resources */,
-				46F180A51A41DDCE00D2FF1D /* Santa.sks in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
-				4600123E1A3786AD0039AF86 /* IdleView.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
-				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
-				46498C811A3F352400CAFACC /* poo.png in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
 				46F6F8BC1A406DE700C4180C /* lights2.png in Resources */,
-				463FDE821A39039500FA9B3F /* Poo.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
-				46F180A11A41DD8E00D2FF1D /* tree.png in Resources */,
-				46F180A61A41DDCE00D2FF1D /* Tree.sks in Resources */,
-				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
-				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
-				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
-				46F180A21A41DD8E00D2FF1D /* santa.png in Resources */,
 				3CD1DF611A3068DA003DEA9F /* Tests.storyboard in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46F6F8BE1A406DE700C4180C /* lights4.png in Resources */,
@@ -557,9 +504,7 @@
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				460012391A376C0D0039AF86 /* BuzzerViewController.swift in Sources */,
-				4600123D1A3786AD0039AF86 /* IdleViewController.swift in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
-				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */,
 			);
@@ -700,6 +645,7 @@
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -718,6 +664,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

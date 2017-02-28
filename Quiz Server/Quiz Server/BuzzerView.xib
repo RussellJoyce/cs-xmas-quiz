@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BuzzerViewController" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="snowView" destination="sPC-AR-Gbf" id="nsN-xz-aba"/>
                 <outlet property="team1" destination="wG6-Yk-TjM" id="AsQ-W7-sS7"/>
                 <outlet property="team2" destination="5ja-xL-YOx" id="Dxe-c9-qee"/>
                 <outlet property="team3" destination="cin-LI-1TI" id="hC7-IJ-KMd"/>
@@ -39,38 +39,45 @@
             <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sPC-AR-Gbf" userLabel="SK View" customClass="SKView">
-                    <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
-                </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kI7-LD-Yge" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iDu-D3-Gf8" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="788" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wJI-hf-ndL" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="660" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jT8-8u-2bj" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="532" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wlv-95-Ay3" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="404" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Z6U-rN-s54" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="276" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ALJ-sy-1dt" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="148" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r6c-DS-fnc" customClass="PlaceholderView" customModule="Quiz_Server" customModuleProvider="target">
                     <rect key="frame" x="593" y="20" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wG6-Yk-TjM" userLabel="Team 1">
                     <rect key="frame" x="502" y="920" width="916" height="140"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7vd-6t-Ngz">
                             <rect key="frame" x="18" y="10" width="880" height="131"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="5">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -84,13 +91,14 @@
                     <shadow key="shadow" blurRadius="7">
                         <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </shadow>
-                    <animations/>
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5ja-xL-YOx" userLabel="Team 2">
                     <rect key="frame" x="593" y="788" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sY4-Ub-666">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -102,6 +110,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LTH-LQ-T6s">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -118,9 +127,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cin-LI-1TI" userLabel="Team 3">
                     <rect key="frame" x="593" y="660" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WvM-6H-jFO">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -132,6 +143,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YQ9-1I-0l5">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -148,9 +160,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AuV-2C-eKF" userLabel="Team 4">
                     <rect key="frame" x="593" y="532" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7xN-L3-9TA">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -162,6 +176,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ebd-Ro-hrp">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -178,9 +193,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PLP-Zm-45j" userLabel="Team 5">
                     <rect key="frame" x="593" y="404" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WeS-IO-RQN">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -192,6 +209,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DbD-IK-kfZ">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -208,9 +226,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZQ2-eB-2FZ" userLabel="Team 6">
                     <rect key="frame" x="593" y="276" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IdQ-P5-cUv">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -222,6 +242,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a3t-Se-hh9">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -238,9 +259,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9hL-3w-kqN" userLabel="Team 7">
                     <rect key="frame" x="593" y="148" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RLv-5q-uUY">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -252,6 +275,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aWe-T1-1On">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -268,9 +292,11 @@
                 </customView>
                 <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6H-vx-3Zv" userLabel="Team 8">
                     <rect key="frame" x="593" y="20" width="734" height="120"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <subviews>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Acl-lN-k5r">
                             <rect key="frame" x="18" y="39" width="698" height="88"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="4">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -282,6 +308,7 @@
                         </textField>
                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W9V-we-516">
                             <rect key="frame" x="18" y="7" width="698" height="34"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <shadow key="shadow" blurRadius="1">
                                 <color key="color" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </shadow>
@@ -297,7 +324,6 @@
                     </shadow>
                 </customView>
             </subviews>
-            <animations/>
             <point key="canvasLocation" x="664" y="522"/>
         </customView>
     </objects>

@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -312,13 +313,17 @@
         <window title="Quiz Server" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" showsToolbarButton="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="335" y="390" width="566" height="170"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="566" height="170"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
                         <rect key="frame" x="165" y="126" width="384" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="379" id="TFe-2a-vBa"/>
+                            <constraint firstAttribute="height" constant="21" id="ZlP-Xe-b3n"/>
+                        </constraints>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Z2K-FA-4W8">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -329,16 +334,24 @@
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4o8-pD-iQK">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4o8-pD-iQK">
                         <rect key="frame" x="18" y="106" width="143" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="17" id="Cut-hz-yoI"/>
+                            <constraint firstAttribute="width" constant="139" id="bwk-Qa-iwT"/>
+                        </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz buzzer controller:" id="Vnc-xz-H7T">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-Ch-lHI">
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-Ch-lHI">
                         <rect key="frame" x="165" y="100" width="384" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="379" id="Zyd-Lf-Z4P"/>
+                            <constraint firstAttribute="height" constant="21" id="qNs-Hs-WCw"/>
+                        </constraints>
                         <popUpButtonCell key="cell" type="push" title="No game controllers" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rBd-JD-XOy" id="ZJH-pF-0XG">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -349,16 +362,24 @@
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qxb-yY-gad">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qxb-yY-gad">
                         <rect key="frame" x="43" y="78" width="118" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="114" id="CkC-Ig-ash"/>
+                            <constraint firstAttribute="height" constant="17" id="swj-wm-cfm"/>
+                        </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz buzzer serial:" id="TXh-Nq-8lF">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <popUpButton verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
+                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
                         <rect key="frame" x="165" y="72" width="384" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="TRW-fK-luf"/>
+                            <constraint firstAttribute="width" constant="379" id="cXh-Ya-mEe"/>
+                        </constraints>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="p3n-5t-awL">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
@@ -369,23 +390,35 @@
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qsu-Et-3OI">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qsu-Et-3OI">
                         <rect key="frame" x="32" y="133" width="129" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="125" id="CQ5-Ki-DLT"/>
+                            <constraint firstAttribute="height" constant="17" id="gyY-dR-hVe"/>
+                        </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Quiz display screen:" id="tnL-c4-Ipy">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BzV-d4-VFP">
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="BzV-d4-VFP">
                         <rect key="frame" x="18" y="22" width="126" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="122" id="g4s-Oz-kj6"/>
+                            <constraint firstAttribute="height" constant="14" id="jyC-fx-UQD"/>
+                        </constraints>
                         <buttonCell key="cell" type="check" title="Windowed mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cK3-Iy-Rsk">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
                     </button>
-                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
                         <rect key="frame" x="447" y="13" width="105" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="93" id="V7I-jU-QHh"/>
+                            <constraint firstAttribute="height" constant="21" id="ofS-nu-cJW"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Start" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="8TC-aM-0ia">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -399,15 +432,37 @@ DQ
                     </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="qxb-yY-gad" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="45" id="3ly-AM-Yff"/>
+                    <constraint firstAttribute="trailing" secondItem="9Zo-H4-VCv" secondAttribute="trailing" constant="20" id="60l-LI-Jm7"/>
+                    <constraint firstItem="qxb-yY-gad" firstAttribute="top" secondItem="4o8-pD-iQK" secondAttribute="bottom" constant="11" id="9gs-PI-rUq"/>
+                    <constraint firstAttribute="bottom" secondItem="3ly-hv-dYY" secondAttribute="bottom" constant="20" id="Al3-eh-Ahq"/>
+                    <constraint firstAttribute="trailing" secondItem="3ly-hv-dYY" secondAttribute="trailing" constant="20" id="B7K-j2-5Le"/>
+                    <constraint firstItem="3ly-hv-dYY" firstAttribute="top" secondItem="AUn-q1-hZ0" secondAttribute="bottom" constant="34" id="BnN-SB-hlV"/>
                     <constraint firstAttribute="trailing" secondItem="9Zo-H4-VCv" secondAttribute="trailing" constant="20" id="CRs-J3-gXG"/>
+                    <constraint firstItem="AUn-q1-hZ0" firstAttribute="leading" secondItem="qxb-yY-gad" secondAttribute="trailing" constant="8" id="GPS-Ep-oBo"/>
+                    <constraint firstAttribute="trailing" secondItem="7Fx-Ch-lHI" secondAttribute="trailing" constant="20" id="HaT-Nj-GhE"/>
+                    <constraint firstItem="3ly-hv-dYY" firstAttribute="leading" secondItem="BzV-d4-VFP" secondAttribute="trailing" constant="311" id="L0X-vI-rF9"/>
+                    <constraint firstItem="Qsu-Et-3OI" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="34" id="NQ1-vM-Sob"/>
+                    <constraint firstItem="9Zo-H4-VCv" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="NdR-SB-gVJ"/>
+                    <constraint firstAttribute="trailing" secondItem="AUn-q1-hZ0" secondAttribute="trailing" constant="20" id="OaQ-3d-pHY"/>
                     <constraint firstAttribute="trailing" secondItem="3ly-hv-dYY" secondAttribute="trailing" constant="20" id="YSP-5p-LDj"/>
+                    <constraint firstItem="7Fx-Ch-lHI" firstAttribute="top" secondItem="9Zo-H4-VCv" secondAttribute="bottom" constant="5" id="cLb-AN-hxK"/>
+                    <constraint firstItem="4o8-pD-iQK" firstAttribute="top" secondItem="Qsu-Et-3OI" secondAttribute="bottom" constant="10" id="ejN-4L-0q7"/>
                     <constraint firstAttribute="bottom" secondItem="BzV-d4-VFP" secondAttribute="bottom" constant="24" id="gyW-3V-YhD"/>
+                    <constraint firstAttribute="bottom" secondItem="BzV-d4-VFP" secondAttribute="bottom" constant="24" id="j2N-ph-6a6"/>
+                    <constraint firstItem="AUn-q1-hZ0" firstAttribute="top" secondItem="7Fx-Ch-lHI" secondAttribute="bottom" constant="7" id="ljg-0Q-qLp"/>
+                    <constraint firstItem="BzV-d4-VFP" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="ooj-TT-tRY"/>
+                    <constraint firstItem="4o8-pD-iQK" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="pRh-R9-40N"/>
                     <constraint firstAttribute="bottom" secondItem="3ly-hv-dYY" secondAttribute="bottom" constant="20" id="qah-Lp-lwz"/>
+                    <constraint firstItem="7Fx-Ch-lHI" firstAttribute="leading" secondItem="4o8-pD-iQK" secondAttribute="trailing" constant="8" id="rug-2u-YRF"/>
                     <constraint firstAttribute="trailing" secondItem="7Fx-Ch-lHI" secondAttribute="trailing" constant="20" id="rw5-d0-va2"/>
+                    <constraint firstItem="BzV-d4-VFP" firstAttribute="top" secondItem="qxb-yY-gad" secondAttribute="bottom" constant="40" id="sV6-dA-KwG"/>
+                    <constraint firstItem="9Zo-H4-VCv" firstAttribute="leading" secondItem="Qsu-Et-3OI" secondAttribute="trailing" constant="8" id="vzD-Wj-8hw"/>
+                    <constraint firstItem="Qsu-Et-3OI" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" id="x0E-q1-eQE"/>
                     <constraint firstAttribute="trailing" secondItem="AUn-q1-hZ0" secondAttribute="trailing" constant="20" id="yPn-gU-oeL"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="130" y="55"/>
+            <point key="canvasLocation" x="24" y="-131"/>
         </window>
         <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="Quiz_Server" customModuleProvider="target">
             <connections>

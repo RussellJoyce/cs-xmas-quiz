@@ -23,22 +23,21 @@ class PointlessGameController: NSViewController {
 		for i in 1...8 {
 			let v = PGLabelView(teamno: i)
 			labels.append(v)
-			labelstack.addView(v, inGravity: NSStackViewGravity.Center)
+			labelstack.addView(v, in: NSStackViewGravity.center)
 		}
 		
 		pv.layer!.borderWidth = 4
-		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).CGColor
+		pv.layer!.borderColor = NSColor(red: 0, green: 0, blue: 0, alpha: 1).cgColor
         
         pv?.leds = leds
     }
 	
 	
-	func setCurrentTeam(team: Int) {
+	func setCurrentTeam(_ team: Int) {
         leds?.buzzersOff()
-        leds?.buzzerOn(team)
+        leds?.buzzerOn(team: team)
         leds?.stringOff()
-        leds?.stringTeamWhite(team)
-        
+		
 		labels[team].setActive()
 		if(lastTeam < labels.count && lastTeam != team)	{
 			labels[lastTeam].setInactive()
@@ -47,10 +46,10 @@ class PointlessGameController: NSViewController {
 		pv.reset()
 	}
 	
-	func setScore(score: Int) {
-		pv.setScore(score, {
+	func setScore(_ score: Int) {
+		pv.setScore(score, callback: {
 			if(self.lastTeam < self.labels.count)	{
-				self.labels[self.lastTeam].setText(String(score))
+				self.labels[self.lastTeam].setText(text: String(score))
 			}
 		})
 	}
@@ -60,13 +59,13 @@ class PointlessGameController: NSViewController {
 		pv.wrong()
 		if(lastTeam < labels.count)	{
 			switch(arc4random_uniform(6)) {
-			case 0: labels[lastTeam].setText("❌")
-			case 1: labels[lastTeam].setText("❌")
-			case 2: labels[lastTeam].setText("❌")
-			case 3: labels[lastTeam].setText("😩")
-			case 4: labels[lastTeam].setText("😟")
-			case 5: labels[lastTeam].setText("👎")
-			default: labels[lastTeam].setText("❌")
+			case 0: labels[lastTeam].setText(text: "❌")
+			case 1: labels[lastTeam].setText(text: "❌")
+			case 2: labels[lastTeam].setText(text: "❌")
+			case 3: labels[lastTeam].setText(text: "😩")
+			case 4: labels[lastTeam].setText(text: "😟")
+			case 5: labels[lastTeam].setText(text: "👎")
+			default: labels[lastTeam].setText(text: "❌")
 			}
 		}
 	}
@@ -74,14 +73,14 @@ class PointlessGameController: NSViewController {
 	func resetTeam() {
 		pv.reset()
 		if(lastTeam < labels.count)	{
-			labels[lastTeam].setText("")
+			labels[lastTeam].setText(text: "")
 		}
 	}
 	
 	func reset() {
 		pv.reset()
 		for i in 0...7 {
-			labels[i].setText("")
+			labels[i].setText(text: "")
 		}
 		if(lastTeam < labels.count) {
 			labels[lastTeam].setInactive()
@@ -95,65 +94,64 @@ class PGLabelView : NSView {
 	let teamno : Int
 	let label = NSTextField()
 	
-	let bgCol = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).CGColor
-	let bgColHighlight = NSColor(red: 1, green: 1, blue: 1, alpha: 0.9).CGColor
+	let bgCol = NSColor(red: 1, green: 1, blue: 1, alpha: 0.3).cgColor
+	let bgColHighlight = NSColor(red: 1, green: 1, blue: 1, alpha: 0.9).cgColor
 	
 	let textCol = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let textColHighlight = NSColor(red: 0, green: 0, blue: 0, alpha: 1)
 	
 	init(teamno : Int) {
 		self.teamno = teamno
-		super.init()
-		self.teamno = teamno //This is required. teamno gets reset to 100 by the required constructors below and don't have time to fix it properly. 😩
+		super.init(frame: NSRect())
 		self.translatesAutoresizingMaskIntoConstraints = false
 		self.wantsLayer = true
 		self.layerUsesCoreImageFilters = true
 		self.layer!.backgroundColor = bgCol
 		
-		label.editable = false
+		label.isEditable = false
 		label.drawsBackground = false
-		label.bezeled = false
+		label.isBezeled = false
 		label.font = NSFont(name: "DIN Alternate Bold", size: 52)
 		label.stringValue = "Team " + String(teamno) + ":"
 		label.translatesAutoresizingMaskIntoConstraints = false
 		label.textColor = textCol
 		label.alphaValue = 0.7
-
+		
 		self.addSubview(label)
-
+		
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-			multiplier: 1, constant: CGFloat(600)))
+		                                      attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
+		                                      toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+		                                      multiplier: 1, constant: CGFloat(600)))
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-			multiplier: 1, constant: CGFloat(80)))
+		                                      attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal,
+		                                      toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+		                                      multiplier: 1, constant: CGFloat(80)))
 		
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.CenterY, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.CenterY,
-			multiplier: 1, constant: -5))
+		                                      attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal,
+		                                      toItem: self, attribute: NSLayoutAttribute.centerY,
+		                                      multiplier: 1, constant: -5))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Leading, relatedBy: NSLayoutRelation.Equal,
-			toItem: self, attribute: NSLayoutAttribute.Leading,
-			multiplier: 1, constant: 50))
+		                                      attribute: NSLayoutAttribute.leading, relatedBy: NSLayoutRelation.equal,
+		                                      toItem: self, attribute: NSLayoutAttribute.leading,
+		                                      multiplier: 1, constant: 50))
 		
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Width, relatedBy: NSLayoutRelation.Equal,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-			multiplier: 1, constant: CGFloat(280)))
+		                                       attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
+		                                       toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+		                                       multiplier: 1, constant: CGFloat(280)))
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.Height, relatedBy: NSLayoutRelation.GreaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.NotAnAttribute,
-			multiplier: 1, constant: CGFloat(60)))
-
+		                                       attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual,
+		                                       toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+		                                       multiplier: 1, constant: CGFloat(60)))
+		
 	}
 	
 	func setActive() {
@@ -163,7 +161,7 @@ class PGLabelView : NSView {
 		sweep.fromValue = bgCol
 		sweep.toValue = bgColHighlight
 		sweep.duration = 0.5
-		self.layer?.addAnimation(sweep, forKey: "sweep")
+		self.layer?.add(sweep, forKey: "sweep")
 		self.layer!.backgroundColor = bgColHighlight
 	}
 	
@@ -174,7 +172,7 @@ class PGLabelView : NSView {
 		sweep.fromValue = bgColHighlight
 		sweep.toValue = bgCol
 		sweep.duration = 0.5
-		self.layer?.addAnimation(sweep, forKey: "sweep")
+		self.layer?.add(sweep, forKey: "sweep")
 		self.layer!.backgroundColor = bgCol
 	}
 	
@@ -193,11 +191,10 @@ class PGLabelView : NSView {
 	}
 }
 
-
 class PGMainView: NSView {
 	let bgImage = NSImage(named: "purple-texture")
-	override func drawRect(dirtyRect: NSRect) {
-		bgImage?.drawInRect(dirtyRect)
+	override func draw(_ dirtyRect: NSRect) {
+		bgImage?.draw(in: dirtyRect)
 	}
 }
 

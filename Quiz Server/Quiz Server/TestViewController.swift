@@ -20,98 +20,34 @@ class TestViewController: NSViewController {
     @IBOutlet weak var team6: NSTextField!
     @IBOutlet weak var team7: NSTextField!
     @IBOutlet weak var team8: NSTextField!
-    @IBOutlet weak var sparksView: SKView!
-    
+	
     var numbers = [NSTextField]()
     var leds: QuizLeds?
-    var eightCount = 0
-    
-    let 👽 = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("eight", ofType: "wav")!), error: nil) // EXTRATERRESTRIAL ALIEN
-    
-    let scene = SKScene()
-    let sparksUp = [SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp"),
-        SKEmitterNode(fileNamed: "SparksUp")]
-    let sparksDown = [SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown"),
-        SKEmitterNode(fileNamed: "SparksDown")]
-    
+	
     override func viewDidLoad() {
         super.viewDidLoad()
-        numbers.extend([team1, team2, team3, team4, team5, team6, team7, team8])
-        👽.prepareToPlay()
-        
-        
-        // Set up SpriteKit sparks
-        sparksView.allowsTransparency = true
-        scene.size = sparksView.bounds.size
-        scene.backgroundColor = NSColor.clearColor()
-        sparksView.presentScene(scene)
-        for (index, node) in enumerate(sparksUp) {
-            node.position = CGPoint(x: (index * 204) + 247, y: 653)
-            scene.addChild(node)
-        }
-        for (index, node) in enumerate(sparksDown) {
-            node.position = CGPoint(x: (index * 204) + 247, y: 433)
-            scene.addChild(node)
-        }
-        
+        numbers.append(contentsOf: [team1, team2, team3, team4, team5, team6, team7, team8])
+		
         reset()
     }
     
     func reset() {
         leds?.stringOff()
         leds?.buzzersOff()
-        for (index, team) in enumerate(numbers) {
-            team.textColor = NSColor.whiteColor()
+        for (_, team) in numbers.enumerated() {
+            team.textColor = NSColor.white
             leds?.stringOff()
         }
-        
-        for node in sparksUp {
-            node.particleBirthRate = 0
-        }
-        for node in sparksDown {
-            node.particleBirthRate = 0
-        }
-        
-        eightCount = 0
-    }
+	}
     
-    func buzzerPressed(team: Int) {
+    func buzzerPressed(_ team: Int) {
         numbers[team].textColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-        leds?.stringTeamWhite(team)
-        leds?.buzzerOn(team)
-        sparksUp[team].particleBirthRate = 600
-        sparksDown[team].particleBirthRate = 600
-        
-        if team == 7 {
-            if eightCount == 0 {
-                eightCount = 7
-                👽.currentTime = 0
-                👽.play()
-            }
-            else {
-                eightCount--
-            }
-        }
+        leds?.buzzerOn(team: team)
     }
     
-    func buzzerReleased(team: Int) {
-        numbers[team].textColor = NSColor.whiteColor()
-        leds?.stringTeamOff(team)
-        leds?.buzzerOff(team)
-        sparksUp[team].particleBirthRate = 0
-        sparksDown[team].particleBirthRate = 0
+    func buzzerReleased(_ team: Int) {
+        numbers[team].textColor = NSColor.white
+        leds?.buzzerOff(team: team)
     }
     
 }

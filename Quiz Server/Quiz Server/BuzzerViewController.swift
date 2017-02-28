@@ -38,10 +38,8 @@ class BuzzerViewController: NSViewController {
     @IBOutlet weak var teamTime7: NSTextField!
     @IBOutlet weak var teamTime8: NSTextField!
 	
-    @IBOutlet weak var snowView: SKView!
-    
     var buzzNumber = 0
-    var firstBuzzTime: NSDate?
+    var firstBuzzTime: Date?
     var leds: QuizLeds?
     var teams = [NSView]()
     var teamNames = [NSTextField]()
@@ -49,10 +47,9 @@ class BuzzerViewController: NSViewController {
     var teamEnabled = [true, true, true, true, true, true, true, true]
     var buzzes = [Int]()
     var nextTeamNumber = 0
-    let buzzNoise = AVAudioPlayer(contentsOfURL: NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("buzzer", ofType: "wav")!), error: nil)
-    let snowScene = SKScene()
-    let snow = SKEmitterNode(fileNamed: "Snow")
-    
+	let buzzNoise = try! AVAudioPlayer(
+		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "buzzer", ofType: "wav")!))
+	
     override func viewDidLoad() {
         super.viewDidLoad()
         teams += [team1, team2, team3, team4, team5, team6, team7, team8]
@@ -63,43 +60,33 @@ class BuzzerViewController: NSViewController {
 		
 		for team in teams {
 			let scaleFilter = CIFilter(name: "CILanczosScaleTransform")
-			scaleFilter.setDefaults()
-			scaleFilter.setValue(1, forKey: "inputScale")
-			scaleFilter.name = "scale"
+			scaleFilter?.setDefaults()
+			scaleFilter?.setValue(1, forKey: "inputScale")
+			scaleFilter?.name = "scale"
 			team.layerUsesCoreImageFilters = true
-			team.layer?.filters = [scaleFilter]
+			team.layer?.filters = [scaleFilter!]
 		}
-        
-        snowView.allowsTransparency = true
-        snowScene.size = snowView.bounds.size
-        snowScene.backgroundColor = NSColor.clearColor()
-        snowView.presentScene(snowScene)
-        snow.position = CGPoint(x: snowScene.size.width / 2, y: snowScene.size.height + 5)
-        snow.particleColor = NSColor.whiteColor()
-        snow.particleColorSequence = nil
-        snowScene.addChild(snow)
     }
     
     func reset() {
         leds?.buzzersOn()
         teamEnabled = [true, true, true, true, true, true, true, true]
         for team in teams {
-            team.hidden = true
+            team.isHidden = true
             team.layer?.opacity = 1.0
         }
         buzzNumber = 0
         buzzes.removeAll()
         nextTeamNumber = 0
-        snow.particleColor = NSColor.whiteColor()
     }
     
-    func buzzerPressed(team: Int) {
+    func buzzerPressed(_ team: Int) {
         if teamEnabled[team] {
             teamEnabled[team] = false
-            leds?.buzzerOff(team)
+            leds?.buzzerOff(team: team)
             teamNames[buzzNumber].stringValue = "Team \(team + 1)"
             let teamHue = CGFloat(team) / 8.0
-            teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).CGColor
+            teams[buzzNumber].layer?.backgroundColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.7, alpha: 1.0).cgColor
 			buzzes.append(team)
 			
 			let movey = CABasicAnimation()
@@ -108,7 +95,7 @@ class BuzzerViewController: NSViewController {
 			movey.toValue = teams[buzzNumber].frame.origin.y
 			movey.duration = 0.3
 			movey.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-			teams[buzzNumber].layer!.addAnimation(movey, forKey: "movey")
+			teams[buzzNumber].layer!.add(movey, forKey: "movey")
 			
 			let movex = CABasicAnimation()
 			movex.keyPath = "position.x"
@@ -116,7 +103,7 @@ class BuzzerViewController: NSViewController {
 			movex.toValue = teams[buzzNumber].frame.origin.x
 			movex.duration = 0.3
 			movex.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-			teams[buzzNumber].layer!.addAnimation(movex, forKey: "movex")
+			teams[buzzNumber].layer!.add(movex, forKey: "movex")
 			
 			let scale = CABasicAnimation()
 			scale.keyPath = "filters.scale.inputScale"
@@ -124,24 +111,23 @@ class BuzzerViewController: NSViewController {
 			scale.toValue = 1
 			scale.duration = 0.3
 			scale.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-			teams[buzzNumber].layer!.addAnimation(scale, forKey: "scale")
+			teams[buzzNumber].layer!.add(scale, forKey: "scale")
 			
-            teams[buzzNumber].hidden = false
+            teams[buzzNumber].isHidden = false
 			
             if buzzNumber == 0 {
-                firstBuzzTime = NSDate()
+                firstBuzzTime = Date()
                 buzzNoise.currentTime = 0
                 buzzNoise.play()
-                leds?.stringTeamAnimate(team)
-                snow.particleColor = NSColor(calibratedHue: teamHue, saturation: 0.25, brightness: 1.0, alpha: 1.0)
+                leds?.stringTeamAnimate(team: team)
                 nextTeamNumber = 1
             }
             else if let firstBuzzTimeOpt = firstBuzzTime {
                 let time = -firstBuzzTimeOpt.timeIntervalSinceNow
-                teamTimes[buzzNumber]?.stringValue = NSString(format: "+ %0.04f seconds", time)
+                teamTimes[buzzNumber]?.stringValue = NSString(format: "+ %0.04f seconds", time) as String
             }
             
-            buzzNumber++
+            buzzNumber += 1
         }
     }
     
@@ -149,9 +135,8 @@ class BuzzerViewController: NSViewController {
         if nextTeamNumber < buzzes.count {
             let team = buzzes[nextTeamNumber]
             teams[nextTeamNumber - 1].layer?.opacity = 0.5
-            leds?.stringTeamColour(team)
-            snow.particleColor = NSColor(calibratedHue: CGFloat(team) / 8.0, saturation: 0.25, brightness: 1.0, alpha: 1.0)
-            nextTeamNumber++
+            leds?.stringTeamColour(team: team)
+            nextTeamNumber += 1
         }
     }
 }
@@ -159,16 +144,16 @@ class BuzzerViewController: NSViewController {
 class PlaceholderView: NSView {
     let color = NSColor(deviceWhite: 1.0, alpha: 0.4)
     
-    override func drawRect(dirtyRect: NSRect) {
+    override func draw(_ dirtyRect: NSRect) {
         color.setFill()
         NSRectFill(dirtyRect)
-        super.drawRect(dirtyRect)
+        super.draw(dirtyRect)
     }
 }
 
 class BuzzerBackgroundView: NSView {
     let bgImage = NSImage(named: "2")
-    override func drawRect(dirtyRect: NSRect) {
-        bgImage?.drawInRect(dirtyRect, fromRect: dirtyRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
+    override func draw(_ dirtyRect: NSRect) {
+        bgImage?.draw(in: dirtyRect, from: dirtyRect, operation: NSCompositingOperation.copy, fraction: 1.0)
     }
 }
