@@ -179,7 +179,7 @@ class TimerScene: SKScene {
 		RunLoop.main.add(timer!, forMode: .commonModes)
 	}
 	
-	func tick() {
+	@objc func tick() {
 		filternode.run(pulseAction!)
 	}
 	

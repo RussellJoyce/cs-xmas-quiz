@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
     
-    let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
+    let controllerWindow = ControllerWindowController(windowNibName: NSNib.Name(rawValue: "ControllerWindow"))
 	
 	let webSocket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
 

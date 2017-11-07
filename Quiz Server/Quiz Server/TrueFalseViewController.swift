@@ -166,7 +166,7 @@ class TrueFalseViewController: NSViewController {
 }
 
 class TFMainView: NSView {
-	let bgImage = NSImage(named: "dark-purple-background-blurred")
+	let bgImage = NSImage(named: NSImage.Name(rawValue: "dark-purple-background-blurred"))
 	override func draw(_ dirtyRect: NSRect) {
 		bgImage?.draw(in: dirtyRect)
 	}
@@ -204,23 +204,23 @@ class TrueFalseTeamView : NSView {
 		self.addSubview(label)
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.greaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(280)))
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(60)))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal,
-			toItem: self, attribute: NSLayoutAttribute.centerY,
+			attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: self, attribute: NSLayoutConstraint.Attribute.centerY,
 			multiplier: 1, constant: -5))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal,
-			toItem: self, attribute: NSLayoutAttribute.centerX,
+			attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: self, attribute: NSLayoutConstraint.Attribute.centerX,
 			multiplier: 1, constant: 0))
 		
 	}

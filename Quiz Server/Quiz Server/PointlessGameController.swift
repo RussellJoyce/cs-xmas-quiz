@@ -24,7 +24,7 @@ class PointlessGameController: NSViewController {
 		for i in 1...numTeams {
 			let v = PGLabelView(teamno: i)
 			labels.append(v)
-			labelstack.addView(v, in: NSStackViewGravity.center)
+			labelstack.addView(v, in: NSStackView.Gravity.center)
 		}
 		
 		pv.layer!.borderWidth = 4
@@ -130,35 +130,35 @@ class PGLabelView : NSView {
 
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(600)))
 		
 		self.addConstraint(NSLayoutConstraint(item: self,
-			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(80)))
 		
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal,
-			toItem: self, attribute: NSLayoutAttribute.centerY,
+			attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: self, attribute: NSLayoutConstraint.Attribute.centerY,
 			multiplier: 1, constant: -5))
 		
 		self.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.leading, relatedBy: NSLayoutRelation.equal,
-			toItem: self, attribute: NSLayoutAttribute.leading,
+			attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: self, attribute: NSLayoutConstraint.Attribute.leading,
 			multiplier: 1, constant: 50))
 		
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(280)))
 		
 		label.addConstraint(NSLayoutConstraint(item: label,
-			attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual,
-			toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+			attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.greaterThanOrEqual,
+			toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 			multiplier: 1, constant: CGFloat(60)))
 
 	}
@@ -202,7 +202,7 @@ class PGLabelView : NSView {
 
 
 class PGMainView: NSView {
-	let bgImage = NSImage(named: "purple-texture-blurred")
+	let bgImage = NSImage(named: NSImage.Name(rawValue: "purple-texture-blurred"))
 	override func draw(_ dirtyRect: NSRect) {
 		bgImage?.draw(in: dirtyRect)
 	}

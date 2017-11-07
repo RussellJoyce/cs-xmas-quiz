@@ -26,7 +26,7 @@ class StartupView: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        allScreens = NSScreen.screens() as [NSScreen]?
+        allScreens = NSScreen.screens as [NSScreen]?
 		allScreens!.sort(by: {$0.frame.width > $1.frame.width})
 		
         if let screens = allScreens {
@@ -93,10 +93,10 @@ class StartupView: NSViewController {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
         let controller = (allControllers != nil && (allControllers?.count)! > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
         let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
-        let test = testMode.state == NSOnState;
+        let test = testMode.state == NSControl.StateValue.on;
 		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
-        let delegate = NSApplication.shared().delegate as! AppDelegate
+        let delegate = NSApplication.shared.delegate as! AppDelegate
         delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams)
     }
 }

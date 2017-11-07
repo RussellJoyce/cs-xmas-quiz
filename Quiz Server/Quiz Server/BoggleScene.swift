@@ -409,7 +409,7 @@ class BoggleScene: SKScene {
 		}
 	}
 	
-	func timerTick() {
+	@objc func timerTick() {
 		updateTime(seconds: time - 1);
 		
 		ledcount += 5.0/6.0

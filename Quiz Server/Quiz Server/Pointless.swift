@@ -23,7 +23,7 @@ class PointlessView: NSView {
     var leds: QuizLeds?
 	
 	let imgView = PointlessBackgroundImage()
-	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
+	let pvc = PointlessStackViewController(nibName: NSNib.Name(rawValue: "PointlessStackView"), bundle: nil)
 	
 	let counterSound = try! AVAudioPlayer(
 		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_soft_end", ofType: "wav")!))
@@ -54,8 +54,8 @@ class PointlessView: NSView {
 		constrainToSizeOfContainer(target: imgView, container: self)
 		
 		//On top of the background image, add an instance of the stackview
-		imgView.addSubview(pvc!.view)
-		constrainToSizeOfContainer(target: pvc!.view, container: imgView)
+		imgView.addSubview(pvc.view)
+		constrainToSizeOfContainer(target: pvc.view, container: imgView)
 	}
 	
 	func setScore(score: Int, callback: (()->Void)! = nil) {
@@ -63,14 +63,14 @@ class PointlessView: NSView {
 			leds?.stringPointlessReset()
 			counterSound.currentTime = 0
 			counterSound.play()
-			self.pvc!.resetBars()
+			self.pvc.resetBars()
 			DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
 				if(score < 100) {
 					for i in 0...(99-score) {
 						Thread.sleep(forTimeInterval: sleepTimeInterval)
 						DispatchQueue.main.async(execute: {
-							self.pvc!.disappearBar(num: i, delay: 0)
-							self.pvc!.mainLabel.stringValue = String(99-i)
+							self.pvc.disappearBar(num: i, delay: 0)
+							self.pvc.mainLabel.stringValue = String(99-i)
 							self.leds?.stringPointlessDec()
 						})
 					}
@@ -105,8 +105,8 @@ class PointlessView: NSView {
 	}
 	
 	func reset() {
-		self.pvc!.resetBars()
-		self.pvc!.mainLabel.stringValue = String(100)
+		self.pvc.resetBars()
+		self.pvc.mainLabel.stringValue = String(100)
 		
 		//Preload sound buffers
 		counterSound.prepareToPlay()
@@ -132,22 +132,22 @@ class PointlessStackViewController: NSViewController {
 		//Add the bars
 		for _ in 0..<numBars {
 			let container = PointlessBarContainer()
-			stack.addView(container, in: NSStackViewGravity.bottom)
+			stack.addView(container, in: NSStackView.Gravity.bottom)
 			
 			let bar = PointlessBar()
 			container.addSubview(bar)
 			
 			//Set the container to the same width as the stack
-			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: stack, attribute: NSLayoutAttribute.width, multiplier: 1, constant: 0))
+			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: stack, attribute: NSLayoutConstraint.Attribute.width, multiplier: 1, constant: 0))
 			
 			//Set container's height to be at least the size of the bar it contains
-			container.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.greaterThanOrEqual, toItem: bar, attribute: NSLayoutAttribute.height, multiplier: 1, constant: 0))
+			container.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.greaterThanOrEqual, toItem: bar, attribute: NSLayoutConstraint.Attribute.height, multiplier: 1, constant: 0))
 			
 			//Centre align bar in container
-			container.addConstraint(NSLayoutConstraint(item: bar, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: container, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
+			container.addConstraint(NSLayoutConstraint(item: bar, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: container, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0))
 			
 			//Centre align container in stack
-			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: stack, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0))
+			stack.addConstraint(NSLayoutConstraint(item: container, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: stack, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0))
 			
 			bars.append(bar)
 			barContainers.append(container)
@@ -196,7 +196,7 @@ class PointlessStackViewController: NSViewController {
 
 ///The individual bars inside the Pointless stack, instantiated by PointlessStackViewController
 class PointlessBar: NSImageView {
-	let bgImage = NSImage(named: "bar3")
+	let bgImage = NSImage(named: NSImage.Name(rawValue: "bar3"))
 	
 	init() {
 		super.init(frame: NSRect())
@@ -237,7 +237,7 @@ class PointlessBarContainer: NSView {
 
 
 class PointlessBackgroundImage: NSImageView {
-	let bgImage = NSImage(named: "purple-texture")
+	let bgImage = NSImage(named: NSImage.Name(rawValue: "purple-texture"))
 	
 	init() {
 		super.init(frame: NSRect())
@@ -365,27 +365,27 @@ func constrainToSizeOfContainer(target: NSView, container: NSView) {
 	target.translatesAutoresizingMaskIntoConstraints = false
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.top,
-		relatedBy: NSLayoutRelation.equal,
-		toItem: container, attribute: NSLayoutAttribute.top,
+		item: target, attribute: NSLayoutConstraint.Attribute.top,
+		relatedBy: NSLayoutConstraint.Relation.equal,
+		toItem: container, attribute: NSLayoutConstraint.Attribute.top,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.leading,
-		relatedBy: NSLayoutRelation.equal,
-		toItem: container, attribute: NSLayoutAttribute.leading,
+		item: target, attribute: NSLayoutConstraint.Attribute.leading,
+		relatedBy: NSLayoutConstraint.Relation.equal,
+		toItem: container, attribute: NSLayoutConstraint.Attribute.leading,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.bottom,
-		relatedBy: NSLayoutRelation.equal,
-		toItem: container, attribute: NSLayoutAttribute.bottom,
+		item: target, attribute: NSLayoutConstraint.Attribute.bottom,
+		relatedBy: NSLayoutConstraint.Relation.equal,
+		toItem: container, attribute: NSLayoutConstraint.Attribute.bottom,
 		multiplier: 1, constant: 0))
 	
 	container.addConstraint(NSLayoutConstraint(
-		item: target, attribute: NSLayoutAttribute.trailing,
-		relatedBy: NSLayoutRelation.equal,
-		toItem: container, attribute: NSLayoutAttribute.trailing,
+		item: target, attribute: NSLayoutConstraint.Attribute.trailing,
+		relatedBy: NSLayoutConstraint.Relation.equal,
+		toItem: container, attribute: NSLayoutConstraint.Attribute.trailing,
 		multiplier: 1, constant: 0))
 }
 

@@ -90,7 +90,7 @@ class BuzzerTeamNode: SKNode {
 		particles2.zPosition = 2
 		particles2.particleColor = particleColour
 		particles2.particleColorSequence = nil
-		particles2.emissionAngle = CGFloat(M_PI)
+		particles2.emissionAngle = .pi
 		particles2.particlePositionRange = CGVector(dx: 0, dy: height)
 		particles2.xAcceleration = 450
 		particles2.yAcceleration = 0
@@ -102,7 +102,7 @@ class BuzzerTeamNode: SKNode {
 		particles3.zPosition = 2
 		particles3.particleColor = particleColour
 		particles3.particleColorSequence = nil
-		particles3.emissionAngle = CGFloat(3.0 * M_PI / 2.0)
+		particles3.emissionAngle = 3.0 * .pi / 2.0
 		particles3.particlePositionRange = CGVector(dx: width, dy: 0)
 		particles3.xAcceleration = 0
 		particles3.yAcceleration = 360
@@ -114,7 +114,7 @@ class BuzzerTeamNode: SKNode {
 		particles4.zPosition = 2
 		particles4.particleColor = particleColour
 		particles4.particleColorSequence = nil
-		particles4.emissionAngle = CGFloat(M_PI / 2.0)
+		particles4.emissionAngle = .pi / 2.0
 		particles4.particlePositionRange = CGVector(dx: width, dy: 0)
 		particles4.xAcceleration = 0
 		particles4.yAcceleration = -360

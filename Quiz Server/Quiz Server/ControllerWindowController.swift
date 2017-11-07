@@ -18,6 +18,7 @@ enum BuzzerType {
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
+
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
     @IBOutlet weak var buzzerButton3: NSButton!
@@ -52,7 +53,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemBoggle: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	
-    let quizView = QuizViewController(nibName: "QuizView", bundle: nil)!
+    let quizView = QuizViewController(nibName: NSNib.Name(rawValue: "QuizView"), bundle: nil)
     var quizWindow: NSWindow?
 	
 	var socket : WebSocket?
@@ -101,30 +102,30 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
             quizWindow?.title = "Quiz Test"
-            quizWindow?.styleMask = NSWindowStyleMask.titled
+            quizWindow?.styleMask = NSWindow.StyleMask.titled
             quizWindow?.makeKeyAndOrderFront(self)
             self.window?.orderFront(self)
         }
         else {
             // Show quiz view on selected screen (resized to fit)
             quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal,
-                toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+                attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal,
+                toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
                 multiplier: 1, constant: quizScreen!.frame.width))
             quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal,
-                toItem: nil, attribute: NSLayoutAttribute.notAnAttribute,
+                attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal,
+                toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
                 multiplier: 1, constant: quizScreen!.frame.height))
-            quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSFullScreenModeAllScreens: 0])
+            quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
         }
 		
 		if let s = socket, s.isConnected {
 			s.write(string: "vibuzzer")
 		}
 
-		tabView.removeTabViewItem(tabitemPointless)
-		tabView.removeTabViewItem(tabitemTimer)
-		tabView.removeTabViewItem(tabitemtruefalse)
+		//tabView.removeTabViewItem(tabitemPointless)
+//		tabView.removeTabViewItem(tabitemTimer)
+//		tabView.removeTabViewItem(tabitemtruefalse)
     }
 	
     func windowWillClose(_ notification: Notification) {
@@ -141,7 +142,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // If buzzers are not connected, buttons will act as virtual buzzers,
         //  otherwise, buttons will disable buzzers
         if quizBuzzers == nil {
-            if (sender.state == NSOnState) {
+            if (sender.state == NSControl.StateValue.on) {
                 quizView.buzzerPressed(team: sender.tag, type: .test)
             }
             else {
@@ -149,7 +150,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             }
         }
         else {
-            if (sender.state == NSOnState) {
+            if (sender.state == NSControl.StateValue.on) {
                 buzzersEnabled[sender.tag] = false
 				if let s = socket, s.isConnected {
 					s.write(string: "of" + String(sender.tag + 1))
@@ -166,7 +167,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func disableAllBuzzers(_ sender: NSButton) {
-        if (sender.state == NSOnState) {
+        if (sender.state == NSControl.StateValue.on) {
             buzzersDisabled = true
             for i in 0..<numTeams {
                 quizView.buzzerReleased(team: i, type: .disabled)
@@ -359,15 +360,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.geoShowWinner(x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
 	}
 	
-	public func websocketDidConnect(socket: WebSocket) {
+	public func websocketDidConnect(socket: WebSocketClient) {
 		print("Websocket connected.")
 	}
 	
-	public func websocketDidReceiveData(socket: WebSocket, data: Data) {
+	public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
 		//print("Got data: " . data)
 	}
 	
-	public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+	public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
 		print("Websocket disconnected.")
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -381,9 +382,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		bogglePreview.stringValue = boggleGrids[index]
 	}
 	
-	public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
-		if(text.characters.count >= 3) {
-			switch(String(text.characters.prefix(2))) {
+	public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+		if(text.count >= 3) {
+			switch(String(text.prefix(2))) {
 			case "co":
 				break;
 			case "zz":
@@ -397,8 +398,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				}
 			case "ii":
-				var details = String(text)!
-				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2)) //bleh
+				let details = text.suffix(2)
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
@@ -406,8 +406,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				}
 			case "bs":
-				var details = String(text)!
-				details = details.substring(from: details.characters.index(details.startIndex, offsetBy: 2))
+				let details = text.suffix(2)
 				print("Boggle message: \(details)")
 				if let dataFromString = details.data(using: .utf8, allowLossyConversion: false) {
 					let json = JSON(data: dataFromString)
