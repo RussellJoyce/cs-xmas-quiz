@@ -9,90 +9,6 @@ var myid = 0;
 //This also therefore sets the initial view
 var lastview = "buzzer";
 
-var boggleLastSelected = null;
-
-function boggleLetterEV(event) {
-    //is the cell clickable at all?
-    var boggleLetter = event.target;
-    if (boggleLetter.className.indexOf("isEmpty")!==-1) return; //no, it's empty
-    if (boggleLetter.className.indexOf("isSelected")!==-1) return; //no, it's already clicked
-
-    var attemptCoord = boggleLetter.id.split("-")[1].split("x").map(function(n) {return parseInt(n)});
-
-    //is the cell valid to be clicked next (adjacent to previous click)
-    if (boggleLastSelected) { //(if nothing is selected then it's always 'ok')
-        for (var dim=0; dim<=1; dim++) {
-            if (attemptCoord[dim]==boggleLastSelected[dim]-1 ||
-                attemptCoord[dim]==boggleLastSelected[dim] ||
-                attemptCoord[dim]==boggleLastSelected[dim]+1 ) {
-                //ok. This is an acceptable variance in this dimension
-            } else {
-                //BOOO NOT COOL. DISQUALIFIED
-                return;
-            }
-        }
-    } else {
-        //If there was nothing selected currently, clear the boggleWord as it might be showing the status of the previous submission.
-        boggleWord.innerHTML = "";
-        boggleSubmitStatus.innerHTML = "";
-    }
-
-    //Ok, let's do it.
-    boggleLetter.className += " isSelected";
-    boggleLastSelected = attemptCoord;
-
-    boggleWord.innerHTML+=boggleLetter.innerHTML;
-}
-
-var boggleCurrentGrid = null;
-
-function boggleSetGrid(grid) {
-    boggleCurrentGrid=grid.split(",");
-
-    //Clear current word
-    boggleWord.innerHTML = "";
-    boggleSubmitStatus.innerHTML = "";
-
-    //Clear score
-    boggleScore.innerHTML = "0";
-
-    boggleResetGrid();
-
-    boggleDisable();
-}
-
-function boggleResetGrid() {
-    //clear the last-selected recorder.
-    boggleLastSelected = null;
-
-    //Set all button contents
-    for (var x=1; x<=9; x++) {
-        for (var y=1; y<=4; y++) {
-            var boggleLetter = document.getElementById("boggleLetter-"+x+"x"+y);
-            var gridLetter = boggleCurrentGrid[y-1][x-1];
-
-            boggleLetter.innerHTML = gridLetter;
-            if (gridLetter == ' ') {
-                if (boggleLetter.className.indexOf("isEmpty")==-1) boggleLetter.className+=" isEmpty";
-            } else {
-                boggleLetter.className = boggleLetter.className.replace("isEmpty", "");
-            }
-
-            boggleLetter.className = boggleLetter.className.replace("isSelected", "");
-
-            boggleLetter.removeEventListener(eventtouse, boggleLetterEV);
-            boggleLetter.addEventListener(eventtouse, boggleLetterEV);
-        }
-    }
-}
-
-function boggleDisable() {
-
-}
-
-function boggleEnable() {
-
-}
 
 /*
 When we connect to the server we set up a websocket with the appropriate handlers.
@@ -139,31 +55,6 @@ function connect() {
                 toggleState(true);
                 geoimg.src = "images/" + event.data.slice(2);
                 break;
-            case "bg":
-                //Boggle stuff
-                var payload = JSON.parse(event.data.slice(2));
-                switch (payload.cmd) {
-                    case "set":
-                        boggleSetGrid(payload.grid);
-                        break;
-                    case "good":
-                        boggleScore.innerHTML = payload.score;
-                        boggleWord.innerHTML = '<span class="boggleCorrect">'+boggleWord.innerHTML+'<span>';
-                        boggleSubmitStatus.innerHTML = "✅🎉";
-                        boggleResetGrid();
-                        break;
-                    case "bad":
-                        boggleWord.innerHTML = '<span class="boggleIncorrect">'+boggleWord.innerHTML+'<span>';
-                        boggleSubmitStatus.innerHTML = "📖❌😨"
-                        boggleResetGrid();
-                        break;
-                    case "duplicate":
-                        boggleWord.innerHTML = '<span class="boggleDuplicate">'+boggleWord.innerHTML+'<span>';
-                        boggleSubmitStatus.innerHTML = "📖🔁"
-                        boggleResetGrid();
-                        break;
-                }
-                break;
             case "pb":
                 console.log("Ping back");
                 break;
@@ -199,12 +90,10 @@ function toggleState(on) {
     if(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
-        boggleEnable();
         geomark.style.display = "none";
     } else {
         buzzer.className = "view theButton buttonOff";
         geoimg.className = "imageDisabled";
-        boggleDisable();
     }
 }
 
@@ -258,23 +147,6 @@ geoimg.addEventListener('mousedown', function(event) {
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
-
-boggleCancel.addEventListener(eventtouse, function(event) {
-    //Clear current word
-    boggleWord.innerHTML = "";
-    boggleSubmitStatus.innerHTML = "";
-    boggleResetGrid();
-});
-
-boggleSubmit.addEventListener(eventtouse, function(event) {
-    if (boggleWord.innerHTML!="" && boggleSubmitStatus.innerHTML=="") {
-        ws.send("bw"+boggleWord.innerHTML);
-        boggleSubmitStatus.innerHTML = "⌛️";
-    }
-});
-
-boggleSetGrid("         ,         ,         ,         ");
-boggleSetGrid("   EBSA  ,   OTLV  ,   TEET  ,   STMN  ");
 
 //Set up a periodic timer to keep the connection to the client alive
 //client -> "pi" -> server. server -> "pb" -> client

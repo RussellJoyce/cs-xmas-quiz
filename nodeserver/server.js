@@ -2,66 +2,13 @@ var WebSocketServer = require('ws').Server;
 var connect = require('connect');
 var serveStatic = require('serve-static');
 
-//Bits for the boglord
-var enGB = require('dictionary-en-gb');
-var nodehun = require('nodehun');
 var _ = require('lodash');
-
-//dictionary used by boggle:
-var dict;
 
 var clients = {};
 
 wclient = new WebSocketServer({ port: 8090 });
 wserver = new WebSocketServer({ port: 8091 });
 wleds = new WebSocketServer({ port: 8092 });
-
-var wordScores = [0,0,0,1,1,2,3,5,11,13,15,19,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21];
-
-function boggleTestWord(word, client) {
-  console.log(client.words);
-  if (client.words[word]) {
-    //duplicate!
-    client.sock.send("bg"+JSON.stringify({cmd: "duplicate"}));
-  } else {
-    dict.isCorrect(word, function(err, isInDict, word) {
-      if (err) console.log(err);
-      if (isInDict) {
-        var wordscore = wordScores[word.length];
-        client.boggleScore+=wordscore;
-        client.sock.send("bg"+JSON.stringify({cmd: "good", score: client.boggleScore}));
-        client.words[word] = true;
-        boggleDigest();
-      } else {
-        client.sock.send("bg"+JSON.stringify({cmd: "bad", score: 10}));
-      }
-    });
-  }
-}
-
-function boggleReset() {
-    console.log("Resetting Boggle");
-    _.forEach(clients, c => {
-        c.words = {};
-        c.boggleScore = 0;
-    });
-}
-
-function boggleDigest() {
-  var summary = {};
-  _.forEach(clients, c => {
-    summary[c.id] = c.boggleScore;
-  });
-  try {
-    wserver.clients.forEach(function each(c) {
-        c.send("bs"+JSON.stringify(summary));
-    });
-    console.log("Sending: " + JSON.stringify(summary));
-  } catch (e) {
-    console.log(e);
-  }
-}
-
 
 function getClientByID(id) {
     for(var c in clients) {
@@ -106,9 +53,6 @@ wserver.on('connection', function(ws) {
                                 c.sock.send("of");
                             } //else client not connected
                         }
-                        break;
-                    case "br":
-                        boggleReset();
                         break;
                     case "le":
                         console.log("To LEDs: " + message);
@@ -168,9 +112,6 @@ wclient.on('connection', function connection(ws) {
                         //Client wants an ID
                         ws.send('ok' + clients[client].id);
                         break;
-                    case "bw": //boggle words
-                        boggleTestWord(message.slice(2), clients[client]);
-                        break;
                     case "pi": //ping from client
                         ws.send("pb");
                         break;
@@ -190,13 +131,6 @@ wclient.on('connection', function connection(ws) {
 });
 
 
-enGB(function (err, result) {
-    if (err) throw err;
-
-    dict = new nodehun(result.aff,result.dic);
-    console.log("Dictionary loaded!");
-    connect().use(serveStatic(__dirname+'/static')).listen(8080, function(){
-        console.log('Quiz Server running on 8080...');
-    });
-
+connect().use(serveStatic(__dirname+'/static')).listen(8080, function(){
+    console.log('Quiz Server running on 8080...');
 });
