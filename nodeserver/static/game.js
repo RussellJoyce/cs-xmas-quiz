@@ -1,13 +1,16 @@
 var buzzer = document.getElementById("buzzer");
 var geoimg = document.getElementById("geoimg");
 var geomark = document.getElementById("geomark");
+var textbox = document.getElementById("textbox");
+var textenterbutton = document.getElementById("textenterbutton");
+var textform = document.getElementById("textform");
 
 var ws;
 var myid = 0;
 
 //Remembers the last view that we were set to, in the event that we are disconnected
 //This also therefore sets the initial view
-var lastview = "buzzer";
+var lastview = "text";
 
 
 /*
@@ -109,12 +112,7 @@ function setView(id) {
 }
 
 
-//When the buzzer is clicked, send a message to the server
-function buzzhandler(event) {
-    if(myid > 0 && myid <= 10) { //Valid team ids are 1 to 10
-        ws.send('zz' + myid);
-    }
-}
+
 /*
  * So 'touchstart' is the better event to use on iOS because it will fire even if the user is "gesturing".
  * However it is not supported on IE, of course. We shouldn't add both, so this detects whether touchstart is
@@ -127,7 +125,17 @@ if ('ontouchstart' in document.documentElement) {
     eventtouse = 'mousedown';
 }
 
-buzzer.addEventListener(eventtouse, buzzhandler);
+buzzer.addEventListener(eventtouse, function(event) {
+    if(myid > 0 && myid <= 10) {
+        ws.send('zz' + myid);
+    }
+});
+
+textenterbutton.addEventListener(eventtouse, function(event) {
+    if(myid > 0 && myid <= 10) {
+        ws.send('tt' + myid + textbox.value);
+    }
+});
 
 
 //When the image is clicked send the coords to the server
@@ -147,6 +155,16 @@ geoimg.addEventListener('mousedown', function(event) {
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
+
+
+//Catch form submission (so when the user types 'enter')
+textform.addEventListener("submit", function(event) {
+    if(myid > 0 && myid <= 10) {
+        ws.send('tt' + myid + textbox.value);
+    }
+    return false //Prevent submission (and therefore a page reload)
+});
+
 
 //Set up a periodic timer to keep the connection to the client alive
 //client -> "pi" -> server. server -> "pb" -> client

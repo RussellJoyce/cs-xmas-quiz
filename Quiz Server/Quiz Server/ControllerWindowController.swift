@@ -52,6 +52,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
 	@IBOutlet var tabitemBoggle: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
+	@IBOutlet var tabitemText: NSTabViewItem!
 	
     let quizView = QuizViewController(nibName: NSNib.Name(rawValue: "QuizView"), bundle: nil)
     var quizWindow: NSWindow?
@@ -208,6 +209,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("imstart.jpg")
 			socketWriteIfConnected("vigeo")
 			quizView.setRound(round: RoundType.geography)
+		case tabitemText:
+			socketWriteIfConnected("vitext")
+			quizView.setRound(round: RoundType.text)
 		default:
 			break
 		}
@@ -370,6 +374,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			case "co":
 				break;
 			case "zz":
+				//A team has buzzed
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
@@ -380,6 +385,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				}
 			case "ii":
+				//A team has answered in the Geography round
 				let details = text.suffix(2)
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
@@ -388,6 +394,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				}
 			case "bs":
+				//A team has tried a word in the Boggle round
 				let details = text.suffix(2)
 				print("Boggle message: \(details)")
 				if let dataFromString = details.data(using: .utf8, allowLossyConversion: false) {
