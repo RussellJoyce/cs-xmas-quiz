@@ -17,8 +17,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     let controllerWindow = ControllerWindowController(windowNibName: NSNib.Name(rawValue: "ControllerWindow"))
 	
-	let webSocket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
-
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
     }
@@ -43,10 +41,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         controllerWindow.quizScreen = screen
         controllerWindow.quizBuzzers = buzzers
         if let serial = serial {
-            controllerWindow.quizLeds = QuizLeds(serialPort: serial, webSocket: webSocket)
+            controllerWindow.quizLeds = QuizLeds(serialPort: serial, webSocket: controllerWindow.socket)
         }
 		
-		controllerWindow.socket = webSocket;
         controllerWindow.showWindow(self)
     }
 

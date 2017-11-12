@@ -56,7 +56,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     let quizView = QuizViewController(nibName: NSNib.Name(rawValue: "QuizView"), bundle: nil)
     var quizWindow: NSWindow?
 	
-	var socket : WebSocket?
+	var socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
+	
+	private func socketWriteIfConnected(_ s : String) {
+		if socket.isConnected {
+			socket.write(string: s)
+		}
+	}
 	
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -70,8 +76,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizBuzzers?.startListening()
 		
 		//Connect to Node server
-		socket?.delegate = self
-		socket?.connect()
+		print("Connect to Node server...")
+		socket.delegate = self
+		socket.connect()
 		
 		// Trim number of buttons down to match number of teams
 		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
@@ -119,13 +126,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
         }
 		
-		if let s = socket, s.isConnected {
-			s.write(string: "vibuzzer")
-		}
+		socketWriteIfConnected("vibuzzer")
 
-		//tabView.removeTabViewItem(tabitemPointless)
-//		tabView.removeTabViewItem(tabitemTimer)
-//		tabView.removeTabViewItem(tabitemtruefalse)
+		tabView.removeTabViewItem(tabitemBoggle)
+		tabView.removeTabViewItem(tabitemTimer)
     }
 	
     func windowWillClose(_ notification: Notification) {
@@ -152,16 +156,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         else {
             if (sender.state == NSControl.StateValue.on) {
                 buzzersEnabled[sender.tag] = false
-				if let s = socket, s.isConnected {
-					s.write(string: "of" + String(sender.tag + 1))
-				}
+				socketWriteIfConnected("of" + String(sender.tag + 1))
                 quizView.buzzerReleased(team: sender.tag, type: .disabled)
             }
             else {
                 buzzersEnabled[sender.tag] = true
-				if let s = socket, s.isConnected {
-					s.write(string: "on" + String(sender.tag + 1))
-				}
+				socketWriteIfConnected("on" + String(sender.tag + 1))
             }
         }
     }
@@ -172,18 +172,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             for i in 0..<numTeams {
                 quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
-				if let s = socket, s.isConnected {
-					s.write(string: "of" + String(i + 1))
-				}
+				socketWriteIfConnected("of" + String(i + 1))
             }
         }
         else {
             buzzersDisabled = false
 			for i in 0..<numTeams {
                 buzzerButtons[i].isEnabled = true
-				if let s = socket, s.isConnected {
-					s.write(string: "on" + String(i + 1))
-				}
+				socketWriteIfConnected("on" + String(i + 1))
             }
         }
     }
@@ -191,19 +187,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		switch(tabViewItem!) {
 		case tabitemIdle:
-			if let s = socket, s.isConnected {
-				s.write(string: "vibuzzer")
-			}
+			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.idle)
 		case tabitemTest:
-			if let s = socket, s.isConnected {
-				s.write(string: "vibuzzer")
-			}
+			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.test)
 		case tabitemBuzzers:
-			if let s = socket, s.isConnected {
-				s.write(string: "vibuzzer")
-			}
+			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.buzzers)
 		case tabitemtruefalse:
 			quizView.setRound(round: RoundType.trueFalse)
@@ -212,15 +202,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemTimer:
 			quizView.setRound(round: RoundType.timer)
 		case tabitemBoggle:
-			if let s = socket, s.isConnected {
-				s.write(string: "viboggle")
-			}
+			socketWriteIfConnected("viboggle")
 			quizView.setRound(round: RoundType.boggle)
 		case tabitemGeography:
-			if let s = socket, s.isConnected {
-				s.write(string: "imstart.jpg")
-				s.write(string: "vigeo")
-			}
+			socketWriteIfConnected("imstart.jpg")
+			socketWriteIfConnected("vigeo")
 			quizView.setRound(round: RoundType.geography)
 		default:
 			break
@@ -232,10 +218,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.resetRound()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
-			if let s = socket, s.isConnected {
-				s.write(string: "vigeo")
-				s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
-			}
+			socketWriteIfConnected("vigeo")
+			socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 		}
     }
@@ -349,10 +333,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizView.resetRound()
-		if let s = socket, s.isConnected {
-			s.write(string: "vigeo")
-			s.write(string: "imgeo" + geoStepper.stringValue + ".jpg")
-		}
+		socketWriteIfConnected("vigeo")
+		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 	}
 	
@@ -360,15 +342,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.geoShowWinner(x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
 	}
 	
-	public func websocketDidConnect(socket: WebSocketClient) {
+	func websocketDidConnect(socket: WebSocketClient) {
 		print("Websocket connected.")
 	}
 	
-	public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+	func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
 		//print("Got data: " . data)
 	}
 	
-	public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+	func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
 		print("Websocket disconnected.")
 		
 		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
