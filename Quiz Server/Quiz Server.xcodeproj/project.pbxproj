@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
@@ -164,6 +165,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
@@ -327,10 +329,11 @@
 		46056EB61A19624E00C37628 /* Quiz Server */ = {
 			isa = PBXGroup;
 			children = (
-				46056EB91A19624E00C37628 /* AppDelegate.swift */,
-				46056EBB1A19624E00C37628 /* Images.xcassets */,
-				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46056EB71A19624E00C37628 /* Supporting Files */,
+				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
+				46056EBB1A19624E00C37628 /* Images.xcassets */,
+				46056EB91A19624E00C37628 /* AppDelegate.swift */,
+				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
@@ -348,10 +351,11 @@
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
+				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 				466B46CD1DEC98C100428CDC /* BoggleScene.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
-				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
+				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
@@ -368,7 +372,6 @@
 				461672381DF838150049C8D1 /* locationnumber.sks */,
 				461672421DF87C470049C8D1 /* BoggleSparks.sks */,
 				461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */,
-				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -677,6 +680,7 @@
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
+				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
 				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,

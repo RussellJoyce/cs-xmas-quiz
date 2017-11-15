@@ -131,11 +131,19 @@ buzzer.addEventListener(eventtouse, function(event) {
     }
 });
 
-textenterbutton.addEventListener(eventtouse, function(event) {
+
+function textboxhandler(event) {
     if(myid > 0 && myid <= 10) {
-        ws.send('tt' + myid + textbox.value);
+        ws.send('tt' + myid + "," + textbox.value);
     }
-});
+    textbox.className = "textboxgrey";
+    return false //Prevent submission (and therefore a page reload)
+}
+
+textenterbutton.addEventListener(eventtouse, textboxhandler);
+//Catch form submission (so when the user types 'enter')
+textform.addEventListener("submit", textboxhandler);
+
 
 
 //When the image is clicked send the coords to the server
@@ -156,14 +164,6 @@ geoimg.addEventListener('mousedown', function(event) {
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
 
-
-//Catch form submission (so when the user types 'enter')
-textform.addEventListener("submit", function(event) {
-    if(myid > 0 && myid <= 10) {
-        ws.send('tt' + myid + textbox.value);
-    }
-    return false //Prevent submission (and therefore a page reload)
-});
 
 
 //Set up a periodic timer to keep the connection to the client alive

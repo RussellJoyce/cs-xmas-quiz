@@ -157,6 +157,10 @@ body {
 }
 
 
+.textboxgrey {
+    color: #666666;
+}
+
 #textbox {
     font-size: 50px;
     border-radius:6px;

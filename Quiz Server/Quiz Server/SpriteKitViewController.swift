@@ -19,6 +19,7 @@ class SpriteKitViewController: NSViewController {
 	let timerScene = TimerScene()
 	let boggleScene = BoggleScene()
 	let geographyScene = GeographyScene()
+	let textScene = TextScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
@@ -37,6 +38,8 @@ class SpriteKitViewController: NSViewController {
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		boggleScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		
 		
 		let transitionDuration = 1.0
 		
@@ -59,7 +62,7 @@ class SpriteKitViewController: NSViewController {
 		transition.pausesIncomingScene = false
 		transition.pausesOutgoingScene = false
 		transitions.append(transition)
-		
+
 		transition = SKTransition.flipVertical(withDuration: transitionDuration)
 		transition.pausesIncomingScene = false
 		transition.pausesOutgoingScene = false
@@ -115,6 +118,8 @@ class SpriteKitViewController: NSViewController {
 			scene = boggleScene
 		case .geography:
 			scene = geographyScene
+		case .text:
+			scene = textScene
 		default:
 			scene = nil
 		}
@@ -143,6 +148,8 @@ class SpriteKitViewController: NSViewController {
 			boggleScene.reset()
 		case .geography:
 			geographyScene.reset()
+		case .text:
+			textScene.reset()
 		default:
 			break
 		}
@@ -214,6 +221,14 @@ class SpriteKitViewController: NSViewController {
 		default:
 			break
 		}
+	}
+	
+	func textTeamGuess(teamid : Int, guess : String, roundid : Int) {
+		textScene.teamGuess(teamid: teamid, guess: guess, roundid: roundid)
+	}
+	
+	func textShowGuesses() {
+		textScene.showGuesses()
 	}
 	
 	func timerIncrement() {

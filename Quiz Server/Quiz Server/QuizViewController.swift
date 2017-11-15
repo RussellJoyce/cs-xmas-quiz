@@ -133,8 +133,8 @@ class QuizViewController: NSViewController {
             break // Do nothing
 		case .idle, .test, .buzzers, .timer, .boggle, .geography, .text:
             spriteKitView.buzzerReleased(team: team, type: type)
-        case .trueFalse:
-            break // Do nothing
+		case .trueFalse:
+			break // Do nothing
         case .pointless:
 			break // Do nothing
         }
@@ -215,4 +215,13 @@ class QuizViewController: NSViewController {
 	func setBoggleQuestion(questionNum: Int) {
 		spriteKitView.boggleScene.setQuestion(questionNum: questionNum)
 	}
+	
+	func textTeamGuess(teamid : Int, guess : String, roundid : Int) {
+		spriteKitView.textTeamGuess(teamid: teamid, guess: guess, roundid: roundid)
+	}
+	
+	func textShowGuesses() {
+		spriteKitView.textShowGuesses()
+	}
+	
 }

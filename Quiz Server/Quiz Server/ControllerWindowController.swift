@@ -217,7 +217,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
     }
     
-
+	@IBOutlet var textAllowAnswers: NSButton!
+	
     @IBAction func resetRound(_ sender: AnyObject) {
         quizView.resetRound()
 
@@ -226,6 +227,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
 		}
+		
+		textStepper.intValue = 1
+		textQuestionNumber.stringValue = "1"
+		textTeamGuesses.stringValue = ""
+		textAllowAnswers.state = .on
     }
     
     @IBAction func setPointlessScoreValue(_ sender: AnyObject) {
@@ -331,9 +337,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var geoAnswerY: NSTextField!
 	@IBOutlet var geoQuestionNumber: NSTextField!
 	@IBOutlet var geoStepper: NSStepper!
+	
 	@IBAction func geoStepperChange(_ sender: Any) {
 		geoQuestionNumber.stringValue = geoStepper.stringValue
 	}
+	
+	@IBOutlet var textQuestionNumber: NSTextField!
+	@IBOutlet var textStepper: NSStepper!
+	@IBAction func textStepperChange(_ sender: Any) {
+		textQuestionNumber.stringValue = textStepper.stringValue
+	}
+	@IBAction func textShowGuesses(_ sender: Any) {
+		quizView.textShowGuesses()
+	}
+	
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizView.resetRound()
@@ -368,6 +385,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		bogglePreview.stringValue = boggleGrids[index]
 	}
 	
+	@IBOutlet var textTeamGuesses: NSTextField!
+	
 	public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
 		if(text.count >= 3) {
 			switch(String(text.prefix(2))) {
@@ -386,16 +405,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				}
 			case "ii":
 				//A team has answered in the Geography round
-				let details = text.suffix(2)
+				let details = text.suffix(text.count - 2)
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
 						quizView.geoTeamAnswered(team: team - 1, x: x, y: y) //make zero indexed
 					}
+				} else {
+					print("Invalid Geography guess")
 				}
 			case "bs":
 				//A team has tried a word in the Boggle round
-				let details = text.suffix(2)
+				let details = text.suffix(text.count - 2)
 				print("Boggle message: \(details)")
 				if let dataFromString = details.data(using: .utf8, allowLossyConversion: false) {
 					let json = JSON(data: dataFromString)
@@ -408,6 +429,31 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						else {
 							print("Bad Boggle score data: key \(key), subJson \(subJson)")
 						}
+					}
+				}
+			case "tt":
+				//A team has guessed a text answer
+				if textAllowAnswers.state == .on {
+					let details = text.suffix(text.count - 2)
+					let vals = details.components(separatedBy: ",")
+					if(vals.count >= 2) {
+						if let team = Int(vals[0]) {
+							let guess = String(vals[1].prefix(18))
+							
+							quizView.textTeamGuess(teamid: team - 1, guess: guess, roundid: Int(textQuestionNumber.intValue)) //make zero indexed
+							
+							var val = ""
+							for team in 0...7 {
+								if let tg = quizView.spriteKitView.textScene.teamGuesses[team] {
+									val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
+								}
+							}
+							textTeamGuesses.stringValue = val
+						} else {
+							print("Invalid Text guess: Bad Int conversion")
+						}
+					} else {
+						print("Invalid Text guess: Bad comma separation")
 					}
 				}
 			default:
