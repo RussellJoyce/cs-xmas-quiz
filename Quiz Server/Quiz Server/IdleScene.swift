@@ -26,6 +26,10 @@ class IdleScene: SKScene {
 		self.size = size
 		self.leds = leds
 		
+		let date = Date()
+		let calendar = Calendar.current
+		let year = calendar.component(.year, from: date)
+		
 		let bgImage = SKSpriteNode(imageNamed: "background1")
 		bgImage.position = self.centrePoint
 		bgImage.size = self.size
@@ -109,7 +113,7 @@ class IdleScene: SKScene {
 		text1.fontColor = NSColor.white
 		
 		let text2 = SKLabelNode(fontNamed: "Neutra Display Titling")
-		text2.text = "Christmas Quiz 2016!"
+		text2.text = "Christmas Quiz \(year)!"
 		text2.fontSize = 140
 		text2.horizontalAlignmentMode = .center
 		text2.verticalAlignmentMode = .center
@@ -133,7 +137,7 @@ class IdleScene: SKScene {
 		shadowText1.zPosition = 16
 		
 		let shadowText2 = SKLabelNode(fontNamed: "Neutra Display Titling")
-		shadowText2.text = "Christmas Quiz 2016!"
+		shadowText2.text = "Christmas Quiz \(year)!"
 		shadowText2.fontSize = 140
 		shadowText2.fontColor = NSColor(white: 0.0, alpha: 0.8)
 		shadowText2.horizontalAlignmentMode = .center
