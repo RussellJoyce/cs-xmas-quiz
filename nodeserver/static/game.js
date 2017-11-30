@@ -136,13 +136,19 @@ function textboxhandler(event) {
     if(myid > 0 && myid <= 10) {
         ws.send('tt' + myid + "," + textbox.value);
     }
-    textbox.className = "textboxgrey";
+    textbox.style.animationName = "textboxpulse";
     return false //Prevent submission (and therefore a page reload)
 }
 
 textenterbutton.addEventListener(eventtouse, textboxhandler);
 //Catch form submission (so when the user types 'enter')
 textform.addEventListener("submit", textboxhandler);
+
+
+textbox.addEventListener("webkitAnimationEnd", function() {
+    textbox.style.animationName = "";
+});
+
 
 
 

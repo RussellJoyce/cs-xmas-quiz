@@ -157,12 +157,16 @@ body {
 }
 
 
-.textboxgrey {
-    color: #666666;
+
+
+@keyframes textboxpulse {
+    0%  {background-color:white;}
+    25%  {background-color:#99dd44;}
+    100% {background-color:white;}
 }
 
 #textbox {
     font-size: 50px;
     border-radius:6px;
+    animation-duration: 0.4s;
 }
-
