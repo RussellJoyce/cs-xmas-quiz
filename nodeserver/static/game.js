@@ -4,13 +4,16 @@ var geomark = document.getElementById("geomark");
 var textbox = document.getElementById("textbox");
 var textenterbutton = document.getElementById("textenterbutton");
 var textform = document.getElementById("textform");
+var higherlower = document.getElementById("higherlower");
+var higher = document.getElementById("higher");
+var lower = document.getElementById("lower");
 
 var ws;
 var myid = 0;
 
 //Remembers the last view that we were set to, in the event that we are disconnected
 //This also therefore sets the initial view
-var lastview = "text";
+var lastview = "buzzer";
 
 
 /*
