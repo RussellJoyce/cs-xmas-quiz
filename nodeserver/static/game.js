@@ -97,9 +97,13 @@ function toggleState(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
         geomark.style.display = "none";
+        higher.className = "higherLowerButton buttonOn";
+        lower.className = "higherLowerButton buttonOn";
     } else {
         buzzer.className = "view theButton buttonOff";
         geoimg.className = "imageDisabled";
+        higher.className = "higherLowerButton buttonOff";
+        lower.className = "higherLowerButton buttonOff";
     }
 }
 
@@ -131,6 +135,18 @@ if ('ontouchstart' in document.documentElement) {
 buzzer.addEventListener(eventtouse, function(event) {
     if(myid > 0 && myid <= 10) {
         ws.send('zz' + myid);
+    }
+});
+
+higher.addEventListener(eventtouse, function(event) {
+    if(myid > 0 && myid <= 10) {
+        ws.send('hi' + myid);
+    }
+});
+
+lower.addEventListener(eventtouse, function(event) {
+    if(myid > 0 && myid <= 10) {
+        ws.send('lo' + myid);
     }
 });
 
