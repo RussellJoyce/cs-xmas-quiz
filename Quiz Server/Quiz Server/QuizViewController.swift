@@ -216,12 +216,12 @@ class QuizViewController: NSViewController {
 		spriteKitView.boggleScene.setQuestion(questionNum: questionNum)
 	}
 	
-	func textTeamGuess(teamid : Int, guess : String, roundid : Int) {
-		spriteKitView.textTeamGuess(teamid: teamid, guess: guess, roundid: roundid)
+	func textTeamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
+		spriteKitView.textTeamGuess(teamid: teamid, guess: guess, roundid: roundid, showroundno: showroundno)
 	}
 	
-	func textShowGuesses() {
-		spriteKitView.textShowGuesses()
+	func textShowGuesses(showroundno : Bool) {
+		spriteKitView.textShowGuesses(showroundno: showroundno)
 	}
 	
 }

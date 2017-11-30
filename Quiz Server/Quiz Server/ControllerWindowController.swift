@@ -32,7 +32,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var pointlessScore: NSTextField!
 	@IBOutlet weak var boggleQuestions: NSPopUpButton!
 	@IBOutlet weak var bogglePreview: NSTextField!
-    var quizScreen: NSScreen?
+	@IBOutlet var textShowQuestionNumbers: NSButton!
+	var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode = true
@@ -348,7 +349,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		textQuestionNumber.stringValue = textStepper.stringValue
 	}
 	@IBAction func textShowGuesses(_ sender: Any) {
-		quizView.textShowGuesses()
+		quizView.textShowGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
 	
@@ -440,7 +441,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						if let team = Int(vals[0]) {
 							let guess = String(vals[1].prefix(18))
 							
-							quizView.textTeamGuess(teamid: team - 1, guess: guess, roundid: Int(textQuestionNumber.intValue)) //make zero indexed
+							quizView.textTeamGuess(
+								teamid: team - 1, //make zero indexed
+								guess: guess,
+								roundid: Int(textQuestionNumber.intValue),
+								showroundno: (textShowQuestionNumbers.state == .on) ? true : false
+							)
 							
 							var val = ""
 							for team in 0...7 {

@@ -223,12 +223,12 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func textTeamGuess(teamid : Int, guess : String, roundid : Int) {
-		textScene.teamGuess(teamid: teamid, guess: guess, roundid: roundid)
+	func textTeamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
+		textScene.teamGuess(teamid: teamid, guess: guess, roundid: roundid, showroundno: showroundno)
 	}
 	
-	func textShowGuesses() {
-		textScene.showGuesses()
+	func textShowGuesses(showroundno : Bool) {
+		textScene.showGuesses(showroundno: showroundno)
 	}
 	
 	func timerIncrement() {

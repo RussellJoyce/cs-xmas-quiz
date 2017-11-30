@@ -37,6 +37,7 @@
                 <outlet property="tabitemtruefalse" destination="gEv-Hs-Dry" id="30r-AD-6Sb"/>
                 <outlet property="textAllowAnswers" destination="2iq-4I-wHz" id="YLS-cr-kJY"/>
                 <outlet property="textQuestionNumber" destination="j6v-1e-qRO" id="XSp-JZ-4dr"/>
+                <outlet property="textShowQuestionNumbers" destination="4Xo-nU-iC2" id="QH7-26-ein"/>
                 <outlet property="textStepper" destination="D2n-8d-ddz" id="fHQ-ZJ-RPN"/>
                 <outlet property="textTeamGuesses" destination="Hww-8P-tfO" id="r65-Fr-DNq"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -1401,6 +1402,14 @@ DQ
                                             <buttonCell key="cell" type="push" title="Allow Answers" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="Uqb-i7-UWX">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system" size="20"/>
+                                            </buttonCell>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Xo-nU-iC2">
+                                            <rect key="frame" x="66" y="52" width="168" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Show Round Numbers" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vvz-dD-82d">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
                                             </buttonCell>
                                         </button>
                                     </subviews>

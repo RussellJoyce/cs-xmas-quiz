@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
+		3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */; };
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
@@ -166,6 +167,7 @@
 
 /* Begin PBXFileReference section */
 		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
+		3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TextSceneSparks.sks; sourceTree = "<group>"; };
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
@@ -298,24 +300,40 @@
 		3C366CC51FBC48FF006BA9B1 /* Particles */ = {
 			isa = PBXGroup;
 			children = (
-				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
-				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
-				46498C821A3F366700CAFACC /* Snow.sks */,
-				46596C811A38E04800822FB7 /* SparksUp.sks */,
-				46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */,
-				4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */,
-				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
-				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
-				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
-				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
-				46596C821A38E04800822FB7 /* spark.png */,
-				3C77C8A11DEF69E10088B36A /* location.sks */,
-				3C7F5E581DF454AA008075B8 /* locationstar.sks */,
-				461672381DF838150049C8D1 /* locationnumber.sks */,
 				461672421DF87C470049C8D1 /* BoggleSparks.sks */,
 				461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */,
+				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
+				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
+				3C77C8A11DEF69E10088B36A /* location.sks */,
+				461672381DF838150049C8D1 /* locationnumber.sks */,
+				3C7F5E581DF454AA008075B8 /* locationstar.sks */,
+				46498C821A3F366700CAFACC /* Snow.sks */,
+				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
+				46596C821A38E04800822FB7 /* spark.png */,
+				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
+				4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */,
+				46596C811A38E04800822FB7 /* SparksUp.sks */,
+				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
+				46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */,
+				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
+				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 			);
 			name = Particles;
+			sourceTree = "<group>";
+		};
+		3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				466B46CD1DEC98C100428CDC /* BoggleScene.swift */,
+				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
+				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
+				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
+				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
+				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
+				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
+				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
+			);
+			name = "SpriteKit Scenes";
 			sourceTree = "<group>";
 		};
 		3CD1765D1DDB4AA900F54D47 /* Products */ = {
@@ -352,34 +370,27 @@
 		46056EB61A19624E00C37628 /* Quiz Server */ = {
 			isa = PBXGroup;
 			children = (
-				3C366CC51FBC48FF006BA9B1 /* Particles */,
-				46056EB71A19624E00C37628 /* Supporting Files */,
 				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
 				46056EBB1A19624E00C37628 /* Images.xcassets */,
+				3C366CC51FBC48FF006BA9B1 /* Particles */,
+				3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */,
+				46056EB71A19624E00C37628 /* Supporting Files */,
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
-				46056EBD1A19624E00C37628 /* MainMenu.xib */,
-				46056ED51A1974A800C37628 /* StartupView.swift */,
-				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
+				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
+				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				3CD1DF5C1A30687F003DEA9F /* Pointless.swift */,
-				3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */,
-				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
-				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
-				4620DC981A30C400006EABA1 /* QuizView.xib */,
 				3C7082121A35FE38006DB763 /* PointlessGameController.swift */,
 				3C7082131A35FE38006DB763 /* PointlessGameController.xib */,
-				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
-				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
+				3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */,
+				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
+				4620DC981A30C400006EABA1 /* QuizView.xib */,
+				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
-				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
-				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
-				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
-				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
-				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
-				466B46CD1DEC98C100428CDC /* BoggleScene.swift */,
-				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
-				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
+				46056ED51A1974A800C37628 /* StartupView.swift */,
+				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
+				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -663,6 +674,7 @@
 				461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 				461672391DF838150049C8D1 /* locationnumber.sks in Resources */,
+				3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */,
 				3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */,
 				3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */,
 			);

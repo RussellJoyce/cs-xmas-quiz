@@ -12,7 +12,9 @@ import SpriteKit
 
 class TextTeamNode: SKNode {
 	
-	var text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+	var guessLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+	var roundLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+	var singleLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	var width : Int = 0
 	var height : Int = 0
 	var bgBox : SKShapeNode
@@ -28,14 +30,30 @@ class TextTeamNode: SKNode {
 		bgBox.fillColor = bgColour
 		bgBox.lineWidth = 2.0
 		
-		text.text = "this is an answer answ"
-		text.fontSize = 60
-		text.fontColor = NSColor.black
-		text.horizontalAlignmentMode = .left
-		text.verticalAlignmentMode = .center
-		text.zPosition = 6
-		text.position = CGPoint(x: -((width/2) - 75), y: 0)
+		guessLabel.text = "abcedfghijklmnopqrstuv"
+		guessLabel.fontSize = 60
+		guessLabel.fontColor = NSColor.black
+		guessLabel.horizontalAlignmentMode = .left
+		guessLabel.verticalAlignmentMode = .center
+		guessLabel.zPosition = 6
+		guessLabel.position = CGPoint(x: -((width/2) - 75), y: 30)
 
+		roundLabel.text = "(round number)"
+		roundLabel.fontSize = 38
+		roundLabel.fontColor = NSColor(calibratedRed: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
+		roundLabel.horizontalAlignmentMode = .left
+		roundLabel.verticalAlignmentMode = .center
+		roundLabel.zPosition = 6
+		roundLabel.position = CGPoint(x: -((width/2) - 75), y: -40)
+		
+		singleLabel.text = "this is an answer answ"
+		singleLabel.fontSize = 60
+		singleLabel.fontColor = NSColor.black
+		singleLabel.horizontalAlignmentMode = .left
+		singleLabel.verticalAlignmentMode = .center
+		singleLabel.zPosition = 6
+		singleLabel.position = CGPoint(x: -((width/2) - 75), y: 0)
+		
 		teamNoLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		teamNoLabel.text = "\(team + 1)."
 		teamNoLabel.fontSize = 60
@@ -54,7 +72,9 @@ class TextTeamNode: SKNode {
 		self.position = position
 		self.addChild(teamNoLabel)
 		self.addChild(bgBox)
-		self.addChild(text)
+		self.addChild(guessLabel)
+		self.addChild(roundLabel)
+		self.addChild(singleLabel)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -67,12 +87,21 @@ class TextTeamNode: SKNode {
 			teamHue -= 1.0
 		}
 		
-		let parts = SKEmitterNode(fileNamed: "BoggleSparksBonus")!
-		parts.position = CGPoint(x: -((self.width/2) - 20), y: 0)
+		let parts = SKEmitterNode(fileNamed: "TextSceneSparks")!
+		parts.position = CGPoint(x: -((self.width/2) - 40), y: 0)
 		parts.zPosition = 7
+		
+		parts.particleColorSequence = SKKeyframeSequence(
+			keyframeValues: [
+				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+			], times: [0.0, 0.1, 0.1, 0.3, 0.7]
+		)
+		
 		parts.removeWhenDone()
-		parts.particleColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		parts.particleColorSequence = nil
 		self.addChild(parts)
 		
 		let grow = SKAction.scale(to: 1.2, duration: 0.05)
@@ -82,7 +111,9 @@ class TextTeamNode: SKNode {
 		let anim = SKAction.sequence([grow, shrink])
 		teamNoLabel.run(anim)
 		bgBox.run(anim)
-		text.run(anim)
+		guessLabel.run(anim)
+		singleLabel.run(anim)
+		roundLabel.run(anim)
 	}
 	
 }
@@ -130,18 +161,36 @@ class TextScene: SKScene {
 		}
 	}
 
-	func teamGuess(teamid : Int, guess : String, roundid : Int) {
+	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		teamGuesses[teamid] = (roundid, guess)
-		teamBoxes[teamid].text.text = "•••••••• (\(roundid))"
+		if showroundno {
+			teamBoxes[teamid].guessLabel.text = "••••••••"
+			teamBoxes[teamid].roundLabel.text = "(at Question \(roundid))"
+			teamBoxes[teamid].singleLabel.text = ""
+		} else {
+			teamBoxes[teamid].guessLabel.text = ""
+			teamBoxes[teamid].roundLabel.text = ""
+			teamBoxes[teamid].singleLabel.text = "••••••••"
+		}
 		teamBoxes[teamid].emphasise()
 	}
 	
-	func showGuesses() {
+	func showGuesses(showroundno : Bool) {
 		for team in 0...7 {
 			if let tg = teamGuesses[team] {
-				teamBoxes[team].text.text = "\(tg.guess) (\(tg.roundid))"
+				if showroundno {
+					teamBoxes[team].guessLabel.text = "\(tg.guess)"
+					teamBoxes[team].roundLabel.text = "(at Question \(tg.roundid))"
+					teamBoxes[team].singleLabel.text = ""
+				} else {
+					teamBoxes[team].singleLabel.text = "\(tg.guess)"
+					teamBoxes[team].guessLabel.text = ""
+					teamBoxes[team].roundLabel.text = ""
+				}
 			} else {
-				teamBoxes[team].text.text = ""
+				teamBoxes[team].guessLabel.text = ""
+				teamBoxes[team].roundLabel.text = ""
+				teamBoxes[team].singleLabel.text = ""
 			}
 		}
 	}
@@ -151,7 +200,9 @@ class TextScene: SKScene {
 		
 		for team in 0...7 {
 			teamGuesses[team] = nil
-			teamBoxes[team].text.text = ""
+			teamBoxes[team].guessLabel.text = ""
+			teamBoxes[team].roundLabel.text = ""
+			teamBoxes[team].singleLabel.text = ""
 		}
 	}
 
