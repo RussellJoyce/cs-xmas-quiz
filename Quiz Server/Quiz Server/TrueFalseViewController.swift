@@ -228,13 +228,13 @@ class TrueFalseTeamView : NSView {
 	func setPressedTrue() {
 		label.textColor = textColTrue
 		self.layer?.backgroundColor = bgColTrue
-		label.stringValue = "Team \(teamno + 1): ✅"
+		label.stringValue = "Team \(teamno + 1): ⬆️"
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
 		self.layer?.backgroundColor = bgColFalse
-		label.stringValue = "Team \(teamno + 1): ❌"
+		label.stringValue = "Team \(teamno + 1): ⬇️"
 	}
 	
 	func setNeutral() {
