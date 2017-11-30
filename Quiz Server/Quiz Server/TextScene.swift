@@ -20,7 +20,7 @@ class TextTeamNode: SKNode {
 	var bgBox : SKShapeNode
 	var teamNoLabel : SKLabelNode
 	var teamNo : Int
-	
+
 	init(team: Int, width: Int, height: Int, position : CGPoint) {
 		let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
 		
@@ -79,6 +79,16 @@ class TextTeamNode: SKNode {
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
+	}
+	
+	func setTextSize(size : CGFloat) {
+		guessLabel.fontSize = size
+		singleLabel.fontSize = size
+	}
+	
+	func resetTextSize() {
+		guessLabel.fontSize = 60
+		singleLabel.fontSize = 60
 	}
 	
 	func emphasise() {
@@ -163,6 +173,7 @@ class TextScene: SKScene {
 
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		teamGuesses[teamid] = (roundid, guess)
+		teamBoxes[teamid].resetTextSize()
 		if showroundno {
 			teamBoxes[teamid].guessLabel.text = "••••••••"
 			teamBoxes[teamid].roundLabel.text = "(at Question \(roundid))"
@@ -178,6 +189,13 @@ class TextScene: SKScene {
 	func showGuesses(showroundno : Bool) {
 		for team in 0...7 {
 			if let tg = teamGuesses[team] {
+				
+				if(tg.guess.count) > 13 {
+					teamBoxes[team].setTextSize(size: 40)
+				} else {
+					teamBoxes[team].setTextSize(size: 60)
+				}
+				
 				if showroundno {
 					teamBoxes[team].guessLabel.text = "\(tg.guess)"
 					teamBoxes[team].roundLabel.text = "(at Question \(tg.roundid))"
@@ -203,6 +221,7 @@ class TextScene: SKScene {
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].roundLabel.text = ""
 			teamBoxes[team].singleLabel.text = ""
+			teamBoxes[team].resetTextSize()
 		}
 	}
 

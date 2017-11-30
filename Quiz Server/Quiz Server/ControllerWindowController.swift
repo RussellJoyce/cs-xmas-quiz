@@ -439,7 +439,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					let vals = details.components(separatedBy: ",")
 					if(vals.count >= 2) {
 						if let team = Int(vals[0]) {
-							let guess = String(vals[1].prefix(18))
+							let guess = String(vals[1].prefix(20))
 							
 							quizView.textTeamGuess(
 								teamid: team - 1, //make zero indexed
