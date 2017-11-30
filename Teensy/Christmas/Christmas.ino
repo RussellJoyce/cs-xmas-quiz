@@ -73,19 +73,19 @@ inline void outputBuzzerLeds() {
     digitalWrite(LED10, !bitRead(buzzerLeds, 9));
 }
 
-inline void outputBuzzerButtons() {
-    Quiz.button(1,  bitRead(buttons, 0));
-    Quiz.button(2,  bitRead(buttons, 1));
-    Quiz.button(3,  bitRead(buttons, 2));
-    Quiz.button(4,  bitRead(buttons, 3));
-    Quiz.button(5,  bitRead(buttons, 4));
-    Quiz.button(6,  bitRead(buttons, 5));
-    Quiz.button(7,  bitRead(buttons, 6));
-    Quiz.button(8,  bitRead(buttons, 7));
-    Quiz.button(9,  bitRead(buttons, 8));
-    Quiz.button(10, bitRead(buttons, 9));
-    Quiz.send_now();
-}
+//inline void outputBuzzerButtons() {
+//    Quiz.button(1,  bitRead(buttons, 0));
+//    Quiz.button(2,  bitRead(buttons, 1));
+//    Quiz.button(3,  bitRead(buttons, 2));
+//    Quiz.button(4,  bitRead(buttons, 3));
+//    Quiz.button(5,  bitRead(buttons, 4));
+//    Quiz.button(6,  bitRead(buttons, 5));
+//    Quiz.button(7,  bitRead(buttons, 6));
+//    Quiz.button(8,  bitRead(buttons, 7));
+//    Quiz.button(9,  bitRead(buttons, 8));
+//    Quiz.button(10, bitRead(buttons, 9));
+//    Quiz.send_now();
+//}
 
 inline void setBuzzerLed(int led, boolean value) {
     if (bitRead(buzzerLeds, led) != value) {
@@ -220,19 +220,19 @@ void updateTick() {
     bitWrite(buttons, 8, digitalRead(BTN9));
     bitWrite(buttons, 9, digitalRead(BTN10));
 
-    if (buttons != oldButtons) {
-        Quiz.button(1,  bitRead(buttons, 0));
-        Quiz.button(2,  bitRead(buttons, 1));
-        Quiz.button(3,  bitRead(buttons, 2));
-        Quiz.button(4,  bitRead(buttons, 3));
-        Quiz.button(5,  bitRead(buttons, 4));
-        Quiz.button(6,  bitRead(buttons, 5));
-        Quiz.button(7,  bitRead(buttons, 6));
-        Quiz.button(8,  bitRead(buttons, 7));
-        Quiz.button(9,  bitRead(buttons, 8));
-        Quiz.button(10, bitRead(buttons, 9));
-        Quiz.send_now();
-    }
+//    if (buttons != oldButtons) {
+//        Quiz.button(1,  bitRead(buttons, 0));
+//        Quiz.button(2,  bitRead(buttons, 1));
+//        Quiz.button(3,  bitRead(buttons, 2));
+//        Quiz.button(4,  bitRead(buttons, 3));
+//        Quiz.button(5,  bitRead(buttons, 4));
+//        Quiz.button(6,  bitRead(buttons, 5));
+//        Quiz.button(7,  bitRead(buttons, 6));
+//        Quiz.button(8,  bitRead(buttons, 7));
+//        Quiz.button(9,  bitRead(buttons, 8));
+//        Quiz.button(10, bitRead(buttons, 9));
+//        Quiz.send_now();
+//    }
 }
 
 
@@ -274,10 +274,10 @@ void setup() {
     Serial.begin(0);
 
     // Make game controller use manual event sending
-    Quiz.useManualSend(true);
+    //Quiz.useManualSend(true);
 
     // Send initial game controller buttons as off
-    outputBuzzerButtons();
+//    outputBuzzerButtons();
 
     // Set buzzer LEDs to be off
     outputBuzzerLeds();
