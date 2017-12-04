@@ -137,6 +137,8 @@ class TextScene: SKScene {
 	fileprivate var setUp = false
 	var numTeams = 10
 	var teamBoxes = [TextTeamNode]()
+	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
+	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
@@ -172,6 +174,7 @@ class TextScene: SKScene {
 	}
 
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
+		self.run(blopSound)
 		teamGuesses[teamid] = (roundid, guess)
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {
@@ -187,6 +190,8 @@ class TextScene: SKScene {
 	}
 	
 	func showGuesses(showroundno : Bool) {
+		self.run(hornSound)
+		leds?.stringPointlessCorrect()
 		for team in 0...7 {
 			if let tg = teamGuesses[team] {
 				
