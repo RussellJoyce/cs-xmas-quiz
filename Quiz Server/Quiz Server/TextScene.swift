@@ -176,7 +176,7 @@ class TextScene: SKScene {
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {
 			teamBoxes[teamid].guessLabel.text = "••••••••"
-			teamBoxes[teamid].roundLabel.text = "(at Question \(roundid))"
+			teamBoxes[teamid].roundLabel.text = "(at Clue \(roundid))"
 			teamBoxes[teamid].singleLabel.text = ""
 		} else {
 			teamBoxes[teamid].guessLabel.text = ""
@@ -198,7 +198,7 @@ class TextScene: SKScene {
 				
 				if showroundno {
 					teamBoxes[team].guessLabel.text = "\(tg.guess)"
-					teamBoxes[team].roundLabel.text = "(at Question \(tg.roundid))"
+					teamBoxes[team].roundLabel.text = "(at Clue \(tg.roundid))"
 					teamBoxes[team].singleLabel.text = ""
 				} else {
 					teamBoxes[team].singleLabel.text = "\(tg.guess)"
