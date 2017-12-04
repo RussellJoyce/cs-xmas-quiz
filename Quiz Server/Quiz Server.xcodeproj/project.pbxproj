@@ -60,6 +60,7 @@
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
 		466B46CE1DEC98C100428CDC /* BoggleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46CD1DEC98C100428CDC /* BoggleScene.swift */; };
 		466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46D41DEC98E400428CDC /* GeographyScene.swift */; };
+		468B090B1FD6005D0052047A /* Shower.sks in Resources */ = {isa = PBXBuildFile; fileRef = 468B090A1FD6005D0052047A /* Shower.sks */; };
 		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
 		46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */; };
 		46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739381BFAB45300E03DE5 /* BuzzerScene.swift */; };
@@ -226,6 +227,7 @@
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
 		466B46CD1DEC98C100428CDC /* BoggleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoggleScene.swift; sourceTree = "<group>"; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
+		468B090A1FD6005D0052047A /* Shower.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Shower.sks; sourceTree = "<group>"; };
 		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
 		46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpriteKitViewController.xib; sourceTree = "<group>"; };
 		46A739381BFAB45300E03DE5 /* BuzzerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerScene.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 		3C366CC51FBC48FF006BA9B1 /* Particles */ = {
 			isa = PBXGroup;
 			children = (
+				468B090A1FD6005D0052047A /* Shower.sks */,
 				461672421DF87C470049C8D1 /* BoggleSparks.sks */,
 				461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */,
 				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
@@ -675,6 +678,7 @@
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 				461672391DF838150049C8D1 /* locationnumber.sks in Resources */,
 				3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */,
+				468B090B1FD6005D0052047A /* Shower.sks in Resources */,
 				3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */,
 				3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */,
 			);

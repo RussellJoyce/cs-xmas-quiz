@@ -192,6 +192,14 @@ class TextScene: SKScene {
 	func showGuesses(showroundno : Bool) {
 		self.run(hornSound)
 		leds?.stringPointlessCorrect()
+		let p = SKEmitterNode(fileNamed: "Shower")!
+		let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
+		p.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
+		p.position = CGPoint(x: self.centrePoint.x, y: self.centrePoint.y+100)
+		p.zPosition = 100
+		p.removeWhenDone()
+		self.addChild(p)
+		
 		for team in 0...7 {
 			if let tg = teamGuesses[team] {
 				
