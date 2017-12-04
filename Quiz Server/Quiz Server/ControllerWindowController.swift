@@ -201,8 +201,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vihigherlower")
 			quizView.setRound(round: RoundType.trueFalse)
 		case tabitemPointless:
+			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.pointless)
 		case tabitemTimer:
+			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.timer)
 		case tabitemBoggle:
 			socketWriteIfConnected("viboggle")
