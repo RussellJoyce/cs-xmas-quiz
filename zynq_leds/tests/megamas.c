@@ -38,7 +38,7 @@ int main(int argc __attribute__((unused)), char *argv[] __attribute__((unused)))
 
 	// Pick an LED and set it to a random hue (a few thousand times)
 	uint32_t led;
-	for (int i = 0; i < 2000; i++) {
+	for (int i = 0; i < 100000; i++) {
 		random = rand() % HSV_HUE_MAX;
 		led = rand() % NUM_LEDS;
 		ws2812_led_set_hsv(&leds, led, random, HSV_SAT_MAX, HSV_VAL_MAX/4);
