@@ -58,10 +58,9 @@ void colourwipe_base(int team, bool fromleft, bool usemappings) {
 	for(int x = 0; x < NUM_LEDS; x++) {
 		int y = x;
 		if(!fromleft) y = NUM_LEDS - y;
+		if(usemappings) y = ledlookup[y];
 		leds[y] = teamcol[team];
-		if(x%5 == 0) {
-		  FastLED.show();
-		}
+		FastLED.show();
 	}
 }
 
@@ -83,8 +82,8 @@ void build(int team) {
 	int values[NUM_LEDS];
 	for(int i = 0; i < NUM_LEDS; i++) values[i] = 0;
 
-	for(int frame = 0; frame < 100; frame++) {
-		for(int x = 0; x < 30; x++) {
+	for(int frame = 0; frame < 200; frame++) {
+		for(int x = 0; x < 10; x++) {
 			int led = random(NUM_LEDS);
 			values[led] += 30;
 			values[led] = constrain(values[led], 0, 255);
@@ -121,10 +120,10 @@ void fadeToHue(int hue, bool fromwhite) {
 			int v = constrain(frame * fadespeed[x] * 3, 0, 255);
 			if(fromwhite) 
 				//Fade saturation (so from white to target colour)
-				leds[x] = CHSV(hue, v, 255);
+				leds[ledlookup[x]] = CHSV(hue, v, 255);
 			else
 				//Fade Value (so from black to target colour)
-				leds[x] = CHSV(hue, 255, v);
+				leds[ledlookup[x]] = CHSV(hue, 255, v);
 		}
 		FastLED.show();
 	}
@@ -132,14 +131,14 @@ void fadeToHue(int hue, bool fromwhite) {
 
 void sparklesweep(int team, bool fromleft) {
 	clearLEDs();
-	for(int x = 0; x < NUM_LEDS; x += 5) {
+	for(int x = 0; x < NUM_LEDS; x += 2) {
 		int y = constrain(x + ((int) random(20) - 10), 0, NUM_LEDS);
 		int hue = (teamcol[team].hue + (random(64) - 32)) % 360;
 
 		if(fromleft)
-			leds[y] = CHSV(hue, 255, 255);
+			leds[ledlookup[y]] = CHSV(hue, 255, 255);
 		else
-			leds[NUM_LEDS-y] = CHSV(hue, 255, 255);
+			leds[ledlookup[NUM_LEDS-y]] = CHSV(hue, 255, 255);
 
 		fadeAllLeds(4);
 		FastLED.show();
@@ -169,10 +168,9 @@ void sweeptocentre(int team) {
 			else 
 				brightness = (frame * 3) - (NUM_LEDS - x);
 			brightness = constrain(brightness, 0, 255);
-			leds[x] = CRGB(brightness, brightness, brightness);
+			leds[ledlookup[x]] = CRGB(brightness, brightness, brightness);
 		}
 		FastLED.show();
-		//delay(0);
 	}
 	fadeToHue(teamcol[team].hue, true);
 }
@@ -223,7 +221,7 @@ void pointless_state(int cmd) {
 	
 	for(int x = 0; x < NUM_LEDS; x++) leds[x] = CRGB(0, 0, 0);
 	for(int x = 0; x < round((float) state / 100.0f * (float) NUM_LEDS); x++) {
-		leds[x] = CRGB(255, 255, 0);
+		leds[ledlookup[x]] = CRGB(255, 255, 0);
 	}
 	FastLED.show();
 }

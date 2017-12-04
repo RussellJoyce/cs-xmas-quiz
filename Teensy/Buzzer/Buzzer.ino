@@ -146,13 +146,13 @@ inline void setPointlessCorrect() {
 
 inline void setTestOn(int team) {
     if (team < 0 || team >= NUM_TEAMS) return;
-    for (int i = team; i < NUM_LEDS; i+=NUM_TEAMS) leds[i] = teamcol[team];
+    for (int i = team; i < NUM_LEDS; i+=NUM_TEAMS) leds[ledlookup[i]] = teamcol[team];
     FastLED.show();
 }
 
 inline void setTestOff(int team) {
     if (team < 0 || team >= NUM_TEAMS) return;
-    for (int i = team; i < NUM_LEDS; i+=10) leds[i] = CRGB::Black;
+    for (int i = team; i < NUM_LEDS; i+=NUM_TEAMS) leds[ledlookup[i]] = CRGB::Black;
     FastLED.show();
 }
 

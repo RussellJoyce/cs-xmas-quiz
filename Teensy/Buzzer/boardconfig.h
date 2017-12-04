@@ -6,7 +6,7 @@
 
 #include <FastLED.h>
 
-#define NUM_LEDS 450
+#define NUM_LEDS 200
 #define LED_DATA_PIN 9
 
 extern CRGB leds[NUM_LEDS];
