@@ -198,6 +198,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.buzzers)
 		case tabitemtruefalse:
+			socketWriteIfConnected("vihigherlower")
 			quizView.setRound(round: RoundType.trueFalse)
 		case tabitemPointless:
 			quizView.setRound(round: RoundType.pointless)

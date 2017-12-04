@@ -140,15 +140,15 @@ buzzer.addEventListener(eventtouse, function(event) {
 
 higher.addEventListener(eventtouse, function(event) {
     if(myid > 0 && myid <= 10) {
-        ws.send('hi' + myid);
+        ws.send('zz' + myid);
     }
 });
 
-lower.addEventListener(eventtouse, function(event) {
-    if(myid > 0 && myid <= 10) {
-        ws.send('lo' + myid);
-    }
-});
+// lower.addEventListener(eventtouse, function(event) {
+//     if(myid > 0 && myid <= 10) {
+//         ws.send('lo' + myid);
+//     }
+// });
 
 
 function textboxhandler(event) {
