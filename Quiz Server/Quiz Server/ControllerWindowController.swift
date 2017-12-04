@@ -350,6 +350,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		textQuestionNumber.stringValue = textStepper.stringValue
 	}
 	@IBAction func textShowGuesses(_ sender: Any) {
+		textAllowAnswers.state = .off
 		quizView.textShowGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
