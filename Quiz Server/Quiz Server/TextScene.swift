@@ -150,7 +150,7 @@ class TextScene: SKScene {
 		self.leds = leds
 		self.numTeams = numTeams
 		
-		let bgImage = SKSpriteNode(imageNamed: "2")
+		let bgImage = SKSpriteNode(imageNamed: "background2")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
