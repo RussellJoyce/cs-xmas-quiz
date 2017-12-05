@@ -175,6 +175,7 @@ class TextScene: SKScene {
 
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		self.run(blopSound)
+		leds?.stringPulseTeamColour(team: teamid)
 		teamGuesses[teamid] = (roundid, guess)
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {

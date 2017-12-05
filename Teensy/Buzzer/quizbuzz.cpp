@@ -249,6 +249,31 @@ void set_string_colour(int col) {
 	FastLED.show();
 }
 
+void pulse_team_colour(int team) {
+	if(team < 0 || team >= NUM_TEAMS) return;
+	CHSV col = teamcol[team];
 
+	clearLEDs();
+
+	// Fade in fast
+	for (int frame = 0; frame < 10; frame++) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			col.v = frame * 25;
+			leds[led] = col;
+		}
+		FastLED.show();
+	}
+
+	// Fade out slowly
+	for (int frame = 63; frame >= 0; frame--) {
+		for (int led = 0; led < NUM_LEDS; led++) {
+			col.v = frame*4;
+			leds[led] = col;
+		}
+		FastLED.show();
+	}
+
+	clearLEDs();
+}
 
 

@@ -30,6 +30,11 @@ Set the string to a given fixed colour
 void set_string_colour(int col);
 
 /*
+Pulse the LEDs in a team's colour
+*/
+void pulse_team_colour(int team);
+
+/*
 Play Pointless wrong animation
 */
 void play_pointless_wrong();

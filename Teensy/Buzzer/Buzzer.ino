@@ -183,6 +183,9 @@ void updateTick() {
             case LEDS_TESTOFF:
                 setTestOff(serialParam);
                 break;
+            case LEDS_TEAMPUL:
+                pulse_team_colour(serialParam);
+                break;
             case LEDS_POINTW:
                 setPointlessWrong();
                 break;

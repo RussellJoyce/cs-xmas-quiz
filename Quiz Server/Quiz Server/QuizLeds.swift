@@ -15,6 +15,7 @@ let LEDS_TEAMC   = 0x30 as UInt8
 let LEDS_COL     = 0x40 as UInt8
 let LEDS_TESTON  = 0x50 as UInt8
 let LEDS_TESTOFF = 0x60 as UInt8
+let LEDS_TEAMPUL = 0x70 as UInt8
 let LEDS_POINTW  = 0x80 as UInt8
 let LEDS_POINTC  = 0x90 as UInt8
 
@@ -165,7 +166,6 @@ class QuizLeds: NSObject {
 	@discardableResult func stringPointlessDec() -> Bool {
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_POINT_STATE + UInt8(1)]), count: 1));
 	}
-
 	
     /// Play Pointless wrong animation on LED string
     ///
@@ -180,4 +180,13 @@ class QuizLeds: NSObject {
     @discardableResult func stringPointlessCorrect() -> Bool {
         return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTC]), count: 1));
     }
+	
+	/// Pulse LED string in team colour
+	///
+	/// - parameter team: The team number (0-9)
+	/// - returns: true if data sent successfully, false otherwise
+	@discardableResult func stringPulseTeamColour(team: Int) -> Bool {
+		Thread.sleep(forTimeInterval: 0.01)
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMPUL + UInt8(team)]), count: 1));
+	}
 }

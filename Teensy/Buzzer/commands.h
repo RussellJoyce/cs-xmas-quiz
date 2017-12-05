@@ -12,6 +12,7 @@
 #define LEDS_COL     0x40
 #define LEDS_TESTON  0x50
 #define LEDS_TESTOFF 0x60
+#define LEDS_TEAMPUL 0x70
 #define LEDS_POINTW  0x80
 #define LEDS_POINTC  0x90
 
