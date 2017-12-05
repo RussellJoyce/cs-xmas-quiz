@@ -113,7 +113,11 @@ body {
     align-items: center;
 }
 
-.higherLowerButton.buttonOn:active {
+.higherLowerButton#lower.buttonOn:active {
+    transform: translate(0%, 1%) !important;
+}
+
+.higherLowerButton#higher.buttonOn:active {
     transform: translate(0%, -1%) !important;
 }
 
