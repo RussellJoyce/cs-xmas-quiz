@@ -283,7 +283,7 @@ void setup() {
     outputBuzzerLeds();
 
     // Initialise LED string
-    FastLED.addLeds<WS2811, LED_DATA_PIN, GRB>(leds, NUM_LEDS);
+    FastLED.addLeds<WS2811, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
     currentAnim = NULL;
 
     // Start update timer to interrupt every millisecond
