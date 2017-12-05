@@ -34,7 +34,7 @@ class GeographyScene: SKScene {
 		self.leds = leds
 		self.numTeams = numTeams
 		
-		let bgImage = SKSpriteNode(imageNamed: "purple-texture-blurred")
+		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
 		bgImage.zPosition = 0.0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
@@ -49,7 +49,7 @@ class GeographyScene: SKScene {
 		
 		
 		text.fontSize = 70
-		text.fontColor = NSColor.white
+		text.fontColor = NSColor.black
 		text.horizontalAlignmentMode = .left
 		text.verticalAlignmentMode = .baseline
 		text.zPosition = 6.0
