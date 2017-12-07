@@ -161,6 +161,7 @@ function textboxhandler(event) {
 
 textenterbutton.addEventListener(eventtouse, textboxhandler);
 //Catch form submission (so when the user types 'enter')
+textform.addEventListener("onsubmit", textboxhandler);
 textform.addEventListener("submit", textboxhandler);
 
 

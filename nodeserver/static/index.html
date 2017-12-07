@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <div class="theButton buttonOn view" id="buzzer">NO CONNECTION</div>
 
@@ -26,8 +26,8 @@
 </div>
 
 <div class="view" id="text">
-	<form action="#" id="textform">
-		<input type="text" id="textbox" value="">
+	<form action="#" id="textform" onsubmit="return false;">
+		<input type="text" id="textbox" value="" autocomplete="off">
 		<div class="smallButton smallButtonOn" id="textenterbutton">Enter</div>
 	</form>
 </div>
