@@ -54,6 +54,9 @@ function connect() {
                 lastview = event.data.slice(2);
                 toggleState(true);
                 setView(event.data.slice(2));
+                if(event.data.slice(2) == "text") {
+                    textbox.focus();
+                }
                 break;
             case "im":
                 //Set the geo image
