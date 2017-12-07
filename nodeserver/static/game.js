@@ -185,8 +185,8 @@ geoimg.addEventListener('mousedown', function(event) {
         geomark.style.top = (event.clientY - rect.top) - 40;
         geomark.style.left = (event.clientX - rect.left) - 10;
     } else {
-        geomark.style.top = (event.clientY - rect.top) - 30;
-        geomark.style.left = (event.clientX - rect.left) - 30;
+        geomark.style.top = (event.clientY - rect.top) - 37;
+        geomark.style.left = (event.clientX - rect.left) - 37;
     }
     geomark.style.display = "block";
 
