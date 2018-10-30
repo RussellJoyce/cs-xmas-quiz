@@ -389,7 +389,7 @@ class BoggleScene: SKScene {
 			updateTargetString(target: String(questions[currentQuestion].target), shadow: true)
 			timer?.invalidate()
 			timer = Timer(timeInterval: 1.0, target: self, selector: #selector(timerTick), userInfo: nil, repeats: true)
-			RunLoop.main.add(timer!, forMode: .commonModes)
+			RunLoop.main.add(timer!, forMode: RunLoop.Mode.common)
 			active = true
 		}
 	}

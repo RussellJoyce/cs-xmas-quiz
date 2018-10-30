@@ -55,7 +55,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
 	
-    let quizView = QuizViewController(nibName: NSNib.Name(rawValue: "QuizView"), bundle: nil)
+    let quizView = QuizViewController(nibName: "QuizView", bundle: nil)
     var quizWindow: NSWindow?
 	
 	var socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)

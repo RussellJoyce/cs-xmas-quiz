@@ -23,7 +23,7 @@ class PointlessView: NSView {
     var leds: QuizLeds?
 	
 	let imgView = PointlessBackgroundImage()
-	let pvc = PointlessStackViewController(nibName: NSNib.Name(rawValue: "PointlessStackView"), bundle: nil)
+	let pvc = PointlessStackViewController(nibName: "PointlessStackView", bundle: nil)
 	
 	let counterSound = try! AVAudioPlayer(
 		contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "counter_soft_end", ofType: "wav")!))
@@ -169,7 +169,7 @@ class PointlessStackViewController: NSViewController {
 		fade.toValue = 0
 		fade.duration = barAnimationTime
 		fade.beginTime = CACurrentMediaTime() + delay
-		fade.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+		fade.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeIn)
 		
 		let move = CABasicAnimation()
 		move.keyPath = "position.y"
@@ -177,7 +177,7 @@ class PointlessStackViewController: NSViewController {
 		move.toValue = barContainers[num].frame.origin.y + CGFloat(10 + arc4random_uniform(UInt32(moveRandomAmount)))
 		move.duration = barAnimationTime
 		move.beginTime = CACurrentMediaTime() + delay
-		move.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		move.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		barContainers[num].layer?.add(blur, forKey: "blur")
 		barContainers[num].layer?.add(fade, forKey: "fade")
@@ -196,7 +196,7 @@ class PointlessStackViewController: NSViewController {
 
 ///The individual bars inside the Pointless stack, instantiated by PointlessStackViewController
 class PointlessBar: NSImageView {
-	let bgImage = NSImage(named: NSImage.Name(rawValue: "bar3"))
+	let bgImage = NSImage(named: "bar3")
 	
 	init() {
 		super.init(frame: NSRect())
@@ -237,7 +237,7 @@ class PointlessBarContainer: NSView {
 
 
 class PointlessBackgroundImage: NSImageView {
-	let bgImage = NSImage(named: NSImage.Name(rawValue: "purple-texture"))
+	let bgImage = NSImage(named: "purple-texture")
 	
 	init() {
 		super.init(frame: NSRect())
@@ -287,7 +287,7 @@ class PointlessBackgroundImage: NSImageView {
 		pulseup.fromValue = 1
 		pulseup.toValue = ev
 		pulseup.duration = rampUpTime
-		pulseup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		pulseup.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		let pulsedn = CABasicAnimation()
 		pulsedn.keyPath = "filters.pulse.inputEV"
@@ -295,7 +295,7 @@ class PointlessBackgroundImage: NSImageView {
 		pulsedn.toValue = 1
 		pulsedn.duration = fadeTime
 		pulsedn.beginTime = CACurrentMediaTime() + rampUpTime
-		pulsedn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		pulsedn.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		self.layer?.add(pulseup, forKey: "pulseup")
 		self.layer?.add(pulsedn, forKey: "pulsedn")
@@ -312,7 +312,7 @@ class PointlessBackgroundImage: NSImageView {
 		pulseup.fromValue = 1
 		pulseup.toValue = ev
 		pulseup.duration = rampUpTime
-		pulseup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		pulseup.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		let pulsedn = CABasicAnimation()
 		pulsedn.keyPath = "filters.pulse.inputEV"
@@ -320,7 +320,7 @@ class PointlessBackgroundImage: NSImageView {
 		pulsedn.toValue = 1
 		pulsedn.duration = fadeTime
 		pulsedn.beginTime = CACurrentMediaTime() + rampUpTime
-		pulsedn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		pulsedn.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		
 		let wpup = CABasicAnimation()
@@ -329,7 +329,7 @@ class PointlessBackgroundImage: NSImageView {
 		wpup.toValue = col
 		wpup.duration = rampUpTime * 2
 		wpup.beginTime = CACurrentMediaTime()
-		wpup.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		wpup.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		let wpdn = CABasicAnimation()
 		wpdn.keyPath = "filters.wp.inputColor"
@@ -337,7 +337,7 @@ class PointlessBackgroundImage: NSImageView {
 		wpdn.toValue = CIColor(red: 1, green: 1, blue: 1)
 		wpdn.duration = fadeTime
 		wpdn.beginTime = CACurrentMediaTime() + rampUpTime * 2
-		wpdn.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+		wpdn.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
 		
 		self.layer?.add(pulseup, forKey: "pulseup")
 		self.layer?.add(pulsedn, forKey: "pulsedn")

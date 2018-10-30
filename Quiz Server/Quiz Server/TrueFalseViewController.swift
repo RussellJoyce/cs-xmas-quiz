@@ -166,7 +166,7 @@ class TrueFalseViewController: NSViewController {
 }
 
 class TFMainView: NSView {
-	let bgImage = NSImage(named: NSImage.Name(rawValue: "dark-purple-background-blurred"))
+	let bgImage = NSImage(named: "dark-purple-background-blurred")
 	override func draw(_ dirtyRect: NSRect) {
 		bgImage?.draw(in: dirtyRect)
 	}

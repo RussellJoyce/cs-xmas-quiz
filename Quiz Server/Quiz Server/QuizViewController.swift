@@ -24,9 +24,9 @@ enum RoundType {
 
 class QuizViewController: NSViewController {
     
-    let spriteKitView = SpriteKitViewController(nibName: NSNib.Name(rawValue: "SpriteKitViewController"), bundle: nil)
-    let pointlessGame = PointlessGameController(nibName: NSNib.Name(rawValue: "PointlessGameController"), bundle: nil)
-	let trueFalseView = TrueFalseViewController(nibName: NSNib.Name(rawValue: "TrueFalseViewController"), bundle: nil)
+    let spriteKitView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
+    let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)
+	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)
 	
 	var currentRound = RoundType.none
     var currentRoundView: NSView?

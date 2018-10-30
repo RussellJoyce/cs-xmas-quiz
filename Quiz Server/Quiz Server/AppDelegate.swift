@@ -15,7 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
     
-    let controllerWindow = ControllerWindowController(windowNibName: NSNib.Name(rawValue: "ControllerWindow"))
+    let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
 	
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application

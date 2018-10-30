@@ -176,7 +176,7 @@ class TimerScene: SKScene {
 		
 		timer?.invalidate()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(TimerScene.tick), userInfo: nil, repeats: true)
-		RunLoop.main.add(timer!, forMode: .commonModes)
+		RunLoop.main.add(timer!, forMode: RunLoop.Mode.common)
 	}
 	
 	@objc func tick() {

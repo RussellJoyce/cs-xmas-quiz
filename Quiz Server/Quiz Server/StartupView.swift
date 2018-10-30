@@ -57,7 +57,7 @@ class StartupView: NSViewController {
                 controllerSelector.removeAllItems()
                 
                 for controller in controllers {
-                    print("  \(controller.manufacturer()) - \(controller.productName())")
+					print("  \(controller.manufacturer() ?? "No manufacturer") - \(controller.productName() ?? "No product name")")
                     controllerSelector.addItem(withTitle: controller.productName())
                 }
                 
