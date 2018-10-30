@@ -132,6 +132,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		tabView.removeTabViewItem(tabitemBoggle)
 		tabView.removeTabViewItem(tabitemTimer)
+		tabView.removeTabViewItem(tabitemPointless)
+		tabView.removeTabViewItem(tabitemtruefalse)
     }
 	
     func windowWillClose(_ notification: Notification) {
