@@ -37,7 +37,7 @@ wserver.on('connection', function(ws) {
             if(message.length >= 2) { //All valid messages are 2 or more characters long
                 switch(message.slice(0,2)) {
                     case "on":
-                        if(id = parseInt(message[2])) {
+                        if(id = parseInt(message.slice(2))) {
                             if(c = getClientByID(id)) {
                                 console.log("On: " + id);
                                 c.sock.send("on");
@@ -45,7 +45,7 @@ wserver.on('connection', function(ws) {
                         }
                         break;
                     case "of":
-                        if(id = parseInt(message[2])) {
+                        if(id = parseInt(message.slice(2))) {
                             if(c = getClientByID(id)) {
                                 console.log("Off: " + id);
                                 c.sock.send("of");
