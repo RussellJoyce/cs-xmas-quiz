@@ -1,9 +1,6 @@
 var WebSocketServer = require('ws').Server;
 var connect = require('connect');
 var serveStatic = require('serve-static');
-
-var _ = require('lodash');
-
 var clients = {};
 
 wclient = new WebSocketServer({ port: 8090 });
