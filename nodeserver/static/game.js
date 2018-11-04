@@ -8,6 +8,7 @@ var higherlower = document.getElementById("higherlower");
 var higher = document.getElementById("higher");
 var lower = document.getElementById("lower");
 
+
 var ws;
 var myid = 0;
 
@@ -35,7 +36,7 @@ function connect() {
         switch(event.data.slice(0,2)) {
             case "ok":
                 //We are told what team we are
-                myid = event.data[2];
+                myid = event.data.slice(2);
                 buzzer.innerHTML = "TEAM " + myid;
                 console.log("Server gave us ID " + myid);
                 toggleState(true);
@@ -88,10 +89,6 @@ function connect() {
         /* If the websocker errors then disconnect, which will fire the ws.onclose handler. */
         ws.close()
     }
-}
-
-document.ontouchmove = function(event){
-    event.preventDefault();
 }
 
 
@@ -147,6 +144,7 @@ higher.addEventListener(eventtouse, function(event) {
     }
 });
 
+// We *don't* attach to lower, because 'higher' is buzz and 'lower' is do nothing ;)
 // lower.addEventListener(eventtouse, function(event) {
 //     if(myid > 0 && myid <= 10) {
 //         ws.send('lo' + myid);
@@ -173,8 +171,6 @@ textbox.addEventListener("webkitAnimationEnd", function() {
 });
 
 
-
-
 //When the image is clicked send the coords to the server
 geoimg.addEventListener('mousedown', function(event) {
     var rect = geoimg.getBoundingClientRect();
@@ -192,6 +188,32 @@ geoimg.addEventListener('mousedown', function(event) {
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
+
+
+//Attach a hander to each team pick handler
+var teambuttons = document.getElementsByClassName("teamButton");
+for(var i = 0; i < teambuttons.length; i++) {
+    teambuttons[i].addEventListener(eventtouse, function() {
+        ws.send("pt" + this.id.slice(10));
+    })
+}
+
+
+//Prevent iOS gentures (pinch to zoom etc.)
+//iOS 10 no longer allows meta tags to prevent zooming :/
+document.addEventListener('gesturestart', function (e) {
+    e.preventDefault();
+});
+
+//This little awful is to turn "double clicks" into single clicks
+document.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    $(this).click();
+})
+
+//Disable all scrolling
+bodyScrollLock.disableBodyScroll(document);
+
 
 
 

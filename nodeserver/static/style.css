@@ -1,11 +1,13 @@
 html {
     -ms-content-zooming: none;
     touch-action: none;
+    overflow: hidden;
 }
 
 body {
     background-image: url("images/bg1.jpg");
     background-color: #cccccc;
+    overflow: hidden;
 }
 
 
@@ -89,6 +91,8 @@ body {
 }
 
 
+
+
 .higherLowerButton {
     -moz-border-radius:13px;
     -webkit-border-radius:13px;
@@ -121,7 +125,56 @@ body {
     transform: translate(0%, -1%) !important;
 }
 
+.teamgrid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: 'header header header header header';
+    grid-gap: 0px;
 
+    border-radius: 5px;
+    background-color: #002233;
+    padding: 20px;
+}
+
+/*'main main main main main'*/
+
+.teamButton {
+    background-color:#4488ff;
+    border:2px solid #4488ff;
+    background:linear-gradient(to bottom, #99c7ff 5%, #4488ff 100%);
+    border-radius:4px;
+    margin: 10px;
+    min-width: 50px;
+
+    font-weight: bolder;
+    height: 50px;
+    font-family:Arial;
+    font-size:35px;
+    text-decoration:none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.teamButton:active {
+    background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4685d', endColorstr='#eb675e',GradientType=0);
+    background-color:#e4685d;
+}
+
+.viewTitle {
+    grid-area: header;
+    color: white;
+    font-weight: bolder;
+    font-family: Arial;
+    font-size:30px;
+    display: block;
+    text-shadow:0px 0px 10px black;
+    text-align: center;
+    padding: 10px
+}
 
 .smallButtonOn {
     background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #44c767), color-stop(1, #5cbf2a));
@@ -140,11 +193,6 @@ body {
 
 
 .smallButtonOn:active {
-    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #e4685d), color-stop(1, #eb675e));
-    background:-moz-linear-gradient(top, #e4685d 5%, #eb675e 100%);
-    background:-webkit-linear-gradient(top, #e4685d 5%, #eb675e 100%);
-    background:-o-linear-gradient(top, #e4685d 5%, #eb675e 100%);
-    background:-ms-linear-gradient(top, #e4685d 5%, #eb675e 100%);
     background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4685d', endColorstr='#eb675e',GradientType=0);
     background-color:#e4685d;
