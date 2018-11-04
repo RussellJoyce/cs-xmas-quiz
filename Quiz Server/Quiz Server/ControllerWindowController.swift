@@ -474,4 +474,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 	}
 
+	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
+		socketWriteIfConnected("di\(sender.tag)")
+	}
 }

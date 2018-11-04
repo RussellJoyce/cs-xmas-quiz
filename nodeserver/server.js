@@ -58,6 +58,14 @@ wserver.on('connection', function(ws) {
                             c.send(message.slice(2));
                         });
                         break;
+                    case "di":
+                        const team = parseInt(message.slice(2));
+                        console.log("Disconnect request from quiz software for team " + team);
+                        if(c = getClientByID(team)) {
+                            c.sock.send("vipickteam");
+                            c.id = null;
+                        } //else client not connected
+                        break;
                     default:
                         //Else just forward it on to all clients
                         console.log("To all: " + message);
