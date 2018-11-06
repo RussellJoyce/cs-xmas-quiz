@@ -172,18 +172,22 @@ textbox.addEventListener("webkitAnimationEnd", function() {
 
 
 //When the image is clicked send the coords to the server
-geoimg.addEventListener('mousedown', function(event) {
+geoimg.addEventListener(eventtouse, function(event) {
     var rect = geoimg.getBoundingClientRect();
-    var x = (event.clientX - rect.left) / rect.width * 100;
-    var y = (event.clientY - rect.top) / rect.height * 100;
 
-    if ('ontouchstart' in document.documentElement) {
-        geomark.style.top = (event.clientY - rect.top) - 40;
-        geomark.style.left = (event.clientX - rect.left) - 10;
+    if(eventtouse == 'mousedown') {
+        tx = event.clientX;
+        ty = event.clientY;
     } else {
-        geomark.style.top = (event.clientY - rect.top) - 37;
-        geomark.style.left = (event.clientX - rect.left) - 37;
+        tx = event.pageX;
+        ty = event.pageY;
     }
+
+    var x = (tx - rect.left) / rect.width * 100;
+    var y = (ty - rect.top) / rect.height * 100;
+    geomark.style.left = (tx - rect.left) - 15;
+    geomark.style.top = (ty - rect.top) - 15;
+
     geomark.style.display = "block";
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
@@ -208,7 +212,7 @@ document.addEventListener('gesturestart', function (e) {
 //This little awful is to turn "double clicks" into single clicks
 document.addEventListener('touchend', function(e) {
     e.preventDefault();
-    $(this).click();
+    //$(this).click();
 })
 
 //Disable all scrolling
