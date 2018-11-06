@@ -1,6 +1,5 @@
 html {
     -ms-content-zooming: none;
-    touch-action: none;
     overflow: hidden;
 }
 
@@ -239,6 +238,9 @@ body {
 }
 
 
+#textenterbutton {
+    font-size: 330%;
+}
 
 
 @keyframes textboxpulse {

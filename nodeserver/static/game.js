@@ -153,6 +153,7 @@ higher.addEventListener(eventtouse, function(event) {
 
 
 function textboxhandler(event) {
+    console.log("Text entered");
     if(myid > 0 && myid <= 10) {
         ws.send('tt' + myid + "," + textbox.value);
     }
@@ -160,7 +161,7 @@ function textboxhandler(event) {
     return false //Prevent submission (and therefore a page reload)
 }
 
-textenterbutton.addEventListener(eventtouse, textboxhandler);
+textenterbutton.addEventListener("mousedown", textboxhandler);
 //Catch form submission (so when the user types 'enter')
 textform.addEventListener("onsubmit", textboxhandler);
 textform.addEventListener("submit", textboxhandler);
@@ -203,22 +204,30 @@ for(var i = 0; i < teambuttons.length; i++) {
 }
 
 
-//Prevent iOS gentures (pinch to zoom etc.)
+//Prevent iOS gestures (pinch to zoom etc.)
 //iOS 10 no longer allows meta tags to prevent zooming :/
 document.addEventListener('gesturestart', function (e) {
     e.preventDefault();
 });
 
 //This little awful is to turn "double clicks" into single clicks
-document.addEventListener('touchend', function(e) {
-    e.preventDefault();
-    //$(this).click();
-})
+//document.addEventListener('touchend', function(e) {
+//    e.preventDefault();
+//    e.target.click();
+//})
+var lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    var now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 500) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+
 
 //Disable all scrolling
 bodyScrollLock.disableBodyScroll(document);
-
-
 
 
 //Set up a periodic timer to keep the connection to the client alive
