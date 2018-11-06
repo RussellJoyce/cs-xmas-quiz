@@ -63,7 +63,7 @@ function connect() {
                 //Set the geo image
                 console.log("Setting geo image: " + event.data.slice(2));
                 toggleState(true);
-                geoimg.src = "images/" + event.data.slice(2);
+                geoimg.src = "geography/" + event.data.slice(2);
                 break;
             case "pb":
                 console.log("Ping back");

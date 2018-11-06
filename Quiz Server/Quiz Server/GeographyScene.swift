@@ -62,7 +62,15 @@ class GeographyScene: SKScene {
 	func setQuestion(question: Int) {
 		if(question > 0 && question <= 10) {
 			print("Question " + String(question))
-			mainImage.texture = SKTexture(imageNamed:"geo" + String(question))
+			let homeDir = NSHomeDirectory()
+			let imagePath = "\(homeDir)/Documents/cs-xmas-quiz/nodeserver/static/geography/geo\(question).jpg"
+			let image = NSImage(contentsOfFile: imagePath)
+			if let image = image {
+				mainImage.texture = SKTexture(image: image)
+			}
+			else {
+				mainImage.texture = SKTexture(imageNamed: "geostart")
+			}
 		}
 	}
 	
