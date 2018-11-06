@@ -233,5 +233,6 @@ class GeographyScene: SKScene {
 		}
 		updateText()
 		mainImage.removeAllChildren()
+		mainImage.texture = SKTexture(imageNamed: "geostart")
 	}
 }

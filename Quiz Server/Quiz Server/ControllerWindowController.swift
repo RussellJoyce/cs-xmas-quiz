@@ -212,8 +212,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("viboggle")
 			quizView.setRound(round: RoundType.boggle)
 		case tabitemGeography:
-			socketWriteIfConnected("imstart.jpg")
 			socketWriteIfConnected("vigeo")
+			socketWriteIfConnected("imstart.jpg")
 			quizView.setRound(round: RoundType.geography)
 		case tabitemText:
 			socketWriteIfConnected("vitext")
@@ -230,8 +230,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
-			socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
-			quizView.geoStartQuestion(question: Int(geoStepper.intValue))
+			socketWriteIfConnected("imstart.jpg")
 		}
 		
 		textStepper.intValue = 1
