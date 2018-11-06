@@ -218,6 +218,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemText:
 			socketWriteIfConnected("vitext")
 			quizView.setRound(round: RoundType.text)
+			textStepper.intValue = 1
+			textQuestionNumber.stringValue = "1"
+			textTeamGuesses.stringValue = ""
+			textAllowAnswers.state = .on
 		default:
 			break
 		}
@@ -232,11 +236,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
 		}
-		
-		textStepper.intValue = 1
-		textQuestionNumber.stringValue = "1"
-		textTeamGuesses.stringValue = ""
-		textAllowAnswers.state = .on
+		else if (tabView.selectedTabViewItem == tabitemText) {
+			textStepper.intValue = 1
+			textQuestionNumber.stringValue = "1"
+			textTeamGuesses.stringValue = ""
+			textAllowAnswers.state = .on
+		}
     }
     
     @IBAction func setPointlessScoreValue(_ sender: AnyObject) {
