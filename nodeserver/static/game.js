@@ -22,7 +22,7 @@ When we connect to the server we set up a websocket with the appropriate handler
 */
 function connect() {
     //The server opens the client websocket port on 8090
-    ws = new WebSocket("ws://" + location.hostname + ":8090");
+    ws = new WebSocket("wss://" + location.hostname + ":8090");
 
     ws.onopen = function(event) {
         //We we have connected, ask which team we are

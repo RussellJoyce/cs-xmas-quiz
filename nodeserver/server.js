@@ -1,9 +1,17 @@
-var WebSocketServer = require('ws').Server;
-var connect = require('connect');
-var serveStatic = require('serve-static');
+const WebSocketServer = require('ws').Server;
+const fs = require('fs');
+const https = require('https');
+const express = require('express');
+
 var clients = {};
 
-wclient = new WebSocketServer({ port: 8090 });
+const wclientHttpsServer = https.createServer({
+    key: fs.readFileSync('quiz.key', 'utf8'),
+    cert: fs.readFileSync('quiz.crt', 'utf8')
+});
+wclient = new WebSocketServer({ server: wclientHttpsServer });
+wclientHttpsServer.listen(8090);
+
 wserver = new WebSocketServer({ port: 8091 });
 wleds = new WebSocketServer({ port: 8092 });
 
@@ -152,6 +160,15 @@ wclient.on('connection', function connection(ws) {
 });
 
 
-connect().use(serveStatic(__dirname+'/static')).listen(8080, function(){
-    console.log('Quiz Server running on 8080...');
+const app = express();
+app.use(express.static(__dirname+'/static'));
+
+const options = {
+    key: fs.readFileSync('quiz.key', 'utf8'),
+    cert: fs.readFileSync('quiz.crt', 'utf8')
+};
+const server = https.createServer(options, app);
+
+server.listen(443, function(){
+    console.log('Quiz Server running super securely on port 443...');
 });
