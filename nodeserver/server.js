@@ -159,16 +159,23 @@ wclient.on('connection', function connection(ws) {
     });
 });
 
+// Server to redirect HTTP requests to HTTPS
+const http = express();
+http.get('*', function(req, res) {  
+    res.redirect('https://' + req.headers.host + req.url);
+});
+http.listen(80, function(){
+    console.log('HTTPS redirect server running on port 80...');
+});
 
+// Actual HTTPS server
 const app = express();
 app.use(express.static(__dirname+'/static'));
-
 const options = {
     key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
     cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
 };
 const server = https.createServer(options, app);
-
 server.listen(443, function(){
     console.log('Quiz Server running super securely on port 443...');
 });
