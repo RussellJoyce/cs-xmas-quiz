@@ -54,5 +54,5 @@ jspm_packages
 package-lock.json
 
 ### Ignore certificates, etc. in '/certs/', but keep README
-/certs/
+/certs/*
 !/certs/README.md
