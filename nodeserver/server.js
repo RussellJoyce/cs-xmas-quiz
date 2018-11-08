@@ -6,8 +6,8 @@ const express = require('express');
 var clients = {};
 
 const wclientHttpsServer = https.createServer({
-    key: fs.readFileSync('quiz.key', 'utf8'),
-    cert: fs.readFileSync('quiz.crt', 'utf8')
+    key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
+    cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
 });
 wclient = new WebSocketServer({ server: wclientHttpsServer });
 wclientHttpsServer.listen(8090);
@@ -164,8 +164,8 @@ const app = express();
 app.use(express.static(__dirname+'/static'));
 
 const options = {
-    key: fs.readFileSync('quiz.key', 'utf8'),
-    cert: fs.readFileSync('quiz.crt', 'utf8')
+    key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
+    cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
 };
 const server = https.createServer(options, app);
 

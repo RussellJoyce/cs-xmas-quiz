@@ -50,3 +50,9 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
+# More Node stuff
+package-lock.json
+
+### Ignore certificates, etc. in '/certs/', but keep README
+/certs/
+!/certs/README.md
