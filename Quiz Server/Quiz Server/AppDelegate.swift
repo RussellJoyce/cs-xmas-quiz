@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	
     
     
-	func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int) {
+	func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String) {
         window.close()
 		
 		controllerWindow.numTeams = numberOfTeams
@@ -43,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let serial = serial {
             controllerWindow.quizLeds = QuizLeds(serialPort: serial, webSocket: controllerWindow.socket)
         }
+		controllerWindow.geographyImagesPath = geographyImagesPath
 		
         controllerWindow.showWindow(self)
     }

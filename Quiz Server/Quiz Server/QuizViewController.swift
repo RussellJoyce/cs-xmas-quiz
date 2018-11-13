@@ -33,6 +33,7 @@ class QuizViewController: NSViewController {
     var quizLeds: QuizLeds?
 	var webSocket: WebSocket?
 	var numTeams = 10
+	var geographyImagesPath: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +47,7 @@ class QuizViewController: NSViewController {
 		trueFalseView.numTeams = numTeams
 		
 		spriteKitView.boggleScene.webSocket = webSocket
+		spriteKitView.geographyScene.imagesPath = geographyImagesPath
         
         spriteKitView.view.frame = view.bounds
         pointlessGame.view.frame = view.bounds

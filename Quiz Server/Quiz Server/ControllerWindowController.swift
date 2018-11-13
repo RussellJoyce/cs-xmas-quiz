@@ -42,6 +42,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
 	var boggleGrids = [String]()
+	var geographyImagesPath: String?
     
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet var tabitemPointless: NSTabViewItem!
@@ -92,6 +93,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		quizView.numTeams = numTeams
 		quizView.webSocket = socket
+		quizView.geographyImagesPath = geographyImagesPath
 		
 		// Load entries into Boggle questions list from plist
 		let plist = Bundle.main.path(forResource: "Boggle", ofType:"plist")

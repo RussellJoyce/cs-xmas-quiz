@@ -17,7 +17,8 @@ class StartupView: NSViewController {
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var testMode: NSButton!
 	@IBOutlet weak var teamsSelector: NSPopUpButton!
-    
+	@IBOutlet weak var geographyImagesPath: NSTextField!
+	
     var allScreens: [NSScreen]?
     var allControllers: [DDHidJoystick]?
     var allPorts: [ORSSerialPort]?
@@ -84,6 +85,7 @@ class StartupView: NSViewController {
             }
         }
 
+		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
         
         startButton.isEnabled = true
     }
@@ -97,6 +99,24 @@ class StartupView: NSViewController {
 		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-        delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams)
+		delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue)
     }
+	
+	@IBAction func geographyPathBrowse(_ sender: Any) {
+		let dialog = NSOpenPanel();
+		dialog.title = "Geography round images folder"
+		dialog.showsHiddenFiles = false
+		dialog.canChooseDirectories = true
+		dialog.canChooseFiles = false
+		dialog.canCreateDirectories = false
+		dialog.allowsMultipleSelection = false
+		dialog.directoryURL = URL(fileURLWithPath: geographyImagesPath.stringValue, isDirectory: true)
+		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
+			let result = dialog.url // Pathname of the file
+			if (result != nil) {
+				let path = result!.path
+				geographyImagesPath.stringValue = path
+			}
+		}
+	}
 }
