@@ -153,7 +153,6 @@ higher.addEventListener(eventtouse, function(event) {
 
 
 function textboxhandler(event) {
-    console.log("Text entered");
     if(myid > 0 && myid <= 10) {
         ws.send('tt' + myid + "," + textbox.value);
     }
@@ -161,7 +160,7 @@ function textboxhandler(event) {
     return false //Prevent submission (and therefore a page reload)
 }
 
-textenterbutton.addEventListener("mousedown", textboxhandler);
+textenterbutton.addEventListener(eventtouse, textboxhandler);
 //Catch form submission (so when the user types 'enter')
 textform.addEventListener("onsubmit", textboxhandler);
 textform.addEventListener("submit", textboxhandler);
@@ -180,14 +179,14 @@ geoimg.addEventListener(eventtouse, function(event) {
         tx = event.clientX;
         ty = event.clientY;
     } else {
-        tx = event.pageX;
-        ty = event.pageY;
+        tx = event.touches[0].pageX;
+        ty = event.touches[0].pageY;
     }
 
     var x = (tx - rect.left) / rect.width * 100;
     var y = (ty - rect.top) / rect.height * 100;
-    geomark.style.left = (tx - rect.left) - 15;
-    geomark.style.top = (ty - rect.top) - 15;
+    geomark.style.left = (tx - rect.left) - 25; //div is 50x50
+    geomark.style.top = (ty - rect.top) - 25;
 
     geomark.style.display = "block";
 
@@ -211,10 +210,6 @@ document.addEventListener('gesturestart', function (e) {
 });
 
 //This little awful is to turn "double clicks" into single clicks
-//document.addEventListener('touchend', function(e) {
-//    e.preventDefault();
-//    e.target.click();
-//})
 var lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
     var now = (new Date()).getTime();
