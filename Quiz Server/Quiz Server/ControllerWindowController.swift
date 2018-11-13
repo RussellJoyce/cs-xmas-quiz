@@ -407,7 +407,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				break;
 			case "zz":
 				//A team has buzzed
-				if let idx = Int(String(text[text.index(text.startIndex, offsetBy:2)])) {
+				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
 						quizView.buzzerPressed(team: team, type: .websocket)
