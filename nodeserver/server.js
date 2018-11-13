@@ -5,6 +5,9 @@ const express = require('express');
 
 var clients = {};
 
+var lastView = "buzzer";
+var lastGeoImage = "start.jpg";
+
 const wclientHttpsServer = https.createServer({
     key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
     cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
@@ -33,6 +36,12 @@ function getClientByID(id) {
     }
     return id;
 }*/
+
+function sendMessageToAllClients(message) {
+    wclient.clients.forEach(function each(c) {
+        c.send(message);
+    });
+}
 
 
 wserver.on('connection', function(ws) {
@@ -74,12 +83,20 @@ wserver.on('connection', function(ws) {
                             c.id = null;
                         } //else client not connected
                         break;
+                    case "vi":
+                        lastView = message.slice(2);
+                        console.log("View change to view: " + lastView);
+                        sendMessageToAllClients(message);
+                        break;
+                    case "im":
+                        lastGeoImage = message.slice(2);
+                        console.log("Geography image: " + lastGeoImage);
+                        sendMessageToAllClients(message);
+                        break;
                     default:
                         //Else just forward it on to all clients
                         console.log("To all: " + message);
-                        wclient.clients.forEach(function each(c) {
-                            c.send(message);
-                        });
+                        sendMessageToAllClients(message);
                         break;
                 }
             }
@@ -107,6 +124,8 @@ wclient.on('connection', function connection(ws) {
         //Client already connected before, so has an ID, but this is a different socket.
         console.log("Client reconnected: " + client);
         clients[client].sock = ws;
+        ws.send('vi' + lastView); //Forward them to the current view
+        ws.send('im' + lastGeoImage); //Set the geography image
     } else {
         //New client
         console.log("New client connected: " + client);
@@ -128,7 +147,8 @@ wclient.on('connection', function connection(ws) {
                             console.log("Team " + teampick + " assigned to client " + client)
                             clients[client].id = teampick;
                             ws.send("ok" + teampick);
-                            ws.send('vibuzzer');
+                            ws.send('vi' + lastView);
+                            ws.send('im' + lastGeoImage);
                         } else {
                             console.log("Team " + teampick + " is already taken by client " + client);
                             //The team is already taken so ignore it
