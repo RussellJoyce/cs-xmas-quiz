@@ -57,6 +57,8 @@ function connect() {
                 setView(event.data.slice(2));
                 if(event.data.slice(2) == "text") {
                     textbox.focus();
+                    removeTextmodeHandlers();
+                    textbox.value = "";
                 }
                 break;
             case "im":
@@ -152,23 +154,33 @@ higher.addEventListener(eventtouse, function(event) {
 // });
 
 
+function removeTextmodeHandlers() {
+    textenterbutton.removeEventListener(eventtouse, textboxhandler);
+    textform.removeEventListener("onsubmit", textboxhandler);
+    textform.removeEventListener("submit", textboxhandler);
+    textenterbutton.className = "smallButton buttonOff";
+}
+
 function textboxhandler(event) {
     if(myid > 0 && myid <= 10) {
         ws.send('tt' + myid + "," + textbox.value);
     }
     textbox.style.animationName = "textboxpulse";
+    removeTextmodeHandlers();
     return false //Prevent submission (and therefore a page reload)
 }
 
-textenterbutton.addEventListener(eventtouse, textboxhandler);
-//Catch form submission (so when the user types 'enter')
-textform.addEventListener("onsubmit", textboxhandler);
-textform.addEventListener("submit", textboxhandler);
-
+textform.addEventListener("input", function() {
+    textenterbutton.addEventListener(eventtouse, textboxhandler);
+    textform.addEventListener("onsubmit", textboxhandler);
+    textform.addEventListener("submit", textboxhandler);
+    textenterbutton.className = "smallButton smallButtonOn";
+});
 
 textbox.addEventListener("webkitAnimationEnd", function() {
     textbox.style.animationName = "";
 });
+
 
 
 //When the image is clicked send the coords to the server
