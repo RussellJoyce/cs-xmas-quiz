@@ -13,7 +13,7 @@ const wclientHttpsServer = https.createServer({
     cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
 });
 wclient = new WebSocketServer({ server: wclientHttpsServer });
-wclientHttpsServer.listen(8090);
+wclientHttpsServer.listen(8090, "0.0.0.0");
 
 wserver = new WebSocketServer({ port: 8091 });
 wleds = new WebSocketServer({ port: 8092 });
@@ -184,7 +184,7 @@ const http = express();
 http.get('*', function(req, res) {  
     res.redirect('https://' + req.headers.host + req.url);
 });
-http.listen(80, function(){
+http.listen(80, "0.0.0.0", function(){
     console.log('HTTPS redirect server running on port 80...');
 });
 
@@ -196,6 +196,6 @@ const options = {
     cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
 };
 const server = https.createServer(options, app);
-server.listen(443, function(){
+server.listen(443, "0.0.0.0", function(){
     console.log('Quiz Server running super securely on port 443...');
 });
