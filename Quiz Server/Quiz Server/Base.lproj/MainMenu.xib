@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -314,7 +313,7 @@
         <window title="Quiz Server" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="335" y="390" width="566" height="226"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="566" height="226"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -424,14 +423,14 @@ DQ
                             <constraint firstAttribute="width" constant="379" id="b12-SJ-UK2"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="379" id="p2k-aM-VL4"/>
                         </constraints>
-                        <popUpButtonCell key="cell" type="push" title="8" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="ihA-Ky-dag" id="Bfg-TT-FeV">
+                        <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="PS2-CU-TcM" id="Bfg-TT-FeV">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="menu"/>
                             <menu key="menu" id="xyB-wg-Pja">
                                 <items>
-                                    <menuItem title="10" id="PS2-CU-TcM"/>
+                                    <menuItem title="10" state="on" id="PS2-CU-TcM"/>
                                     <menuItem title="9" id="wWx-aU-NIc"/>
-                                    <menuItem title="8" state="on" id="ihA-Ky-dag"/>
+                                    <menuItem title="8" id="ihA-Ky-dag"/>
                                     <menuItem title="7" id="pIU-yH-W43"/>
                                     <menuItem title="6" id="OMA-6f-9Gb"/>
                                     <menuItem title="5" id="vIX-k6-Jy5"/>
