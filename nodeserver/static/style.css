@@ -228,3 +228,7 @@ body {
     border-radius:6px;
     animation-duration: 0.4s;
 }
+
+#text {
+    align-items: start;
+}
