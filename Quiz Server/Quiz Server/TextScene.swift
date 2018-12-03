@@ -157,11 +157,11 @@ class TextScene: SKScene {
 		
 		self.addChild(bgImage)
 		
-		for team in 0...7 {
-			let offset = (team >= 4) ? ((3 - (team - 4)) * 200) : ((3 - team) * 200)
+		for team in 0..<numTeams {
+			let yOffset = (team >= 5) ? ((4 - (team - 5)) * 200) : ((4 - team) * 200)
 			let position = CGPoint(
-				x: (team < 4) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
-				y: CGFloat(250 + offset)
+				x: (team < 5) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
+				y: CGFloat(160 + yOffset)
 			)
 			let box = TextTeamNode(team: team, width: 700, height: 150, position: position)
 			
@@ -205,7 +205,7 @@ class TextScene: SKScene {
 			self.addChild(p)
 		}
 		
-		for team in 0...7 {
+		for team in 0..<numTeams {
 			if let tg = teamGuesses[team] {
 				
 				if(tg.guess.count) > 13 {
@@ -234,7 +234,7 @@ class TextScene: SKScene {
 	func reset() {
 		leds?.buzzersOn()
 		
-		for team in 0...7 {
+		for team in 0..<numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].roundLabel.text = ""
