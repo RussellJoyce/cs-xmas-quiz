@@ -818,7 +818,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -866,7 +865,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -886,7 +884,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
@@ -908,7 +905,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Quiz Server";
 				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
