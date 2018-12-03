@@ -16,7 +16,7 @@ class BuzzerTeamNode: SKNode {
 	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool) {
 		self.init()
 		
-		var teamHue = CGFloat(team) / 8.0
+		var teamHue = CGFloat(team) / 10.0
 		if teamHue > 1.0 {
 			teamHue -= 1.0
 		}

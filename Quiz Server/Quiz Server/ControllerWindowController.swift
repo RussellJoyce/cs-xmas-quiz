@@ -462,7 +462,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							)
 							
 							var val = ""
-							for team in 0...7 {
+							for team in 0..<numTeams {
 								if let tg = quizView.spriteKitView.textScene.teamGuesses[team] {
 									val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
 								}

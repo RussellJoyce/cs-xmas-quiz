@@ -3,24 +3,24 @@
 
 // Team colours as 45 degrees apart on the hue spectrum
 CHSV teamcol[NUM_TEAMS] = {
-//	CHSV(  0, 255, 255), // Team 1  (  0)
-//	CHSV( 25, 255, 255), // Team 2  ( 36)
-//	CHSV( 51, 255, 255), // Team 3  ( 72)
-//	CHSV( 76, 255, 255), // Team 4  (108)
-//	CHSV(102, 255, 255), // Team 5  (144)
-//	CHSV(128, 255, 255), // Team 6  (180)
-//	CHSV(153, 255, 255), // Team 7  (216)
-//	CHSV(179, 255, 255), // Team 8  (252)
-//	CHSV(204, 255, 255), // Team 9  (288)
-//	CHSV(230, 255, 255), // Team 10 (324)
-  CHSV(  0, 255, 255), // Team 1  (  0)
-  CHSV( 31, 255, 255), // Team 2  ( 45)
-  CHSV( 63, 255, 255), // Team 3  ( 90)
-  CHSV( 95, 255, 255), // Team 4  (135)
-  CHSV(127, 255, 255), // Team 5  (180)
-  CHSV(159, 255, 255), // Team 6  (225)
-  CHSV(191, 255, 255), // Team 7  (270)
-  CHSV(223, 255, 255), // Team 8  (315)
+	CHSV(  0, 255, 255), // Team 1  (  0)
+	CHSV( 25, 255, 255), // Team 2  ( 36)
+	CHSV( 51, 255, 255), // Team 3  ( 72)
+	CHSV( 76, 255, 255), // Team 4  (108)
+	CHSV(102, 255, 255), // Team 5  (144)
+	CHSV(128, 255, 255), // Team 6  (180)
+	CHSV(153, 255, 255), // Team 7  (216)
+	CHSV(179, 255, 255), // Team 8  (252)
+	CHSV(204, 255, 255), // Team 9  (288)
+	CHSV(230, 255, 255), // Team 10 (324)
+//  CHSV(  0, 255, 255), // Team 1  (  0)
+//  CHSV( 31, 255, 255), // Team 2  ( 45)
+//  CHSV( 63, 255, 255), // Team 3  ( 90)
+//  CHSV( 95, 255, 255), // Team 4  (135)
+//  CHSV(127, 255, 255), // Team 5  (180)
+//  CHSV(159, 255, 255), // Team 6  (225)
+//  CHSV(191, 255, 255), // Team 7  (270)
+//  CHSV(223, 255, 255), // Team 8  (315)
 };
 
 //Animation prototypes
@@ -233,18 +233,7 @@ void set_string_team_colour(int team) {
 }
 
 void set_string_colour(int col) {
-	CRGB c;
-	switch(col) {
-		case 0: c = CRGB(255,0,0); break;
-		case 1: c = CRGB(0,255,0); break;
-		case 2: c = CRGB(0,0,255); break;
-		case 3: c = CRGB(0,255,255); break;
-		case 4: c = CRGB(255,0,255); break;
-		case 5: c = CRGB(255,255,0); break;
-		case 6: c = CRGB(255,255,255); break;
-		default: c = CRGB(0,0,0); break;
-	}
-
+	CRGB c = teamcol[col];
 	for(int i = 0; i < NUM_LEDS; i++) leds[i] = c;
 	FastLED.show();
 }

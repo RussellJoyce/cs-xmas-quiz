@@ -36,7 +36,7 @@ class TextTeamNode: SKNode {
 		guessLabel.horizontalAlignmentMode = .left
 		guessLabel.verticalAlignmentMode = .center
 		guessLabel.zPosition = 6
-		guessLabel.position = CGPoint(x: -((width/2) - 75), y: 30)
+		guessLabel.position = CGPoint(x: -((width/2) - 120), y: 30)
 
 		roundLabel.text = "(round number)"
 		roundLabel.fontSize = 38
@@ -44,7 +44,7 @@ class TextTeamNode: SKNode {
 		roundLabel.horizontalAlignmentMode = .left
 		roundLabel.verticalAlignmentMode = .center
 		roundLabel.zPosition = 6
-		roundLabel.position = CGPoint(x: -((width/2) - 75), y: -40)
+		roundLabel.position = CGPoint(x: -((width/2) - 120), y: -40)
 		
 		singleLabel.text = "this is an answer answ"
 		singleLabel.fontSize = 60
@@ -52,7 +52,7 @@ class TextTeamNode: SKNode {
 		singleLabel.horizontalAlignmentMode = .left
 		singleLabel.verticalAlignmentMode = .center
 		singleLabel.zPosition = 6
-		singleLabel.position = CGPoint(x: -((width/2) - 75), y: 0)
+		singleLabel.position = CGPoint(x: -((width/2) - 120), y: 0)
 		
 		teamNoLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		teamNoLabel.text = "\(team + 1)."
@@ -92,7 +92,7 @@ class TextTeamNode: SKNode {
 	}
 	
 	func emphasise() {
-		var teamHue = CGFloat(teamNo) / 8.0
+		var teamHue = CGFloat(teamNo) / 10.0
 		if teamHue > 1.0 {
 			teamHue -= 1.0
 		}

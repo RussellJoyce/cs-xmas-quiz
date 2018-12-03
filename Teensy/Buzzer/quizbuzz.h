@@ -11,7 +11,7 @@ The Quiz Buzzer code. This is independent of the rest of the system apart from:
 	Some simple led handling routines in library.cpp
 */
 
-#define NUM_TEAMS 8
+#define NUM_TEAMS 10
 
 /*
 Play the "swoosh" animation when a given team buzzes in. Clears all LEDs first,

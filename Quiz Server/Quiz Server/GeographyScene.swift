@@ -199,7 +199,7 @@ class GeographyScene: SKScene {
 				x: (teamguesses[id]?.x)!,
 				y: (teamguesses[id]?.y)!
 			))
-			var teamHue = CGFloat(id) / 8.0
+			var teamHue = CGFloat(id) / 10.0
 			if teamHue > 1.0 {
 				teamHue -= 1.0
 			}

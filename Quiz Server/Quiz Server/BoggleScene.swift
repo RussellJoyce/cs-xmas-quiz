@@ -299,7 +299,7 @@ class BoggleScene: SKScene {
 			teamNameShadow.position = CGPoint(x: x, y: 70)
 			self.addChild(teamNameShadow)
 			
-			var teamHue = CGFloat(i) / 8.0
+			var teamHue = CGFloat(i) / 10.0
 			if teamHue > 1.0 {
 				teamHue -= 1.0
 			}

@@ -101,7 +101,7 @@ class QuizLeds: NSObject {
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringTeamAnimate(team: Int) -> Bool {
 		
-		var teamHue = CGFloat(team) / 8.0
+		var teamHue = CGFloat(team) / 10.0
 		if teamHue > 1.0 {
 			teamHue -= 1.0
 		}
