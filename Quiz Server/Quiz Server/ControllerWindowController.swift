@@ -239,6 +239,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("imstart.jpg")
 		}
 		else if (tabView.selectedTabViewItem == tabitemText) {
+			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
