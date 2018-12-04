@@ -11,7 +11,6 @@ import SpriteKit
 
 class IdleScene: SKScene {
 	
-	let snow = SKEmitterNode(fileNamed: "Snow")!
 	var snowmojis = [SKEmitterNode]()
 	var leds: QuizLeds?
 	fileprivate var setUp = false
@@ -30,25 +29,44 @@ class IdleScene: SKScene {
 		let calendar = Calendar.current
 		let year = calendar.component(.year, from: date)
 		
-		let bgImage = SKSpriteNode(imageNamed: "background1")
-		bgImage.position = self.centrePoint
-		bgImage.size = self.size
-		bgImage.zPosition = 0
-		let snowmenImage = SKSpriteNode(imageNamed: "background1-snowmen")
-		snowmenImage.position = self.centrePoint
-		snowmenImage.size = self.size
-		snowmenImage.zPosition = 12
-		let treeImage = SKSpriteNode(imageNamed: "xmastree")
-		treeImage.position = CGPoint(x: 1680, y: 380)
-		treeImage.zPosition = 1
-		let snowImage = SKSpriteNode(imageNamed: "background1-snow")
-		snowImage.position = self.centrePoint
-		snowImage.size = self.size
-		snowImage.zPosition = 14
+		let bgImageLayer1 = SKSpriteNode(imageNamed: "snowman-background-1")
+		bgImageLayer1.position = self.centrePoint
+		bgImageLayer1.size = self.size
+		bgImageLayer1.zPosition = 0
+		let bgImageLayer2 = SKSpriteNode(imageNamed: "snowman-background-2")
+		bgImageLayer2.position = self.centrePoint
+		bgImageLayer2.size = self.size
+		bgImageLayer2.zPosition = 12
+		let bgImageLayer3 = SKSpriteNode(imageNamed: "snowman-background-3")
+		bgImageLayer3.position = self.centrePoint
+		bgImageLayer3.size = self.size
+		bgImageLayer3.zPosition = 21
+		let bgImageLayer4 = SKSpriteNode(imageNamed: "snowman-background-4")
+		bgImageLayer4.position = self.centrePoint
+		bgImageLayer4.size = self.size
+		bgImageLayer4.zPosition = 23
 		
-		snow.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
-		snow.particleBirthRate = 40
-		snow.zPosition = 13
+		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
+		snow1.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
+		snow1.zPosition = 1
+		
+		let snow2 = SKEmitterNode(fileNamed: "Snow")!
+		snow2.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
+		snow2.particleBirthRate = 30
+		snow2.particleScale = 0.2
+		snow2.zPosition = 20
+		
+		let snow3 = SKEmitterNode(fileNamed: "Snow")!
+		snow3.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
+		snow3.particleBirthRate = 10
+		snow2.particleScale = 0.3
+		snow3.zPosition = 22
+		
+		let snow4 = SKEmitterNode(fileNamed: "Snow")!
+		snow4.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
+		snow4.particleBirthRate = 10
+		snow2.particleScale = 0.4
+		snow4.zPosition = 24
 		
 		for i in 0...9 {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
@@ -109,7 +127,7 @@ class IdleScene: SKScene {
 		text1.horizontalAlignmentMode = .center
 		text1.verticalAlignmentMode = .center
 		text1.position = CGPoint(x: 0, y: 72)
-		text1.zPosition = 17
+		text1.zPosition = 50
 		text1.fontColor = NSColor.white
 		
 		let text2 = SKLabelNode(fontNamed: "Neutra Display Titling")
@@ -118,12 +136,12 @@ class IdleScene: SKScene {
 		text2.horizontalAlignmentMode = .center
 		text2.verticalAlignmentMode = .center
 		text2.position = CGPoint(x: 0, y: -85)
-		text2.zPosition = 18
+		text2.zPosition = 50
 		text2.fontColor = NSColor.white
 		
 		let text = SKNode()
-		text.position = CGPoint(x: 960, y: 820)
-		text.zPosition = 17
+		text.position = CGPoint(x: 1100, y: 900)
+		text.zPosition = 50
 		text.addChild(text1)
 		text.addChild(text2)
 		
@@ -134,7 +152,7 @@ class IdleScene: SKScene {
 		shadowText1.horizontalAlignmentMode = .center
 		shadowText1.verticalAlignmentMode = .center
 		shadowText1.position = CGPoint(x: 0, y: 72)
-		shadowText1.zPosition = 16
+		shadowText1.zPosition = 49
 		
 		let shadowText2 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		shadowText2.text = "Christmas Quiz \(year)!"
@@ -143,41 +161,44 @@ class IdleScene: SKScene {
 		shadowText2.horizontalAlignmentMode = .center
 		shadowText2.verticalAlignmentMode = .center
 		shadowText2.position = CGPoint(x: 0, y: -85)
-		shadowText2.zPosition = 16
+		shadowText2.zPosition = 49
 		
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
-		textShadow.zPosition = 16
+		textShadow.zPosition = 49
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
 		filter?.setValue(25, forKey: "inputRadius")
 		textShadow.filter = filter;
-		textShadow.position = CGPoint(x: 960, y: 820)
+		textShadow.position = CGPoint(x: 1100, y: 900)
 		textShadow.addChild(shadowText1)
 		textShadow.addChild(shadowText2)
 		
-		let lights = SKSpriteNode(imageNamed: "lights")
-		lights.position = CGPoint(x: 960, y: 985)
-		lights.zPosition = 15
-		var lightsTextures = [SKTexture]()
-		for i in 1...4 {
-			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
-		}
-		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
-		lights.run(lightsAction)
+//		let lights = SKSpriteNode(imageNamed: "lights")
+//		lights.position = CGPoint(x: 960, y: 985)
+//		lights.zPosition = 25
+//		var lightsTextures = [SKTexture]()
+//		for i in 1...4 {
+//			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
+//		}
+//		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
+//		lights.run(lightsAction)
 		
 		for node in snowmojis {
 			self.addChild(node)
 		}
-		self.addChild(bgImage)
-		self.addChild(snowmenImage)
-		self.addChild(treeImage)
-		self.addChild(snowImage)
-		self.addChild(snow)
+		self.addChild(bgImageLayer1)
+		self.addChild(bgImageLayer2)
+		self.addChild(bgImageLayer3)
+		self.addChild(bgImageLayer4)
+		self.addChild(snow1)
+		self.addChild(snow2)
+		self.addChild(snow3)
+		self.addChild(snow4)
 		self.addChild(text)
 		self.addChild(textShadow)
-		self.addChild(lights)
+//		self.addChild(lights)
 		self.addChild(quizSnow)
 		self.addChild(ianSnow)
 		self.addChild(richardSnow)
