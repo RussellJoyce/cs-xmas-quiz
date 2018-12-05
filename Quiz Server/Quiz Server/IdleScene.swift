@@ -15,6 +15,7 @@ class IdleScene: SKScene {
 	var leds: QuizLeds?
 	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "mortarboard", "poop"]
+	let clock = ClockNode()
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?) {
 		if setUp {
@@ -185,6 +186,14 @@ class IdleScene: SKScene {
 //		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
 //		lights.run(lightsAction)
 		
+		clock.position = CGPoint(x: 1450, y: 260)
+		clock.zPosition = 50
+		clock.updateTime(animated: false)
+		
+		Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (timer) in
+			self.clock.updateTime(animated: true)
+		}
+		
 		for node in snowmojis {
 			self.addChild(node)
 		}
@@ -205,6 +214,7 @@ class IdleScene: SKScene {
 		self.addChild(eggSnow)
 		self.addChild(ooSnow)
 		self.addChild(nootSnow)
+		self.addChild(clock)
 	}
 	
 	func reset() {
