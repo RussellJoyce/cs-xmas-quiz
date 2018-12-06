@@ -31,7 +31,7 @@ class TestScene: SKScene {
 	
 	let ibmSparks = ["ibm-i", "ibm-b", "ibm-m"]
 	let academicSparks = ["mortarboard", "mortarboard", "mortarboard"]
-	let christmasSparks = ["snowflake", "snowflake", "snowflake"]
+	let christmasSparks = ["snowflake", "floppydisk", "star"]
 	
 	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
@@ -48,7 +48,18 @@ class TestScene: SKScene {
 		
 		for i in 0..<numTeams {
 			
-			let xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.0));
+			var xPos = 0.0
+			if numTeams == 10 {
+				if i == 9 {
+					xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.2));
+				}
+				else {
+					xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.5));
+				}
+			}
+			else {
+				xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.0));
+			}
 			
 			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 			numberNode.fontSize = 170.0
