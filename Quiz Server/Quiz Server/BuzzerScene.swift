@@ -33,7 +33,7 @@ class BuzzerScene: SKScene {
 		self.leds = leds
 		self.numTeams = numTeams
 		
-		let bgImage = SKSpriteNode(imageNamed: "2")
+		let bgImage = SKSpriteNode(imageNamed: "abstract-tree-and-stars")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
