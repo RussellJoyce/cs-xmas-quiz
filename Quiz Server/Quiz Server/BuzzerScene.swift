@@ -23,6 +23,10 @@ class BuzzerScene: SKScene {
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
+	var altBuzzNoise = [SKAction]()
+	var lastAltBuzzIndex = 0
+	
+	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
@@ -38,7 +42,35 @@ class BuzzerScene: SKScene {
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		
+		//Load any alternative Buzzer sounds
+		do {
+			let docsArray = try FileManager.default.contentsOfDirectory(atPath: Bundle.main.resourcePath!)
+			for fileName in docsArray {
+				if fileName.starts(with: "altBuzz") {
+					altBuzzNoise.append(SKAction.playSoundFileNamed(fileName, waitForCompletion: false))
+				}
+			}
+			altBuzzNoise.shuffle()
+		} catch {
+			print(error)
+		}
+		
+		
 		self.addChild(bgImage)
+	}
+	
+	func buzzSound() {
+		if Int.random(in: 0...1) == 0 {
+			//Play the next alternative buzzer sound
+			if lastAltBuzzIndex >= altBuzzNoise.count {
+				lastAltBuzzIndex = 0
+			}
+			self.run(altBuzzNoise[lastAltBuzzIndex])
+			lastAltBuzzIndex = lastAltBuzzIndex + 1
+		} else {
+			//Play the default buzzer sound
+			self.run(buzzNoise)
+		}
 	}
 	
 	func reset() {
@@ -63,7 +95,7 @@ class BuzzerScene: SKScene {
 			
 			if buzzNumber == 0 {
 				firstBuzzTime = Date()
-				self.run(buzzNoise)
+				buzzSound()
 				leds?.stringTeamAnimate(team: team)
 				nextTeamNumber = 1
 				

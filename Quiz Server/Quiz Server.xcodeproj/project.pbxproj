@@ -24,6 +24,10 @@
 		3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB51C03D53000A2B397 /* airhorn.mp3 */; };
 		3C8DD5191FB89672007DA61F /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6C3C681FB2140B0096D530 /* Starscream.framework */; };
 		3C8DD51A1FB89679007DA61F /* Starscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6C3C681FB2140B0096D530 /* Starscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3C934627237DAEED009DBD0C /* altBuzz1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C934626237DAEED009DBD0C /* altBuzz1.wav */; };
+		3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C934628237DB637009DBD0C /* altBuzz2.wav */; };
+		3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462A237DB6B0009DBD0C /* altBuzz3.wav */; };
+		3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462C237DBF88009DBD0C /* altBuzz4.wav */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
@@ -184,6 +188,10 @@
 		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
 		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
 		3C872EB51C03D53000A2B397 /* airhorn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = airhorn.mp3; sourceTree = "<group>"; };
+		3C934626237DAEED009DBD0C /* altBuzz1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz1.wav; sourceTree = "<group>"; };
+		3C934628237DB637009DBD0C /* altBuzz2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz2.wav; sourceTree = "<group>"; };
+		3C93462A237DB6B0009DBD0C /* altBuzz3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz3.wav; sourceTree = "<group>"; };
+		3C93462C237DBF88009DBD0C /* altBuzz4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz4.wav; sourceTree = "<group>"; };
 		3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Starscream.xcodeproj; path = ../Starscream/Starscream.xcodeproj; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
@@ -409,6 +417,10 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C934626237DAEED009DBD0C /* altBuzz1.wav */,
+				3C934628237DB637009DBD0C /* altBuzz2.wav */,
+				3C93462A237DB6B0009DBD0C /* altBuzz3.wav */,
+				3C93462C237DBF88009DBD0C /* altBuzz4.wav */,
 				46BBC4461DF0725600C41112 /* EHSMB.TTF */,
 				4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */,
 				3C872EB51C03D53000A2B397 /* airhorn.mp3 */,
@@ -678,9 +690,11 @@
 				4634F74F21B6DBD600C9862F /* SnowBackground.sks in Resources */,
 				3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
+				3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */,
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
+				3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */,
 				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
@@ -693,6 +707,8 @@
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */,
+				3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */,
+				3C934627237DAEED009DBD0C /* altBuzz1.wav in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 				461672391DF838150049C8D1 /* locationnumber.sks in Resources */,
 				3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */,
