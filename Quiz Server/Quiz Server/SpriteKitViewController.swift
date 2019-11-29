@@ -17,7 +17,6 @@ class SpriteKitViewController: NSViewController {
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
 	let timerScene = TimerScene()
-	let boggleScene = BoggleScene()
 	let geographyScene = GeographyScene()
 	let textScene = TextScene()
 	var leds: QuizLeds?
@@ -36,7 +35,6 @@ class SpriteKitViewController: NSViewController {
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
-		boggleScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		
@@ -114,8 +112,6 @@ class SpriteKitViewController: NSViewController {
 			scene = buzzerScene
 		case .timer:
 			scene = timerScene
-		case .boggle:
-			scene = boggleScene
 		case .geography:
 			scene = geographyScene
 		case .text:
@@ -144,8 +140,6 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.reset()
 		case .timer:
 			timerScene.reset()
-		case .boggle:
-			boggleScene.reset()
 		case .geography:
 			geographyScene.reset()
 		case .text:
@@ -165,8 +159,6 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.buzzerPressed(team: team, type: type)
 		case .timer:
 			break
-		case .boggle:
-			break
 		case .geography:
 			break
 		default:
@@ -184,8 +176,6 @@ class SpriteKitViewController: NSViewController {
 			break
 		case .timer:
 			break
-		case .boggle:
-			break
 		case .geography:
 			break
 		default:
@@ -201,23 +191,15 @@ class SpriteKitViewController: NSViewController {
 		switch (currentRound) {
 		case .timer:
 			timerScene.startTimer()
-		case .boggle:
-			boggleScene.startTimer()
 		default:
 			break
 		}
-	}
-	
-	func boggleDisplayGrid() {
-		boggleScene.sendQuestionGrid()
 	}
 	
 	func stopTimer() {
 		switch (currentRound) {
 		case .timer:
 			timerScene.stopTimer()
-		case .boggle:
-			boggleScene.stopTimer()
 		default:
 			break
 		}

@@ -63,7 +63,6 @@
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
 		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
-		466B46CE1DEC98C100428CDC /* BoggleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46CD1DEC98C100428CDC /* BoggleScene.swift */; };
 		466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46D41DEC98E400428CDC /* GeographyScene.swift */; };
 		468B090B1FD6005D0052047A /* Shower.sks in Resources */ = {isa = PBXBuildFile; fileRef = 468B090A1FD6005D0052047A /* Shower.sks */; };
 		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
@@ -236,7 +235,6 @@
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
 		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
-		466B46CD1DEC98C100428CDC /* BoggleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoggleScene.swift; sourceTree = "<group>"; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
 		468B090A1FD6005D0052047A /* Shower.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Shower.sks; sourceTree = "<group>"; };
 		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
@@ -341,7 +339,6 @@
 		3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				466B46CD1DEC98C100428CDC /* BoggleScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
@@ -750,7 +747,6 @@
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
-				466B46CE1DEC98C100428CDC /* BoggleScene.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
