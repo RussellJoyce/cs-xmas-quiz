@@ -17,7 +17,6 @@ enum RoundType {
     case trueFalse
     case pointless
 	case timer
-	case boggle
 	case geography
 	case text
 }
@@ -46,7 +45,6 @@ class QuizViewController: NSViewController {
 		pointlessGame.numTeams = numTeams
 		trueFalseView.numTeams = numTeams
 		
-		spriteKitView.boggleScene.webSocket = webSocket
 		spriteKitView.geographyScene.imagesPath = geographyImagesPath
         
         spriteKitView.view.frame = view.bounds
@@ -64,7 +62,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle, .test, .buzzers, .timer, .boggle, .geography, .text:
+        case .idle, .test, .buzzers, .timer, .geography, .text:
             spriteKitView.reset()
         case .trueFalse:
             trueFalseView.reset()
@@ -84,7 +82,7 @@ class QuizViewController: NSViewController {
             switch (currentRound) {
             case .none:
                 currentRoundView = nil
-            case .idle, .test, .buzzers, .timer, .boggle, .geography, .text:
+            case .idle, .test, .buzzers, .timer, .geography, .text:
                 currentRoundView = spriteKitView.view
             case .trueFalse:
                 currentRoundView = trueFalseView.view
@@ -116,7 +114,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .boggle, .geography, .text:
+		case .idle, .test, .buzzers, .timer, .geography, .text:
             spriteKitView.buzzerPressed(team: team, type: type)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
@@ -133,7 +131,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .boggle, .geography, .text:
+		case .idle, .test, .buzzers, .timer, .geography, .text:
             spriteKitView.buzzerReleased(team: team, type: type)
 		case .trueFalse:
 			break // Do nothing
@@ -145,11 +143,7 @@ class QuizViewController: NSViewController {
 	func startTimer() {
 		spriteKitView.startTimer();
 	}
-	
-	func boggleDisplayGrid() {
-		spriteKitView.boggleDisplayGrid();
-	}
-	
+
 	func stopTimer() {
 		spriteKitView.stopTimer();
 	}
@@ -209,15 +203,7 @@ class QuizViewController: NSViewController {
 	func setTeamType(team: Int, type: TeamType) {
 		spriteKitView.setTeamType(team: team, type: type)
 	}
-	
-	func setBoggleScore(team: Int, score: Int) {
-		spriteKitView.boggleScene.setTeamScore(team: team, score: score)
-	}
-	
-	func setBoggleQuestion(questionNum: Int) {
-		spriteKitView.boggleScene.setQuestion(questionNum: questionNum)
-	}
-	
+
 	func textTeamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		spriteKitView.textTeamGuess(teamid: teamid, guess: guess, roundid: roundid, showroundno: showroundno)
 	}

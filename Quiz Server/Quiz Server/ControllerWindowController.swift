@@ -30,8 +30,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton9: NSButton!
 	@IBOutlet weak var buzzerButton10: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
-	@IBOutlet weak var boggleQuestions: NSPopUpButton!
-	@IBOutlet weak var bogglePreview: NSTextField!
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	var quizScreen: NSScreen?
     var quizBuzzers: DDHidJoystick?
@@ -41,7 +39,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzersEnabled = [Bool]()
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
-	var boggleGrids = [String]()
 	var geographyImagesPath: String?
     
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
@@ -52,7 +49,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemIdle: NSTabViewItem!
 	@IBOutlet var tabitemTest: NSTabViewItem!
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
-	@IBOutlet var tabitemBoggle: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
 	
@@ -95,20 +91,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.webSocket = socket
 		quizView.geographyImagesPath = geographyImagesPath
 		
-		// Load entries into Boggle questions list from plist
-		let plist = Bundle.main.path(forResource: "Boggle", ofType:"plist")
-		let grids = NSDictionary(contentsOfFile:plist!)
-		let questionGrids = grids?.value(forKey: "questionGrids") as! [NSDictionary]
-		for (i, gridItem) in questionGrids.enumerated() {
-			let number = i + 1
-			let target = gridItem.value(forKey: "target") as! Int
-			let grid = gridItem.value(forKey: "grid") as! String
-			let title = "Question \(number):  target \(target)  '\(grid)'"
-			boggleQuestions.addItem(withTitle: title)
-			boggleGrids.append(grid.replacingOccurrences(of: ",", with: "\n"))
-		}
-		setBoggleQuestion(boggleQuestions)
-		
         if (testMode) {
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
@@ -131,8 +113,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
 		
 		socketWriteIfConnected("vibuzzer")
-
-		tabView.removeTabViewItem(tabitemBoggle)
+		
 		tabView.removeTabViewItem(tabitemTimer)
     }
 	
@@ -208,9 +189,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemTimer:
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.timer)
-		case tabitemBoggle:
-			socketWriteIfConnected("viboggle")
-			quizView.setRound(round: RoundType.boggle)
 		case tabitemGeography:
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
@@ -310,10 +288,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.timerDecrement()
 	}
 	
-	@IBAction func boggleDisplayGrid(_ sender: Any) {
-		quizView.boggleDisplayGrid()
-	}
-	
 	@IBAction func setTeamType(_ sender: NSPopUpButton) {
 		let team = sender.tag
 		if (team < numTeams) {
@@ -391,12 +365,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 	}
 	
-	@IBAction func setBoggleQuestion(_ sender: NSPopUpButton) {
-		let index = sender.indexOfSelectedItem
-		quizView.setBoggleQuestion(questionNum: index)
-		bogglePreview.stringValue = boggleGrids[index]
-	}
-	
 	@IBOutlet var textTeamGuesses: NSTextField!
 	
 	public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
@@ -425,23 +393,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				} else {
 					print("Invalid Geography guess")
-				}
-			case "bs":
-				//A team has tried a word in the Boggle round
-				let details = text.suffix(text.count - 2)
-				print("Boggle message: \(details)")
-				if let dataFromString = details.data(using: .utf8, allowLossyConversion: false) {
-					let json = JSON(data: dataFromString)
-					for (key, subJson) : (String, JSON) in json {
-						let team = Int(key)
-						let score = subJson.int
-						if let team = team, let score = score {
-							quizView.setBoggleScore(team: team - 1, score: score)
-						}
-						else {
-							print("Bad Boggle score data: key \(key), subJson \(subJson)")
-						}
-					}
 				}
 			case "tt":
 				//A team has guessed a text answer
