@@ -20,6 +20,7 @@ class GeographyScene: SKScene {
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let mainImage = SKSpriteNode(imageNamed: "geostart")
+	let answersText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	
 	var geogReveal = -1
 	
@@ -42,12 +43,11 @@ class GeographyScene: SKScene {
 		
 		self.addChild(bgImage)
 
-		mainImage.position = CGPoint(x: 0, y: 50.0)
+		mainImage.position = CGPoint(x: 150, y: 50.0)
 		mainImage.size.width = 1300.0
 		mainImage.size.height = 867.0
 		mainImage.zPosition = 1.0
 		bgImage.addChild(mainImage)
-		
 		
 		text.fontSize = 70
 		text.fontColor = NSColor.black
@@ -55,8 +55,19 @@ class GeographyScene: SKScene {
 		text.verticalAlignmentMode = .baseline
 		text.zPosition = 6.0
 		text.position = CGPoint(x: 50, y: 50)
+		text.numberOfLines = 0
+		
+		answersText.fontSize = 55
+		answersText.fontColor = NSColor.black
+		answersText.horizontalAlignmentMode = .left
+		answersText.verticalAlignmentMode = .top
+		answersText.zPosition = 6.0
+		answersText.position = CGPoint(x: 50, y: self.frame.height - 150)
+		answersText.numberOfLines = 10
+
 		
 		self.addChild(text)
+		self.addChild(answersText)
 
 	}
 	
@@ -126,14 +137,16 @@ class GeographyScene: SKScene {
 			answering = true;
 			mainImage.removeAllChildren()
 			
-			/*teamguesses[0] = (10, 10)
+			teamguesses[0] = (10, 10)
 			teamguesses[1] = (20, 20)
 			teamguesses[2] = (30, 30)
 			teamguesses[3] = (40, 40)
 			teamguesses[4] = (10, 50)
 			teamguesses[5] = (20, 50)
 			teamguesses[6] = (30, 60)
-			teamguesses[7] = (40, 70)*/
+			teamguesses[7] = (40, 70)
+			teamguesses[8] = (70, 60)
+			teamguesses[9] = (90, 70)
 			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
@@ -184,14 +197,45 @@ class GeographyScene: SKScene {
 		}
 	}
 	
+	func emojiNum(_ num : Int) -> String {
+		switch(num) {
+		case 1:
+			return "1️⃣"
+		case 2:
+			return "2️⃣"
+		case 3:
+			return "3️⃣"
+		case 4:
+			return "4️⃣"
+		case 5:
+			return "5️⃣"
+		case 6:
+			return "6️⃣"
+		case 7:
+			return "7️⃣"
+		case 8:
+			return "8️⃣"
+		case 9:
+			return "9️⃣"
+		case 10:
+			return "🔟"
+		default:
+			return ""
+		}
+	}
+	
 	
 	func teamAnswer(id : Int, order : Int) {
 
 		if(order == sorted.count) {
-			text.fontSize = 35
-			text.text = prefix(order) + ": Team " + String(id + 1)
+			text.text = ""
+			answersText.text = emojiNum(order) + ": Team " + String(id + 1) + "\n"
 		} else {
-			text.text! += "   " + prefix(order) + ": Team " + String(id + 1)
+			if(order <= 3) {
+				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " ⭐️\n"
+			} else {
+				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + "\n"
+			}
 		}
 		
 		if teamguesses[id] != nil {
@@ -226,6 +270,7 @@ class GeographyScene: SKScene {
 	
 	
 	func updateText() {
+		answersText.text = ""
 		text.fontSize = 70
 		text.text = "Teams Remaining: "
 		for i in 0 ..< numTeams {
