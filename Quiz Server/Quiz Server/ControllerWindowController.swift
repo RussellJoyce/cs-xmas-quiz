@@ -229,7 +229,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
 		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
-			socketWriteIfConnected("vinumbers")
+			socketWriteIfConnected("vitext")
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
