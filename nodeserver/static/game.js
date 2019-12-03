@@ -76,7 +76,7 @@ function connect() {
     ws.onclose = function(event) {
         setView("buzzer");
         console.log("Disconnected");
-        buzzer.innerHTML = "😨 NO CONNECTION 😨";
+        buzzer.innerHTML = "🤕 NO CONNECTION 🤒";
         buzzer.className = "theButton buttonOff view";
         ws = null;
 
