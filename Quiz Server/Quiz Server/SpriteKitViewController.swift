@@ -222,8 +222,8 @@ class SpriteKitViewController: NSViewController {
 		textScene.showGuesses(showroundno: showroundno)
 	}
 	
-	func numbersShowGuesses() {
-		numbersScene.showGuesses()
+	func numbersShowGuesses(actualAnswer : Int) {
+		numbersScene.showGuesses(actualAnswer: actualAnswer)
 	}
 	
 	func timerIncrement() {

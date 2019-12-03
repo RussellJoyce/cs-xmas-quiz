@@ -353,7 +353,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
-		quizView.numbersShowGuesses()
+		quizView.numbersShowGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
 	}
 	
 	

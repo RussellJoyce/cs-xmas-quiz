@@ -13,7 +13,6 @@ import SpriteKit
 class NumbersTeamNode: SKNode {
 	
 	var guessLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-	var roundLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	var singleLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	var width : Int = 0
 	var height : Int = 0
@@ -37,14 +36,6 @@ class NumbersTeamNode: SKNode {
 		guessLabel.verticalAlignmentMode = .center
 		guessLabel.zPosition = 6
 		guessLabel.position = CGPoint(x: -((width/2) - 120), y: 30)
-
-		roundLabel.text = "(round number)"
-		roundLabel.fontSize = 38
-		roundLabel.fontColor = NSColor(calibratedRed: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
-		roundLabel.horizontalAlignmentMode = .left
-		roundLabel.verticalAlignmentMode = .center
-		roundLabel.zPosition = 6
-		roundLabel.position = CGPoint(x: -((width/2) - 120), y: -40)
 		
 		singleLabel.text = "this is an answer answ"
 		singleLabel.fontSize = 60
@@ -73,7 +64,6 @@ class NumbersTeamNode: SKNode {
 		self.addChild(teamNoLabel)
 		self.addChild(bgBox)
 		self.addChild(guessLabel)
-		self.addChild(roundLabel)
 		self.addChild(singleLabel)
 	}
 	
@@ -123,7 +113,6 @@ class NumbersTeamNode: SKNode {
 		bgBox.run(anim)
 		guessLabel.run(anim)
 		singleLabel.run(anim)
-		roundLabel.run(anim)
 	}
 	
 }
@@ -136,9 +125,10 @@ class NumbersScene: SKScene {
 	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 10
-	var teamBoxes = [TextTeamNode]()
+	var teamBoxes = [NumbersTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	var revealed = false
 
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
@@ -149,8 +139,9 @@ class NumbersScene: SKScene {
 		self.size = size
 		self.leds = leds
 		self.numTeams = numTeams
+		self.revealed = false
 		
-		let bgImage = SKSpriteNode(imageNamed: "background2")
+		let bgImage = SKSpriteNode(imageNamed: "blue-snow")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
@@ -163,7 +154,7 @@ class NumbersScene: SKScene {
 				x: (team < 5) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
 				y: CGFloat(160 + yOffset)
 			)
-			let box = TextTeamNode(team: team, width: 700, height: 150, position: position)
+			let box = NumbersTeamNode(team: team, width: 700, height: 150, position: position)
 			
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -179,48 +170,67 @@ class NumbersScene: SKScene {
 		teamGuesses[teamid] = guess
 		teamBoxes[teamid].resetTextSize()
 		teamBoxes[teamid].guessLabel.text = ""
-		teamBoxes[teamid].roundLabel.text = ""
 		teamBoxes[teamid].singleLabel.text = "••••••••"
 		
 		teamBoxes[teamid].emphasise()
 	}
 	
-	func showGuesses() {
-		self.run(hornSound)
-		leds?.stringPointlessCorrect()
-		
-		let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
-		
-		for i in 0..<100 {
-			let p = SKEmitterNode(fileNamed: "Shower")!
-			p.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
-			p.position = CGPoint(x: self.centrePoint.x, y: self.centrePoint.y+100)
-			p.zPosition = CGFloat(100 + i)
-			p.removeWhenDone()
-			self.addChild(p)
-		}
-		
-		for team in 0..<numTeams {
-			if let tg = teamGuesses[team] {
-				teamBoxes[team].setTextSize(size: 60)
-				teamBoxes[team].singleLabel.text = "\(tg)"
-				teamBoxes[team].guessLabel.text = ""
-				teamBoxes[team].roundLabel.text = ""
-			} else {
-				teamBoxes[team].guessLabel.text = ""
-				teamBoxes[team].roundLabel.text = ""
-				teamBoxes[team].singleLabel.text = ""
+	func showGuesses(actualAnswer : Int) {
+		if(!revealed) {
+			self.run(hornSound)
+			leds?.stringPointlessCorrect()
+			
+			let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
+			
+			for i in 0..<100 {
+				let p = SKEmitterNode(fileNamed: "Shower")!
+				p.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
+				p.position = CGPoint(x: self.centrePoint.x, y: self.centrePoint.y+100)
+				p.zPosition = CGFloat(100 + i)
+				p.removeWhenDone()
+				self.addChild(p)
 			}
+			
+			for team in 0..<numTeams {
+				if let tg = teamGuesses[team] {
+					teamBoxes[team].setTextSize(size: 60)
+					teamBoxes[team].singleLabel.text = "\(tg)"
+					teamBoxes[team].guessLabel.text = ""
+				} else {
+					teamBoxes[team].guessLabel.text = ""
+					teamBoxes[team].singleLabel.text = ""
+				}
+			}
+			
+			revealed = true
+			
+		} else {
+			
+			//Work out which is closest to the actual answer
+			var teamDistances = [(team : Int, distance : Int)]()
+			
+			for team in 0..<numTeams {
+				if let teamGuessText = teamBoxes[team].guessLabel.text {
+					if let teamGuessInt = Int(teamGuessText) {
+						let dist = abs(teamGuessInt - actualAnswer)
+						teamDistances.append((team, dist))
+					}
+				}
+			}
+			
+			teamDistances = teamDistances.sorted(by: {$0.distance < $1.distance})
+
+			//teamBoxes[teamDistances[0].team].bgBox.fillColor = 
 		}
 	}
 	
 	func reset() {
 		leds?.buzzersOn()
+		self.revealed = false
 		
 		for team in 0..<numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
-			teamBoxes[team].roundLabel.text = ""
 			teamBoxes[team].singleLabel.text = ""
 			teamBoxes[team].resetTextSize()
 		}
