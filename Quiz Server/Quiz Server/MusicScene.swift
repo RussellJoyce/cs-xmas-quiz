@@ -134,15 +134,18 @@ class MusicScene: SKScene {
     func resumeMusic() {
         reset()
         music?.play()
+        leds?.stringAnimation(animation: 2)
     }
     
     func pauseMusic() {
         music?.pause()
+        leds?.stringOff()
     }
     
     func stopMusic() {
         music?.stop()
         music?.currentTime = 0
         music?.prepareToPlay()
+        leds?.stringOff()
     }
 }
