@@ -166,7 +166,7 @@ class TrueFalseViewController: NSViewController {
 }
 
 class TFMainView: NSView {
-	let bgImage = NSImage(named: "dark-purple-background-blurred")
+	let bgImage = NSImage(named: "decorations2-blurred")
 	override func draw(_ dirtyRect: NSRect) {
 		bgImage?.draw(in: dirtyRect)
 	}
@@ -184,9 +184,9 @@ class TrueFalseTeamView : NSView {
 	let textColOut = NSColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1)
 	let bgColOut = NSColor(red: 0.3, green: 0.3, blue: 0.3, alpha: 0.3).cgColor
 	
-	let textColTrue = NSColor(red: 0.3, green: 0.7, blue: 0.3, alpha: 1)
+    let textColTrue = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let bgColTrue = NSColor(red: 0.5, green: 1, blue: 0.5, alpha: 0.3).cgColor
-	let textColFalse = NSColor(red: 0.7, green: 0.3, blue: 0.3, alpha: 1)
+    let textColFalse = NSColor(red: 1, green: 1, blue: 1, alpha: 1)
 	let bgColFalse = NSColor(red: 1, green: 0.5, blue: 0.5, alpha: 0.3).cgColor
 	
 	func setTeam(team : Int) {
@@ -228,13 +228,13 @@ class TrueFalseTeamView : NSView {
 	func setPressedTrue() {
 		label.textColor = textColTrue
 		self.layer?.backgroundColor = bgColTrue
-		label.stringValue = "Team \(teamno + 1): ⬆️"
+		label.stringValue = "Team \(teamno + 1): 👍"
 	}
 	
 	func setPressedFalse() {
 		label.textColor = textColFalse
 		self.layer?.backgroundColor = bgColFalse
-		label.stringValue = "Team \(teamno + 1): ⬇️"
+		label.stringValue = "Team \(teamno + 1): 👎"
 	}
 	
 	func setNeutral() {
