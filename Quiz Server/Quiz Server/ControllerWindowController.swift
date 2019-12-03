@@ -126,8 +126,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         
         if let musicPath = musicPath {
             do {
-                let fileURLs = try FileManager.default.contentsOfDirectory(atPath: musicPath).sorted()
-                musicFile.addItems(withTitles: fileURLs)
+                let files = try FileManager.default.contentsOfDirectory(atPath: musicPath)
+                for file in files.sorted() {
+                    if (!file.hasPrefix(".")) {
+                        musicFile.addItem(withTitle: file)
+                    }
+                }
                 musicChooseFile(musicFile)
             } catch {
                 print("Error while enumerating files \(musicPath): \(error.localizedDescription)")
