@@ -217,8 +217,8 @@ class QuizViewController: NSViewController {
 		spriteKitView.numbersTeamGuess(teamid: teamid, guess: guess)
 	}
 	
-	func numbersShowGuesses() {
-		spriteKitView.numbersShowGuesses()
+	func numbersShowGuesses(actualAnswer : Int) {
+		spriteKitView.numbersShowGuesses(actualAnswer: actualAnswer)
 	}
 	
 }
