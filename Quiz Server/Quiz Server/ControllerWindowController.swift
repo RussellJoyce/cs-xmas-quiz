@@ -51,8 +51,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
+	@IBOutlet var tabitemNumbers: NSTabViewItem!
 	
-    let quizView = QuizViewController(nibName: "QuizView", bundle: nil)
+	@IBOutlet var textAllowAnswers: NSButton!
+	
+	@IBOutlet weak var numbersAllowAnswers: NSButton!
+	@IBOutlet weak var numbersActualAnswer: NSTextField!
+
+	let quizView = QuizViewController(nibName: "QuizView", bundle: nil)
     var quizWindow: NSWindow?
 	
 	var socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
@@ -193,33 +199,40 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
 			quizView.setRound(round: RoundType.geography)
+		case tabitemNumbers:
+			socketWriteIfConnected("vitext")
+			quizView.setRound(round: RoundType.numbers)
+			numbersActualAnswer.intValue = 0
+			numbersAllowAnswers.state = .on
 		case tabitemText:
 			socketWriteIfConnected("vitext")
 			quizView.setRound(round: RoundType.text)
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
-			textAllowAnswers.state = .on
+			//textAllowAnswers.state = .on
 		default:
 			break
 		}
     }
     
-	@IBOutlet var textAllowAnswers: NSButton!
-	
     @IBAction func resetRound(_ sender: AnyObject) {
         quizView.resetRound()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-		}
-		else if (tabView.selectedTabViewItem == tabitemText) {
+		} else if (tabView.selectedTabViewItem == tabitemText) {
 			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
+		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
+			socketWriteIfConnected("vinumbers")
+			quizView.setRound(round: RoundType.numbers)
+			numbersActualAnswer.intValue = 0
+			numbersAllowAnswers.state = .on
 		}
     }
     
@@ -337,6 +350,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.textShowGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
+
+	@IBAction func numbersShowAnswers(_ sender: NSButton) {
+		numbersAllowAnswers.state = .off
+		quizView.numbersShowGuesses()
+	}
+	
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizView.resetRound()
@@ -366,6 +385,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBOutlet var textTeamGuesses: NSTextField!
+	@IBOutlet var numbersTeamGuesses: NSTextField!
 	
 	public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
 		if(text.count >= 3) {
@@ -395,34 +415,71 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					print("Invalid Geography guess")
 				}
 			case "tt":
-				//A team has guessed a text answer
-				if textAllowAnswers.state == .on {
-					let details = text.suffix(text.count - 2)
-					let vals = details.components(separatedBy: ",")
-					if(vals.count >= 2) {
-						if let team = Int(vals[0]) {
-							let guess = String(vals[1].prefix(20))
+				if (tabView.selectedTabViewItem == tabitemText) {
+					//A team has guessed a text answer
+					if textAllowAnswers.state == .on {
+						let details = text.suffix(text.count - 2)
+						let vals = details.components(separatedBy: ",")
+						if(vals.count >= 2) {
+							if let team = Int(vals[0]) {
+								let guessText = String(vals[1].prefix(20))
 							
-							quizView.textTeamGuess(
-								teamid: team - 1, //make zero indexed
-								guess: guess,
-								roundid: Int(textQuestionNumber.intValue),
-								showroundno: (textShowQuestionNumbers.state == .on) ? true : false
-							)
-							
-							var val = ""
-							for team in 0..<numTeams {
-								if let tg = quizView.spriteKitView.textScene.teamGuesses[team] {
-									val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
+								quizView.textTeamGuess(
+									teamid: team - 1, //make zero indexed
+									guess: guessText,
+									roundid: Int(textQuestionNumber.intValue),
+									showroundno: (textShowQuestionNumbers.state == .on) ? true : false
+								)
+								
+								//Update the guesses in the controller window
+								var val = ""
+								for team in 0..<numTeams {
+									if let tg = quizView.spriteKitView.textScene.teamGuesses[team] {
+										val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
+									}
+								}
+								textTeamGuesses.stringValue = val
+								
+							} else {
+								print("Invalid Text guess: Bad Int conversion")
+							}
+						} else {
+							print("Invalid Text guess: Bad comma separation")
+						}
+					}
+				} else {
+					//A team has guessed a number answer
+					
+					if numbersAllowAnswers.state == .on {
+						let details = text.suffix(text.count - 2)
+						let vals = details.components(separatedBy: ",")
+						if(vals.count >= 2) {
+							if let team = Int(vals[0]) {
+								let guessText = String(vals[1].prefix(20))
+						
+								let guess = Int(guessText)
+								if guess != nil {
+									quizView.numbersTeamGuess(
+										teamid: team - 1, //make zero indexed
+										guess: guess!
+									)
+									
+									//Update the guesses in the controller window
+									var val = ""
+									for team in 0..<numTeams {
+										if let tg = quizView.spriteKitView.numbersScene.teamGuesses[team] {
+											val = "\(val) Team \(team+1): \(String(tg))\n"
+										}
+									}
+									numbersTeamGuesses.stringValue = val
+									
+								} else {
+									print("Invalid Numbers guess: Bad Int conversion")
 								}
 							}
-							textTeamGuesses.stringValue = val
-						} else {
-							print("Invalid Text guess: Bad Int conversion")
 						}
-					} else {
-						print("Invalid Text guess: Bad comma separation")
 					}
+					
 				}
 			default:
 				print("Unknown message: " + text)

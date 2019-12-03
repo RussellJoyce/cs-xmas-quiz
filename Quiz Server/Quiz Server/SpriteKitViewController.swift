@@ -19,6 +19,7 @@ class SpriteKitViewController: NSViewController {
 	let timerScene = TimerScene()
 	let geographyScene = GeographyScene()
 	let textScene = TextScene()
+	let numbersScene = NumbersScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
@@ -37,7 +38,7 @@ class SpriteKitViewController: NSViewController {
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		
+		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		
 		let transitionDuration = 1.0
 		
@@ -116,6 +117,8 @@ class SpriteKitViewController: NSViewController {
 			scene = geographyScene
 		case .text:
 			scene = textScene
+		case .numbers:
+			scene = numbersScene
 		default:
 			scene = nil
 		}
@@ -144,6 +147,8 @@ class SpriteKitViewController: NSViewController {
 			geographyScene.reset()
 		case .text:
 			textScene.reset()
+		case .numbers:
+			numbersScene.reset()
 		default:
 			break
 		}
@@ -209,8 +214,16 @@ class SpriteKitViewController: NSViewController {
 		textScene.teamGuess(teamid: teamid, guess: guess, roundid: roundid, showroundno: showroundno)
 	}
 	
+	func numbersTeamGuess(teamid : Int, guess : Int) {
+		numbersScene.teamGuess(teamid: teamid, guess: guess)
+	}
+	
 	func textShowGuesses(showroundno : Bool) {
 		textScene.showGuesses(showroundno: showroundno)
+	}
+	
+	func numbersShowGuesses() {
+		numbersScene.showGuesses()
 	}
 	
 	func timerIncrement() {

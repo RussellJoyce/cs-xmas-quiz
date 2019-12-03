@@ -21,17 +21,21 @@
                 <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
                 <outlet property="geoQuestionNumber" destination="5z5-BU-AUP" id="uQw-pa-69M"/>
                 <outlet property="geoStepper" destination="PD7-GT-IDE" id="b5n-bY-4ik"/>
+                <outlet property="numbersActualAnswer" destination="76B-rL-ts0" id="VJi-gM-zIT"/>
+                <outlet property="numbersAllowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
+                <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
                 <outlet property="pointlessScore" destination="2RS-Zt-DjW" id="eN0-RM-dOi"/>
                 <outlet property="tabView" destination="SaY-do-P3f" id="ldq-kO-31n"/>
                 <outlet property="tabitemBuzzers" destination="zkE-YU-uHw" id="tqo-kG-iLP"/>
                 <outlet property="tabitemGeography" destination="MCw-dI-hrf" id="bN4-Xw-l7Y"/>
                 <outlet property="tabitemIdle" destination="u2C-EJ-D9s" id="LjV-Is-cRp"/>
+                <outlet property="tabitemNumbers" destination="CS6-c3-Fen" id="eSy-LI-0LA"/>
                 <outlet property="tabitemPointless" destination="KMJ-xD-WLu" id="ljB-1D-Bwf"/>
                 <outlet property="tabitemTest" destination="OV7-s7-eho" id="fAV-tJ-zQL"/>
-                <outlet property="tabitemText" destination="QsW-tO-3AJ" id="dox-nI-ObB"/>
+                <outlet property="tabitemText" destination="QsW-tO-3AJ" id="mer-ty-Abj"/>
                 <outlet property="tabitemTimer" destination="jWj-s8-V1l" id="SGq-NW-KzQ"/>
                 <outlet property="tabitemtruefalse" destination="gEv-Hs-Dry" id="30r-AD-6Sb"/>
-                <outlet property="textAllowAnswers" destination="2iq-4I-wHz" id="YLS-cr-kJY"/>
+                <outlet property="textAllowAnswers" destination="2iq-4I-wHz" id="qnA-YL-CLD"/>
                 <outlet property="textQuestionNumber" destination="j6v-1e-qRO" id="XSp-JZ-4dr"/>
                 <outlet property="textShowQuestionNumbers" destination="4Xo-nU-iC2" id="QH7-26-ein"/>
                 <outlet property="textStepper" destination="D2n-8d-ddz" id="fHQ-ZJ-RPN"/>
@@ -44,7 +48,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -275,7 +279,7 @@
                         <font key="font" metaFont="systemBold" size="17"/>
                         <tabViewItems>
                             <tabViewItem label="Idle" identifier="1" id="u2C-EJ-D9s">
-                                <view key="view" ambiguous="YES" id="b26-Hk-9q4">
+                                <view key="view" id="b26-Hk-9q4">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1270,7 +1274,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Text" identifier="" id="QsW-tO-3AJ">
-                                <view key="view" id="opd-kA-j2y">
+                                <view key="view" ambiguous="YES" id="opd-kA-j2y">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
@@ -1336,6 +1340,61 @@ DQ
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Numbers" identifier="" id="CS6-c3-Fen">
+                                <view key="view" id="pGq-SZ-3Fm">
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rgi-h9-BM0">
+                                            <rect key="frame" x="93" y="162" width="95" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Actual Answer:" id="6xo-PO-n2f">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6GF-Mg-VR7">
+                                            <rect key="frame" x="324" y="12" width="344" height="236"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="zEr-XC-8Xv">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7kj-Da-9HS">
+                                            <rect key="frame" x="24" y="205" width="233" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Allow Answers" bezelStyle="rounded" alignment="center" state="on" borderStyle="border" inset="2" id="BK2-2J-3CQ">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                <font key="font" metaFont="system" size="20"/>
+                                            </buttonCell>
+                                        </button>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="76B-rL-ts0">
+                                            <rect key="frame" x="79" y="118" width="123" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="234,675" drawsBackground="YES" id="VMI-aD-iJC">
+                                                <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="3AZ-jk-JoH"/>
+                                                <font key="font" metaFont="system" size="22"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5GN-xC-Oy7">
+                                            <rect key="frame" x="62" y="47" width="157" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Show Answers" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aof-iT-WQg">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="numbersShowAnswers:" target="-2" id="EZ9-jM-dYZ"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                 </view>
