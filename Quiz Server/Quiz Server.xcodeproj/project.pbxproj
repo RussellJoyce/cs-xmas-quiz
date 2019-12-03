@@ -113,6 +113,7 @@
 		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
 		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
+		46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF9D07239672FF00D019A3 /* MusicScene.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
@@ -288,6 +289,7 @@
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
+		46DF9D07239672FF00D019A3 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
 		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -347,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
+				46DF9D07239672FF00D019A3 /* MusicScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
@@ -747,6 +750,7 @@
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
 				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
+				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
 				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,

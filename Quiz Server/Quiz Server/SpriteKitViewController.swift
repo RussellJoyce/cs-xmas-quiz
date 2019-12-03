@@ -16,6 +16,7 @@ class SpriteKitViewController: NSViewController {
 	let idleScene = IdleScene()
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
+    let musicScene = MusicScene()
 	let timerScene = TimerScene()
 	let geographyScene = GeographyScene()
 	let textScene = TextScene()
@@ -35,6 +36,7 @@ class SpriteKitViewController: NSViewController {
 		idleScene.setUpScene(size: skView.bounds.size, leds: leds)
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+        musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
@@ -111,6 +113,8 @@ class SpriteKitViewController: NSViewController {
 			scene = testScene
 		case .buzzers:
 			scene = buzzerScene
+        case .music:
+            scene = musicScene
 		case .timer:
 			scene = timerScene
 		case .geography:
@@ -141,6 +145,8 @@ class SpriteKitViewController: NSViewController {
 			testScene.reset()
 		case .buzzers:
 			buzzerScene.reset()
+        case .music:
+            musicScene.reset()
 		case .timer:
 			timerScene.reset()
 		case .geography:
@@ -162,6 +168,8 @@ class SpriteKitViewController: NSViewController {
 			testScene.buzzerPressed(team: team, type: type)
 		case .buzzers:
 			buzzerScene.buzzerPressed(team: team, type: type)
+        case .music:
+            musicScene.buzzerPressed(team: team, type: type)
 		case .timer:
 			break
 		case .geography:
@@ -179,6 +187,8 @@ class SpriteKitViewController: NSViewController {
 			testScene.buzzerReleased(team: team, type: type)
 		case .buzzers:
 			break
+        case .music:
+            break
 		case .timer:
 			break
 		case .geography:
@@ -191,6 +201,26 @@ class SpriteKitViewController: NSViewController {
 	func nextBuzzerTeam() {
 		buzzerScene.nextTeam()
 	}
+    
+    func nextMusicTeam() {
+        musicScene.nextTeam()
+    }
+    
+    func musicPlay() {
+        musicScene.resumeMusic()
+    }
+    
+    func musicPause() {
+        musicScene.pauseMusic()
+    }
+    
+    func musicStop() {
+        musicScene.stopMusic()
+    }
+    
+    func musicSetFile(file: String) {
+        musicScene.initMusic(file: file)
+    }
 	
 	func startTimer() {
 		switch (currentRound) {

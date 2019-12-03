@@ -18,6 +18,7 @@ class StartupView: NSViewController {
     @IBOutlet weak var testMode: NSButton!
 	@IBOutlet weak var teamsSelector: NSPopUpButton!
 	@IBOutlet weak var geographyImagesPath: NSTextField!
+    @IBOutlet weak var musicPath: NSTextField!
 	
     var allScreens: [NSScreen]?
     var allControllers: [DDHidJoystick]?
@@ -86,6 +87,7 @@ class StartupView: NSViewController {
         }
 
 		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
+        musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Music"
         
         startButton.isEnabled = true
     }
@@ -99,7 +101,7 @@ class StartupView: NSViewController {
 		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-		delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue)
+		delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {
@@ -119,4 +121,22 @@ class StartupView: NSViewController {
 			}
 		}
 	}
+    
+    @IBAction func musicPathBrowse(_ sender: Any) {
+        let dialog = NSOpenPanel();
+        dialog.title = "Music round music folder"
+        dialog.showsHiddenFiles = false
+        dialog.canChooseDirectories = true
+        dialog.canChooseFiles = false
+        dialog.canCreateDirectories = false
+        dialog.allowsMultipleSelection = false
+        dialog.directoryURL = URL(fileURLWithPath: musicPath.stringValue, isDirectory: true)
+        if (dialog.runModal() == NSApplication.ModalResponse.OK) {
+            let result = dialog.url // Pathname of the file
+            if (result != nil) {
+                let path = result!.path
+                musicPath.stringValue = path
+            }
+        }
+    }
 }

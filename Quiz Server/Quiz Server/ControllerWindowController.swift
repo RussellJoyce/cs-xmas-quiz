@@ -40,6 +40,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
 	var geographyImagesPath: String?
+    var musicPath: String?
     
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet var tabitemPointless: NSTabViewItem!
@@ -49,10 +50,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemIdle: NSTabViewItem!
 	@IBOutlet var tabitemTest: NSTabViewItem!
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
+    @IBOutlet var tabitemMusic: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
 	@IBOutlet var tabitemNumbers: NSTabViewItem!
-	
+    
+    @IBOutlet weak var musicFile: NSPopUpButton!
+    
 	@IBOutlet var textAllowAnswers: NSButton!
 	
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
@@ -119,6 +123,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
 		
 		socketWriteIfConnected("vibuzzer")
+        
+        if let musicPath = musicPath {
+            do {
+                let fileURLs = try FileManager.default.contentsOfDirectory(atPath: musicPath).sorted()
+                musicFile.addItems(withTitles: fileURLs)
+                musicChooseFile(musicFile)
+            } catch {
+                print("Error while enumerating files \(musicPath): \(error.localizedDescription)")
+            }
+        }
 		
 		tabView.removeTabViewItem(tabitemTimer)
     }
@@ -186,6 +200,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemBuzzers:
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.buzzers)
+        case tabitemMusic:
+            socketWriteIfConnected("vibuzzer")
+            quizView.setRound(round: RoundType.music)
 		case tabitemtruefalse:
 			socketWriteIfConnected("vihigherlower")
 			quizView.setRound(round: RoundType.trueFalse)
@@ -285,7 +302,33 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.buzzersNextTeam()
     }
     
-	@IBAction func startTimer(_ sender: AnyObject) {
+    @IBAction func musicNextTeam(_ sender: AnyObject) {
+        quizView.musicNextTeam()
+    }
+    
+    @IBAction func musicPlay(_ sender: AnyObject) {
+        quizView.musicPlay()
+    }
+    
+    @IBAction func musicPause(_ sender: AnyObject) {
+        quizView.musicPause()
+    }
+    
+    @IBAction func musicStop(_ sender: AnyObject) {
+        quizView.musicStop()
+    }
+    
+    @IBAction func musicChooseFile(_ sender: NSPopUpButton) {
+        if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
+            let path =  musicPath + "/" + fileName
+            quizView.musicSetFile(file: path)
+        }
+        else {
+            print("Error choosing music file")
+        }
+    }
+    
+    @IBAction func startTimer(_ sender: AnyObject) {
 		quizView.startTimer()
 	}
 	
