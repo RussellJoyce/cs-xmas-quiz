@@ -21,6 +21,7 @@
                 <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
                 <outlet property="geoQuestionNumber" destination="5z5-BU-AUP" id="uQw-pa-69M"/>
                 <outlet property="geoStepper" destination="PD7-GT-IDE" id="b5n-bY-4ik"/>
+                <outlet property="musicFile" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
                 <outlet property="numbersActualAnswer" destination="76B-rL-ts0" id="VJi-gM-zIT"/>
                 <outlet property="numbersAllowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
                 <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
@@ -29,6 +30,7 @@
                 <outlet property="tabitemBuzzers" destination="zkE-YU-uHw" id="tqo-kG-iLP"/>
                 <outlet property="tabitemGeography" destination="MCw-dI-hrf" id="bN4-Xw-l7Y"/>
                 <outlet property="tabitemIdle" destination="u2C-EJ-D9s" id="LjV-Is-cRp"/>
+                <outlet property="tabitemMusic" destination="mfC-Tl-ocF" id="qEX-r3-nHM"/>
                 <outlet property="tabitemNumbers" destination="CS6-c3-Fen" id="eSy-LI-0LA"/>
                 <outlet property="tabitemPointless" destination="KMJ-xD-WLu" id="ljB-1D-Bwf"/>
                 <outlet property="tabitemTest" destination="OV7-s7-eho" id="fAV-tJ-zQL"/>
@@ -672,6 +674,87 @@
                                     </subviews>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Music" identifier="" id="mfC-Tl-ocF">
+                                <view key="view" ambiguous="YES" id="92T-4o-NHW">
+                                    <rect key="frame" x="10" y="33" width="896" height="258"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AAX-dK-BKE">
+                                            <rect key="frame" x="33" y="93" width="203" height="109"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Wrong! Next Team..." bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="G57-uk-LCf">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <string key="keyEquivalent">n</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="musicNextTeam:" target="-2" id="RSF-J2-DuA"/>
+                                            </connections>
+                                        </button>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Plo-2R-M6B">
+                                            <rect key="frame" x="121" y="71" width="27" height="17"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="⌘N" id="5aU-6h-KiR">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R7I-N7-f85">
+                                            <rect key="frame" x="673" y="33" width="200" height="70"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Pause" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PFN-D6-phr">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <string key="keyEquivalent">n</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="musicPause:" target="-2" id="dUl-15-tHj"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uRd-aY-n3e">
+                                            <rect key="frame" x="370" y="14" width="157" height="42"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Stop" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="45Y-yI-Axx">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <string key="keyEquivalent">n</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="musicStop:" target="-2" id="puq-IJ-cVZ"/>
+                                            </connections>
+                                        </button>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YNA-i9-2Xz">
+                                            <rect key="frame" x="259" y="135" width="380" height="25"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="6im-dm-09n">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                                <menu key="menu" id="4Os-sN-Ihl"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="musicChooseFile:" target="-2" id="t5L-Kf-36u"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96H-lb-nY9">
+                                            <rect key="frame" x="673" y="135" width="200" height="70"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Play" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cOH-gH-QWx">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <string key="keyEquivalent">n</string>
+                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="musicPlay:" target="-2" id="gcX-oi-4Qw"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
                             <tabViewItem label="Higher/Lower" identifier="" id="gEv-Hs-Dry">
                                 <view key="view" id="Ssg-s3-vJT">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
@@ -1274,7 +1357,7 @@ DQ
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Text" identifier="" id="QsW-tO-3AJ">
-                                <view key="view" ambiguous="YES" id="opd-kA-j2y">
+                                <view key="view" id="opd-kA-j2y">
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>

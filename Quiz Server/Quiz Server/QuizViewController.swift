@@ -14,6 +14,7 @@ enum RoundType {
     case idle
     case test
     case buzzers
+    case music
     case trueFalse
     case pointless
 	case timer
@@ -63,7 +64,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
+        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
             spriteKitView.reset()
         case .trueFalse:
             trueFalseView.reset()
@@ -83,7 +84,7 @@ class QuizViewController: NSViewController {
             switch (currentRound) {
             case .none:
                 currentRoundView = nil
-			case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
+            case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
                 currentRoundView = spriteKitView.view
             case .trueFalse:
                 currentRoundView = trueFalseView.view
@@ -115,7 +116,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
+        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
             spriteKitView.buzzerPressed(team: team, type: type)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
@@ -132,7 +133,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
+        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
             spriteKitView.buzzerReleased(team: team, type: type)
 		case .trueFalse:
 			break // Do nothing
@@ -187,6 +188,26 @@ class QuizViewController: NSViewController {
     
     func buzzersNextTeam() {
         spriteKitView.nextBuzzerTeam()
+    }
+    
+    func musicNextTeam() {
+        spriteKitView.nextMusicTeam()
+    }
+    
+    func musicPlay() {
+        spriteKitView.musicPlay()
+    }
+    
+    func musicPause() {
+        spriteKitView.musicPause()
+    }
+    
+    func musicStop() {
+        spriteKitView.musicStop()
+    }
+    
+    func musicSetFile(file: String) {
+        spriteKitView.musicSetFile(file: file)
     }
 
 	func geoStartQuestion(question: Int) {
