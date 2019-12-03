@@ -54,18 +54,28 @@ function connect() {
                 console.log("Server requests setting view: " + event.data.slice(2));
                 lastview = event.data.slice(2);
                 toggleState(true);
-                setView(event.data.slice(2));
+                
                 if(event.data.slice(2) == "text") {
+                    setView("text");
+                    document.getElementById("textbox").type = "text";
                     textbox.focus();
                     removeTextmodeHandlers();
                     textbox.value = "";
+                } else if(event.data.slice(2) == "numbers") {
+                    setView("text");
+                    document.getElementById("textbox").type = "number";
+                    textbox.focus();
+                    removeTextmodeHandlers();
+                    textbox.value = "";
+                } else {
+                    setView(event.data.slice(2));
                 }
                 break;
             case "im":
                 //Set the geo image
                 console.log("Setting geo image: " + event.data.slice(2));
                 toggleState(true);
-                geoimg.src = "geography/" + event.data.slice(2);
+                geoimg.style.backgroundImage = "url(geography/" + event.data.slice(2) + ")";
                 break;
             case "pb":
                 console.log("Ping back");
