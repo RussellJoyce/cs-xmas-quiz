@@ -38,6 +38,7 @@
 		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
 		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
 		3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3CF41C1F1C04C7D100785564 /* TimerSpray.sks */; };
+		3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF78EF923954DB9007FC394 /* NumbersScene.swift */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
 		46056EBC1A19624E00C37628 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBB1A19624E00C37628 /* Images.xcassets */; };
 		46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46056EBD1A19624E00C37628 /* MainMenu.xib */; };
@@ -202,6 +203,7 @@
 		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
 		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
 		3CF41C1F1C04C7D100785564 /* TimerSpray.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimerSpray.sks; sourceTree = "<group>"; };
+		3CF78EF923954DB9007FC394 /* NumbersScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumbersScene.swift; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		46056EB81A19624E00C37628 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		46056EB91A19624E00C37628 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 				46BBD3CC21B83DED0010319E /* ClockNode.swift */,
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
+				3CF78EF923954DB9007FC394 /* NumbersScene.swift */,
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 			);
 			name = "SpriteKit Scenes";
@@ -607,7 +610,7 @@
 			attributes = {
 				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Russell Joyce & Ian Gray";
 				TargetAttributes = {
 					46056EB31A19624E00C37628 = {
@@ -622,10 +625,9 @@
 			};
 			buildConfigurationList = 46056EAF1A19624E00C37628 /* Build configuration list for PBXProject "Quiz Server" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -745,6 +747,7 @@
 				46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
+				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
@@ -807,6 +810,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -860,6 +864,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -908,6 +913,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 2019.1;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -931,6 +937,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 2019.1;
 				FRAMEWORK_SEARCH_PATHS = (

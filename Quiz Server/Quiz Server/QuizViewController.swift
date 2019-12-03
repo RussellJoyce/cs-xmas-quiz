@@ -19,6 +19,7 @@ enum RoundType {
 	case timer
 	case geography
 	case text
+	case numbers
 }
 
 class QuizViewController: NSViewController {
@@ -62,7 +63,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle, .test, .buzzers, .timer, .geography, .text:
+		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
             spriteKitView.reset()
         case .trueFalse:
             trueFalseView.reset()
@@ -82,7 +83,7 @@ class QuizViewController: NSViewController {
             switch (currentRound) {
             case .none:
                 currentRoundView = nil
-            case .idle, .test, .buzzers, .timer, .geography, .text:
+			case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
                 currentRoundView = spriteKitView.view
             case .trueFalse:
                 currentRoundView = trueFalseView.view
@@ -114,7 +115,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .geography, .text:
+		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
             spriteKitView.buzzerPressed(team: team, type: type)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
@@ -131,7 +132,7 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-		case .idle, .test, .buzzers, .timer, .geography, .text:
+		case .idle, .test, .buzzers, .timer, .geography, .text, .numbers:
             spriteKitView.buzzerReleased(team: team, type: type)
 		case .trueFalse:
 			break // Do nothing
@@ -210,6 +211,14 @@ class QuizViewController: NSViewController {
 	
 	func textShowGuesses(showroundno : Bool) {
 		spriteKitView.textShowGuesses(showroundno: showroundno)
+	}
+	
+	func numbersTeamGuess(teamid : Int, guess : Int) {
+		spriteKitView.numbersTeamGuess(teamid: teamid, guess: guess)
+	}
+	
+	func numbersShowGuesses() {
+		spriteKitView.numbersShowGuesses()
 	}
 	
 }
