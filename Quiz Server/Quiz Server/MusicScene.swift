@@ -21,7 +21,7 @@ class MusicScene: SKScene {
 	var teamEnabled = [Bool](repeating: true, count: 10)
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
-	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
+	var buzzNoises = [SKAction]()
 	var teamBoxes = [BuzzerTeamNode]()
     var music: AVAudioPlayer?
 	
@@ -37,18 +37,26 @@ class MusicScene: SKScene {
 		self.size = size
 		self.leds = leds
 		self.numTeams = numTeams
+        
+        buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
+        buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
+        buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
+        buzzNoises.append(SKAction.playSoundFileNamed("scratch4", waitForCompletion: false))
 		
 		let bgImage = SKSpriteNode(imageNamed: "music2")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
-        		
+        
 		self.addChild(bgImage)
 	}
 	
 	func buzzSound() {
-        self.run(buzzNoise)
-	}
+        // Play random buzzer sound
+        if let buzzNoise = buzzNoises.randomElement() {
+            self.run(buzzNoise)
+        }
+    }
 	
 	func reset() {
 		leds?.buzzersOn()
@@ -72,8 +80,8 @@ class MusicScene: SKScene {
 			
 			if buzzNumber == 0 {
 				firstBuzzTime = Date()
+                buzzSound()
                 pauseMusic()
-				buzzSound()
 				leds?.stringTeamAnimate(team: team)
 				nextTeamNumber = 1
 				
