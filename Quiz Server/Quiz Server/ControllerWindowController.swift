@@ -217,7 +217,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("imstart.jpg")
 			quizView.setRound(round: RoundType.geography)
 		case tabitemNumbers:
-			socketWriteIfConnected("vitext")
+			socketWriteIfConnected("vinumbers")
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
@@ -246,7 +246,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
 		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
-			socketWriteIfConnected("vitext")
+			socketWriteIfConnected("vinumbers")
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
