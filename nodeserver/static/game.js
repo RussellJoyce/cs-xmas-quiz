@@ -192,6 +192,9 @@ textbox.addEventListener("webkitAnimationEnd", function() {
 });
 
 
+Number.prototype.clamp = function(min, max) {
+  return Math.min(Math.max(this, min), max);
+};
 
 //When the image is clicked send the coords to the server
 geoimg.addEventListener(eventtouse, function(event) {
@@ -211,6 +214,9 @@ geoimg.addEventListener(eventtouse, function(event) {
     geomark.style.top = (ty - rect.top) - 25;
 
     geomark.style.display = "block";
+
+    x = x.clamp(0, 100);
+    y = y.clamp(0, 100);
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
