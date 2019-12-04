@@ -54,9 +54,8 @@
 		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		4634F74F21B6DBD600C9862F /* SnowBackground.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4634F74D21B6DBD600C9862F /* SnowBackground.sks */; };
 		463EA5DC2396D6CC00118892 /* scratch2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5D82396D6CC00118892 /* scratch2.wav */; };
-		463EA5DD2396D6CC00118892 /* scratch3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5D92396D6CC00118892 /* scratch3.wav */; };
 		463EA5DE2396D6CC00118892 /* scratch1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5DA2396D6CC00118892 /* scratch1.wav */; };
-		463EA5DF2396D6CC00118892 /* scratch4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5DB2396D6CC00118892 /* scratch4.wav */; };
+		463EA5DF2396D6CC00118892 /* scratch3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5DB2396D6CC00118892 /* scratch3.wav */; };
 		463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Snowmoji.sks */; };
 		46498C831A3F366700CAFACC /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46498C821A3F366700CAFACC /* Snow.sks */; };
 		464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */; };
@@ -229,9 +228,8 @@
 		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		4634F74D21B6DBD600C9862F /* SnowBackground.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SnowBackground.sks; sourceTree = "<group>"; };
 		463EA5D82396D6CC00118892 /* scratch2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch2.wav; sourceTree = "<group>"; };
-		463EA5D92396D6CC00118892 /* scratch3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch3.wav; sourceTree = "<group>"; };
 		463EA5DA2396D6CC00118892 /* scratch1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch1.wav; sourceTree = "<group>"; };
-		463EA5DB2396D6CC00118892 /* scratch4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch4.wav; sourceTree = "<group>"; };
+		463EA5DB2396D6CC00118892 /* scratch3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch3.wav; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Snowmoji.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snowmoji.sks; sourceTree = "<group>"; };
 		46498C821A3F366700CAFACC /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
 		464E191E1BE7E44700F0491B /* ORSSerialBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialBuffer.h; path = ../ORSSerialPort/Source/ORSSerialBuffer.h; sourceTree = "<group>"; };
@@ -435,8 +433,7 @@
 			children = (
 				463EA5DA2396D6CC00118892 /* scratch1.wav */,
 				463EA5D82396D6CC00118892 /* scratch2.wav */,
-				463EA5D92396D6CC00118892 /* scratch3.wav */,
-				463EA5DB2396D6CC00118892 /* scratch4.wav */,
+				463EA5DB2396D6CC00118892 /* scratch3.wav */,
 				3C934626237DAEED009DBD0C /* altBuzz1.wav */,
 				3C934628237DB637009DBD0C /* altBuzz2.wav */,
 				3C93462A237DB6B0009DBD0C /* altBuzz3.wav */,
@@ -727,7 +724,6 @@
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
-				463EA5DD2396D6CC00118892 /* scratch3.wav in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
@@ -735,7 +731,7 @@
 				3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */,
 				3C934627237DAEED009DBD0C /* altBuzz1.wav in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
-				463EA5DF2396D6CC00118892 /* scratch4.wav in Resources */,
+				463EA5DF2396D6CC00118892 /* scratch3.wav in Resources */,
 				461672391DF838150049C8D1 /* locationnumber.sks in Resources */,
 				3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */,
 				468B090B1FD6005D0052047A /* Shower.sks in Resources */,

@@ -41,7 +41,6 @@ class MusicScene: SKScene {
         buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
-        buzzNoises.append(SKAction.playSoundFileNamed("scratch4", waitForCompletion: false))
 		
 		let bgImage = SKSpriteNode(imageNamed: "music2")
 		bgImage.zPosition = 0
