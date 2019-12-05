@@ -15,11 +15,6 @@
 #define LEDS_TEAMPUL 0x70
 #define LEDS_POINTW  0x80
 #define LEDS_POINTC  0x90
-
-#define LED_ON       0xA0
-#define LED_OFF      0xB0
-#define LED_ALLON    0xC0
-#define LED_ALLOFF   0xD0
 #define POINT_STATE  0xE0
 
 #endif
