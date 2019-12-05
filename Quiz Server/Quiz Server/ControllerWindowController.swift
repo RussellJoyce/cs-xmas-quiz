@@ -254,6 +254,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
+			numbersTeamGuesses.stringValue = ""
 		}
     }
     

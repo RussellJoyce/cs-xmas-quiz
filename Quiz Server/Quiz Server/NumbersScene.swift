@@ -301,6 +301,7 @@ class NumbersScene: SKScene {
 			teamBoxes[team].singleLabel.text = ""
 			teamBoxes[team].resetTextSize()
 			teamBoxes[team].bgBox.fillColor = NumbersTeamNode.bgColour
+			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		
 		/*teamGuess(teamid : 1, guess : 10)
