@@ -63,7 +63,7 @@ function connect() {
                     textbox.value = "";
                 } else if(event.data.slice(2) == "numbers") {
                     setView("text");
-                    document.getElementById("textbox").type = "number";
+                    document.getElementById("textbox").type = "numbers";
                     textbox.focus();
                     removeTextmodeHandlers();
                     textbox.value = "";
@@ -172,11 +172,17 @@ function removeTextmodeHandlers() {
 }
 
 function textboxhandler(event) {
+    if(lastview == "numbers" && !(/^\d*$/.test(textbox.value))) {
+        console.log("Invalid number format")
+        return false;
+    }
+
     if(myid > 0 && myid <= 10) {
         ws.send('tt' + myid + "," + textbox.value);
     }
     textbox.style.animationName = "textboxpulse";
     removeTextmodeHandlers();
+    
     return false //Prevent submission (and therefore a page reload)
 }
 
