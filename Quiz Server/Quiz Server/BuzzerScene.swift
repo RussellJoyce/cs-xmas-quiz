@@ -74,7 +74,6 @@ class BuzzerScene: SKScene {
 	}
 	
 	func reset() {
-		leds?.buzzersOn()
 		teamEnabled = [Bool](repeating: true, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()
@@ -89,7 +88,6 @@ class BuzzerScene: SKScene {
 	func buzzerPressed(team: Int, type: BuzzerType) {
 		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
-			leds?.buzzerOff(team: team)
 			
 			buzzes.append(team)
 			
@@ -114,10 +112,6 @@ class BuzzerScene: SKScene {
 			}
 			
 			buzzNumber += 1
-		}
-		
-		if buzzes.count == 5 {
-			leds?.buzzersOff()
 		}
 	}
 	

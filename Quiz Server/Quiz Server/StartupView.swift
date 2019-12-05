@@ -7,12 +7,10 @@
 //
 
 import Cocoa
-import DDHidLib
 
 class StartupView: NSViewController {
     
     @IBOutlet weak var screenSelector: NSPopUpButton!
-    @IBOutlet weak var controllerSelector: NSPopUpButton!
     @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var testMode: NSButton!
@@ -21,7 +19,6 @@ class StartupView: NSViewController {
     @IBOutlet weak var musicPath: NSTextField!
 	
     var allScreens: [NSScreen]?
-    var allControllers: [DDHidJoystick]?
     var allPorts: [ORSSerialPort]?
     
     
@@ -48,25 +45,6 @@ class StartupView: NSViewController {
         else {
             print("Error enumerating screens");
         }
-        
-        
-        allControllers = DDHidJoystick.allJoysticks() as? [DDHidJoystick]
-        
-        if let controllers = allControllers {
-            print("Found \(controllers.count) game controller(s):")
-            
-            if controllers.count > 0 {
-                controllerSelector.removeAllItems()
-                
-                for controller in controllers {
-					print("  \(controller.manufacturer() ?? "No manufacturer") - \(controller.productName() ?? "No product name")")
-                    controllerSelector.addItem(withTitle: controller.productName())
-                }
-                
-                controllerSelector.isEnabled = true
-            }
-        }
-        
         
         let serialPortManager = ORSSerialPortManager.shared()
         allPorts = serialPortManager.availablePorts as [ORSSerialPort]
@@ -95,13 +73,12 @@ class StartupView: NSViewController {
     
     @IBAction func startQuiz(_ sender: AnyObject) {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
-        let controller = (allControllers != nil && (allControllers?.count)! > 0) ? allControllers?[controllerSelector.indexOfSelectedItem] : nil
         let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSControl.StateValue.on;
 		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-		delegate.startQuiz(screen: screen, buzzers: controller, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue)
+		delegate.startQuiz(screen: screen, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {

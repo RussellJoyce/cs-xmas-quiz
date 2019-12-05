@@ -35,8 +35,6 @@ class PointlessGameController: NSViewController {
 	
 	
 	func setCurrentTeam(team: Int) {
-        leds?.buzzersOff()
-        leds?.buzzerOn(team: team)
         leds?.stringOff()
 
 		labels[team].setActive()

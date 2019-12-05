@@ -9,33 +9,26 @@
 import Cocoa
 import Starscream
 
-let LEDS_ANIM    = 0x10 as UInt8
-let LEDS_TEAM    = 0x20 as UInt8
-let LEDS_TEAMC   = 0x30 as UInt8
-let LEDS_COL     = 0x40 as UInt8
-let LEDS_TESTON  = 0x50 as UInt8
-let LEDS_TESTOFF = 0x60 as UInt8
-let LEDS_TEAMPUL = 0x70 as UInt8
-let LEDS_POINTW  = 0x80 as UInt8
-let LEDS_POINTC  = 0x90 as UInt8
-
-let LED_ON     = 0xA0 as UInt8
-let LED_OFF    = 0xB0 as UInt8
-let LED_ALLON  = 0xC0 as UInt8
-let LED_ALLOFF = 0xD0 as UInt8
+let LEDS_ANIM       = 0x10 as UInt8
+let LEDS_TEAM       = 0x20 as UInt8
+let LEDS_TEAMC      = 0x30 as UInt8
+let LEDS_COL        = 0x40 as UInt8
+let LEDS_TESTON     = 0x50 as UInt8
+let LEDS_TESTOFF    = 0x60 as UInt8
+let LEDS_TEAMPUL    = 0x70 as UInt8
+let LEDS_POINTW     = 0x80 as UInt8
+let LEDS_POINTC     = 0x90 as UInt8
 let LED_POINT_STATE = 0xE0 as UInt8
 
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
 class QuizLeds: NSObject {
     let serial: ORSSerialPort
-	let webSocket : WebSocket
     
     /// Initialise LEDs connected via serial port
     ///
     /// - parameter serialPort: Serial port of the buzzer system
-	init(serialPort: ORSSerialPort, webSocket : WebSocket) {
+	init(serialPort: ORSSerialPort) {
         serial = serialPort
-		self.webSocket = webSocket
     }
     
     /// Open associated serial port (required once before use)
@@ -48,36 +41,6 @@ class QuizLeds: NSObject {
     /// - returns: true if port was closed successfully, false otherwise
     @discardableResult func closeSerial() -> Bool {
         return serial.close()
-    }
-    
-    /// Turn all buzzer LEDs off
-    ///
-    /// - returns: true if data sent successfully, false otherwise
-    @discardableResult func buzzersOff() -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ALLOFF]), count: 1));
-    }
-    
-    /// Turn all buzzer LEDs on
-    ///
-    /// - returns: true if data sent successfully, false otherwise
-    @discardableResult func buzzersOn() -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ALLON]), count: 1));
-    }
-    
-    /// Turn a specific buzzer LED off
-    ///
-    /// - parameter team: The team's LED to to turn on (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    @discardableResult func buzzerOff(team: Int) -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_OFF + UInt8(team)]), count: 1));
-    }
-    
-    /// Turn a specific buzzer LED on
-    ///
-    /// - parameter team: The team's LED to to turn on (0-9)
-    /// - returns: true if data sent successfully, false otherwise
-    @discardableResult func buzzerOn(team: Int) -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_ON + UInt8(team)]), count: 1));
     }
     
     /// Set animation on LED string
@@ -100,20 +63,6 @@ class QuizLeds: NSObject {
     /// - parameter team: The team number (0-9)
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringTeamAnimate(team: Int) -> Bool {
-		
-		var teamHue = CGFloat(team) / 10.0
-		if teamHue > 1.0 {
-			teamHue -= 1.0
-		}
-		let col = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		let red = Int(col.redComponent * 255)
-		let green = Int(col.greenComponent * 255)
-		let blue = Int(col.blueComponent * 255)
-		
-		if webSocket.isConnected {
-			webSocket.write(string: "le{\"cmd\":\"buzz\",\"r\":\(red),\"g\":\(green),\"b\":\(blue)}")
-		}
-			
         return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAM + UInt8(team)]), count: 1));
     }
 

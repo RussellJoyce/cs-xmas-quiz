@@ -109,7 +109,6 @@ class TestScene: SKScene {
 	
 	func reset() {
 		leds?.stringOff()
-		leds?.buzzersOn()
 		for team in numbers {
 			team.fontColor = NSColor.white
 		}
@@ -134,7 +133,6 @@ class TestScene: SKScene {
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		leds?.stringTestOn(team: team)
-		leds?.buzzerOff(team: team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3
@@ -158,7 +156,6 @@ class TestScene: SKScene {
 					self.sparksUp[team].particleBirthRate = 0
 					self.sparksDown[team].particleBirthRate = 0
 					self.leds?.stringTestOff(team: team)
-					self.leds?.buzzerOn(team: team)
 					
 					for node in self.imageSparks[team] {
 						node.particleBirthRate = 0
@@ -171,7 +168,6 @@ class TestScene: SKScene {
 			self.sparksUp[team].particleBirthRate = 0
 			self.sparksDown[team].particleBirthRate = 0
 			self.leds?.stringTestOff(team: team)
-			self.leds?.buzzerOn(team: team)
 			
 			for node in self.imageSparks[team] {
 				node.particleBirthRate = 0

@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import DDHidLib
 import Starscream
 
 enum BuzzerType {
@@ -32,7 +31,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var pointlessScore: NSTextField!
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	var quizScreen: NSScreen?
-    var quizBuzzers: DDHidJoystick?
     var quizLeds: QuizLeds?
     var testMode = true
 	var numTeams = 10
@@ -79,10 +77,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Open serial port
         quizLeds?.openSerial()
         quizView.quizLeds = quizLeds
-		
-        // Open game controller
-        quizBuzzers?.setDelegate(self)
-        quizBuzzers?.startListening()
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -143,18 +137,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     func windowWillClose(_ notification: Notification) {
         // Turn off all buzzer and animation LEDs
-        quizLeds?.buzzersOff()
         quizLeds?.stringOff()
         
         // Cleanly close serial port and game controller
         quizLeds?.closeSerial()
-        quizBuzzers?.stopListening()
     }
     
     @IBAction func pressedNumber(_ sender: NSButton) {
-        // If buzzers are not connected, buttons will act as virtual buzzers,
+        // If using windowed test mode, buttons will act as virtual buzzers,
         //  otherwise, buttons will disable buzzers
-        if quizBuzzers == nil {
+        if testMode {
             if (sender.state == NSControl.StateValue.on) {
                 quizView.buzzerPressed(team: sender.tag, type: .test)
             }
@@ -363,20 +355,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 	}
-	
-    override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonDown buttonNumber: UInt32) {
-        let button = Int(buttonNumber)
-        if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
-            quizView.buzzerPressed(team: button, type: .button)
-        }
-    }
-    
-    override func ddhidJoystick(_ joystick: DDHidJoystick!, buttonUp buttonNumber: UInt32) {
-        let button = Int(buttonNumber)
-        if (!buzzersDisabled && button < numTeams && buzzersEnabled[button]) {
-            quizView.buzzerReleased(team: button, type: .button)
-        }
-    }
 	
 	@IBOutlet var geoAnswerX: NSTextField!
 	@IBOutlet var geoAnswerY: NSTextField!
