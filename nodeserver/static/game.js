@@ -63,7 +63,7 @@ function connect() {
                     textbox.value = "";
                 } else if(event.data.slice(2) == "numbers") {
                     setView("text");
-                    document.getElementById("textbox").type = "numbers";
+                    document.getElementById("textbox").type = "number";
                     textbox.focus();
                     removeTextmodeHandlers();
                     textbox.value = "";
@@ -172,7 +172,7 @@ function removeTextmodeHandlers() {
 }
 
 function textboxhandler(event) {
-    if(lastview == "numbers" && !(/^\d*$/.test(textbox.value))) {
+    if(lastview == "numbers" && !(/^\d+$/.test(textbox.value))) {
         console.log("Invalid number format")
         return false;
     }
