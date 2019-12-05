@@ -59,8 +59,8 @@ class MusicScene: SKScene {
 	
 	func reset() {
         pauseMusic()
-		leds?.buzzersOn()
-		teamEnabled = [Bool](repeating: true, count: 10)
+		leds?.buzzersOff()
+		teamEnabled = [Bool](repeating: false, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0
@@ -132,8 +132,10 @@ class MusicScene: SKScene {
     
     func resumeMusic() {
         reset()
-        music?.play()
+		leds?.buzzersOn()
+		teamEnabled = [Bool](repeating: true, count: 10)
         leds?.stringAnimation(animation: 2)
+		music?.play()
     }
     
     func pauseMusic() {
