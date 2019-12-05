@@ -7,7 +7,7 @@
     "dictionary-en-gb": "^1.2.1",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
-    "nodehun": "^2.0.12",
+    "nodehun": "^3.0.1",
     "serve-static": "^1.13.2",
     "ws": ">=3.3.1"
   }
