@@ -116,7 +116,9 @@ class MusicScene: SKScene {
 	}
     
     func initMusic(file: String) {
-        reset()
+        if music != nil {
+            reset()
+        }
         music = nil
         let musicUrl = URL(fileURLWithPath: file)
         do {
