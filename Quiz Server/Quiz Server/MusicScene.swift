@@ -59,7 +59,6 @@ class MusicScene: SKScene {
 	
 	func reset() {
         pauseMusic()
-		leds?.buzzersOff()
 		teamEnabled = [Bool](repeating: false, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()
@@ -74,7 +73,6 @@ class MusicScene: SKScene {
 	func buzzerPressed(team: Int, type: BuzzerType) {
 		if teamEnabled[team] && buzzes.count < 5 {
 			teamEnabled[team] = false
-			leds?.buzzerOff(team: team)
 			
 			buzzes.append(team)
 			
@@ -103,7 +101,6 @@ class MusicScene: SKScene {
 		}
 		
 		if buzzes.count == 5 {
-			leds?.buzzersOff()
 		}
 	}
 	
@@ -132,7 +129,6 @@ class MusicScene: SKScene {
     
     func resumeMusic() {
         reset()
-		leds?.buzzersOn()
 		teamEnabled = [Bool](repeating: true, count: 10)
         leds?.stringAnimation(animation: 2)
 		music?.play()

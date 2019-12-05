@@ -63,7 +63,6 @@ class TrueFalseViewController: NSViewController {
 		for team in teams {
 			team.setNeutral()
 		}
-		leds?.buzzersOff()
 		counted = false
 		
 		🔊.prepareToPlay()
@@ -73,12 +72,6 @@ class TrueFalseViewController: NSViewController {
 	func start() {
 		if (counting) {
 			return
-		}
-		
-		for i in 0..<teams.count {
-			if(teamEnabled[i]) {
-				leds?.buzzerOn(team: i)
-			}
 		}
 		
 		objc_sync_enter(🔒)
@@ -111,9 +104,7 @@ class TrueFalseViewController: NSViewController {
 				self.🔊end.currentTime = 0
 				self.🔊end.play()
 				objc_sync_exit(self.🔒)
-				
-				self.leds?.buzzersOff()
-				
+								
 				//Now set the team colours based on who pressed what
 				for (i, team) in self.teams.enumerated() {
 					if(self.teamEnabled[i]) {

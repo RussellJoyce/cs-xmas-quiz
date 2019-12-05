@@ -7,7 +7,6 @@
 //
 
 import Cocoa
-import DDHidLib
 import Starscream
 
 @NSApplicationMain
@@ -30,23 +29,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("Screens changed!")
     }
 	
-	
-    
-    
-	func startQuiz(screen: NSScreen?, buzzers: DDHidJoystick?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String) {
+	func startQuiz(screen: NSScreen?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String) {
         window.close()
 		
 		controllerWindow.numTeams = numberOfTeams
         controllerWindow.testMode = testMode
         controllerWindow.quizScreen = screen
-        controllerWindow.quizBuzzers = buzzers
         if let serial = serial {
-            controllerWindow.quizLeds = QuizLeds(serialPort: serial, webSocket: controllerWindow.socket)
+            controllerWindow.quizLeds = QuizLeds(serialPort: serial)
         }
 		controllerWindow.geographyImagesPath = geographyImagesPath
         controllerWindow.musicPath = musicPath
 		
         controllerWindow.showWindow(self)
     }
-
 }

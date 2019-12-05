@@ -77,37 +77,6 @@
 		46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393A1BFAB46A00E03DE5 /* TestScene.swift */; };
 		46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
-		46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; };
-		46B0256C1A1BF4ED0088294B /* DDHidLib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 46B025541A1BF4EC0088294B /* DDHidLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		46B0258D1A1BF5570088294B /* DDHidAppleRemote.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025741A1BF5570088294B /* DDHidAppleRemote.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B0258E1A1BF5570088294B /* DDHidAppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025751A1BF5570088294B /* DDHidAppleRemote.m */; };
-		46B0258F1A1BF5570088294B /* DDHidDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025761A1BF5570088294B /* DDHidDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025901A1BF5570088294B /* DDHidDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025771A1BF5570088294B /* DDHidDevice.m */; };
-		46B025911A1BF5570088294B /* DDHidElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025781A1BF5570088294B /* DDHidElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025921A1BF5570088294B /* DDHidElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025791A1BF5570088294B /* DDHidElement.m */; };
-		46B025931A1BF5570088294B /* DDHidEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0257A1A1BF5570088294B /* DDHidEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025951A1BF5570088294B /* DDHidJoystick.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0257C1A1BF5570088294B /* DDHidJoystick.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025961A1BF5570088294B /* DDHidJoystick.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B0257D1A1BF5570088294B /* DDHidJoystick.m */; };
-		46B025971A1BF5570088294B /* DDHidKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0257E1A1BF5570088294B /* DDHidKeyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025981A1BF5570088294B /* DDHidKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B0257F1A1BF5570088294B /* DDHidKeyboard.m */; };
-		46B025991A1BF5570088294B /* DDHidKeyboardBarcodeScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025801A1BF5570088294B /* DDHidKeyboardBarcodeScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B0259A1A1BF5570088294B /* DDHidKeyboardBarcodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025811A1BF5570088294B /* DDHidKeyboardBarcodeScanner.m */; };
-		46B0259B1A1BF5570088294B /* DDHidMouse.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025821A1BF5570088294B /* DDHidMouse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B0259C1A1BF5570088294B /* DDHidMouse.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025831A1BF5570088294B /* DDHidMouse.m */; };
-		46B0259D1A1BF5570088294B /* DDHidQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025841A1BF5570088294B /* DDHidQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B0259E1A1BF5570088294B /* DDHidQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025851A1BF5570088294B /* DDHidQueue.m */; };
-		46B0259F1A1BF5570088294B /* DDHidStandardUsages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46B025861A1BF5570088294B /* DDHidStandardUsages.plist */; };
-		46B025A01A1BF5570088294B /* DDHidUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025871A1BF5570088294B /* DDHidUsage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025A11A1BF5570088294B /* DDHidUsage.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025881A1BF5570088294B /* DDHidUsage.m */; };
-		46B025A21A1BF5570088294B /* DDHidUsageTables.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025891A1BF5570088294B /* DDHidUsageTables.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025A31A1BF5570088294B /* DDHidUsageTables.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B0258A1A1BF5570088294B /* DDHidUsageTables.m */; };
-		46B025A41A1BF5570088294B /* NSDictionary+DDHidExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0258B1A1BF5570088294B /* NSDictionary+DDHidExtras.h */; };
-		46B025A51A1BF5570088294B /* NSDictionary+DDHidExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B0258C1A1BF5570088294B /* NSDictionary+DDHidExtras.m */; };
-		46B025A71A1BF57B0088294B /* DDHidLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025A61A1BF57B0088294B /* DDHidLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		46B025A81A1BF5B50088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
-		46B025AA1A1BF71E0088294B /* DDHidEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025A91A1BF71E0088294B /* DDHidEvent.m */; };
-		46B025AD1A1BF8140088294B /* NSXReturnThrowError.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B025AB1A1BF8140088294B /* NSXReturnThrowError.h */; };
-		46B025AE1A1BF8140088294B /* NSXReturnThrowError.m in Sources */ = {isa = PBXBuildFile; fileRef = 46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */; };
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
@@ -143,13 +112,6 @@
 			remoteGlobalIDString = 33CCF0841F5DDC030099B092;
 			remoteInfo = Starscream;
 		};
-		46B025691A1BF4ED0088294B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 46056EAC1A19624E00C37628 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 46B025531A1BF4EC0088294B;
-			remoteInfo = DDHidLib;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -160,7 +122,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3C8DD51A1FB89679007DA61F /* Starscream.framework in Embed Frameworks */,
-				46B0256C1A1BF4ED0088294B /* DDHidLib.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,36 +218,6 @@
 		46A7393A1BFAB46A00E03DE5 /* TestScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		46B025541A1BF4EC0088294B /* DDHidLib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DDHidLib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		46B025571A1BF4EC0088294B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		46B025741A1BF5570088294B /* DDHidAppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidAppleRemote.h; sourceTree = "<group>"; };
-		46B025751A1BF5570088294B /* DDHidAppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidAppleRemote.m; sourceTree = "<group>"; };
-		46B025761A1BF5570088294B /* DDHidDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidDevice.h; sourceTree = "<group>"; };
-		46B025771A1BF5570088294B /* DDHidDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidDevice.m; sourceTree = "<group>"; };
-		46B025781A1BF5570088294B /* DDHidElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidElement.h; sourceTree = "<group>"; };
-		46B025791A1BF5570088294B /* DDHidElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidElement.m; sourceTree = "<group>"; };
-		46B0257A1A1BF5570088294B /* DDHidEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidEvent.h; sourceTree = "<group>"; };
-		46B0257C1A1BF5570088294B /* DDHidJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidJoystick.h; sourceTree = "<group>"; };
-		46B0257D1A1BF5570088294B /* DDHidJoystick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidJoystick.m; sourceTree = "<group>"; };
-		46B0257E1A1BF5570088294B /* DDHidKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidKeyboard.h; sourceTree = "<group>"; };
-		46B0257F1A1BF5570088294B /* DDHidKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidKeyboard.m; sourceTree = "<group>"; };
-		46B025801A1BF5570088294B /* DDHidKeyboardBarcodeScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidKeyboardBarcodeScanner.h; sourceTree = "<group>"; };
-		46B025811A1BF5570088294B /* DDHidKeyboardBarcodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidKeyboardBarcodeScanner.m; sourceTree = "<group>"; };
-		46B025821A1BF5570088294B /* DDHidMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidMouse.h; sourceTree = "<group>"; };
-		46B025831A1BF5570088294B /* DDHidMouse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidMouse.m; sourceTree = "<group>"; };
-		46B025841A1BF5570088294B /* DDHidQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidQueue.h; sourceTree = "<group>"; };
-		46B025851A1BF5570088294B /* DDHidQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidQueue.m; sourceTree = "<group>"; };
-		46B025861A1BF5570088294B /* DDHidStandardUsages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DDHidStandardUsages.plist; sourceTree = "<group>"; };
-		46B025871A1BF5570088294B /* DDHidUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidUsage.h; sourceTree = "<group>"; };
-		46B025881A1BF5570088294B /* DDHidUsage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidUsage.m; sourceTree = "<group>"; };
-		46B025891A1BF5570088294B /* DDHidUsageTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidUsageTables.h; sourceTree = "<group>"; };
-		46B0258A1A1BF5570088294B /* DDHidUsageTables.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidUsageTables.m; sourceTree = "<group>"; };
-		46B0258B1A1BF5570088294B /* NSDictionary+DDHidExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+DDHidExtras.h"; sourceTree = "<group>"; };
-		46B0258C1A1BF5570088294B /* NSDictionary+DDHidExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+DDHidExtras.m"; sourceTree = "<group>"; };
-		46B025A61A1BF57B0088294B /* DDHidLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHidLib.h; sourceTree = "<group>"; };
-		46B025A91A1BF71E0088294B /* DDHidEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHidEvent.m; sourceTree = "<group>"; };
-		46B025AB1A1BF8140088294B /* NSXReturnThrowError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSXReturnThrowError.h; sourceTree = "<group>"; };
-		46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSXReturnThrowError.m; sourceTree = "<group>"; };
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
@@ -310,15 +241,6 @@
 				46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */,
 				3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */,
 				46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */,
-				46B0256B1A1BF4ED0088294B /* DDHidLib.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		46B025501A1BF4EC0088294B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				46B025A81A1BF5B50088294B /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,7 +306,6 @@
 				3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */,
 				46BBC4561DF383F400C41112 /* SwiftyJSON */,
 				46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */,
-				46B025551A1BF4EC0088294B /* DDHidLib */,
 				46B0254C1A1BF0590088294B /* Frameworks */,
 				46056EB61A19624E00C37628 /* Quiz Server */,
 				46056EB51A19624E00C37628 /* Products */,
@@ -396,7 +317,6 @@
 			isa = PBXGroup;
 			children = (
 				46056EB41A19624E00C37628 /* Quiz Server.app */,
-				46B025541A1BF4EC0088294B /* DDHidLib.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -469,58 +389,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		46B025551A1BF4EC0088294B /* DDHidLib */ = {
-			isa = PBXGroup;
-			children = (
-				46B025AB1A1BF8140088294B /* NSXReturnThrowError.h */,
-				46B025AC1A1BF8140088294B /* NSXReturnThrowError.m */,
-				46B025741A1BF5570088294B /* DDHidAppleRemote.h */,
-				46B025751A1BF5570088294B /* DDHidAppleRemote.m */,
-				46B025761A1BF5570088294B /* DDHidDevice.h */,
-				46B025771A1BF5570088294B /* DDHidDevice.m */,
-				46B025781A1BF5570088294B /* DDHidElement.h */,
-				46B025791A1BF5570088294B /* DDHidElement.m */,
-				46B0257A1A1BF5570088294B /* DDHidEvent.h */,
-				46B025A91A1BF71E0088294B /* DDHidEvent.m */,
-				46B0257C1A1BF5570088294B /* DDHidJoystick.h */,
-				46B0257D1A1BF5570088294B /* DDHidJoystick.m */,
-				46B0257E1A1BF5570088294B /* DDHidKeyboard.h */,
-				46B0257F1A1BF5570088294B /* DDHidKeyboard.m */,
-				46B025801A1BF5570088294B /* DDHidKeyboardBarcodeScanner.h */,
-				46B025811A1BF5570088294B /* DDHidKeyboardBarcodeScanner.m */,
-				46B025821A1BF5570088294B /* DDHidMouse.h */,
-				46B025831A1BF5570088294B /* DDHidMouse.m */,
-				46B025841A1BF5570088294B /* DDHidQueue.h */,
-				46B025851A1BF5570088294B /* DDHidQueue.m */,
-				46B025861A1BF5570088294B /* DDHidStandardUsages.plist */,
-				46B025871A1BF5570088294B /* DDHidUsage.h */,
-				46B025881A1BF5570088294B /* DDHidUsage.m */,
-				46B025891A1BF5570088294B /* DDHidUsageTables.h */,
-				46B0258A1A1BF5570088294B /* DDHidUsageTables.m */,
-				46B0258B1A1BF5570088294B /* NSDictionary+DDHidExtras.h */,
-				46B0258C1A1BF5570088294B /* NSDictionary+DDHidExtras.m */,
-				46B025AF1A1BFB510088294B /* DDHidLib */,
-				46B025A61A1BF57B0088294B /* DDHidLib.h */,
-				46B025561A1BF4EC0088294B /* Supporting Files */,
-			);
-			path = DDHidLib;
-			sourceTree = "<group>";
-		};
-		46B025561A1BF4EC0088294B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				46B025571A1BF4EC0088294B /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		46B025AF1A1BFB510088294B /* DDHidLib */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = DDHidLib;
-			sourceTree = "<group>";
-		};
 		46BBC4561DF383F400C41112 /* SwiftyJSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -558,30 +426,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		46B025511A1BF4EC0088294B /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				46B025AD1A1BF8140088294B /* NSXReturnThrowError.h in Headers */,
-				46B025A71A1BF57B0088294B /* DDHidLib.h in Headers */,
-				46B025A41A1BF5570088294B /* NSDictionary+DDHidExtras.h in Headers */,
-				46B025A21A1BF5570088294B /* DDHidUsageTables.h in Headers */,
-				46B025971A1BF5570088294B /* DDHidKeyboard.h in Headers */,
-				46B0258D1A1BF5570088294B /* DDHidAppleRemote.h in Headers */,
-				46B025A01A1BF5570088294B /* DDHidUsage.h in Headers */,
-				46B025991A1BF5570088294B /* DDHidKeyboardBarcodeScanner.h in Headers */,
-				46B0258F1A1BF5570088294B /* DDHidDevice.h in Headers */,
-				46B025911A1BF5570088294B /* DDHidElement.h in Headers */,
-				46B0259D1A1BF5570088294B /* DDHidQueue.h in Headers */,
-				46B025951A1BF5570088294B /* DDHidJoystick.h in Headers */,
-				46B0259B1A1BF5570088294B /* DDHidMouse.h in Headers */,
-				46B025931A1BF5570088294B /* DDHidEvent.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		46056EB31A19624E00C37628 /* Quiz Server */ = {
 			isa = PBXNativeTarget;
@@ -597,30 +441,11 @@
 			);
 			dependencies = (
 				3C8DD5161FB8966A007DA61F /* PBXTargetDependency */,
-				46B0256A1A1BF4ED0088294B /* PBXTargetDependency */,
 			);
 			name = "Quiz Server";
 			productName = QuizServer;
 			productReference = 46056EB41A19624E00C37628 /* Quiz Server.app */;
 			productType = "com.apple.product-type.application";
-		};
-		46B025531A1BF4EC0088294B /* DDHidLib */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 46B0256D1A1BF4ED0088294B /* Build configuration list for PBXNativeTarget "DDHidLib" */;
-			buildPhases = (
-				46B0254F1A1BF4EC0088294B /* Sources */,
-				46B025501A1BF4EC0088294B /* Frameworks */,
-				46B025511A1BF4EC0088294B /* Headers */,
-				46B025521A1BF4EC0088294B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = DDHidLib;
-			productName = DDHidLib;
-			productReference = 46B025541A1BF4EC0088294B /* DDHidLib.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -636,10 +461,6 @@
 					46056EB31A19624E00C37628 = {
 						CreatedOnToolsVersion = 6.1;
 						LastSwiftMigration = 1120;
-					};
-					46B025531A1BF4EC0088294B = {
-						CreatedOnToolsVersion = 6.1;
-						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -663,7 +484,6 @@
 			projectRoot = "";
 			targets = (
 				46056EB31A19624E00C37628 /* Quiz Server */,
-				46B025531A1BF4EC0088294B /* DDHidLib */,
 			);
 		};
 /* End PBXProject section */
@@ -742,14 +562,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		46B025521A1BF4EC0088294B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				46B0259F1A1BF5570088294B /* DDHidStandardUsages.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -785,26 +597,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		46B0254F1A1BF4EC0088294B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				46B0258E1A1BF5570088294B /* DDHidAppleRemote.m in Sources */,
-				46B025901A1BF5570088294B /* DDHidDevice.m in Sources */,
-				46B025AE1A1BF8140088294B /* NSXReturnThrowError.m in Sources */,
-				46B0259A1A1BF5570088294B /* DDHidKeyboardBarcodeScanner.m in Sources */,
-				46B0259E1A1BF5570088294B /* DDHidQueue.m in Sources */,
-				46B025961A1BF5570088294B /* DDHidJoystick.m in Sources */,
-				46B0259C1A1BF5570088294B /* DDHidMouse.m in Sources */,
-				46B025AA1A1BF71E0088294B /* DDHidEvent.m in Sources */,
-				46B025A51A1BF5570088294B /* NSDictionary+DDHidExtras.m in Sources */,
-				46B025A31A1BF5570088294B /* DDHidUsageTables.m in Sources */,
-				46B025A11A1BF5570088294B /* DDHidUsage.m in Sources */,
-				46B025981A1BF5570088294B /* DDHidKeyboard.m in Sources */,
-				46B025921A1BF5570088294B /* DDHidElement.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -812,11 +604,6 @@
 			isa = PBXTargetDependency;
 			name = Starscream;
 			targetProxy = 3C8DD5151FB8966A007DA61F /* PBXContainerItemProxy */;
-		};
-		46B0256A1A1BF4ED0088294B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 46B025531A1BF4EC0088294B /* DDHidLib */;
-			targetProxy = 46B025691A1BF4ED0088294B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -980,58 +767,6 @@
 			};
 			name = Release;
 		};
-		46B0256E1A1BF4ED0088294B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = DDHidLib/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.dribin.dave.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		46B0256F1A1BF4ED0088294B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = NO;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = DDHidLib/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.dribin.dave.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1049,15 +784,6 @@
 			buildConfigurations = (
 				46056ECF1A19624E00C37628 /* Debug */,
 				46056ED01A19624E00C37628 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		46B0256D1A1BF4ED0088294B /* Build configuration list for PBXNativeTarget "DDHidLib" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				46B0256E1A1BF4ED0088294B /* Debug */,
-				46B0256F1A1BF4ED0088294B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

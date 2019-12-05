@@ -232,8 +232,6 @@ class TextScene: SKScene {
 	}
 	
 	func reset() {
-		leds?.buzzersOn()
-		
 		for team in 0..<numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
