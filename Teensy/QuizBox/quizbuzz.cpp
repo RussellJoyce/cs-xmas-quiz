@@ -189,7 +189,7 @@ void pointlessfade(bool white) {
 	}
 
 	// Fade out slowly
-	for (int frame = 255; frame >= 0; frame--) {
+	for (int frame = 255; frame > 8; frame--) {
 		for (int led = 0; led < NUM_LEDS; led++) {
 			leds[led] = CHSV(0, saturation, frame);
 		}
@@ -254,7 +254,7 @@ void pulse_team_colour(int team) {
 	}
 
 	// Fade out slowly
-	for (int frame = 63; frame >= 0; frame--) {
+	for (int frame = 63; frame > 8; frame--) {
 		for (int led = 0; led < NUM_LEDS; led++) {
 			col.v = frame*4;
 			leds[led] = col;
