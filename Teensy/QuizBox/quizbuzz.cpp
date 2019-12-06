@@ -218,11 +218,23 @@ void pointless_state(int cmd) {
 			state--;
 			break;
 	}
-	
-	for(int x = 0; x < NUM_LEDS; x++) leds[x] = CRGB(0, 0, 0);
-	for(int x = 0; x < round((float) state / 100.0f * (float) NUM_LEDS); x++) {
-		leds[ledlookup[x]] = CRGB(255, 255, 0);
+
+	int level = round((float)state / 100.0f * (float)(NUM_LEDS/2));
+
+	for (int i = 0; i < NUM_LEDS/2; i++) {
+		if (i < level)
+			leds[ledlookup[i]] = CRGB(255, 255, 0);
+		else
+			leds[ledlookup[i]] = CRGB(0, 0, 0);
 	}
+
+	for (int i = NUM_LEDS/2; i < NUM_LEDS; i++) {
+		if (i >= NUM_LEDS-level)
+			leds[ledlookup[i]] = CRGB(255, 255, 0);
+		else
+			leds[ledlookup[i]] = CRGB(0, 0, 0);
+	}
+	
 	FastLED.show();
 }
 
@@ -265,4 +277,25 @@ void pulse_team_colour(int team) {
 	clearLEDs();
 }
 
+void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak) {
+	for (int i = 0; i < NUM_LEDS/2; i++) {
+		if (i < rightAvg)
+			leds[ledlookup[i]] = CRGB(0, 255, 0);
+		else if (i < rightPeak)
+			leds[ledlookup[i]] = CRGB(255, 0, 0);
+		else
+			leds[ledlookup[i]] = CRGB(0, 0, 0);
+	}
+
+	for (int i = NUM_LEDS/2; i < NUM_LEDS; i++) {
+		if (i >= NUM_LEDS-leftAvg)
+			leds[ledlookup[i]] = CRGB(0, 255, 0);
+		else if (i >= NUM_LEDS-leftPeak)
+			leds[ledlookup[i]] = CRGB(255, 0, 0);
+		else
+			leds[ledlookup[i]] = CRGB(0, 0, 0);
+	}
+	
+	FastLED.show();
+}
 

@@ -49,6 +49,8 @@ Set the pointless display to the given state (0-100)
 */
 void pointless_state(int state);
 
+void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak);
+
 /*
 The colours assigned to each team.
 */

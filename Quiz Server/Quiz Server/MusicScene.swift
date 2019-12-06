@@ -27,7 +27,24 @@ class MusicScene: SKScene {
 	
 	var lastAltBuzzIndex = 0
 	
-	
+    func normalisePower(power: Float) -> Float {
+        return pow(10.0, min(power, 0.0)/10.0)
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+        
+        if music?.isPlaying ?? false {
+            music?.updateMeters()
+            let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
+            let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
+            let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
+            let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
+            
+            leds?.stringMusic(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
+        }
+    }
+    
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
@@ -126,14 +143,15 @@ class MusicScene: SKScene {
         } catch let error {
             print(error.localizedDescription)
         }
+        music?.isMeteringEnabled = true
         music?.prepareToPlay()
     }
     
     func resumeMusic() {
         reset()
 		teamEnabled = [Bool](repeating: true, count: 10)
-        leds?.stringAnimation(animation: 2)
 		music?.play()
+        music?.updateMeters()
     }
     
     func pauseMusic() {
