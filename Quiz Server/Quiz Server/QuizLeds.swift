@@ -9,16 +9,17 @@
 import Cocoa
 import Starscream
 
-let LEDS_ANIM       = 0x10 as UInt8
-let LEDS_TEAM       = 0x20 as UInt8
-let LEDS_TEAMC      = 0x30 as UInt8
-let LEDS_COL        = 0x40 as UInt8
-let LEDS_TESTON     = 0x50 as UInt8
-let LEDS_TESTOFF    = 0x60 as UInt8
-let LEDS_TEAMPUL    = 0x70 as UInt8
-let LEDS_POINTW     = 0x80 as UInt8
-let LEDS_POINTC     = 0x90 as UInt8
-let LED_POINT_STATE = 0xE0 as UInt8
+let LEDS_ANIM        = 0x10 as UInt8
+let LEDS_TEAM        = 0x20 as UInt8
+let LEDS_TEAMC       = 0x30 as UInt8
+let LEDS_COL         = 0x40 as UInt8
+let LEDS_TESTON      = 0x50 as UInt8
+let LEDS_TESTOFF     = 0x60 as UInt8
+let LEDS_TEAMPUL     = 0x70 as UInt8
+let LEDS_POINTW      = 0x80 as UInt8
+let LEDS_POINTC      = 0x90 as UInt8
+let LEDS_POINT_STATE = 0xA0 as UInt8
+let LEDS_CANCEL      = 0xFF as UInt8
 
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
 class QuizLeds: NSObject, ORSSerialPortDelegate {
@@ -142,14 +143,14 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPointlessReset() -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_POINT_STATE + UInt8(0)]), count: 1));
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(0)]), count: 1));
 	}
 	
 	/// Decrement the Pointless LEDs
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPointlessDec() -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LED_POINT_STATE + UInt8(1)]), count: 1));
+		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(1)]), count: 1));
 	}
 	
     /// Play Pointless wrong animation on LED string

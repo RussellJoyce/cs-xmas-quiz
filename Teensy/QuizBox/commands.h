@@ -15,6 +15,7 @@
 #define LEDS_TEAMPUL 0x70
 #define LEDS_POINTW  0x80
 #define LEDS_POINTC  0x90
-#define POINT_STATE  0xE0
+#define POINT_STATE  0xA0
+#define CANCEL       0xFF
 
 #endif
