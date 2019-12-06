@@ -32,6 +32,9 @@ CRGB buzzerColour = CRGB::White;
 
 Animation *animations[16];
 
+int data_count = 0;
+uint8_t data[4];
+
 
 inline void switchAnimation(Animation *arg) {
     currentAnim = arg;
@@ -82,37 +85,56 @@ void updateTick() {
         serialCommand = serialData & 0xF0; // Set command to be high 4 bits (0x to Fx)
         serialParam = serialData & 0x0F;   // Set parameter to be low 4 bits (x0 to xF)
 
-        switch (serialCommand) {
-            case LEDS_ANIM:
-                switchAnimation(animations[serialParam]);
-                break;
-            case LEDS_TEAM:
-                playBuzzerAnimation(serialParam);
-                break;
-            case LEDS_TEAMC:
-                set_string_team_colour(serialParam);
-                break;
-            case LEDS_COL:
-                set_string_colour(serialParam);
-                break;
-            case LEDS_TESTON:
-                setTestOn(serialParam);
-                break;
-            case LEDS_TESTOFF:
-                setTestOff(serialParam);
-                break;
-            case LEDS_TEAMPUL:
-                pulse_team_colour(serialParam);
-                break;
-            case LEDS_POINTW:
-                setPointlessWrong();
-                break;
-            case LEDS_POINTC:
-                setPointlessCorrect();
-                break;
-            case POINT_STATE:
-                pointless_state(serialParam);
-                break;
+        if (serialData == CANCEL) {
+            data_count = 0;
+            return;
+        }
+
+        if (data_count == 0) {
+            switch (serialCommand) {
+                case LEDS_ANIM:
+                    switchAnimation(animations[serialParam]);
+                    break;
+                case LEDS_TEAM:
+                    playBuzzerAnimation(serialParam);
+                    break;
+                case LEDS_TEAMC:
+                    set_string_team_colour(serialParam);
+                    break;
+                case LEDS_COL:
+                    set_string_colour(serialParam);
+                    break;
+                case LEDS_TESTON:
+                    setTestOn(serialParam);
+                    break;
+                case LEDS_TESTOFF:
+                    setTestOff(serialParam);
+                    break;
+                case LEDS_TEAMPUL:
+                    pulse_team_colour(serialParam);
+                    break;
+                case LEDS_POINTW:
+                    setPointlessWrong();
+                    break;
+                case LEDS_POINTC:
+                    setPointlessCorrect();
+                    break;
+                case LEDS_POINT_STATE:
+                    pointless_state(serialParam);
+                    break;
+                case LEDS_MUSIC_LEVELS:
+                    data_count = 1;
+                    break;
+            }
+        }
+        else {
+            data[data_count - 1] = serialData;
+            if (data_count > 3) {
+                data_count = 0;
+                set_music_levels(data[0], data[1], data[2], data[3]);
+            }
+            else
+                data_count++;
         }
     }
 }
