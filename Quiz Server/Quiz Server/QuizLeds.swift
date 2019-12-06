@@ -58,6 +58,9 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     func openSerial() {
         self.reconnecting = false
         serial.open()
+        if let delegate = NSApplication.shared.delegate {
+            (delegate as! AppDelegate).controllerWindow.window?.title = "Quiz Controller"
+        }
     }
     
     /// Close associated serial port (call when finished using LEDs)
@@ -69,13 +72,15 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     
     func reconnectSerialAfterDelay() {
         if !reconnecting {
+            if let delegate = NSApplication.shared.delegate {
+                (delegate as! AppDelegate).controllerWindow.window?.title = "Quiz Controller (LEDs Serial Port Reconnecting...)"
+            }
             reconnecting = true
             print("Serial port \(serial.name) will try to reconnect in 5 seconds...")
             DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
                 self.openSerial()
             }
         }
-        
     }
     
     /// Set animation on LED string
