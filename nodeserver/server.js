@@ -116,9 +116,9 @@ wleds.on('connection', function(ws) {
 })
 
 
-wclient.on('connection', function connection(ws) {
+wclient.on('connection', function connection(ws, req) {
     //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
-    var client = ws.upgradeReq.connection.remoteAddress;
+    var client = req.connection.remoteAddress;
 
     if(clients.hasOwnProperty(client) && clients[client].id != null) {
         //Client already connected before, so has an ID, but this is a different socket.
