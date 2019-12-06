@@ -106,7 +106,6 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTeamColour(team: Int) -> Bool {
-		Thread.sleep(forTimeInterval: 0.01)
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMC + UInt8(team)]), count: 1));
 	}
 
@@ -115,7 +114,6 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter colour: The colour (red, green, blue, cyan, magenta, yellow, white, black)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringFixedColour(colour: Int) -> Bool {
-		Thread.sleep(forTimeInterval: 0.01)
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_COL + UInt8(colour)]), count: 1));
 	}
 	
@@ -124,7 +122,6 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTestOn(team: Int) -> Bool {
-		Thread.sleep(forTimeInterval: 0.01)
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTON + UInt8(team)]), count: 1));
 	}
 	
@@ -133,7 +130,6 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTestOff(team: Int) -> Bool {
-		Thread.sleep(forTimeInterval: 0.01)
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTOFF + UInt8(team)]), count: 1));
 	}
 	
@@ -170,7 +166,6 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPulseTeamColour(team: Int) -> Bool {
-		Thread.sleep(forTimeInterval: 0.01)
 		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMPUL + UInt8(team)]), count: 1));
 	}
 }
