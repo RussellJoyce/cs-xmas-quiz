@@ -140,12 +140,11 @@ void setup() {
     // Initialise LED string
     FastLED.addLeds<WS2811, LED_DATA_PIN, RGB>(leds, NUM_LEDS);
     currentAnim = NULL;
-
-    // Start update timer to interrupt every millisecond
-    updateTimer.begin(updateTick, 1000);
 }
 
 void loop() {
+    updateTick();
+
     if (currentAnim != NULL) {
         currentAnim->tick();
     }
