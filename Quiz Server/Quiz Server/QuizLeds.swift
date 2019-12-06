@@ -21,18 +21,42 @@ let LEDS_POINTC     = 0x90 as UInt8
 let LED_POINT_STATE = 0xE0 as UInt8
 
 /// Controller for the quiz buzzer system LEDs (both buzzer LEDs and LED string)
-class QuizLeds: NSObject {
+class QuizLeds: NSObject, ORSSerialPortDelegate {
+    
     let serial: ORSSerialPort
+    var reconnecting = false
+    
+    func serialPortWasRemoved(fromSystem serialPort: ORSSerialPort) {
+        print("Serial port \(serialPort.name) removed!")
+        reconnectSerialAfterDelay()
+    }
+    
+    func serialPortWasOpened(_ serialPort: ORSSerialPort) {
+        print("Serial port \(serialPort.name) opened successfully.")
+    }
+    
+    func serialPortWasClosed(_ serialPort: ORSSerialPort) {
+        print("Serial port \(serialPort.name) closed.")
+    }
+    
+    func serialPort(_ serialPort: ORSSerialPort, didEncounterError error: Error) {
+        print("Serial port \(serialPort.name) encountered an error (\(error.localizedDescription)).")
+        reconnectSerialAfterDelay()
+    }
+    
     
     /// Initialise LEDs connected via serial port
     ///
     /// - parameter serialPort: Serial port of the buzzer system
 	init(serialPort: ORSSerialPort) {
         serial = serialPort
+        super.init()
+        serial.delegate = self
     }
     
     /// Open associated serial port (required once before use)
     func openSerial() {
+        self.reconnecting = false
         serial.open()
     }
     
@@ -41,6 +65,17 @@ class QuizLeds: NSObject {
     /// - returns: true if port was closed successfully, false otherwise
     @discardableResult func closeSerial() -> Bool {
         return serial.close()
+    }
+    
+    func reconnectSerialAfterDelay() {
+        if !reconnecting {
+            reconnecting = true
+            print("Serial port \(serial.name) will try to reconnect in 5 seconds...")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                self.openSerial()
+            }
+        }
+        
     }
     
     /// Set animation on LED string
