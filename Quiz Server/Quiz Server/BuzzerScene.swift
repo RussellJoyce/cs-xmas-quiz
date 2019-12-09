@@ -55,12 +55,11 @@ class BuzzerScene: SKScene {
 			print(error)
 		}
 		
-		
 		self.addChild(bgImage)
 	}
 	
 	func buzzSound() {
-		if Int.random(in: 0...1) == 0 {
+		if Int.random(in: 0...8) == 0 {
 			//Play the next alternative buzzer sound
 			if lastAltBuzzIndex >= altBuzzNoise.count {
 				lastAltBuzzIndex = 0
