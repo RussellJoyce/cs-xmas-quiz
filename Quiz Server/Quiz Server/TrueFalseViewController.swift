@@ -58,6 +58,7 @@ class TrueFalseViewController: NSViewController {
 		objc_sync_enter(🔒)
 		counting = false
 		pressed = [Int]()
+		leds?.stringPointlessReset()
 		objc_sync_exit(🔒)
 		teamEnabled = [Bool](repeating: true, count: numTeams)
 		for team in teams {
@@ -78,6 +79,7 @@ class TrueFalseViewController: NSViewController {
 		counting = true
 		pressed = [Int]()
 		leds?.stringPointlessReset()
+		leds?.stringPointlessDec()
 		objc_sync_exit(🔒)
 		
 		DispatchQueue.global(qos: DispatchQoS.QoSClass.background).async(execute: {
