@@ -289,5 +289,6 @@ class GeographyScene: SKScene {
 		updateText()
 		mainImage.removeAllChildren()
 		mainImage.texture = SKTexture(imageNamed: "geostart")
+		leds?.stringAnimation(animation: 1)
 	}
 }
