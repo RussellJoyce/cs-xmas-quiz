@@ -28,7 +28,7 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     let serial: ORSSerialPort
     var reconnecting = false
     
-    func serialPortWasRemoved(fromSystem serialPort: ORSSerialPort) {
+    func serialPortWasRemovedFromSystem(_ serialPort: ORSSerialPort) {
         print("Serial port \(serialPort.name) removed!")
         reconnectSerialAfterDelay()
     }
