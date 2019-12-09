@@ -209,10 +209,12 @@ void play_pointless_correct() {
 
 void pointless_state(int cmd) {
 	static int state;
+	int brightness = 255;
 
 	switch(cmd) {
 		case 0: //Reset 
 			state = 100;
+			brightness = 60;
 			break;
 		case 1: //Decrement
 			state--;
@@ -223,14 +225,14 @@ void pointless_state(int cmd) {
 
 	for (int i = 0; i < NUM_LEDS/2; i++) {
 		if (i < level)
-			leds[ledlookup[i]] = CRGB(255, 255, 0);
+			leds[ledlookup[i]] = CRGB(brightness, brightness, 0);
 		else
 			leds[ledlookup[i]] = CRGB(0, 0, 0);
 	}
 
 	for (int i = NUM_LEDS/2; i < NUM_LEDS; i++) {
 		if (i >= NUM_LEDS-level)
-			leds[ledlookup[i]] = CRGB(255, 255, 0);
+			leds[ledlookup[i]] = CRGB(brightness, brightness, 0);
 		else
 			leds[ledlookup[i]] = CRGB(0, 0, 0);
 	}
