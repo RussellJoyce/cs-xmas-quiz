@@ -196,13 +196,19 @@ class IdleScene: SKScene {
 //		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
 //		lights.run(lightsAction)
 		
-		let clock = ClockNode()
-		clock.position = CGPoint(x: 1450, y: 260)
-		clock.zPosition = 50
-		clock.updateTime(animated: false)
-		Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (_) in
-			clock.updateTime(animated: true)
-		}
+//		let clock = ClockNode()
+//		clock.position = CGPoint(x: 1450, y: 260)
+//		clock.zPosition = 50
+//		clock.updateTime(animated: false)
+//		Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (_) in
+//			clock.updateTime(animated: true)
+//		}
+        
+        let anniversary = AnniversaryNode()
+        anniversary.position = CGPoint(x: 1450, y: 220)
+        anniversary.zPosition = 50
+        anniversary.zRotation = 0.1
+        
 		
 		for node in snowmojis {
 			self.addChild(node)
@@ -226,7 +232,8 @@ class IdleScene: SKScene {
 		self.addChild(poopSnow)
 		self.addChild(coldSnow)
 		self.addChild(drunkSnow)
-		self.addChild(clock)
+//		self.addChild(clock)
+        self.addChild(anniversary)
 	}
 	
 	func reset() {

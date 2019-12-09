@@ -69,6 +69,7 @@
 		46596C831A38E04800822FB7 /* SparksUp.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46596C811A38E04800822FB7 /* SparksUp.sks */; };
 		46596C841A38E04800822FB7 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 46596C821A38E04800822FB7 /* spark.png */; };
 		465FDFE81A372E5E00734431 /* eight.wav in Resources */ = {isa = PBXBuildFile; fileRef = 465FDFE71A372E5E00734431 /* eight.wav */; };
+		466894E9239E99CB009CB9CC /* SnowtopCaps.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 466894E7239E99A1009CB9CC /* SnowtopCaps.otf */; };
 		466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46D41DEC98E400428CDC /* GeographyScene.swift */; };
 		468B090B1FD6005D0052047A /* Shower.sks in Resources */ = {isa = PBXBuildFile; fileRef = 468B090A1FD6005D0052047A /* Shower.sks */; };
 		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
@@ -83,10 +84,12 @@
 		46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBC4571DF383F400C41112 /* SwiftyJSON.swift */; };
 		46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BBC4601DF39AA000C41112 /* Boggle.plist */; };
 		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
+		46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */; };
 		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
 		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF9D07239672FF00D019A3 /* MusicScene.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
+		46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EE3976239EA694006298D1 /* SparksLeft.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
 
@@ -132,6 +135,7 @@
 			dstPath = Fonts;
 			dstSubfolderSpec = 7;
 			files = (
+				466894E9239E99CB009CB9CC /* SnowtopCaps.otf in CopyFiles */,
 				46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */,
 				46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */,
 			);
@@ -209,6 +213,7 @@
 		46596C811A38E04800822FB7 /* SparksUp.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp.sks; sourceTree = "<group>"; };
 		46596C821A38E04800822FB7 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
+		466894E7239E99A1009CB9CC /* SnowtopCaps.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SnowtopCaps.otf; sourceTree = "<group>"; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
 		4688FDF52397C0E10028503F /* Music.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Music.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		468B090A1FD6005D0052047A /* Shower.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Shower.sks; sourceTree = "<group>"; };
@@ -225,10 +230,13 @@
 		46BBC4601DF39AA000C41112 /* Boggle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Boggle.plist; sourceTree = "<group>"; };
 		46BBD3CC21B83DED0010319E /* ClockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockNode.swift; sourceTree = "<group>"; };
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnniversaryNode.swift; sourceTree = "<group>"; };
 		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
 		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46DF9D07239672FF00D019A3 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
 		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
+		46EE3976239EA694006298D1 /* SparksLeft.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = SparksLeft.sks; path = Playgrounds/Anniversary.playground/Resources/SparksLeft.sks; sourceTree = SOURCE_ROOT; };
+		46EE3979239EA6D8006298D1 /* Anniversary.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Anniversary.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -268,6 +276,7 @@
 				46596C811A38E04800822FB7 /* SparksUp.sks */,
 				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
 				46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */,
+				46EE3976239EA694006298D1 /* SparksLeft.sks */,
 				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 			);
@@ -283,6 +292,7 @@
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
 				46BBD3CC21B83DED0010319E /* ClockNode.swift */,
+				46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */,
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
 				3CF78EF923954DB9007FC394 /* NumbersScene.swift */,
@@ -361,6 +371,7 @@
 				3C93462C237DBF88009DBD0C /* altBuzz4.wav */,
 				46BBC4461DF0725600C41112 /* EHSMB.TTF */,
 				4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */,
+				466894E7239E99A1009CB9CC /* SnowtopCaps.otf */,
 				3C872EB51C03D53000A2B397 /* airhorn.mp3 */,
 				3CF78EFC2396A11A007FC394 /* tada.mp3 */,
 				3C872EB31C03D47A00A2B397 /* blop.mp3 */,
@@ -400,6 +411,7 @@
 		46BBD3CF21B847980010319E /* Playgrounds */ = {
 			isa = PBXGroup;
 			children = (
+				46EE3979239EA6D8006298D1 /* Anniversary.playground */,
 				4688FDF52397C0E10028503F /* Music.playground */,
 				46BBD3D021B847980010319E /* Clock.playground */,
 			);
@@ -522,6 +534,7 @@
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
+				46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */,
 				3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */,
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
 				4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */,
@@ -585,6 +598,7 @@
 				46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
+				46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
