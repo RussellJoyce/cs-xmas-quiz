@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C1FFA0F239E8E33000160B1 /* fireworks.sks */; };
 		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
 		3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */; };
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
@@ -144,6 +145,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C1FFA0F239E8E33000160B1 /* fireworks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireworks.sks; sourceTree = "<group>"; };
 		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
 		3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TextSceneSparks.sks; sourceTree = "<group>"; };
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				46EE3976239EA694006298D1 /* SparksLeft.sks */,
 				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
+				3C1FFA0F239E8E33000160B1 /* fireworks.sks */,
 			);
 			name = Particles;
 			sourceTree = "<group>";
@@ -559,6 +562,7 @@
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
+				3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
