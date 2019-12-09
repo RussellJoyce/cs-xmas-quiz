@@ -209,8 +209,6 @@ class IdleScene: SKScene {
         anniversary.zPosition = 50
         anniversary.zRotation = 0.1
         
-		
-		
 		self.firework()
 		
 		for node in snowmojis {
@@ -242,9 +240,9 @@ class IdleScene: SKScene {
 	
 	func firework() {
 		let parts = SKEmitterNode(fileNamed: "fireworks")!
-		parts.position = CGPoint(x: 1200 + Int.random(in: 0...600), y: 200 + Int.random(in: 0...500))
-		parts.zPosition = 25
-		parts.numParticlesToEmit = 200
+		parts.position = CGPoint(x: 20 + Int.random(in: 0..<1880), y: 600 + Int.random(in: 0..<460))
+		parts.zPosition = 1
+		parts.numParticlesToEmit = 250
 		parts.particleColorSequence = SKKeyframeSequence(
 			keyframeValues: [SKColor(calibratedHue: CGFloat(Double.random(in: 0 ..< 1.0)), saturation: 1.0, brightness: 1.0, alpha: 1.0)], times: [0]
 		)
@@ -252,7 +250,7 @@ class IdleScene: SKScene {
 		
 		self.addChild(parts)
 		
-		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ..< 1.0), repeats: false) {_ in self.firework()}
+        Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 5.0), repeats: false) {_ in self.firework()}
 	}
 	
 	func reset() {
