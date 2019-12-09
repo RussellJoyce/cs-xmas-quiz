@@ -292,6 +292,7 @@ class NumbersScene: SKScene {
 	}
 	
 	func reset() {
+        leds?.stringOff()
 		self.revealed = false
 		
 		for team in 0..<numTeams {

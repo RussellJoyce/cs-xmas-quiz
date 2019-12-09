@@ -108,6 +108,7 @@ class PointlessView: NSView {
 		self.pvc.resetBars()
 		self.pvc.mainLabel.stringValue = String(100)
 		
+        leds?.stringOff()
         leds?.stringPointlessReset()
         
 		//Preload sound buffers

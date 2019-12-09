@@ -35,6 +35,9 @@ uint8_t data[4];
 
 
 inline void switchAnimation(Animation *arg) {
+    if (arg != NULL && currentAnim == arg)
+        return;
+
     currentAnim = arg;
 
     if (currentAnim != NULL) {

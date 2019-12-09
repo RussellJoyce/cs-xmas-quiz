@@ -73,6 +73,7 @@ class BuzzerScene: SKScene {
 	}
 	
 	func reset() {
+        leds?.stringOff()
 		teamEnabled = [Bool](repeating: true, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()

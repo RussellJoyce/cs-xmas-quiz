@@ -75,6 +75,7 @@ class MusicScene: SKScene {
     }
 	
 	func reset() {
+        leds?.stringOff()
         pauseMusic()
 		teamEnabled = [Bool](repeating: false, count: 10)
 		buzzNumber = 0

@@ -58,6 +58,7 @@ class TrueFalseViewController: NSViewController {
 		objc_sync_enter(🔒)
 		counting = false
 		pressed = [Int]()
+        leds?.stringOff()
 		leds?.stringPointlessReset()
 		objc_sync_exit(🔒)
 		teamEnabled = [Bool](repeating: true, count: numTeams)

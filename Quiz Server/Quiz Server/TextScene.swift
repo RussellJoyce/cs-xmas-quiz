@@ -232,6 +232,7 @@ class TextScene: SKScene {
 	}
 	
 	func reset() {
+        leds?.stringOff()
 		for team in 0..<numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
