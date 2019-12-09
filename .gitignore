@@ -23,3 +23,6 @@ Temporary Items
 .apdisk
 
 node_modules
+
+# Ignore music files that we haven't explicitly checked in
+Music/*
