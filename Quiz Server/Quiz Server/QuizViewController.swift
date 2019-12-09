@@ -57,9 +57,6 @@ class QuizViewController: NSViewController {
     }
     
     func resetRound() {
-        // Turn off LEDs
-        quizLeds?.stringOff()
-        
         switch (currentRound) {
         case .none:
             break // Do nothing
