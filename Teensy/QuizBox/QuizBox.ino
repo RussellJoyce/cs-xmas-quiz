@@ -20,8 +20,6 @@
 Animation *currentAnim;
 CRGB leds[NUM_LEDS];
 
-IntervalTimer updateTimer;
-
 volatile uint8_t serialData;
 volatile uint8_t serialCommand;
 volatile uint8_t serialParam;

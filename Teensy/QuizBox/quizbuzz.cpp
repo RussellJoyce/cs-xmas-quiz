@@ -1,7 +1,7 @@
 #include "quizbuzz.h"
 #include "ledmapping.h"
 
-// Team colours as 45 degrees apart on the hue spectrum
+// Team colours as 36 degrees apart on the hue spectrum
 CHSV teamcol[NUM_TEAMS] = {
 	CHSV(  0, 255, 255), // Team 1  (  0)
 	CHSV( 25, 255, 255), // Team 2  ( 36)
@@ -13,14 +13,18 @@ CHSV teamcol[NUM_TEAMS] = {
 	CHSV(179, 255, 255), // Team 8  (252)
 	CHSV(204, 255, 255), // Team 9  (288)
 	CHSV(230, 255, 255), // Team 10 (324)
-//  CHSV(  0, 255, 255), // Team 1  (  0)
-//  CHSV( 31, 255, 255), // Team 2  ( 45)
-//  CHSV( 63, 255, 255), // Team 3  ( 90)
-//  CHSV( 95, 255, 255), // Team 4  (135)
-//  CHSV(127, 255, 255), // Team 5  (180)
-//  CHSV(159, 255, 255), // Team 6  (225)
-//  CHSV(191, 255, 255), // Team 7  (270)
-//  CHSV(223, 255, 255), // Team 8  (315)
+};
+
+// Set basic colours for LEDs
+CRGB setcol[] = {
+	CRGB(255,   0,   0), // Red
+	CRGB(  0, 255,   0), // Green
+	CRGB(  0,   0, 255), // Blue
+	CRGB(  0, 255, 255), // Cyan
+	CRGB(255,   0, 255), // Magenta
+	CRGB(255, 255,   0), // Yellow
+	CRGB(255, 255, 255), // White
+	CRGB(  0,   0,   0), // Black
 };
 
 //Animation prototypes
@@ -247,7 +251,7 @@ void set_string_team_colour(int team) {
 }
 
 void set_string_colour(int col) {
-	CRGB c = teamcol[col];
+	CRGB c = setcol[col];
 	for(int i = 0; i < NUM_LEDS; i++) leds[i] = c;
 	FastLED.show();
 }
