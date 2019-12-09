@@ -217,13 +217,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
+			numbersTeamGuesses.stringValue = ""
 		case tabitemText:
 			socketWriteIfConnected("vitext")
 			quizView.setRound(round: RoundType.text)
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
-			//textAllowAnswers.state = .on
+			textAllowAnswers.state = .on
 		default:
 			break
 		}
