@@ -40,11 +40,15 @@ class MusicScene: SKScene {
 		barL.anchorPoint = .zero
 		barR.anchorPoint = .zero
 		
-		let backgroundBox = SKSpriteNode(color: .gray, size: CGSize(width: 190.0, height: 400.0))
-		backgroundBox.position = CGPoint(x: 205, y: 100)
-		backgroundBox.anchorPoint = .zero
+		let backgroundBoxL = SKSpriteNode(color: .gray, size: CGSize(width: 90.0, height: 400.0))
+		backgroundBoxL.position = CGPoint(x: 205, y: 100)
+		backgroundBoxL.anchorPoint = .zero
+        let backgroundBoxR = SKSpriteNode(color: .gray, size: CGSize(width: 90.0, height: 400.0))
+        backgroundBoxR.position = CGPoint(x: 305, y: 100)
+        backgroundBoxR.anchorPoint = .zero
 		
-		addChild(backgroundBox)
+		addChild(backgroundBoxL)
+        addChild(backgroundBoxR)
 		addChild(peakBarL)
 		addChild(peakBarR)
 		addChild(barL)
@@ -52,7 +56,7 @@ class MusicScene: SKScene {
 	}
 	
 	func normalisePower(power: Float) -> Float {
-		return pow(10.0, min(power, 0.0)/10.0)
+		return pow(10.0, min(power, 0.0)/20.0)
 	}
 	
 	func initMusic(file: String) {
@@ -96,5 +100,9 @@ scene.initMusic(file: "/Users/russell/Documents/cs-xmas-quiz/Music/Faster Than A
 //scene.initMusic(file: "/Users/russell/Documents/cs-xmas-quiz/Music/Elephant Tusk.m4a")
 //scene.initMusic(file: "/Users/russell/Documents/cs-xmas-quiz/Music/00 confusionmusic.wav")
 //scene.initMusic(file: "/Users/russell/Music/iTunes/iTunes Media/Music/Elton John/Rocket Man [The Definitive Hits]/05 I Guess That's Why They Call It The Blues.m4a")
+//scene.initMusic(file: "/Users/russell/Music/iTunes/iTunes Media/Music/Queen/Absolute Greatest (Collection)/09 One Vision.m4a")
+//scene.initMusic(file: "/Users/russell/Music/iTunes/iTunes Media/Music/Tom Petty and the Heartbreakers/Greatest Hits/01 American Girl.m4a")
+//scene.initMusic(file: "/Users/russell/Music/iTunes/iTunes Media/Music/Alanis Morissette/Jagged Little Pill (Collector's Edition)/1-10 Ironic.m4a")
+//scene.initMusic(file: "/Users/russell/Music/iTunes/iTunes Media/Music/Foo Fighters/Sonic Highways/01 Something From Nothing.m4a")
 scene.resumeMusic()
 

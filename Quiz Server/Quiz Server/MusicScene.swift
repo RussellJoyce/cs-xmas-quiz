@@ -28,7 +28,7 @@ class MusicScene: SKScene {
 	var lastAltBuzzIndex = 0
 	
     func normalisePower(power: Float) -> Float {
-        return pow(10.0, min(power, 0.0)/10.0)
+        return pow(10.0, min(power, 0.0)/20.0)
     }
     
     override func update(_ currentTime: TimeInterval) {
