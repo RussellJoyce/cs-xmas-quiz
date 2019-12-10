@@ -172,6 +172,21 @@ class TextScene: SKScene {
 			teamGuesses.append(nil)
 		}
 	}
+	
+	func roundPoints(_ roundid : Int) -> String {
+		switch(roundid) {
+		case 1:
+			return "6 pts"
+		case 2:
+			return "4 pts"
+		case 3:
+			return "2 pts"
+		case 4:
+			return "1 pt"
+		default:
+			return "0 pts"
+		}
+	}
 
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		self.run(blopSound)
@@ -180,7 +195,7 @@ class TextScene: SKScene {
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {
 			teamBoxes[teamid].guessLabel.text = "••••••••"
-			teamBoxes[teamid].roundLabel.text = "(at Clue \(roundid))"
+			teamBoxes[teamid].roundLabel.text = "(at Clue \(roundid) - "  + roundPoints(roundid) + ")"
 			teamBoxes[teamid].singleLabel.text = ""
 		} else {
 			teamBoxes[teamid].guessLabel.text = ""
