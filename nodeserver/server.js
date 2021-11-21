@@ -8,9 +8,13 @@ var clients = {};
 var lastView = "buzzer";
 var lastGeoImage = "start.jpg";
 
+//Certificates for SSL
+const certkey = 'certs/privkey.pem';
+const certchain = 'certs/fullchain.pem';
+
 const wclientHttpsServer = https.createServer({
-    key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
-    cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
+    key: fs.readFileSync(certkey, 'utf8'),
+    cert: fs.readFileSync(certchain, 'utf8')
 });
 wclient = new WebSocketServer({ server: wclientHttpsServer });
 wclientHttpsServer.listen(8090, "0.0.0.0");
@@ -192,8 +196,8 @@ http.listen(80, "0.0.0.0", function(){
 const app = express();
 app.use(express.static(__dirname+'/static'));
 const options = {
-    key: fs.readFileSync('certs/privkey1.pem', 'utf8'),
-    cert: fs.readFileSync('certs/fullchain1.pem', 'utf8')
+    key: fs.readFileSync(certkey, 'utf8'),
+    cert: fs.readFileSync(certchain, 'utf8')
 };
 const server = https.createServer(options, app);
 server.listen(443, "0.0.0.0", function(){

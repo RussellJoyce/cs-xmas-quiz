@@ -6,5 +6,5 @@ SSL Certificates
 To get a certificate from [Let's Encrypt](https://letsencrypt.org), install `certbot` and use something like the following.
 
 ```
-certbot certonly --manual --logs-dir ./logs --config-dir ./config --work-dir ./work --preferred-challenges dns
+certbot certonly --manual --register-unsafely-without-email --logs-dir . --config-dir . --work-dir . --preferred-challenges dns -d christmasquiz.pro
 ```
