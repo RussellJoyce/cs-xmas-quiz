@@ -146,12 +146,12 @@ class IdleScene: SKScene {
 		text2.fontSize = 140
 		text2.horizontalAlignmentMode = .center
 		text2.verticalAlignmentMode = .center
-		text2.position = CGPoint(x: 0, y: -85)
+		text2.position = CGPoint(x: 0, y: -65)
 		text2.zPosition = 50
 		text2.fontColor = NSColor.white
 		
 		let text = SKNode()
-		text.position = CGPoint(x: 1100, y: 900)
+		text.position = CGPoint(x: 950, y: 800)
 		text.zPosition = 50
 		text.addChild(text1)
 		text.addChild(text2)
@@ -159,7 +159,7 @@ class IdleScene: SKScene {
 		let shadowText1 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		shadowText1.text = "Computer Science"
 		shadowText1.fontSize = 140
-		shadowText1.fontColor = NSColor(white: 0.0, alpha: 0.8)
+		shadowText1.fontColor = NSColor(white: 0.0, alpha: 1)
 		shadowText1.horizontalAlignmentMode = .center
 		shadowText1.verticalAlignmentMode = .center
 		shadowText1.position = CGPoint(x: 0, y: 72)
@@ -168,10 +168,10 @@ class IdleScene: SKScene {
 		let shadowText2 = SKLabelNode(fontNamed: "Neutra Display Titling")
 		shadowText2.text = "Christmas Quiz \(year)!"
 		shadowText2.fontSize = 140
-		shadowText2.fontColor = NSColor(white: 0.0, alpha: 0.8)
+		shadowText2.fontColor = NSColor(white: 0.0, alpha: 1)
 		shadowText2.horizontalAlignmentMode = .center
 		shadowText2.verticalAlignmentMode = .center
-		shadowText2.position = CGPoint(x: 0, y: -85)
+		shadowText2.position = CGPoint(x: 0, y: -65)
 		shadowText2.zPosition = 49
 		
 		let textShadow = SKEffectNode()
@@ -180,34 +180,21 @@ class IdleScene: SKScene {
 		textShadow.zPosition = 49
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
-		filter?.setValue(25, forKey: "inputRadius")
+		filter?.setValue(18, forKey: "inputRadius")
 		textShadow.filter = filter;
-		textShadow.position = CGPoint(x: 1100, y: 900)
+		textShadow.position = CGPoint(x: 950, y: 800)
 		textShadow.addChild(shadowText1)
 		textShadow.addChild(shadowText2)
 		
-//		let lights = SKSpriteNode(imageNamed: "lights")
-//		lights.position = CGPoint(x: 960, y: 985)
-//		lights.zPosition = 25
-//		var lightsTextures = [SKTexture]()
-//		for i in 1...4 {
-//			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
-//		}
-//		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
-//		lights.run(lightsAction)
-		
-//		let clock = ClockNode()
-//		clock.position = CGPoint(x: 1450, y: 260)
-//		clock.zPosition = 50
-//		clock.updateTime(animated: false)
-//		Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { (_) in
-//			clock.updateTime(animated: true)
-//		}
-        
-        let anniversary = AnniversaryNode()
-        anniversary.position = CGPoint(x: 1450, y: 220)
-        anniversary.zPosition = 50
-        anniversary.zRotation = 0.1
+		let lights = SKSpriteNode(imageNamed: "lights")
+		lights.position = CGPoint(x: 960, y: 985)
+		lights.zPosition = 25
+		var lightsTextures = [SKTexture]()
+		for i in 1...4 {
+			lightsTextures.append(SKTexture(imageNamed: "lights\(i)"))
+		}
+		let lightsAction = SKAction.repeatForever(SKAction.animate(with: lightsTextures, timePerFrame: 1.0))
+		lights.run(lightsAction)
         
 		self.firework()
 		
@@ -224,7 +211,7 @@ class IdleScene: SKScene {
 		self.addChild(snow4)
 		self.addChild(text)
 		self.addChild(textShadow)
-//		self.addChild(lights)
+		self.addChild(lights)
 		self.addChild(ianSnow)
 		self.addChild(richardSnow)
 		self.addChild(eggSnow)
@@ -233,8 +220,6 @@ class IdleScene: SKScene {
 		self.addChild(poopSnow)
 		self.addChild(coldSnow)
 		self.addChild(drunkSnow)
-//		self.addChild(clock)
-        self.addChild(anniversary)
 	}
 	
 	
