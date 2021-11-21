@@ -90,7 +90,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     /// - parameter animation: The animation number (0-15)
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringAnimation(animation: Int) -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_ANIM + UInt8(animation)]), count: 1));
+		return [LEDS_ANIM + UInt8(animation)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+        //return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_ANIM + UInt8(animation)]), count: 1));
     }
     
     /// Turn LED string off (set to animation 0)
@@ -105,7 +106,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     /// - parameter team: The team number (0-9)
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringTeamAnimate(team: Int) -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAM + UInt8(team)]), count: 1));
+		return [LEDS_TEAM + UInt8(team)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+        //return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAM + UInt8(team)]), count: 1));
     }
 
 	/// Set LED string to team colour
@@ -113,7 +115,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTeamColour(team: Int) -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMC + UInt8(team)]), count: 1));
+		return [LEDS_TEAMC + UInt8(team)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMC + UInt8(team)]), count: 1));
 	}
 
 	/// Set LED string to a given fixed colour
@@ -121,7 +124,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter colour: The colour (red, green, blue, cyan, magenta, yellow, white, black)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringFixedColour(colour: Int) -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_COL + UInt8(colour)]), count: 1));
+		return [LEDS_COL + UInt8(colour)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_COL + UInt8(colour)]), count: 1));
 	}
 	
 	/// Turn on test LEDs for team
@@ -129,7 +133,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTestOn(team: Int) -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTON + UInt8(team)]), count: 1));
+		return [LEDS_TESTON + UInt8(team)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTON + UInt8(team)]), count: 1));
 	}
 	
 	/// Turn off test LEDs for team
@@ -137,35 +142,40 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringTestOff(team: Int) -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTOFF + UInt8(team)]), count: 1));
+		return [LEDS_TESTOFF + UInt8(team)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TESTOFF + UInt8(team)]), count: 1));
 	}
 	
 	/// Reset the Pointless LEDs
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPointlessReset() -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(0)]), count: 1));
+		return [LEDS_POINT_STATE + UInt8(0)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(0)]), count: 1));
 	}
 	
 	/// Decrement the Pointless LEDs
 	///
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPointlessDec() -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(1)]), count: 1));
+		return [LEDS_POINT_STATE + UInt8(1)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINT_STATE + UInt8(1)]), count: 1));
 	}
 	
     /// Play Pointless wrong animation on LED string
     ///
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringPointlessWrong() -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTW]), count: 1));
+		return [LEDS_POINTW].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTW]), count: 1));
     }
     
     /// Play Pointless correct animation on LED string
     ///
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringPointlessCorrect() -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTC]), count: 1));
+		return [LEDS_POINTC].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_POINTC]), count: 1));
     }
 	
 	/// Pulse LED string in team colour
@@ -173,7 +183,8 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
 	/// - parameter team: The team number (0-9)
 	/// - returns: true if data sent successfully, false otherwise
 	@discardableResult func stringPulseTeamColour(team: Int) -> Bool {
-		return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMPUL + UInt8(team)]), count: 1));
+		return [LEDS_TEAMPUL + UInt8(team)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+		//return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_TEAMPUL + UInt8(team)]), count: 1));
 	}
     
     /// Set music levels on LEDs
@@ -184,6 +195,7 @@ class QuizLeds: NSObject, ORSSerialPortDelegate {
     /// - parameter rightPeak: Right peak power
     /// - returns: true if data sent successfully, false otherwise
     @discardableResult func stringMusic(leftAvg: Int, leftPeak: Int, rightAvg: Int, rightPeak: Int) -> Bool {
-        return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_MUSIC_LEVELS, UInt8(leftAvg), UInt8(leftPeak), UInt8(rightAvg), UInt8(rightPeak)]), count: 5));
+		return [LEDS_MUSIC_LEVELS, UInt8(leftAvg), UInt8(leftPeak), UInt8(rightAvg), UInt8(rightPeak)].withUnsafeBufferPointer { buffer -> Bool in serial.send(Data(buffer: buffer))}
+        //return serial.send(Data(bytes: UnsafePointer<UInt8>([LEDS_MUSIC_LEVELS, UInt8(leftAvg), UInt8(leftPeak), UInt8(rightAvg), UInt8(rightPeak)]), count: 5));
     }
 }
