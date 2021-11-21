@@ -108,12 +108,12 @@ class QuizViewController: NSViewController {
     ///
     /// - parameter team: Team number (0-9)
 	/// - parameter type: Type of buzzer that was pressed (test button, physical button, or websocket)
-	func buzzerPressed(team: Int, type: BuzzerType) {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool) {
         switch (currentRound) {
         case .none:
             break // Do nothing
         case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
-            spriteKitView.buzzerPressed(team: team, type: type)
+			spriteKitView.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
 		case .pointless:

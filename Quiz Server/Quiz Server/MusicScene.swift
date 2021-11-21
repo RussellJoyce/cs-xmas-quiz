@@ -88,28 +88,56 @@ class MusicScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType) {
-		if teamEnabled[team] && buzzes.count < 5 {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool) {
+		if teamEnabled[team] && (buzzes.count < 5 || buzzcocksMode == true) {
 			teamEnabled[team] = false
 			
 			buzzes.append(team)
 			
 			if buzzNumber == 0 {
-				firstBuzzTime = Date()
-                buzzSound()
-                pauseMusic()
-				leds?.stringTeamAnimate(team: team)
 				nextTeamNumber = 1
 				
-				let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
-				box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
+				var box : BuzzerTeamNode;
+				if buzzcocksMode == false {
+					firstBuzzTime = Date()
+					buzzSound()
+					pauseMusic()
+					leds?.stringTeamAnimate(team: team)
+					box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
+					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
+				} else {
+					var timeString : String;
+					if let stTime = firstBuzzTime {
+						let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
+						let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
+						timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
+					} else {
+						timeString = "()"
+					}
+					box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 100)
+				}
 				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
 				
 			} else {
-				let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
-				box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
+				var box : BuzzerTeamNode;
+				if buzzcocksMode == false {
+					box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
+					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
+				} else {
+					var timeString : String;
+					if let stTime = firstBuzzTime {
+						let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
+						let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
+						timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
+					} else {
+						timeString = "()"
+					}
+					box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
+				}
 				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
@@ -150,6 +178,7 @@ class MusicScene: SKScene {
     
     func resumeMusic() {
         reset()
+		firstBuzzTime = Date()
 		teamEnabled = [Bool](repeating: true, count: 10)
 		music?.play()
         music?.updateMeters()

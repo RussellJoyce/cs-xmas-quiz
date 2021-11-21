@@ -30,6 +30,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton10: NSButton!
     @IBOutlet weak var pointlessScore: NSTextField!
 	@IBOutlet var textShowQuestionNumbers: NSButton!
+	@IBOutlet weak var buzzcocksMode: NSButton!
+	
 	var quizScreen: NSScreen?
     var quizLeds: QuizLeds?
     var testMode = true
@@ -148,7 +150,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         //  otherwise, buttons will disable buzzers
         if testMode {
             if (sender.state == NSControl.StateValue.on) {
-                quizView.buzzerPressed(team: sender.tag, type: .test)
+				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on)
             }
             else {
                 quizView.buzzerReleased(team: sender.tag, type: .test)
@@ -424,7 +426,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
-						quizView.buzzerPressed(team: team, type: .websocket)
+						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on)
 						DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 							self.quizView.buzzerReleased(team: team, type: .websocket)
 						}

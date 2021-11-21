@@ -13,7 +13,7 @@ class BuzzerTeamNode: SKNode {
 	
 	let glow = SKEmitterNode(fileNamed: "BuzzGlow")!
 	
-	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool) {
+	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool, altText: String? = nil) {
 		self.init()
 		
 		var teamHue = CGFloat(team) / 10.0
@@ -46,7 +46,11 @@ class BuzzerTeamNode: SKNode {
 		shadow.lineWidth = 0.0
 		
 		let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		text.text = "Team \(team + 1)"
+		if let at = altText {
+			text.text = at;
+		} else {
+			text.text = "Team \(team + 1)"
+		}
 		text.fontSize = fontSize
 		text.fontColor = NSColor.white
 		text.horizontalAlignmentMode = .center
@@ -55,7 +59,7 @@ class BuzzerTeamNode: SKNode {
 		text.position = CGPoint.zero
 		
 		let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		shadowText.text = "Team \(team + 1)"
+		shadowText.text = text.text
 		shadowText.fontSize = fontSize
 		shadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
 		shadowText.horizontalAlignmentMode = .center
