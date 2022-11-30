@@ -216,6 +216,7 @@ class NumbersScene: SKScene {
 	}
 	
 	func showGuesses(actualAnswer : Int) {
+		//First press just plays a big honk and shows everything
 		if(!revealed) {
 			self.run(hornSound)
 			leds?.stringPointlessCorrect()
@@ -244,7 +245,9 @@ class NumbersScene: SKScene {
 			
 			revealed = true
 			
-		} else {
+		}
+		//Second press colours everything to show team scores
+		else {
 			//Work out which is closest to the actual answer
 			var teamDistances = [(team : Int, distance : Int)]()
 			
@@ -265,27 +268,30 @@ class NumbersScene: SKScene {
 				NSColor(calibratedRed: 1.0, green: 0.1, blue: 0.1, alpha: 0.9),
 			]
 			
-			var win = -1
+			//We need to handle draws, so it isn't as easy as saying that index 0 is the winner, index 1 is the second etc.
+			var win = 0 //This is the "rank" we are at. 0 is "winner", 1 is "second place", 2 is "top half", higher is "loser"
 			var teNo = 0
-			var lastDist : Int = -1
+			var lastDist : Int = teamDistances[teNo].distance //Will be 0 if someone guessed correctly
 			while win < winColours.count {
 				if teNo >= teamDistances.count {
 					break
 				}
 				
-				if teamDistances[teNo].distance <= lastDist {
-					teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: winColours[win]))
-					teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.2, duration: 0.5))
+				if win == 0 || win == 1 {
+					if teamDistances[teNo].distance > lastDist {
+						win = win + 1
+						lastDist = teamDistances[teNo].distance
+					}
 				} else {
-					win = win + 1
-					if(win >= winColours.count) {
+					if teNo > teamDistances.count / 2 && teamDistances[teNo].distance != teamDistances[teNo-1].distance {
 						break
 					}
-					
-					lastDist = teamDistances[teNo].distance
-					teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: winColours[win]))
-					teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.2, duration: 0.5))
 				}
+				
+				//Animate the team box to the target colour to indicate "win level"
+				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: winColours[win]))
+				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.2, duration: 0.5))
+				
 				teNo = teNo + 1
 			}
 		}
@@ -305,13 +311,17 @@ class NumbersScene: SKScene {
 		}
 		
 		//Quick dirty test code
-		/*teamGuess(teamid : 1, guess : 10)
+		/*teamGuess(teamid : 0, guess : 0)
+		teamGuess(teamid : 1, guess : 10)
 		teamGuess(teamid : 2, guess : 20)
 		teamGuess(teamid : 3, guess : 30)
 		teamGuess(teamid : 4, guess : 40)
 		teamGuess(teamid : 5, guess : 50)
 		teamGuess(teamid : 6, guess : 50)
-		teamGuess(teamid : 7, guess : 50)*/
+		teamGuess(teamid : 7, guess : 50)
+		teamGuess(teamid : 8, guess : 60)
+		teamGuess(teamid : 9, guess : 70)*/
+		
 	}
 
 }
