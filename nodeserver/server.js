@@ -2,6 +2,7 @@ const WebSocketServer = require('ws').Server;
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
+const dns = require('native-dns');
 
 var clients = {};
 
@@ -11,6 +12,10 @@ var lastGeoImage = "start.jpg";
 //Certificates for SSL
 const certkey = 'certs/privkey.pem';
 const certchain = 'certs/fullchain.pem';
+
+//DNS record
+const dnshostname = 'christmasquiz.pro';
+const hostaddress = '192.168.0.2';
 
 const wclientHttpsServer = https.createServer({
     key: fs.readFileSync(certkey, 'utf8'),
@@ -203,3 +208,23 @@ const server = https.createServer(options, app);
 server.listen(443, "0.0.0.0", function(){
     console.log('Quiz Server running super securely on port 443...');
 });
+
+// DNS server because hey why not?
+var dnsserver = dns.createServer();
+dnsserver.on('request', function (request, response) {
+    //console.log("DNS request for " + request.question[0].name)
+    response.answer.push(
+        dns.A({
+            //name: request.question[0].name, 
+            name: dnshostname,
+            address: hostaddress, 
+            ttl: 10}));
+    response.send();
+});
+dnsserver.on('error', function (err, buff, req, res) {
+    console.log(err.stack);
+});
+dnsserver.on('listening', function () {
+    console.log("DNS server running on port 53...");
+});
+dnsserver.serve(53);
