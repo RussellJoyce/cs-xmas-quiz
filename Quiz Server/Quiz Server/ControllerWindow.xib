@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -18,6 +19,7 @@
                 <outlet property="buzzerButton7" destination="Rq1-ez-HAM" id="W4G-1T-hRG"/>
                 <outlet property="buzzerButton8" destination="SKv-7z-Uw4" id="Qtd-Gt-Cjd"/>
                 <outlet property="buzzerButton9" destination="W5J-EJ-vK2" id="2AJ-Da-7HL"/>
+                <outlet property="buzzerQueueMode" destination="zab-jV-I4P" id="QoK-ce-b4E"/>
                 <outlet property="geoAnswerX" destination="jQg-0f-joa" id="5Me-JP-lg1"/>
                 <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
                 <outlet property="geoQuestionNumber" destination="5z5-BU-AUP" id="uQw-pa-69M"/>
@@ -51,7 +53,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1025"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="944"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -672,6 +674,14 @@
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zab-jV-I4P">
+                                            <rect key="frame" x="615" y="127" width="148" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Allow Buzzer Queue" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="VR0-UL-IL9">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                        </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>

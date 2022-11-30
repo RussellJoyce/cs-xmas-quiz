@@ -176,9 +176,9 @@ class TextScene: SKScene {
 	func roundPoints(_ roundid : Int) -> String {
 		switch(roundid) {
 		case 1:
-			return "6 pts"
-		case 2:
 			return "4 pts"
+		case 2:
+			return "3 pts"
 		case 3:
 			return "2 pts"
 		case 4:
@@ -231,7 +231,7 @@ class TextScene: SKScene {
 				
 				if showroundno {
 					teamBoxes[team].guessLabel.text = "\(tg.guess)"
-					teamBoxes[team].roundLabel.text = "(at Clue \(tg.roundid))"
+					teamBoxes[team].roundLabel.text = "(at Clue \(tg.roundid) - " + roundPoints(tg.roundid) + ")"
 					teamBoxes[team].singleLabel.text = ""
 				} else {
 					teamBoxes[team].singleLabel.text = "\(tg.guess)"
@@ -255,6 +255,13 @@ class TextScene: SKScene {
 			teamBoxes[team].singleLabel.text = ""
 			teamBoxes[team].resetTextSize()
 		}
+		
+		//Quick dirty test code
+		/*teamGuess(teamid: 1, guess: "guess1", roundid: 1, showroundno: true);
+		teamGuess(teamid: 2, guess: "guess2", roundid: 2, showroundno: true);
+		teamGuess(teamid: 3, guess: "guess3", roundid: 3, showroundno: true);
+		teamGuess(teamid: 4, guess: "guess4", roundid: 3, showroundno: true);
+		teamGuess(teamid: 5, guess: "guess5", roundid: 4, showroundno: true);*/
 	}
 
 }

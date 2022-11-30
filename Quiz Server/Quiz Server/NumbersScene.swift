@@ -262,7 +262,7 @@ class NumbersScene: SKScene {
 			let winColours = [
 				NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.1, alpha: 0.9),
 				NSColor(calibratedRed: 1.0, green: 1.0, blue: 0.1, alpha: 0.9),
-				//NSColor(calibratedRed: 1.0, green: 0.1, blue: 0.1, alpha: 0.9),
+				NSColor(calibratedRed: 1.0, green: 0.1, blue: 0.1, alpha: 0.9),
 			]
 			
 			var win = -1
@@ -304,6 +304,7 @@ class NumbersScene: SKScene {
 			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		
+		//Quick dirty test code
 		/*teamGuess(teamid : 1, guess : 10)
 		teamGuess(teamid : 2, guess : 20)
 		teamGuess(teamid : 3, guess : 30)

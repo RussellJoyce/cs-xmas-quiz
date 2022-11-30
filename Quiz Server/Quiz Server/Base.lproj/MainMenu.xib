@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15505"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -314,16 +315,16 @@
         <window title="Quiz Server" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="335" y="390" width="738" height="228"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="944"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="738" height="228"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9Zo-H4-VCv">
-                        <rect key="frame" x="165" y="184" width="556" height="25"/>
+                        <rect key="frame" x="164" y="184" width="558" height="25"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Z2K-FA-4W8">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" id="Tds-sA-MlO">
                                 <items>
                                     <menuItem title="No screens" id="YxE-Vd-zm4"/>
@@ -343,7 +344,7 @@
                         </textFieldCell>
                     </textField>
                     <button translatesAutoresizingMaskIntoConstraints="NO" id="BzV-d4-VFP">
-                        <rect key="frame" x="18" y="22" width="126" height="18"/>
+                        <rect key="frame" x="18" y="23" width="124" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="122" id="QNI-AX-790"/>
                             <constraint firstAttribute="height" constant="14" id="iQJ-TS-yBR"/>
@@ -354,7 +355,7 @@
                         </buttonCell>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3ly-hv-dYY">
-                        <rect key="frame" x="619" y="13" width="105" height="32"/>
+                        <rect key="frame" x="618" y="13" width="107" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="93" id="FGT-gn-OIn"/>
                         </constraints>
@@ -381,10 +382,10 @@ DQ
                         </textFieldCell>
                     </textField>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AUn-q1-hZ0">
-                        <rect key="frame" x="165" y="155" width="556" height="25"/>
+                        <rect key="frame" x="164" y="156" width="558" height="25"/>
                         <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="p3n-5t-awL">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" id="PGE-Ho-Qz8">
                                 <items>
                                     <menuItem title="No serial ports" id="JZ8-Iz-485"/>
@@ -393,10 +394,10 @@ DQ
                         </popUpButtonCell>
                     </popUpButton>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KA9-gd-q2U">
-                        <rect key="frame" x="165" y="127" width="556" height="25"/>
+                        <rect key="frame" x="164" y="129" width="558" height="25"/>
                         <popUpButtonCell key="cell" type="push" title="10" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="PS2-CU-TcM" id="Bfg-TT-FeV">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="menu"/>
                             <menu key="menu" id="xyB-wg-Pja">
                                 <items>
                                     <menuItem title="10" state="on" id="PS2-CU-TcM"/>
@@ -436,7 +437,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="756-NJ-HOL">
-                        <rect key="frame" x="628" y="93" width="96" height="32"/>
+                        <rect key="frame" x="627" y="97" width="98" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="84" id="c9F-KV-rS7"/>
                         </constraints>
@@ -449,7 +450,7 @@ DQ
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h66-8w-5Om">
-                        <rect key="frame" x="167" y="101" width="459" height="21"/>
+                        <rect key="frame" x="167" y="104" width="459" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="nLT-0O-cKj">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -468,7 +469,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="znj-cr-uxp">
-                        <rect key="frame" x="167" y="70" width="459" height="21"/>
+                        <rect key="frame" x="167" y="73" width="459" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="NIt-h4-qgF">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -476,7 +477,7 @@ DQ
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EE7-Hd-rD5">
-                        <rect key="frame" x="628" y="63" width="96" height="32"/>
+                        <rect key="frame" x="627" y="68" width="98" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="84" id="6i8-C3-T1f"/>
                         </constraints>
