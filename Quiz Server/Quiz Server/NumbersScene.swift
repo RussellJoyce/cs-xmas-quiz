@@ -169,6 +169,7 @@ class NumbersScene: SKScene {
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
 	var revealed = false
+	var emitters = [SKEmitterNode]()
 
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
@@ -263,9 +264,9 @@ class NumbersScene: SKScene {
 			teamDistances = teamDistances.sorted(by: {$0.distance < $1.distance})
 
 			let winColours = [
-				NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.1, alpha: 0.9),
+				NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.3, alpha: 0.9),
 				NSColor(calibratedRed: 1.0, green: 1.0, blue: 0.1, alpha: 0.9),
-				NSColor(calibratedRed: 1.0, green: 0.1, blue: 0.1, alpha: 0.9),
+				NSColor(calibratedRed: 0.6, green: 0.6, blue: 1.0, alpha: 0.9),
 			]
 			
 			//We need to handle draws, so it isn't as easy as saying that index 0 is the winner, index 1 is the second etc.
@@ -290,13 +291,45 @@ class NumbersScene: SKScene {
 				
 				//Animate the team box to the target colour to indicate "win level"
 				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: winColours[win]))
-				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.2, duration: 0.5))
+				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
+				
+				//Give winners some stars
+				if win == 0 {
+					for _ in 0...5 {
+						let pstar = SKEmitterNode(fileNamed: "locationstar")!
+						var starpoint : CGPoint = teamBoxes[teamDistances[teNo].team].bgBox.centrePoint
+						//starpoint.y += CGFloat(Int.random(in: -70...70))
+						starpoint.x -= 310
+						pstar.position = starpoint
+						pstar.zPosition = 5.0
+						teamBoxes[teamDistances[teNo].team].addChild(pstar)
+						emitters.append(pstar)
+					}
+				}
+				
+				if win < 2 {
+					addGlowParticles(team: teamDistances[teNo].team)
+				}
 				
 				teNo = teNo + 1
 			}
 		}
 	}
 	
+	func addGlowParticles(team : Int) {
+		let pstar = SKEmitterNode(fileNamed: "BuzzGlow")!
+		pstar.particlePositionRange = CGVector(dx: 750, dy: 130)
+		pstar.particleSpeed = 10
+		pstar.particleBirthRate = 70
+		pstar.particleAlpha = 0.4
+		pstar.particleScale = 0.8
+		pstar.position = teamBoxes[team].bgBox.centrePoint
+		pstar.zPosition = 5.0
+		teamBoxes[team].addChild(pstar)
+		emitters.append(pstar)
+	}
+	
+
 	func reset() {
         leds?.stringOff()
 		self.revealed = false
@@ -310,8 +343,13 @@ class NumbersScene: SKScene {
 			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		
+		for e in emitters {
+			e.removeFromParent()
+		}
+		emitters.removeAll()
+		
 		//Quick dirty test code
-		/*teamGuess(teamid : 0, guess : 0)
+		teamGuess(teamid : 0, guess : 0)
 		teamGuess(teamid : 1, guess : 10)
 		teamGuess(teamid : 2, guess : 20)
 		teamGuess(teamid : 3, guess : 30)
@@ -320,7 +358,7 @@ class NumbersScene: SKScene {
 		teamGuess(teamid : 6, guess : 50)
 		teamGuess(teamid : 7, guess : 50)
 		teamGuess(teamid : 8, guess : 60)
-		teamGuess(teamid : 9, guess : 70)*/
+		teamGuess(teamid : 9, guess : 70)
 		
 	}
 
