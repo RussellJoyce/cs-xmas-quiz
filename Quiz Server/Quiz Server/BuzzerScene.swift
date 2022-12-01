@@ -15,6 +15,8 @@ class BuzzerScene: SKScene {
 	fileprivate var setUp = false
 	var numTeams = 10
 	
+	let useAlternateBuzzers = false
+	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
 	var teamEnabled = [Bool](repeating: true, count: 10)
@@ -59,7 +61,7 @@ class BuzzerScene: SKScene {
 	}
 	
 	func buzzSound() {
-		if Int.random(in: 0...8) == 0 {
+		if useAlternateBuzzers && Int.random(in: 0...8) == 0 {
 			//Play the next alternative buzzer sound
 			if lastAltBuzzIndex >= altBuzzNoise.count {
 				lastAltBuzzIndex = 0
