@@ -14,7 +14,7 @@ const certkey = 'certs/privkey.pem';
 const certchain = 'certs/fullchain.pem';
 
 //DNS record
-const dnshostname = 'christmasquiz.pro';
+const dnshostname = 'iangray.me.uk';
 const hostaddress = '192.168.0.2';
 
 const wclientHttpsServer = https.createServer({
