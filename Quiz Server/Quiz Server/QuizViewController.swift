@@ -154,6 +154,15 @@ class QuizViewController: NSViewController {
 		spriteKitView.timerDecrement();
 	}
 	
+	func startBuzzerTimer(_ seconds: Int) {
+		spriteKitView.startBuzzerTimer(seconds)
+	}
+	
+	func stopBuzzerTimer() {
+		spriteKitView.stopBuzzerTimer()
+	}
+	
+	
 	func setPointlessTeam(team: Int) {
 		pointlessGame.setCurrentTeam(team: team)
 	}

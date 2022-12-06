@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
-        <capability name="stacking Non-gravity area distributions on NSStackView" minToolsVersion="7.0" minSystemVersion="10.11"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PointlessGameController" customModule="Quiz_Server" customModuleProvider="target">
@@ -21,13 +20,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5dV-tf-4RZ" customClass="PointlessView" customModule="Quiz_Server" customModuleProvider="target">
-                    <rect key="frame" x="116" y="83" width="859" height="915"/>
+                    <rect key="frame" x="116" y="82" width="859" height="916"/>
                 </customView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="XAt-Fg-45y">
-                    <rect key="frame" x="1072" y="83" width="819" height="915"/>
+                    <rect key="frame" x="1072" y="82" width="819" height="916"/>
                     <subviews>
                         <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="JeB-6P-ehh">
-                            <rect key="frame" x="0.0" y="0.0" width="819" height="915"/>
+                            <rect key="frame" x="0.0" y="0.0" width="819" height="916"/>
                         </stackView>
                     </subviews>
                     <constraints>

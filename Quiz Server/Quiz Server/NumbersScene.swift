@@ -349,7 +349,7 @@ class NumbersScene: SKScene {
 		emitters.removeAll()
 		
 		//Quick dirty test code
-		teamGuess(teamid : 0, guess : 0)
+		/*teamGuess(teamid : 0, guess : 0)
 		teamGuess(teamid : 1, guess : 10)
 		teamGuess(teamid : 2, guess : 20)
 		teamGuess(teamid : 3, guess : 30)
@@ -358,7 +358,7 @@ class NumbersScene: SKScene {
 		teamGuess(teamid : 6, guess : 50)
 		teamGuess(teamid : 7, guess : 50)
 		teamGuess(teamid : 8, guess : 60)
-		teamGuess(teamid : 9, guess : 70)
+		teamGuess(teamid : 9, guess : 70)*/
 		
 	}
 

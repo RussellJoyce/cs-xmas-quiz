@@ -23,12 +23,20 @@ class BuzzerScene: SKScene {
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
+	let buzzNoiseQuack = SKAction.playSoundFileNamed("altBuzz1", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
 	var altBuzzNoise = [SKAction]()
 	var lastAltBuzzIndex = 0
 	
-	
+	fileprivate var time: Int = 30
+	fileprivate var timer: Timer?
+	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
+	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	fileprivate var pulseAction: SKAction?
+	fileprivate let filternode = SKEffectNode()
+	fileprivate var ledcount : Float = 0;
+		
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
@@ -44,6 +52,62 @@ class BuzzerScene: SKScene {
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		
+		let exfilter = CIFilter(name: "CIExposureAdjust")
+		exfilter?.setDefaults()
+		exfilter?.setValue(1, forKey: "inputEV")
+		filternode.filter = exfilter
+		filternode.shouldRasterize = true
+		filternode.addChild(bgImage)
+		self.addChild(filternode)
+		
+		let pulseupaction = SKAction.customAction(withDuration: 0.15, actionBlock: {
+			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: "inputEV")
+			self.filternode.shouldRasterize = false
+			self.filternode.shouldRasterize = true
+		})
+		
+		let pulsednaction = SKAction.customAction(withDuration: 0.25, actionBlock: {(node, time) -> Void in
+			(node as! SKEffectNode).filter!.setValue(1 + (0.25 - time)*3, forKey: "inputEV")
+			self.filternode.shouldRasterize = false
+			self.filternode.shouldRasterize = true
+		})
+		
+		pulseupaction.timingMode = .easeInEaseOut
+		pulsednaction.timingMode = .easeInEaseOut
+		
+		pulseAction = SKAction.sequence([
+			SKAction.run({ () -> Void in
+				self.filternode.shouldRasterize = false
+			}),
+			pulseupaction,
+			tickSound,
+			SKAction.run({ () -> Void in
+				self.ledcount = self.ledcount + (100/30)
+				let ledstodec = Int(floor(self.ledcount))
+				for _ in 0..<ledstodec {
+					self.leds?.stringPointlessDec()
+				}
+				self.ledcount -= floor(self.ledcount)
+				
+				self.time -= 1
+				if(self.time == 0) {
+					self.timer?.invalidate()
+					self.run(self.hornSound)
+					leds?.stringPointlessCorrect()
+					let p = SKEmitterNode(fileNamed: "SparksUp2")!
+					p.position = CGPoint(x: self.centrePoint.x, y: 0)
+					p.zPosition = 2
+					p.removeWhenDone()
+					self.addChild(p)
+				}
+			}),
+			pulsednaction,
+			SKAction.run({ () -> Void in
+				self.filternode.shouldRasterize = true
+			})
+		])
+		
+		
 		//Load any alternative Buzzer sounds
 		do {
 			let docsArray = try FileManager.default.contentsOfDirectory(atPath: Bundle.main.resourcePath!)
@@ -57,25 +121,31 @@ class BuzzerScene: SKScene {
 			print(error)
 		}
 		
-		self.addChild(bgImage)
+		//self.addChild(bgImage)
 	}
 	
 	func buzzSound() {
-		if useAlternateBuzzers && Int.random(in: 0...8) == 0 {
-			//Play the next alternative buzzer sound
-			if lastAltBuzzIndex >= altBuzzNoise.count {
-				lastAltBuzzIndex = 0
-			}
-			self.run(altBuzzNoise[lastAltBuzzIndex])
-			lastAltBuzzIndex = lastAltBuzzIndex + 1
+		if timer != nil && timer!.isValid {
+			self.run(buzzNoiseQuack)
 		} else {
-			//Play the default buzzer sound
-			self.run(buzzNoise)
+			if useAlternateBuzzers && Int.random(in: 0...8) == 0 {
+				//Play the next alternative buzzer sound
+				if lastAltBuzzIndex >= altBuzzNoise.count {
+					lastAltBuzzIndex = 0
+				}
+				self.run(altBuzzNoise[lastAltBuzzIndex])
+				lastAltBuzzIndex = lastAltBuzzIndex + 1
+			} else {
+				//Play the default buzzer sound
+				self.run(buzzNoise)
+			}
 		}
 	}
 	
 	func reset() {
-        leds?.stringOff()
+		if !(timer != nil && timer!.isValid) {
+			leds?.stringOff()
+		}
 		teamEnabled = [Bool](repeating: true, count: 10)
 		buzzNumber = 0
 		buzzes.removeAll()
@@ -97,7 +167,13 @@ class BuzzerScene: SKScene {
 				if buzzNumber == 0 {
 					firstBuzzTime = Date()
 					buzzSound()
-					leds?.stringTeamAnimate(team: team)
+					if let t = timer {
+						if !t.isValid {
+							leds?.stringTeamAnimate(team: team)
+						}
+					} else {
+						leds?.stringTeamAnimate(team: team)
+					}
 					nextTeamNumber = 1
 					
 					let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
@@ -129,6 +205,24 @@ class BuzzerScene: SKScene {
 			nextTeamNumber += 1
 		}
 	}
+	
+	func startTimer(_ secs : Int) {
+		time = secs
+		timer?.invalidate()
+		leds?.stringPointlessReset()
+		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(BuzzerScene.tick), userInfo: nil, repeats: true)
+		RunLoop.main.add(timer!, forMode: RunLoop.Mode.common)
+	}
+	
+	func stopTimer() {
+		leds?.stringOff()
+		timer?.invalidate()
+	}
+	
+	@objc func tick() {
+		filternode.run(pulseAction!)
+	}
+	
 }
 
 

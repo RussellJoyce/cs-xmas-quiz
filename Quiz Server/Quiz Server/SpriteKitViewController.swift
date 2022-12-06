@@ -222,6 +222,14 @@ class SpriteKitViewController: NSViewController {
         musicScene.initMusic(file: file)
     }
 	
+	func startBuzzerTimer(_ secs : Int) {
+		buzzerScene.startTimer(secs)
+	}
+	
+	func stopBuzzerTimer() {
+		buzzerScene.stopTimer()
+	}
+	
 	func startTimer() {
 		switch (currentRound) {
 		case .timer:

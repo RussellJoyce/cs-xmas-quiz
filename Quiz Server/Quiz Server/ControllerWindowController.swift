@@ -48,6 +48,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemTimer: NSTabViewItem!
 	@IBOutlet var tabView: NSTabView!
 	
+	@IBOutlet weak var buzzerTimerTime: NSTextField!
 	@IBOutlet var tabitemIdle: NSTabViewItem!
 	@IBOutlet var tabitemTest: NSTabViewItem!
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
@@ -135,7 +136,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             }
         }
 		
+		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
 		tabView.removeTabViewItem(tabitemTimer)
+		tabView.removeTabViewItem(tabitemPointless)
     }
 	
     func windowWillClose(_ notification: Notification) {
@@ -319,7 +322,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         quizView.musicStop()
     }
     
-    @IBAction func musicChooseFile(_ sender: NSPopUpButton) {
+	@IBAction func startBuzzerTimer(_ sender: Any) {
+		if let secs = Int(buzzerTimerTime.stringValue) {
+			quizView.startBuzzerTimer(secs)
+		}
+	}
+	
+	@IBAction func stopBuzzerTimer(_ sender: Any) {
+		quizView.stopBuzzerTimer()
+	}
+	
+	
+	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
         if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
             let path =  musicPath + "/" + fileName
             quizView.musicSetFile(file: path)
