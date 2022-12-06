@@ -254,11 +254,6 @@ document.addEventListener('touchend', function (event) {
 }, false);
 
 
-
-//Disable all scrolling
-bodyScrollLock.disableBodyScroll(document);
-
-
 //Set up a periodic timer to keep the connection to the client alive
 //client -> "pi" -> server. server -> "pb" -> client
 setInterval(function() {
