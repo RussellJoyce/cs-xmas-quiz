@@ -30,6 +30,7 @@ class BuzzerScene: SKScene {
 	var lastAltBuzzIndex = 0
 	
 	fileprivate var time: Int = 30
+	fileprivate var starttime: Int = 30
 	fileprivate var timer: Timer?
 	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
@@ -82,7 +83,7 @@ class BuzzerScene: SKScene {
 			pulseupaction,
 			tickSound,
 			SKAction.run({ () -> Void in
-				self.ledcount = self.ledcount + (100/30)
+				self.ledcount = self.ledcount + (100/Float(self.starttime))
 				let ledstodec = Int(floor(self.ledcount))
 				for _ in 0..<ledstodec {
 					self.leds?.stringPointlessDec()
@@ -208,6 +209,7 @@ class BuzzerScene: SKScene {
 	
 	func startTimer(_ secs : Int) {
 		time = secs
+		starttime = secs
 		timer?.invalidate()
 		leds?.stringPointlessReset()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(BuzzerScene.tick), userInfo: nil, repeats: true)
