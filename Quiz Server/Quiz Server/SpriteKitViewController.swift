@@ -222,6 +222,10 @@ class SpriteKitViewController: NSViewController {
         musicScene.initMusic(file: file)
     }
 	
+	func uniqueSetFile(file: String) {
+		textScene.initUnique(file: file)
+	}
+	
 	func startBuzzerTimer(_ secs : Int) {
 		buzzerScene.startTimer(secs)
 	}
@@ -274,5 +278,9 @@ class SpriteKitViewController: NSViewController {
 	
 	func setTeamType(team: Int, type: TeamType) {
 		testScene.setTeamType(team: team, type: type)
+	}
+	
+	func textScoreUnique() {
+		textScene.scoreUnique()
 	}
 }
