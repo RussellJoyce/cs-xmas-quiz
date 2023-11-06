@@ -29,7 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("Screens changed!")
     }
 	
-	func startQuiz(screen: NSScreen?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String) {
+	func startQuiz(screen: NSScreen?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String, uniquePath: String) {
         window.close()
 		
 		controllerWindow.numTeams = numberOfTeams
@@ -40,6 +40,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 		controllerWindow.geographyImagesPath = geographyImagesPath
         controllerWindow.musicPath = musicPath
+		controllerWindow.uniquePath = uniquePath
 		
         controllerWindow.showWindow(self)
     }

@@ -42,6 +42,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     var buzzerButtons = [NSButton]()
 	var geographyImagesPath: String?
     var musicPath: String?
+	var uniquePath: String?
     
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet var tabitemPointless: NSTabViewItem!
@@ -58,7 +59,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemNumbers: NSTabViewItem!
     
     @IBOutlet weak var musicFile: NSPopUpButton!
-    
+	@IBOutlet weak var uniqueFile: NSPopUpButton!
+	
 	@IBOutlet var textAllowAnswers: NSButton!
 	
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
@@ -135,6 +137,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 print("Error while enumerating files \(musicPath): \(error.localizedDescription)")
             }
         }
+		
+		if let uniquePath = uniquePath {
+			do {
+				let files = try FileManager.default.contentsOfDirectory(atPath: uniquePath)
+				for file in files.sorted() {
+					if (!file.hasPrefix(".")) {
+						uniqueFile.addItem(withTitle: file)
+					}
+				}
+				uniqueChooseFile(musicFile)
+			} catch {
+				print("Error while enumerating files \(uniquePath): \(error.localizedDescription)")
+			}
+		}
 		
 		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
 		tabView.removeTabViewItem(tabitemTimer)
@@ -342,8 +358,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             print("Error choosing music file")
         }
     }
-    
-    @IBAction func startTimer(_ sender: AnyObject) {
+	
+	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
+		if let uniquePath = uniquePath, let fileName = sender.selectedItem?.title {
+			let path =  uniquePath + "/" + fileName
+			quizView.uniqueSetFile(file: path)
+		}
+		else {
+			print("Error choosing unique list")
+		}
+	}
+	
+	@IBAction func startTimer(_ sender: AnyObject) {
 		quizView.startTimer()
 	}
 	
@@ -406,6 +432,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
+	}
+	
+	@IBAction func textScoreUnique(_ sender: Any) {
+		quizView.textScoreUnique()
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {

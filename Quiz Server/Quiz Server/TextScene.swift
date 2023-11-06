@@ -20,7 +20,7 @@ class TextTeamNode: SKNode {
 	var bgBox : SKShapeNode
 	var teamNoLabel : SKLabelNode
 	var teamNo : Int
-
+	
 	init(team: Int, width: Int, height: Int, position : CGPoint) {
 		let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
 		
@@ -76,7 +76,7 @@ class TextTeamNode: SKNode {
 		self.addChild(roundLabel)
 		self.addChild(singleLabel)
 	}
-	
+		
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
@@ -139,7 +139,9 @@ class TextScene: SKScene {
 	var teamBoxes = [TextTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
-
+	var uniques: [String]?
+	var emitters = [SKEmitterNode]()
+	
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
 		if setUp {
 			return
@@ -187,7 +189,7 @@ class TextScene: SKScene {
 			return "0 pts"
 		}
 	}
-
+	
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		self.run(blopSound)
 		leds?.stringPulseTeamColour(team: teamid)
@@ -203,6 +205,18 @@ class TextScene: SKScene {
 			teamBoxes[teamid].singleLabel.text = "••••••••"
 		}
 		teamBoxes[teamid].emphasise()
+	}
+	
+	func initUnique(file: String) {
+		uniques = []
+		do {
+			let data = try String(contentsOfFile:file, encoding: String.Encoding.utf8)
+			uniques = data.components(separatedBy: "\n")
+			uniques = uniques!.filter { $0 != "" }
+			uniques = uniques!.map { sanitiseString($0) }
+		} catch let err as NSError {
+			print(err)
+		}
 	}
 	
 	func showGuesses(showroundno : Bool) {
@@ -246,6 +260,71 @@ class TextScene: SKScene {
 		}
 	}
 	
+	func isTeamAnswerUnique(_ team : Int) -> Bool {
+		if let ourguess = teamGuesses[team] {
+			for tid in 0..<numTeams {
+				if tid != team {
+					if let tg = teamGuesses[tid] {
+						if tg.guess == ourguess.guess {
+							return false
+						}
+					}
+				}
+			}
+			return true
+		} else {
+			return false
+		}
+	}
+	
+	func sanitiseString(_ input : String) -> String {
+		var str = input.lowercased()
+		str = str.trimmingCharacters(in: .whitespacesAndNewlines)
+		str = str.trimmingCharacters(in: .punctuationCharacters)
+		str = str.trimmingCharacters(in: .symbols)
+		return str
+	}
+	
+	func scoreUnique() {
+		if let uniques = uniques {
+			print("Unique correct answers are: ", uniques)
+			
+			//Convert team guesses to a comparable format
+			for team in 0..<numTeams {
+				if teamGuesses[team] != nil {
+					teamGuesses[team]!.guess = sanitiseString(teamGuesses[team]!.guess);
+				}
+			}
+			
+			
+			//First mark all correct answers
+			for team in 0..<numTeams {
+				if let tg = teamGuesses[team] {
+					if uniques.contains(tg.guess)  {
+						//team is right but might not be unique
+						teamBoxes[team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.3, alpha: 0.9)))
+						teamBoxes[team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
+						
+						if isTeamAnswerUnique(team) {
+							let pstar = SKEmitterNode(fileNamed: "locationstar")!
+							var starpoint : CGPoint = teamBoxes[team].bgBox.centrePoint
+							starpoint.x -= 310
+							pstar.position = starpoint
+							pstar.zPosition = 5.0
+							teamBoxes[team].addChild(pstar)
+							emitters.append(pstar)
+						}
+					} else {
+						//team is wrong
+						teamBoxes[team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: NSColor(calibratedRed: 0.9, green: 0.2, blue: 0.2, alpha: 0.9)))
+					}
+				} else {
+					//team is wrong
+				}
+			}
+		}
+	}
+	
 	func reset() {
         leds?.stringOff()
 		for team in 0..<numTeams {
@@ -254,14 +333,24 @@ class TextScene: SKScene {
 			teamBoxes[team].roundLabel.text = ""
 			teamBoxes[team].singleLabel.text = ""
 			teamBoxes[team].resetTextSize()
+			teamBoxes[team].bgBox.fillColor = NumbersTeamNode.bgColour
+			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		
+		for e in emitters {
+			e.removeFromParent()
+		}
+		emitters.removeAll()
+		
 		//Quick dirty test code
-		/*teamGuess(teamid: 1, guess: "guess1", roundid: 1, showroundno: true);
-		teamGuess(teamid: 2, guess: "guess2", roundid: 2, showroundno: true);
-		teamGuess(teamid: 3, guess: "guess3", roundid: 3, showroundno: true);
-		teamGuess(teamid: 4, guess: "guess4", roundid: 3, showroundno: true);
-		teamGuess(teamid: 5, guess: "guess5", roundid: 4, showroundno: true);*/
+		teamGuess(teamid: 1, guess: "abc'", roundid: 1, showroundno: true);
+		teamGuess(teamid: 2, guess: "abc!", roundid: 2, showroundno: true);
+		teamGuess(teamid: 3, guess: "sss", roundid: 3, showroundno: true);
+		teamGuess(teamid: 4, guess: "sss", roundid: 3, showroundno: true);
+		teamGuess(teamid: 5, guess: "ddd", roundid: 3, showroundno: true);
+		teamGuess(teamid: 6, guess: "def", roundid: 3, showroundno: true);
+		teamGuess(teamid: 7, guess: "xxx", roundid: 4, showroundno: true);
+		teamGuess(teamid: 8, guess: "abc", roundid: 4, showroundno: true);
 	}
 
 }

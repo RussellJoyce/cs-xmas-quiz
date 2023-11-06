@@ -17,8 +17,9 @@ class StartupView: NSViewController {
 	@IBOutlet weak var teamsSelector: NSPopUpButton!
 	@IBOutlet weak var geographyImagesPath: NSTextField!
     @IBOutlet weak var musicPath: NSTextField!
+	@IBOutlet weak var uniquePath: NSTextField!
 	
-    var allScreens: [NSScreen]?
+	var allScreens: [NSScreen]?
     var allPorts: [ORSSerialPort]?
     
     
@@ -66,7 +67,8 @@ class StartupView: NSViewController {
 
 		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
         musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Music"
-        
+		uniquePath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Unique"
+		
         startButton.isEnabled = true
     }
     
@@ -78,7 +80,7 @@ class StartupView: NSViewController {
 		let numTeams = 10 - teamsSelector.indexOfSelectedItem
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-		delegate.startQuiz(screen: screen, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue)
+		delegate.startQuiz(screen: screen, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {
@@ -109,11 +111,31 @@ class StartupView: NSViewController {
         dialog.allowsMultipleSelection = false
         dialog.directoryURL = URL(fileURLWithPath: musicPath.stringValue, isDirectory: true)
         if (dialog.runModal() == NSApplication.ModalResponse.OK) {
-            let result = dialog.url // Pathname of the file
+            let result = dialog.url
             if (result != nil) {
                 let path = result!.path
                 musicPath.stringValue = path
             }
         }
     }
+	
+	
+	@IBAction func uniquePathBrowse(_ sender: NSButton) {
+		let dialog = NSOpenPanel();
+		dialog.title = "Folder of unique lists"
+		dialog.showsHiddenFiles = false
+		dialog.canChooseDirectories = true
+		dialog.canChooseFiles = false
+		dialog.canCreateDirectories = false
+		dialog.allowsMultipleSelection = false
+		dialog.directoryURL = URL(fileURLWithPath: uniquePath.stringValue, isDirectory: true)
+		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
+			let result = dialog.url
+			if (result != nil) {
+				let path = result!.path
+				uniquePath.stringValue = path
+			}
+		}
+	}
+	
 }

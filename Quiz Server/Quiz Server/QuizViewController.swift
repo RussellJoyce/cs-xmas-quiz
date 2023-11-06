@@ -214,6 +214,10 @@ class QuizViewController: NSViewController {
     func musicSetFile(file: String) {
         spriteKitView.musicSetFile(file: file)
     }
+	
+	func uniqueSetFile(file: String) {
+		spriteKitView.uniqueSetFile(file: file)
+	}
 
 	func geoStartQuestion(question: Int) {
 		spriteKitView.geographyScene.setQuestion(question: question)
@@ -233,6 +237,10 @@ class QuizViewController: NSViewController {
 
 	func textTeamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		spriteKitView.textTeamGuess(teamid: teamid, guess: guess, roundid: roundid, showroundno: showroundno)
+	}
+	
+	func textScoreUnique() {
+		spriteKitView.textScoreUnique()
 	}
 	
 	func textShowGuesses(showroundno : Bool) {
