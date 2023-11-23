@@ -28,7 +28,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var buzzerButton8: NSButton!
 	@IBOutlet weak var buzzerButton9: NSButton!
 	@IBOutlet weak var buzzerButton10: NSButton!
-    @IBOutlet weak var pointlessScore: NSTextField!
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
@@ -45,7 +44,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var uniquePath: String?
     
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
-	@IBOutlet var tabitemPointless: NSTabViewItem!
 	@IBOutlet var tabitemTimer: NSTabViewItem!
 	@IBOutlet var tabView: NSTabView!
 	
@@ -153,8 +151,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
-		tabView.removeTabViewItem(tabitemTimer)
-		tabView.removeTabViewItem(tabitemPointless)
+		//tabView.removeTabViewItem(tabitemTimer)
     }
 	
     func windowWillClose(_ notification: Notification) {
@@ -224,9 +221,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemtruefalse:
 			socketWriteIfConnected("vihigherlower")
 			quizView.setRound(round: RoundType.trueFalse)
-		case tabitemPointless:
-			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.pointless)
 		case tabitemTimer:
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.timer)
@@ -271,39 +265,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
 		}
-    }
-    
-    @IBAction func setPointlessScoreValue(_ sender: AnyObject) {
-        if pointlessScore.stringValue.lowercased() == "w" {
-            quizView.setPointlessWrong()
-        }
-        else if let score = Int(pointlessScore.stringValue) {
-            quizView.setPointlessScore(score: score, animated: true)
-        }
-    }
-	
-	@IBAction func setPointlessScoreValueImmediate(_ sender: AnyObject) {
-		if pointlessScore.stringValue.lowercased() == "w" {
-			quizView.setPointlessWrong()
-		}
-		else if let score = Int(pointlessScore.stringValue) {
-			quizView.setPointlessScore(score: score, animated: false)
-		}
-	}
-	
-	@IBAction func pointlessTeamPress(_ sender: NSButton) {
-		let team = sender.tag
-		if (team < numTeams) {
-			quizView.setPointlessTeam(team: team)
-		}
-	}
-	
-	@IBAction func pointlessResetTeam(_ sender: AnyObject) {
-		quizView.pointlessResetCurrentTeam()
-	}
-
-    @IBAction func pointlessWrong(_ sender: AnyObject) {
-        quizView.setPointlessWrong()
     }
     
 	@IBAction func trueFalseStart(_ sender: NSButton) {

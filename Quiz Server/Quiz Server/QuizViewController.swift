@@ -16,7 +16,6 @@ enum RoundType {
     case buzzers
     case music
     case trueFalse
-    case pointless
 	case timer
 	case geography
 	case text
@@ -26,7 +25,6 @@ enum RoundType {
 class QuizViewController: NSViewController {
     
     let spriteKitView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
-    let pointlessGame = PointlessGameController(nibName: "PointlessGameController", bundle: nil)
 	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)
 	
 	var currentRound = RoundType.none
@@ -41,32 +39,27 @@ class QuizViewController: NSViewController {
         
         spriteKitView.leds = quizLeds
         trueFalseView.leds = quizLeds
-        pointlessGame.leds = quizLeds
-		
+
 		spriteKitView.numTeams = numTeams
-		pointlessGame.numTeams = numTeams
 		trueFalseView.numTeams = numTeams
 		
 		spriteKitView.geographyScene.imagesPath = geographyImagesPath
         
         spriteKitView.view.frame = view.bounds
-        pointlessGame.view.frame = view.bounds
 		trueFalseView.view.frame = view.bounds
         
         setRound(round: RoundType.idle)
     }
     
     func resetRound() {
-        switch (currentRound) {
-        case .none:
-            break // Do nothing
-        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
-            spriteKitView.reset()
-        case .trueFalse:
-            trueFalseView.reset()
-		case .pointless:
-            pointlessGame.reset()
-        }
+		switch (currentRound) {
+		case .none:
+			break // Do nothing
+		case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+			spriteKitView.reset()
+		case .trueFalse:
+			trueFalseView.reset()
+		}
     }
     
     func setRound(round: RoundType) {
@@ -77,16 +70,14 @@ class QuizViewController: NSViewController {
 			spriteKitView.setRound(round: round)
             resetRound()
             
-            switch (currentRound) {
-            case .none:
-                currentRoundView = nil
-            case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
-                currentRoundView = spriteKitView.view
-            case .trueFalse:
-                currentRoundView = trueFalseView.view
-            case .pointless:
-                currentRoundView = pointlessGame.view
-            }
+			switch (currentRound) {
+			case .none:
+				currentRoundView = nil
+			case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+				currentRoundView = spriteKitView.view
+			case .trueFalse:
+				currentRoundView = trueFalseView.view
+			}
 			
 			if currentRoundView != lastRoundView {
 				if let currentRoundView = currentRoundView {
@@ -116,8 +107,6 @@ class QuizViewController: NSViewController {
 			spriteKitView.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode, buzzerQueueMode: buzzerQueueMode)
         case .trueFalse:
 			trueFalseView.buzzerPressed(team: team)
-		case .pointless:
-            break // Do nothing
         }
     }
     
@@ -132,8 +121,6 @@ class QuizViewController: NSViewController {
         case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
             spriteKitView.buzzerReleased(team: team, type: type)
 		case .trueFalse:
-			break // Do nothing
-        case .pointless:
 			break // Do nothing
         }
     }
@@ -161,27 +148,6 @@ class QuizViewController: NSViewController {
 	func stopBuzzerTimer() {
 		spriteKitView.stopBuzzerTimer()
 	}
-	
-	
-	func setPointlessTeam(team: Int) {
-		pointlessGame.setCurrentTeam(team: team)
-	}
-	
-	func pointlessResetCurrentTeam() {
-		pointlessGame.resetTeam()
-	}
-	
-	func setPointlessScore(score: Int, animated: Bool) {
-        if currentRound == RoundType.pointless && score >= 0 && score <= 100 {
-            pointlessGame.setScore(score: score, animated: animated)
-        }
-    }
-    
-    func setPointlessWrong() {
-        if currentRound == RoundType.pointless {
-            pointlessGame.wrong()
-        }
-    }
 	
 	func trueFalseStart() {
 		trueFalseView.start()

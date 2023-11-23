@@ -13,8 +13,6 @@
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
-		3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7082121A35FE38006DB763 /* PointlessGameController.swift */; };
-		3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C7082131A35FE38006DB763 /* PointlessGameController.xib */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
@@ -34,8 +32,6 @@
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
 		3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF571A306820003DEA9F /* counter_sting.wav */; };
-		3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5C1A30687F003DEA9F /* Pointless.swift */; };
-		3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
 		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
@@ -151,8 +147,6 @@
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
-		3C7082121A35FE38006DB763 /* PointlessGameController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointlessGameController.swift; sourceTree = "<group>"; };
-		3C7082131A35FE38006DB763 /* PointlessGameController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessGameController.xib; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
 		3C77C8A11DEF69E10088B36A /* location.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = location.sks; sourceTree = "<group>"; };
 		3C77C8A21DEF69E10088B36A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -171,8 +165,6 @@
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
 		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
 		3CD1DF571A306820003DEA9F /* counter_sting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_sting.wav; sourceTree = "<group>"; };
-		3CD1DF5C1A30687F003DEA9F /* Pointless.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pointless.swift; sourceTree = "<group>"; };
-		3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PointlessStackView.xib; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
 		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
@@ -346,10 +338,6 @@
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
-				3CD1DF5C1A30687F003DEA9F /* Pointless.swift */,
-				3C7082121A35FE38006DB763 /* PointlessGameController.swift */,
-				3C7082131A35FE38006DB763 /* PointlessGameController.xib */,
-				3CD1DF5D1A30687F003DEA9F /* PointlessStackView.xib */,
 				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
 				4620DC981A30C400006EABA1 /* QuizView.xib */,
 				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
@@ -536,7 +524,6 @@
 				46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
-				3CD1DF5F1A30687F003DEA9F /* PointlessStackView.xib in Resources */,
 				46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */,
 				3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */,
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
@@ -551,7 +538,6 @@
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
 				3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */,
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
-				3C7082151A35FE38006DB763 /* PointlessGameController.xib in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */,
 				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
@@ -595,7 +581,6 @@
 				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
 				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
-				3CD1DF5E1A30687F003DEA9F /* Pointless.swift in Sources */,
 				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,
 				464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */,
 				464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */,
@@ -611,7 +596,6 @@
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
-				3C7082141A35FE38006DB763 /* PointlessGameController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -756,6 +740,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.trivia-games";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MARKETING_VERSION = 2019.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
@@ -780,6 +765,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Quiz Server/Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.trivia-games";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MARKETING_VERSION = 2019.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
