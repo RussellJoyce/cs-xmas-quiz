@@ -41,6 +41,11 @@ function connect() {
                 console.log("Server gave us ID " + myid);
                 toggleState(true);
                 break;
+            case "px":
+                //The team we reqested wasn't available
+                document.getElementById("teamtitle").innerHTML = "Team already taken <hr>";
+                setTimeout(function(){document.getElementById("teamtitle").innerHTML = "Please select your team <hr>" }, 2000);
+                break;
             case "on":
                 toggleState(true);
                 console.log("button on");

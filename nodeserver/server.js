@@ -10,8 +10,8 @@ var lastView = "buzzer";
 var lastGeoImage = "start.jpg";
 
 //Certificates for SSL
-const certkey = 'certs/privkey.pem';
-const certchain = 'certs/fullchain.pem';
+const certkey = 'certs/privkey1.pem';
+const certchain = 'certs/fullchain1.pem';
 
 //DNS record
 const dnshostname = 'iangray.me.uk';
@@ -161,6 +161,7 @@ wclient.on('connection', function connection(ws, req) {
                         } else {
                             console.log("Team " + teampick + " is already taken by client " + client);
                             //The team is already taken so ignore it
+                            ws.send("px");
                         }
                     }
                 } else {
