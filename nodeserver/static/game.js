@@ -150,13 +150,13 @@ if ('ontouchstart' in document.documentElement) {
 }
 
 buzzer.addEventListener(eventtouse, function(event) {
-    if(myid > 0 && myid <= 10) {
+    if(myid > 0 && myid <= 99) {
         ws.send('zz' + myid);
     }
 });
 
 higher.addEventListener(eventtouse, function(event) {
-    if(myid > 0 && myid <= 10) {
+    if(myid > 0 && myid <= 99) {
         ws.send('zz' + myid);
     }
 });
@@ -182,7 +182,7 @@ function textboxhandler(event) {
         return false;
     }
 
-    if(myid > 0 && myid <= 10) {
+    if(myid > 0 && myid <= 99) {
         ws.send('tt' + myid + "," + textbox.value);
     }
     textbox.style.animationName = "textboxpulse";
