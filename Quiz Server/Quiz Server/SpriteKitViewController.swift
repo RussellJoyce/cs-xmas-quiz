@@ -8,6 +8,7 @@
 
 import Cocoa
 import SpriteKit
+import Starscream
 
 class SpriteKitViewController: NSViewController {
 	
@@ -25,6 +26,7 @@ class SpriteKitViewController: NSViewController {
 	var currentRound = RoundType.none
 	var numTeams = 10
 	var transitions = [SKTransition]()
+	var webSocket: WebSocket?
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -33,14 +35,14 @@ class SpriteKitViewController: NSViewController {
 		//skView.showsFPS = true
 		//skView.showsNodeCount = true
 		
-		idleScene.setUpScene(size: skView.bounds.size, leds: leds)
-		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-        musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		idleScene.setUpScene(size: skView.bounds.size, leds: leds, websocket: webSocket)
+		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
+		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
+        musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
+		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
+		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		
 		let transitionDuration = 1.0
 		

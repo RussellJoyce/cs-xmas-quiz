@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import SpriteKit
+import Starscream
 
 class TextTeamNode: SKNode {
 	
@@ -134,6 +135,7 @@ class TextScene: SKScene {
 	
 	var teamGuesses = [(roundid: Int, guess: String)?]()
 	var leds: QuizLeds?
+	var webSocket : WebSocket?
 	fileprivate var setUp = false
 	var numTeams = 10
 	var teamBoxes = [TextTeamNode]()
@@ -142,7 +144,7 @@ class TextScene: SKScene {
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -150,6 +152,7 @@ class TextScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.webSocket = webSocket
 		self.numTeams = numTeams
 		
 		let bgImage = SKSpriteNode(imageNamed: "background2")
@@ -193,6 +196,7 @@ class TextScene: SKScene {
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		self.run(blopSound)
 		leds?.stringPulseTeamColour(team: teamid)
+		webSocket?.pulseTeamColour(team: teamid)
 		teamGuesses[teamid] = (roundid, guess)
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {
@@ -222,6 +226,7 @@ class TextScene: SKScene {
 	func showGuesses(showroundno : Bool) {
 		self.run(hornSound)
 		leds?.stringPointlessCorrect()
+		webSocket?.pulseWhite()
 		
 		let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 		
@@ -327,6 +332,7 @@ class TextScene: SKScene {
 	
 	func reset() {
         leds?.stringOff()
+		webSocket?.ledsOff()
 		for team in 0..<numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""

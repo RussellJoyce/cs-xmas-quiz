@@ -331,7 +331,7 @@
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qsu-Et-3OI">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Qsu-Et-3OI">
                         <rect key="frame" x="18" y="210" width="143" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="139" id="UOn-Cg-8iB"/>
@@ -369,7 +369,7 @@ DQ
                             <action selector="startQuiz:" target="9BG-lO-pnL" id="CXo-DS-23r"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qxb-yY-gad">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qxb-yY-gad">
                         <rect key="frame" x="18" y="181" width="143" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="139" id="kqi-Qr-C8P"/>
@@ -413,7 +413,7 @@ DQ
                             </menu>
                         </popUpButtonCell>
                     </popUpButton>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VcX-dQ-cip">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VcX-dQ-cip">
                         <rect key="frame" x="18" y="153" width="143" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="139" id="oj3-Ti-TL7"/>
@@ -424,7 +424,7 @@ DQ
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vtv-Yd-NBq">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vtv-Yd-NBq">
                         <rect key="frame" x="18" y="124" width="143" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="139" id="CZG-N5-S7Y"/>
@@ -448,7 +448,7 @@ DQ
                             <action selector="geographyPathBrowse:" target="9BG-lO-pnL" id="3Nt-9w-Wd2"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h66-8w-5Om">
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h66-8w-5Om">
                         <rect key="frame" x="167" y="123" width="459" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="nLT-0O-cKj">
                             <font key="font" metaFont="system"/>
@@ -456,7 +456,7 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ByP-aC-Ccb">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ByP-aC-Ccb">
                         <rect key="frame" x="88" y="93" width="73" height="16"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="69" id="HJW-7G-mQw"/>
@@ -467,7 +467,7 @@ DQ
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hRw-cw-PFI">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hRw-cw-PFI">
                         <rect key="frame" x="82" y="64" width="79" height="16"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Unique lists:" id="qns-1e-jyI">
@@ -476,7 +476,7 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="znj-cr-uxp">
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="znj-cr-uxp">
                         <rect key="frame" x="167" y="92" width="459" height="21"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="NIt-h4-qgF">
                             <font key="font" metaFont="system"/>
@@ -508,7 +508,7 @@ DQ
                             <action selector="uniquePathBrowse:" target="9BG-lO-pnL" id="OoN-TV-LVJ"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ccY-6r-GQo">
+                    <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ccY-6r-GQo">
                         <rect key="frame" x="167" y="61" width="459" height="21"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="cui-5E-h0k">

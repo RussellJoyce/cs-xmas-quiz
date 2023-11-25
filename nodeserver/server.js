@@ -117,8 +117,7 @@ wserver.on('connection', function(ws) {
 
 wleds.on('connection', function(ws) {
     console.log("LEDs connected")
-    ws.send('{"cmd": "setanimation", "animation": "idle"}');
-
+    ws.send('a01'); //New leds are set to Megamas
     ws.on('message', function incoming(message) {
         ws.send(message);
     })

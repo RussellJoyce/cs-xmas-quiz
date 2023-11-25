@@ -8,6 +8,7 @@
 
 import Cocoa
 import SpriteKit
+import Starscream
 
 enum TeamType {
 	case christmas
@@ -21,6 +22,7 @@ class TestScene: SKScene {
 	fileprivate var setUp = false
 	var numTeams = 10
 	var buzzerPresses = [Int]()
+	var webSocket : WebSocket?
 	
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
@@ -34,7 +36,7 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "floppydisk", "star"]
 	
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -42,6 +44,7 @@ class TestScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.webSocket = webSocket
 		self.numTeams = numTeams
 		
 		self.backgroundColor = NSColor.black
@@ -109,6 +112,7 @@ class TestScene: SKScene {
 	
 	func reset() {
 		leds?.stringOff()
+		webSocket?.ledsOff()
 		for team in numbers {
 			team.fontColor = NSColor.white
 		}
@@ -133,6 +137,7 @@ class TestScene: SKScene {
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		leds?.stringTestOn(team: team)
+		webSocket?.pulseTeamColour(team: team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3

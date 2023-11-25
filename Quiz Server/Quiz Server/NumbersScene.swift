@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import SpriteKit
+import Starscream
 
 
 
@@ -163,6 +164,7 @@ class NumbersScene: SKScene {
 	
 	var teamGuesses = [Int?]()
 	var leds: QuizLeds?
+	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	var numTeams = 10
 	var teamBoxes = [NumbersTeamNode]()
@@ -171,7 +173,7 @@ class NumbersScene: SKScene {
 	var revealed = false
 	var emitters = [SKEmitterNode]()
 
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -179,6 +181,7 @@ class NumbersScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.webSocket = webSocket
 		self.numTeams = numTeams
 		self.revealed = false
 		
@@ -208,6 +211,7 @@ class NumbersScene: SKScene {
 	func teamGuess(teamid : Int, guess : Int) {
 		self.run(blopSound)
 		leds?.stringPulseTeamColour(team: teamid)
+		webSocket?.pulseTeamColour(team: teamid)
 		teamGuesses[teamid] = guess
 		teamBoxes[teamid].resetTextSize()
 		teamBoxes[teamid].guessLabel.text = ""
@@ -221,6 +225,7 @@ class NumbersScene: SKScene {
 		if(!revealed) {
 			self.run(hornSound)
 			leds?.stringPointlessCorrect()
+			webSocket?.pulseWhite()
 			
 			let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 			
@@ -332,6 +337,7 @@ class NumbersScene: SKScene {
 
 	func reset() {
         leds?.stringOff()
+		webSocket?.ledsOff()
 		self.revealed = false
 		
 		for team in 0..<numTeams {

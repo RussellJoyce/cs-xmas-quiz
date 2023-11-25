@@ -156,8 +156,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     func windowWillClose(_ notification: Notification) {
         // Turn off all buzzer and animation LEDs
-        quizLeds?.stringOff()
-        
+		quizLeds?.stringOff()
+		socket.ledsOff()
+		
         // Cleanly close serial port and game controller
         quizLeds?.closeSerial()
     }

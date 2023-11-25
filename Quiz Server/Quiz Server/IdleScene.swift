@@ -8,6 +8,7 @@
 
 import Cocoa
 import SpriteKit
+import Starscream
 
 class IdleScene: SKScene {
 	
@@ -15,8 +16,9 @@ class IdleScene: SKScene {
 	var leds: QuizLeds?
 	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "party", "crazy"]
-
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	var webSocket: WebSocket?
+	
+	func setUpScene(size: CGSize, leds: QuizLeds?, websocket: WebSocket?) {
 		if setUp {
 			return
 		}
@@ -24,6 +26,7 @@ class IdleScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.webSocket = websocket;
 		
 		let date = Date()
 		let calendar = Calendar.current
@@ -222,7 +225,6 @@ class IdleScene: SKScene {
 		self.addChild(drunkSnow)
 	}
 	
-	
 	func firework() {
 		let parts = SKEmitterNode(fileNamed: "fireworks")!
 		parts.position = CGPoint(x: 20 + Int.random(in: 0..<1880), y: 600 + Int.random(in: 0..<460))
@@ -239,6 +241,7 @@ class IdleScene: SKScene {
 	}
 	
 	func reset() {
+		webSocket?.megamas()
 		leds?.stringAnimation(animation: 2)
 		for node in snowmojis {
 			node.particleBirthRate = 0

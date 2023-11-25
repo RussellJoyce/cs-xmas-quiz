@@ -39,6 +39,8 @@ class QuizViewController: NSViewController {
         
         spriteKitView.leds = quizLeds
         trueFalseView.leds = quizLeds
+		
+		spriteKitView.webSocket = webSocket
 
 		spriteKitView.numTeams = numTeams
 		trueFalseView.numTeams = numTeams
