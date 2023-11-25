@@ -24,8 +24,7 @@ Temporary Items
 
 node_modules
 
-# Ignore music files that we haven't explicitly checked in
+# Ignore question files 
 Music/*
-
-# Ignore geography files
 nodeserver/static/geography/*
+Unique/*
