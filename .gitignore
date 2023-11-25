@@ -30,3 +30,5 @@ node_modules
 Music/*
 nodeserver/static/geography/*
 Unique/*
+
+quizleds/src/credentials.h
