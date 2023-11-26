@@ -45,12 +45,15 @@ class TrueFalseViewController: NSViewController {
 		topView.topLabel = topLabel
 		
 		// Trim number of views down to match number of teams
+		// This view currently only handles up to 10 teams
 		let allTeams : [TrueFalseTeamView] = [team1, team2, team3, team4, team5, team6, team7, team8, team9, team10]
 		for i in 0..<numTeams {
-			teams.append(allTeams[i])
-			teams[i].isHidden = false
-			teams[i].setTeam(team: i)
-			teamEnabled.append(true)
+			if i < allTeams.count {
+				teams.append(allTeams[i])
+				teams[i].isHidden = false
+				teams[i].setTeam(team: i)
+				teamEnabled.append(true)
+			}
 		}
     }
 	

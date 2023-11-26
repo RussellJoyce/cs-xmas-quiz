@@ -20,7 +20,7 @@ class TestScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
-	var numTeams = 10
+	var numTeams = 15
 	var buzzerPresses = [Int]()
 	var webSocket : WebSocket?
 	
@@ -51,37 +51,33 @@ class TestScene: SKScene {
 		
 		for i in 0..<numTeams {
 			
-			var xPos = 0.0
-			if numTeams == 10 {
-				if i == 9 {
-					xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.2));
-				}
-				else {
-					xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.5));
-				}
-			}
-			else {
-				xPos = Double(i + 1) * (Double(size.width) / (Double(numTeams) + 1.0));
-			}
+			let brkpoint = (numTeams / 2) + 1
+			
+			let xPos = i < ((numTeams / 2) + 1) ?
+				Double(i + 1) * (Double(size.width) / (Double(brkpoint) + 1.5)) :
+				Double((i + 1) - brkpoint) * (Double(size.width) / (Double(brkpoint-1) + 1.5))
+			let yPos = i < brkpoint ?
+				540 + 250 :
+				540 - 250
 			
 			let numberNode = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-			numberNode.fontSize = 170.0
+			numberNode.fontSize = 130.0
 			numberNode.horizontalAlignmentMode = .center
 			numberNode.verticalAlignmentMode = .center
 			numberNode.text = String(i + 1)
-			numberNode.position = CGPoint(x: xPos, y: 540)
+			numberNode.position = CGPoint(x: xPos, y: Double(yPos))
 			numberNode.zPosition = 3
 			numbers.append(numberNode)
 			self.addChild(numberNode)
 		
 			let sparksUpNode = SKEmitterNode(fileNamed: "SparksUp")!
-			sparksUpNode.position = CGPoint(x: xPos, y: 655)
+			sparksUpNode.position = CGPoint(x: xPos, y: Double(yPos+100))
 			sparksUpNode.zPosition = 2
 			sparksUp.append(sparksUpNode)
 			self.addChild(sparksUpNode)
 
 			let sparksDownNode = SKEmitterNode(fileNamed: "SparksDown")!
-			sparksDownNode.position = CGPoint(x: xPos, y: 425)
+			sparksDownNode.position = CGPoint(x: xPos, y: Double(yPos-100))
 			sparksDownNode.zPosition = 2
 			sparksDown.append(sparksDownNode)
 			self.addChild(sparksDownNode)
@@ -90,14 +86,14 @@ class TestScene: SKScene {
 			
 			for j in 0...2 {
 				let imageSparksUpNode = SKEmitterNode(fileNamed: "SparksUpImage")!
-				imageSparksUpNode.position = CGPoint(x: xPos, y: 655)
+				imageSparksUpNode.position = CGPoint(x: xPos, y: Double(yPos+100))
 				imageSparksUpNode.zPosition = 1
 				imageSparksUpNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
 				imageSparksNodes.append(imageSparksUpNode)
 				self.addChild(imageSparksUpNode)
 				
 				let imageSparksDownNode = SKEmitterNode(fileNamed: "SparksDownImage")!
-				imageSparksDownNode.position = CGPoint(x: xPos, y: 425)
+				imageSparksDownNode.position = CGPoint(x: xPos, y: Double(yPos-100))
 				imageSparksDownNode.zPosition = 1
 				imageSparksDownNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
 				imageSparksNodes.append(imageSparksDownNode)
@@ -133,7 +129,7 @@ class TestScene: SKScene {
 	}
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {
-		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team%10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		leds?.stringTestOn(team: team)

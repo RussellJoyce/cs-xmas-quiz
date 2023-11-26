@@ -14,10 +14,10 @@ class StartupView: NSViewController {
     @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var testMode: NSButton!
-	@IBOutlet weak var teamsSelector: NSPopUpButton!
 	@IBOutlet weak var geographyImagesPath: NSTextField!
     @IBOutlet weak var musicPath: NSTextField!
 	@IBOutlet weak var uniquePath: NSTextField!
+	@IBOutlet weak var numTeamsInput: NSTextField!
 	
 	var allScreens: [NSScreen]?
     var allPorts: [ORSSerialPort]?
@@ -77,7 +77,7 @@ class StartupView: NSViewController {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
         let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSControl.StateValue.on;
-		let numTeams = 10 - teamsSelector.indexOfSelectedItem
+		let numTeams = Int(numTeamsInput.intValue)
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
 		delegate.startQuiz(screen: screen, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)

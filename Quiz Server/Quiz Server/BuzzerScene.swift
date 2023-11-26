@@ -14,14 +14,14 @@ class BuzzerScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
-	var numTeams = 10
+	var numTeams = 15
 	var webSocket: WebSocket?
 	
 	let useAlternateBuzzers = false
 	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
-	var teamEnabled = [Bool](repeating: true, count: 10)
+	var teamEnabled = [Bool](repeating: true, count: 15) //Will be rebuilt every call of reset()
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
@@ -152,7 +152,7 @@ class BuzzerScene: SKScene {
 			leds?.stringOff()
 			webSocket?.ledsOff();
 		}
-		teamEnabled = [Bool](repeating: true, count: 10)
+		teamEnabled = [Bool](repeating: true, count: numTeams)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0

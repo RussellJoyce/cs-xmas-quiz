@@ -15,11 +15,11 @@ class MusicScene: SKScene {
 	
 	var leds: QuizLeds?
 	fileprivate var setUp = false
-	var numTeams = 10
+	var numTeams = 15
 	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
-	var teamEnabled = [Bool](repeating: true, count: 10)
+	var teamEnabled = [Bool](repeating: true, count: 15)
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
 	var buzzNoises = [SKAction]()
@@ -82,7 +82,7 @@ class MusicScene: SKScene {
         leds?.stringOff()
 		webSocket?.ledsOff()
         pauseMusic()
-		teamEnabled = [Bool](repeating: false, count: 10)
+		teamEnabled = [Bool](repeating: false, count: numTeams)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0
@@ -141,8 +141,14 @@ class MusicScene: SKScene {
 					} else {
 						timeString = "()"
 					}
-					box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
-					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
+					//We have a few layouts for larger team numbers
+					if numTeams <= 10 {
+						box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
+					} else { //This will work up to about 15
+						box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 120) - CGFloat(buzzNumber * 65))
+					}
 				}
 				box.zPosition = 1
 				teamBoxes.append(box)
@@ -186,7 +192,7 @@ class MusicScene: SKScene {
     func resumeMusic() {
         reset()
 		firstBuzzTime = Date()
-		teamEnabled = [Bool](repeating: true, count: 10)
+		teamEnabled = [Bool](repeating: true, count: numTeams)
 		music?.play()
         music?.updateMeters()
     }

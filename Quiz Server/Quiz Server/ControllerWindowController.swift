@@ -28,6 +28,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBOutlet weak var buzzerButton8: NSButton!
 	@IBOutlet weak var buzzerButton9: NSButton!
 	@IBOutlet weak var buzzerButton10: NSButton!
+	@IBOutlet weak var buzzerButton11: NSButton!
+	@IBOutlet weak var buzzerButton12: NSButton!
+	@IBOutlet weak var buzzerButton13: NSButton!
+	@IBOutlet weak var buzzerButton14: NSButton!
+	@IBOutlet weak var buzzerButton15: NSButton!
+	
+	
+	
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
@@ -35,7 +43,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var quizScreen: NSScreen?
     var quizLeds: QuizLeds?
     var testMode = true
-	var numTeams = 10
+	var numTeams = 15
     var buzzersEnabled = [Bool]()
     var buzzersDisabled = false
     var buzzerButtons = [NSButton]()
@@ -88,11 +96,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socket.connect()
 		
 		// Trim number of buttons down to match number of teams
-		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10]
+		// We only handle 15 test buzzers up here
+		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10, buzzerButton11, buzzerButton12, buzzerButton13, buzzerButton14, buzzerButton15]
 		for i in 0..<numTeams {
-			buzzerButtons.append(allBuzzerButtons[i])
-			buzzerButtons[i].isEnabled = true
-			buzzersEnabled.append(true)
+			if i < allBuzzerButtons.count {
+				buzzerButtons.append(allBuzzerButtons[i])
+				buzzerButtons[i].isEnabled = true
+				buzzersEnabled.append(true)
+			}
 		}
 		
 		quizView.numTeams = numTeams
