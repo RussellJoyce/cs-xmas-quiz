@@ -59,10 +59,11 @@ class NumbersTeamNode: SKNode {
 	var bgBox : SKShapeNode
 	var teamNoLabel : SKLabelNode
 	var teamNo : Int
+	var fontsize : CGFloat
 	
 	static let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
 	
-	init(team: Int, width: Int, height: Int, position : CGPoint) {
+	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat) {
 				
 		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
 		bgBox.zPosition = 5
@@ -71,7 +72,7 @@ class NumbersTeamNode: SKNode {
 		bgBox.lineWidth = 2.0
 		
 		guessLabel.text = "abcedfghijklmnopqrstuv"
-		guessLabel.fontSize = 60
+		guessLabel.fontSize = fontsize
 		guessLabel.fontColor = NSColor.black
 		guessLabel.horizontalAlignmentMode = .left
 		guessLabel.verticalAlignmentMode = .center
@@ -79,7 +80,7 @@ class NumbersTeamNode: SKNode {
 		guessLabel.position = CGPoint(x: -((width/2) - 120), y: 30)
 		
 		singleLabel.text = "this is an answer answ"
-		singleLabel.fontSize = 60
+		singleLabel.fontSize = fontsize
 		singleLabel.fontColor = NSColor.black
 		singleLabel.horizontalAlignmentMode = .left
 		singleLabel.verticalAlignmentMode = .center
@@ -88,7 +89,7 @@ class NumbersTeamNode: SKNode {
 		
 		teamNoLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		teamNoLabel.text = "\(team + 1)."
-		teamNoLabel.fontSize = 60
+		teamNoLabel.fontSize = fontsize
 		teamNoLabel.fontColor = NSColor.black
 		teamNoLabel.horizontalAlignmentMode = .left
 		teamNoLabel.verticalAlignmentMode = .center
@@ -98,6 +99,7 @@ class NumbersTeamNode: SKNode {
 		self.width = width
 		self.height = height
 		self.teamNo = team
+		self.fontsize = fontsize
 		
 		super.init()
 		
@@ -118,8 +120,8 @@ class NumbersTeamNode: SKNode {
 	}
 	
 	func resetTextSize() {
-		guessLabel.fontSize = 60
-		singleLabel.fontSize = 60
+		guessLabel.fontSize = fontsize
+		singleLabel.fontSize = fontsize
 	}
 	
 	func emphasise() {
@@ -192,13 +194,27 @@ class NumbersScene: SKScene {
 		
 		self.addChild(bgImage)
 		
+		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		
+		var boxheight : Int = 150
+		if(numTeams > 10) {
+			boxheight = 100
+		}
+		
 		for team in 0..<numTeams {
-			let yOffset = (team >= 5) ? ((4 - (team - 5)) * 200) : ((4 - team) * 200)
+			var yOffset : Int
+			if team >= halfway {
+				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
+			} else {
+				yOffset = ((halfway-1) - team) * Int(Double(boxheight)*1.3)
+			}
+			
+			//let yOffset = (team >= 5) ? ((4 - (team - 5)) * 200) : ((4 - team) * 200)
 			let position = CGPoint(
-				x: (team < 5) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
-				y: CGFloat(160 + yOffset)
+				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
+				y: CGFloat(boxheight + 10 + yOffset)
 			)
-			let box = NumbersTeamNode(team: team, width: 700, height: 150, position: position)
+			let box = NumbersTeamNode(team: team, width: 700, height: boxheight, position: position, fontsize: numTeams >= 10 ? 60 : 40)
 			
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -240,7 +256,7 @@ class NumbersScene: SKScene {
 			
 			for team in 0..<numTeams {
 				if let tg = teamGuesses[team] {
-					teamBoxes[team].setTextSize(size: 60)
+					teamBoxes[team].setTextSize(size: numTeams >= 10 ? 60 : 40)
 					teamBoxes[team].singleLabel.text = "\(tg)"
 					teamBoxes[team].guessLabel.text = ""
 				} else {

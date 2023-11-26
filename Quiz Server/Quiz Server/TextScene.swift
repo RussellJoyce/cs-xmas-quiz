@@ -31,24 +31,27 @@ class TextTeamNode: SKNode {
 		bgBox.fillColor = bgColour
 		bgBox.lineWidth = 2.0
 		
+		let bigfontsize : CGFloat = height >= 150 ? 60 : 40
+		let smallfontsize : CGFloat = height >= 150 ? 38 : 28
+		
 		guessLabel.text = "abcedfghijklmnopqrstuv"
-		guessLabel.fontSize = 60
+		guessLabel.fontSize = bigfontsize
 		guessLabel.fontColor = NSColor.black
 		guessLabel.horizontalAlignmentMode = .left
 		guessLabel.verticalAlignmentMode = .center
 		guessLabel.zPosition = 6
-		guessLabel.position = CGPoint(x: -((width/2) - 120), y: 30)
+		guessLabel.position = CGPoint(x: -((width/2) - 120), y: Int(0.2*Double(height)))
 
 		roundLabel.text = "(round number)"
-		roundLabel.fontSize = 38
+		roundLabel.fontSize = smallfontsize
 		roundLabel.fontColor = NSColor(calibratedRed: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
 		roundLabel.horizontalAlignmentMode = .left
 		roundLabel.verticalAlignmentMode = .center
 		roundLabel.zPosition = 6
-		roundLabel.position = CGPoint(x: -((width/2) - 120), y: -40)
+		roundLabel.position = CGPoint(x: -((width/2) - 120), y: Int(-0.27*Double(height)))
 		
 		singleLabel.text = "this is an answer answ"
-		singleLabel.fontSize = 60
+		singleLabel.fontSize = bigfontsize
 		singleLabel.fontColor = NSColor.black
 		singleLabel.horizontalAlignmentMode = .left
 		singleLabel.verticalAlignmentMode = .center
@@ -57,7 +60,7 @@ class TextTeamNode: SKNode {
 		
 		teamNoLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		teamNoLabel.text = "\(team + 1)."
-		teamNoLabel.fontSize = 60
+		teamNoLabel.fontSize = bigfontsize
 		teamNoLabel.fontColor = NSColor.black
 		teamNoLabel.horizontalAlignmentMode = .left
 		teamNoLabel.verticalAlignmentMode = .center
@@ -162,13 +165,25 @@ class TextScene: SKScene {
 		
 		self.addChild(bgImage)
 		
+		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		
+		var boxheight : Int = 150
+		if(numTeams > 10) {
+			boxheight = 100
+		}
+	
 		for team in 0..<numTeams {
-			let yOffset = (team >= 5) ? ((4 - (team - 5)) * 200) : ((4 - team) * 200)
+			var yOffset : Int
+			if team >= halfway {
+				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
+			} else {
+				yOffset = ((halfway-1) - team) * Int(Double(boxheight)*1.3)
+			}
 			let position = CGPoint(
-				x: (team < 5) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
-				y: CGFloat(160 + yOffset)
+				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
+				y: CGFloat((boxheight+10) + yOffset)
 			)
-			let box = TextTeamNode(team: team, width: 700, height: 150, position: position)
+			let box = TextTeamNode(team: team, width: 700, height: boxheight, position: position)
 			
 			box.zPosition = 1
 			teamBoxes.append(box)
