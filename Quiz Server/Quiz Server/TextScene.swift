@@ -143,7 +143,8 @@ class TextScene: SKScene {
 	var numTeams = 10
 	var teamBoxes = [TextTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	//let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	let hornSound = SKAction.playSoundFileNamed("drums", waitForCompletion: false)
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	

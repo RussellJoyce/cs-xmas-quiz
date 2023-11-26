@@ -29,6 +29,7 @@
 		3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462A237DB6B0009DBD0C /* altBuzz3.wav */; };
 		3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462C237DBF88009DBD0C /* altBuzz4.wav */; };
 		3C971C902396A50E000346A7 /* emojsplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C971C8E2396A50E000346A7 /* emojsplosion.sks */; };
+		3CC862842B138BDC0060A7E0 /* drums.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CC862822B138BDC0060A7E0 /* drums.wav */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
@@ -162,6 +163,7 @@
 		3C93462A237DB6B0009DBD0C /* altBuzz3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz3.wav; sourceTree = "<group>"; };
 		3C93462C237DBF88009DBD0C /* altBuzz4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz4.wav; sourceTree = "<group>"; };
 		3C971C8E2396A50E000346A7 /* emojsplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = emojsplosion.sks; sourceTree = "<group>"; };
+		3CC862822B138BDC0060A7E0 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
 		3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Starscream.xcodeproj; path = ../Starscream/Starscream.xcodeproj; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3CC862822B138BDC0060A7E0 /* drums.wav */,
 				463EA5DA2396D6CC00118892 /* scratch1.wav */,
 				463EA5D82396D6CC00118892 /* scratch2.wav */,
 				463EA5DB2396D6CC00118892 /* scratch3.wav */,
@@ -545,6 +548,7 @@
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */,
 				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
+				3CC862842B138BDC0060A7E0 /* drums.wav in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
 				4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */,
