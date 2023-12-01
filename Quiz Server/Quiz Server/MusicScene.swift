@@ -114,9 +114,13 @@ class MusicScene: SKScene {
 				} else {
 					var timeString : String;
 					if let stTime = firstBuzzTime {
-						let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
-						let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
-						timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
+						let timeDifference = Date().timeIntervalSince(stTime)
+						let wholeSeconds = Int(timeDifference)
+						let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
+						timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
+						//let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
+						//let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
+						//timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
 					} else {
 						timeString = "()"
 					}
@@ -135,9 +139,13 @@ class MusicScene: SKScene {
 				} else {
 					var timeString : String;
 					if let stTime = firstBuzzTime {
-						let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
-						let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
-						timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
+						let timeDifference = Date().timeIntervalSince(stTime)
+						let wholeSeconds = Int(timeDifference)
+						let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
+						timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
+						//let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
+						//let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
+						//timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
 					} else {
 						timeString = "()"
 					}
