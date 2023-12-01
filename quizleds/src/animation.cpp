@@ -3,10 +3,10 @@
 #include <cmath>
 #include <ledmapping.h>
 
-NeoPixelBus<NeoGrbFeature, NeoWs2812xMethod> leds(NUM_LEDS, LED_PIN);
+NeoPixelBus<NeoRgbFeature, NeoWs2811Method> leds(NUM_LEDS, LED_PIN);
 
-static HslColor target[NUM_LEDS];
-static HslColor current[NUM_LEDS];
+static HsbColor target[NUM_LEDS];
+static HsbColor current[NUM_LEDS];
 static int framenum = 0;
 
 Megamas megamas;
@@ -14,7 +14,9 @@ NoAnim noanim;
 ColourPulse colourpulse;
 TeamPulse teampulse;
 BuzzSweep buzzsweep;
-Animation& current_anim = noanim;
+BuzzFlash buzzflash;
+BuzzCentre buzzcentre;
+Animation* current_anim = &noanim;
 
 
 void anim_init() {
@@ -23,58 +25,71 @@ void anim_init() {
 
 void anim_tick() {
     framenum++;
-    current_anim.tick();
+    if(current_anim != 0) 
+        current_anim->tick();
 }
 
 void anim_set_anim(AnimID id, int param) {
     switch(id) {
         case NONE:
-            current_anim = noanim;
+            current_anim = &noanim;
             break;
         case MEGAMAS:
-            current_anim = megamas;
+            current_anim = &megamas;
             break;
         case COLOURPULSE:
-            current_anim = colourpulse;
+            current_anim = &colourpulse;
             break;
         case TEAMPULSE:
-            current_anim = teampulse;
+            current_anim = &teampulse;
             break;
         case BUZZSWEEP1:
-            current_anim = buzzsweep;
+            current_anim = &buzzsweep;
             buzzsweep.mode = 0;
             break;
         case BUZZSWEEP2:
-            current_anim = buzzsweep;
+            current_anim = &buzzsweep;
             buzzsweep.mode = 1;
             break;
         case BUZZSWEEP3:
-            current_anim = buzzsweep;
+            current_anim = &buzzsweep;
             buzzsweep.mode = 2;
             break;
         case BUZZSWEEP4:
-            current_anim = buzzsweep;
+            current_anim = &buzzsweep;
             buzzsweep.mode = 3;
             break;
-        case BUZZSWEEP5:
-            current_anim = buzzsweep;
-            buzzsweep.mode = 4;
+        case BUZZFLASH:
+            current_anim = &buzzflash;
+            break;
+        case BUZZCENTRE:
+            current_anim = &buzzcentre;
             break;
     }
     framenum = 0;
-    current_anim.start(param);
+    if(current_anim != 0)
+        current_anim->start(param);
 }
 
-void anim_buzz_team(int teamid) {
-    switch(random(5)) {
-        case 0: anim_set_anim(BUZZSWEEP1, teamid); break;
-        case 1: anim_set_anim(BUZZSWEEP2, teamid); break;
-        case 2: anim_set_anim(BUZZSWEEP3, teamid); break;
-        case 3: anim_set_anim(BUZZSWEEP4, teamid); break;
-        case 4: anim_set_anim(BUZZSWEEP5, teamid); break;
-        default:
-            anim_set_anim(BUZZSWEEP2, teamid);
+AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE};
+
+
+//Play a buzzer animation. If animtoplay == -1 then cycles animations each buzz
+//If greater than the total number of anims then play one randomly
+void anim_buzz_team(int teamid, int animtoplay) {
+    static int lastbuzz = -1;
+    const int numbuzanims = sizeof(buzz_anims) / sizeof(AnimID);
+    
+    if(animtoplay < 0) {
+        lastbuzz++;
+        if(lastbuzz >= numbuzanims) lastbuzz = 0;
+        animtoplay = lastbuzz;
     }
+    if(animtoplay >= numbuzanims) {
+        animtoplay = random(numbuzanims);
+    }
+
+    anim_set_anim(buzz_anims[animtoplay], teamid);
 }
 
 
@@ -84,7 +99,7 @@ void setLEDs(RgbColor col) {
 }
 
 void setLEDsNoAnim(RgbColor col) {
-    current_anim = noanim;
+    current_anim = &noanim;
     setLEDs(col);
 }
 
@@ -147,6 +162,27 @@ void fade_current_hue_to_target(float speed) {
 }
 
 
+float fade(float to, float from, float amount) {
+    if(to > from) {
+        from += amount; 
+        if(from > to) from = to;
+    }
+    if(to < from) {
+        from -= amount;
+        if(from < to) from = to;
+    }
+    return from;
+}
+
+void fade_current_to_target(float speed) {
+    for(int i = 0; i < NUM_LEDS; i++) {
+        current[i].B = fade(target[i].B, current[i].B, speed);
+        current[i].H = fade(target[i].H, current[i].H, speed);
+        current[i].S = fade(target[i].S, current[i].S, speed);
+	}
+}
+
+
 void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak) {
 	for (int i = 0; i < NUM_LEDS/2; i++) {
 		if (i < rightAvg)
@@ -189,8 +225,8 @@ void NoAnim::tick() {};
 
 void Megamas::start(int param) {
 	for(int i = 0; i < NUM_LEDS; i++) {
-		target[i] = HslColor(0, 1.0, 0.5);
-		current[i] = HslColor(0, 1.0, 0.5);
+		target[i] = HsbColor(0, 1.0, 1.0);
+		current[i] = HsbColor(0, 1.0, 1.0);
 	}
     setLEDs(HslColor(0, 1.0, 0.5));
 }
@@ -201,13 +237,13 @@ void Megamas::tick() {
 		for(int i = 0; i < MEGAMAS_NUMBER; i++) {
 			switch(random(3)) {
 				case 0:
-					target[random(NUM_LEDS)] = HslColor(0.0, 1.0, 0.5);
+					target[random(NUM_LEDS)] = HsbColor(0.0, 1.0, 1.0);
 					break;
 				case 1:
-					target[random(NUM_LEDS)] = HslColor(0.3, 1.0, 0.5);
+					target[random(NUM_LEDS)] = HsbColor(0.3, 1.0, 1.0);
 					break;
 				case 2:
-					target[random(NUM_LEDS)] = HslColor(0.6, 1.0, 0.5);
+					target[random(NUM_LEDS)] = HsbColor(0.6, 1.0, 1.0);
 					break;
 			}
 		}
@@ -282,27 +318,105 @@ void BuzzSweep::start(int param) {
     this->col = team_col(param);
 }
 
+inline int clamp(int i) {
+    if(i < 0) return 0;
+    if(i >= NUM_LEDS) return NUM_LEDS-1;
+    return i;
+}
+
+int ledlookup_clamp(int i, bool random) {
+    int clamped_i = clamp(i);
+    return random ? ledlookup_rand[clamped_i] : ledlookup[clamped_i];
+}
+
 void BuzzSweep::tick() {
-    if(framenum < NUM_LEDS) {
-        switch(mode) {
-            case 1: //Sweep from left
-                leds.SetPixelColor(ledlookup[framenum], this->col);
-                break;
-            case 2: //Sweep from right
-                leds.SetPixelColor(ledlookup[(NUM_LEDS-1)-framenum], this->col);
-                break;
-            case 3: //random 1
-                leds.SetPixelColor(ledlookup_rand[framenum], this->col);
-                break;
-            case 4: //random 2
-                leds.SetPixelColor(ledlookup_rand[(NUM_LEDS-1)-framenum], this->col);
-                break;
-            default: //no lookup, will come from both sides
-                leds.SetPixelColor(framenum, this->col);
-                break;
+    static const int sweep_speed = 3;
+    if(framenum < NUM_LEDS/sweep_speed + sweep_speed) {
+        for(int i = 0; i < sweep_speed; i++) {
+            switch(mode) {
+                case 1: //Sweep from left
+                    leds.SetPixelColor(ledlookup_clamp(framenum*sweep_speed+i, false), this->col);
+                    break;
+                case 2: //Sweep from right
+                    leds.SetPixelColor(ledlookup_clamp((NUM_LEDS-1)-(framenum*sweep_speed+i), false), this->col);
+                    break;
+                case 3: //random 1
+                    leds.SetPixelColor(ledlookup_clamp(framenum*sweep_speed+i, true), this->col);
+                    break;
+                default: //no lookup -> left and then right
+                    leds.SetPixelColor(clamp(framenum*sweep_speed+i), this->col);
+                    break;
+            }
         }
         leds.Show();
     }
 };
 
 //-------------------------------------------------------------------------------------------------------
+
+
+void BuzzFlash::start(int param) {
+    clearLEDs();
+    this->col = team_col(param);
+    flashnum = 0;
+    flashhold = 0;
+}
+
+void BuzzFlash::tick() {
+    static const int numflashes = 5;
+    static const int flashlen = 7;
+
+    if(flashnum >= numflashes) {
+        if(flashcol.B < 1.0) {
+            flashcol.B += 0.01;
+            if(flashcol.B > 0.95) flashcol.B = 1.0;
+        }
+    } else {
+        if(flashhold == 0) {
+            flashcol = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+        } else {
+            flashcol.B -= 0.1;
+        }
+
+        flashhold++;
+        if(flashhold >= flashlen) {
+            flashhold = 0;
+            flashnum++;
+
+            if(flashnum >= numflashes) {
+                flashcol = HsbColor(col.H, 1.0, 0.0);
+            }
+        }
+    }
+
+    leds.ClearTo(flashcol);
+    leds.Show();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+void BuzzCentre::start(int param) {
+	for(int i = 0; i < NUM_LEDS; i++) {
+		target[i] = HsbColor(this->col.H, 1.0, 0);
+		current[i] = HsbColor(this->col.H, 1.0, 0);
+	}
+    clearLEDs();
+}
+
+void BuzzCentre::tick() {
+	if(framenum < NUM_LEDS/4) {
+        for(int i = 0; i < 2; i++) {
+            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+            current[ledlookup_clamp(NUM_LEDS/2+(framenum*2+1), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+        }
+    } else if(framenum == (NUM_LEDS/4 + 20)) {
+        for(int i = 0; i < NUM_LEDS; i++) {
+            target[i] = HsbColor(this->col.H, 1.0, 1.0);
+        }
+    }
+    
+    fade_current_to_target(0.01);
+    display_current();
+}
+
+

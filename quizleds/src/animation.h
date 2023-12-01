@@ -15,7 +15,7 @@ public:
 };
 
 typedef enum {
-    NONE, MEGAMAS, COLOURPULSE, TEAMPULSE, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZSWEEP5
+    NONE, MEGAMAS, COLOURPULSE, TEAMPULSE, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE
 } AnimID;
 
 void anim_init();
@@ -24,7 +24,7 @@ void anim_set_anim(AnimID id, int param);
 void clearLEDs();
 void setLEDs(RgbColor col);
 void setLEDsNoAnim(RgbColor col);
-void anim_buzz_team(int teamid);
+void anim_buzz_team(int teamid, int animtoplay = -1);
 void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak);
 
 HslColor team_col(int t);
@@ -64,6 +64,24 @@ public:
     void start(int param);
 	void tick();
     uint8_t mode;
+private:
+    HslColor col;
+};
+
+class BuzzFlash : public Animation {
+public:
+    void start(int param);
+	void tick();
+private:
+    HslColor col;
+	HsbColor flashcol;
+	int flashnum, flashhold;
+};
+
+class BuzzCentre : public Animation {
+public:
+    void start(int param);
+	void tick();
 private:
     HslColor col;
 };
