@@ -26,6 +26,7 @@ class BuzzerScene: SKScene {
 	var nextTeamNumber = 0
 	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
 	let buzzNoiseQuack = SKAction.playSoundFileNamed("altBuzz1", waitForCompletion: false)
+	let buzzNoiseQuiet = SKAction.playSoundFileNamed("quietbuzz1", waitForCompletion: false)
 	var teamBoxes = [BuzzerTeamNode]()
 	
 	var altBuzzNoise = [SKAction]()
@@ -129,20 +130,25 @@ class BuzzerScene: SKScene {
 		//self.addChild(bgImage)
 	}
 	
-	func buzzSound() {
+	func buzzSound(_ quietMode: Bool) {
 		if timer != nil && timer!.isValid {
 			self.run(buzzNoiseQuack)
 		} else {
-			if useAlternateBuzzers && Int.random(in: 0...8) == 0 {
-				//Play the next alternative buzzer sound
-				if lastAltBuzzIndex >= altBuzzNoise.count {
-					lastAltBuzzIndex = 0
-				}
-				self.run(altBuzzNoise[lastAltBuzzIndex])
-				lastAltBuzzIndex = lastAltBuzzIndex + 1
+			if(quietMode) {
+				//Play the quiet buzzer sound
+				self.run(buzzNoiseQuiet)
 			} else {
-				//Play the default buzzer sound
-				self.run(buzzNoise)
+				if useAlternateBuzzers && Int.random(in: 0...8) == 0 {
+					//Play the next alternative buzzer sound
+					if lastAltBuzzIndex >= altBuzzNoise.count {
+						lastAltBuzzIndex = 0
+					}
+					self.run(altBuzzNoise[lastAltBuzzIndex])
+					lastAltBuzzIndex = lastAltBuzzIndex + 1
+				} else {
+					//Play the default buzzer sound
+					self.run(buzzNoise)
+				}
 			}
 		}
 	}
@@ -163,7 +169,7 @@ class BuzzerScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzerQueueMode: Bool) {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzerQueueMode: Bool, quietMode: Bool) {
 		if buzzes.count == 0 || (buzzes.count > 0 && buzzerQueueMode) {
 			if teamEnabled[team] && buzzes.count < 5 {
 				teamEnabled[team] = false
@@ -172,7 +178,7 @@ class BuzzerScene: SKScene {
 				
 				if buzzNumber == 0 {
 					firstBuzzTime = Date()
-					buzzSound()
+					buzzSound(quietMode)
 					if let t = timer {
 						if !t.isValid {
 							leds?.stringTeamAnimate(team: team)

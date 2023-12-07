@@ -18,6 +18,8 @@
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
 		3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C7F5E581DF454AA008075B8 /* locationstar.sks */; };
+		3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */; };
+		3C8517E52B2243A000BBCABA /* quietbuzz2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */; };
 		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
 		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
 		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
@@ -154,6 +156,8 @@
 		3C77C8A11DEF69E10088B36A /* location.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = location.sks; sourceTree = "<group>"; };
 		3C77C8A21DEF69E10088B36A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C7F5E581DF454AA008075B8 /* locationstar.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationstar.sks; sourceTree = "<group>"; };
+		3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quietbuzz1.mp3; sourceTree = "<group>"; };
+		3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quietbuzz2.mp3; sourceTree = "<group>"; };
 		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
 		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
 		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
@@ -358,6 +362,8 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */,
+				3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */,
 				3CC862822B138BDC0060A7E0 /* drums.wav */,
 				463EA5DA2396D6CC00118892 /* scratch1.wav */,
 				463EA5D82396D6CC00118892 /* scratch2.wav */,
@@ -536,6 +542,7 @@
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
 				4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */,
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
+				3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */,
 				3C971C902396A50E000346A7 /* emojsplosion.sks in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				463EA5DE2396D6CC00118892 /* scratch1.wav in Resources */,
@@ -548,6 +555,7 @@
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */,
 				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
+				3C8517E52B2243A000BBCABA /* quietbuzz2.mp3 in Resources */,
 				3CC862842B138BDC0060A7E0 /* drums.wav in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
