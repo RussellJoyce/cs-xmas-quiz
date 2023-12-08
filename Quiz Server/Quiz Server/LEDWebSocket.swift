@@ -71,5 +71,11 @@ extension WebSocket {
 	func setMusicLevels(leftAvg: Int, leftPeak: Int, rightAvg: Int, rightPeak: Int) {
 		sendIfConnected("lem" + String(format: "%03d", leftAvg) + String(format: "%03d", leftPeak) + String(format: "%03d", rightAvg) + String(format: "%03d", rightPeak))
 	}
+	
+	/// Set the leds to a value from 0 to NUM_LEDS. LEDs lower than val are white, higher ones animate to fade out.
+	func setCounterValue(val : Int) {
+		sendIfConnected("ler" + String(format: "%03d", val))
+	}
+	
 }
 

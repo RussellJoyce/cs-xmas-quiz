@@ -49,6 +49,7 @@
                 <outlet property="textShowQuestionNumbers" destination="4Xo-nU-iC2" id="QH7-26-ein"/>
                 <outlet property="textStepper" destination="D2n-8d-ddz" id="fHQ-ZJ-RPN"/>
                 <outlet property="textTeamGuesses" destination="Hww-8P-tfO" id="r65-Fr-DNq"/>
+                <outlet property="timerShowCounter" destination="rBB-9P-neg" id="eF9-Yj-gD6"/>
                 <outlet property="uniqueFile" destination="rW6-i1-uwe" id="a0F-TS-9qC"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -869,6 +870,17 @@ DQ
                                                 <action selector="startTimer:" target="-2" id="IRo-7f-FSj"/>
                                             </connections>
                                         </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GZn-pc-Ayw">
+                                            <rect key="frame" x="14" y="110" width="225" height="50"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Start Timer with Music" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Kwh-tF-WNV">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="systemBold" size="19"/>
+                                                <connections>
+                                                    <action selector="timerStartWithMusic:" target="-2" id="Glx-BW-Xnu"/>
+                                                </connections>
+                                            </buttonCell>
+                                        </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qwd-BD-qMA">
                                             <rect key="frame" x="522" y="44" width="37" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -887,6 +899,17 @@ DQ
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rBB-9P-neg">
+                                            <rect key="frame" x="39" y="165" width="197" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Show Counter" bezelStyle="regularSquare" imagePosition="left" inset="2" id="fsQ-cR-AgC">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="21"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="timerShowCounterChange:" target="-2" id="J6x-f1-1lz"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>

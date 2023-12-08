@@ -11,6 +11,7 @@ import Cocoa
 import SpriteKit
 import AVFoundation
 import Darwin
+import Starscream
 
 class TimerScene: SKScene {
 
@@ -20,8 +21,11 @@ class TimerScene: SKScene {
 	fileprivate var time: Int = 60
 	fileprivate var timer: Timer?
 	fileprivate var pulseAction: SKAction?
+	fileprivate var pulseActionNoTick: SKAction?
 	fileprivate let filternode = SKEffectNode()
-	fileprivate var ledcount : Float = 0;
+	fileprivate var tickWhileCounting : Bool = true
+	
+	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -31,11 +35,13 @@ class TimerScene: SKScene {
 	let mainNode = SKNode()
 	let countmainNode = SKNode()
 	
-	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
+	var tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	let timerSound = SKAction.playSoundFileNamed("minutetimer", waitForCompletion: false)
+	let audioNode = SKAudioNode(url: Bundle.main.url(forResource: "minutetimer", withExtension: "mp3")!)
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?) {
+	func setUpScene(size: CGSize, leds: QuizLeds?, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
@@ -43,6 +49,7 @@ class TimerScene: SKScene {
 		
 		self.size = size
 		self.leds = leds
+		self.webSocket = webSocket;
 		correct = 0
 		time = 60
 		
@@ -69,6 +76,26 @@ class TimerScene: SKScene {
 			(node as! SKEffectNode).filter!.setValue(1 + (0.25 - time)*3, forKey: "inputEV")
 		})
 		
+		let mainaction = SKAction.run({ () -> Void in
+			let lednum = Int(200.0 * Float(self.time) / 60.0)
+			   webSocket?.setCounterValue(val: lednum)
+			   
+			   self.time -= 1
+			   self.updateTime()
+			   if(self.time == 0) {
+				   self.timer?.invalidate()
+				   self.run(self.hornSound)
+				   leds?.stringPointlessCorrect()
+				   webSocket?.pulseWhite()
+				   let p = SKEmitterNode(fileNamed: "SparksUp2")!
+				   p.position = CGPoint(x: self.centrePoint.x, y: 0)
+				   p.zPosition = 2
+				   p.removeWhenDone()
+				   self.addChild(p)
+			   }
+		   })
+		
+		
 		pulseupaction.timingMode = .easeInEaseOut
 		pulsednaction.timingMode = .easeInEaseOut
 		
@@ -78,27 +105,19 @@ class TimerScene: SKScene {
 			}),
 			pulseupaction,
 			tickSound,
+			mainaction,
+			pulsednaction,
 			SKAction.run({ () -> Void in
-				self.ledcount = self.ledcount + (5/3)
-				let ledstodec = Int(floor(self.ledcount))
-				for _ in 0..<ledstodec {
-					self.leds?.stringPointlessDec()
-				}
-				self.ledcount -= floor(self.ledcount)
-				
-				self.time -= 1
-				self.updateTime()
-				if(self.time == 0) {
-					self.timer?.invalidate()
-					self.run(self.hornSound)
-					leds?.stringPointlessCorrect()
-					let p = SKEmitterNode(fileNamed: "SparksUp2")!
-					p.position = CGPoint(x: self.centrePoint.x, y: 0)
-					p.zPosition = 2
-					p.removeWhenDone()
-					self.addChild(p)
-				}
+				self.filternode.shouldRasterize = true
+			})
+		])
+		
+		pulseActionNoTick = SKAction.sequence([
+			SKAction.run({ () -> Void in
+				self.filternode.shouldRasterize = false
 			}),
+			pulseupaction,
+			mainaction,
 			pulsednaction,
 			SKAction.run({ () -> Void in
 				self.filternode.shouldRasterize = true
@@ -156,7 +175,7 @@ class TimerScene: SKScene {
 
 		self.addChild(countmainNode)
 		self.addChild(mainNode)
-		
+		self.addChild(audioNode)
 	}
 	
 
@@ -167,12 +186,19 @@ class TimerScene: SKScene {
 		updateAnswers()
 		updateTime()
 		leds?.stringPointlessReset()
+		audioNode.run(SKAction.stop())
 	}
 	
-	func startTimer() {
+	func startTimer(music : Bool) {
 		if(time == 0) {
 			reset()
 		}
+		
+		if(music) {
+			self.time = 59
+			audioNode.run(SKAction.play())
+		}
+		tickWhileCounting = !music
 		
 		timer?.invalidate()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(TimerScene.tick), userInfo: nil, repeats: true)
@@ -180,11 +206,20 @@ class TimerScene: SKScene {
 	}
 	
 	@objc func tick() {
-		filternode.run(pulseAction!)
+		if(tickWhileCounting) {
+			filternode.run(pulseAction!)
+		} else {
+			filternode.run(pulseActionNoTick!)
+		}
+	}
+	
+	func showCounter(_ state : Bool) {
+		countmainNode.alpha = state ? 1.0 : 0.0
 	}
 	
 	func stopTimer() {
 		timer?.invalidate()
+		audioNode.run(SKAction.stop())
 	}
 	
 	func timerIncrement() {

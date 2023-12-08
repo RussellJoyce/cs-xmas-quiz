@@ -127,8 +127,12 @@ class QuizViewController: NSViewController {
         }
     }
     
-	func startTimer() {
-		spriteKitView.startTimer();
+	func timerShowCounter(_ state : Bool) {
+		spriteKitView.timerShowCounter(state)
+	}
+	
+	func startTimer(music : Bool) {
+		spriteKitView.startTimer(music: music);
 	}
 
 	func stopTimer() {

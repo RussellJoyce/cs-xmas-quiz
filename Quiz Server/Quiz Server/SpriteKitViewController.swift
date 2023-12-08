@@ -27,7 +27,7 @@ class SpriteKitViewController: NSViewController {
 	var numTeams = 10
 	var transitions = [SKTransition]()
 	var webSocket: WebSocket?
-
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
@@ -39,7 +39,7 @@ class SpriteKitViewController: NSViewController {
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
         musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-		timerScene.setUpScene(size: skView.bounds.size, leds: leds)
+		timerScene.setUpScene(size: skView.bounds.size, leds: leds, webSocket: webSocket)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
@@ -200,6 +200,10 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
+	func timerShowCounter(_ state : Bool) {
+		timerScene.showCounter(state)
+	}
+	
 	func nextBuzzerTeam() {
 		buzzerScene.nextTeam()
 	}
@@ -236,10 +240,10 @@ class SpriteKitViewController: NSViewController {
 		buzzerScene.stopTimer()
 	}
 	
-	func startTimer() {
+	func startTimer(music: Bool) {
 		switch (currentRound) {
 		case .timer:
-			timerScene.startTimer()
+			timerScene.startTimer(music: music)
 		default:
 			break
 		}

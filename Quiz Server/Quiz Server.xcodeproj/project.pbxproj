@@ -20,6 +20,7 @@
 		3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C7F5E581DF454AA008075B8 /* locationstar.sks */; };
 		3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */; };
 		3C8517E52B2243A000BBCABA /* quietbuzz2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */; };
+		3C8517E92B238A6900BBCABA /* minutetimer.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E72B238A6900BBCABA /* minutetimer.mp3 */; };
 		3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C872EAF1C03C3F000A2B397 /* TimerScene.swift */; };
 		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
 		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
@@ -158,6 +159,7 @@
 		3C7F5E581DF454AA008075B8 /* locationstar.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationstar.sks; sourceTree = "<group>"; };
 		3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quietbuzz1.mp3; sourceTree = "<group>"; };
 		3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = quietbuzz2.mp3; sourceTree = "<group>"; };
+		3C8517E72B238A6900BBCABA /* minutetimer.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = minutetimer.mp3; sourceTree = "<group>"; };
 		3C872EAF1C03C3F000A2B397 /* TimerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimerScene.swift; sourceTree = "<group>"; };
 		3C872EB11C03D35100A2B397 /* tick.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tick.mp3; sourceTree = "<group>"; };
 		3C872EB31C03D47A00A2B397 /* blop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = blop.mp3; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C8517E72B238A6900BBCABA /* minutetimer.mp3 */,
 				3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */,
 				3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */,
 				3CC862822B138BDC0060A7E0 /* drums.wav */,
@@ -564,6 +567,7 @@
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
+				3C8517E92B238A6900BBCABA /* minutetimer.mp3 in Resources */,
 				3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */,
 				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,

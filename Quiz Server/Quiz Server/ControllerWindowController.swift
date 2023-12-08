@@ -40,6 +40,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
 	@IBOutlet weak var quieterBuzzes: NSButton!
+	@IBOutlet weak var timerShowCounter: NSButton!
+
+	@IBAction func timerShowCounterChange(_ sender: NSButton) {
+		quizView.timerShowCounter(timerShowCounter.state == .on)
+	}
 	
 	var quizScreen: NSScreen?
     var quizLeds: QuizLeds?
@@ -344,7 +349,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func startTimer(_ sender: AnyObject) {
-		quizView.startTimer()
+		quizView.startTimer(music: false)
 	}
 	
 	@IBAction func stopTimer(_ sender: AnyObject) {
@@ -394,7 +399,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.textShowGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
-
+	@IBAction func timerStartWithMusic(_ sender: Any) {
+		quizView.startTimer(music: true)
+	}
+	
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
 		quizView.numbersShowGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
