@@ -283,8 +283,9 @@ void ColourPulse::tick() {
     if(framenum <= frames_up+frames_down) {
         if(framenum <= frames_up) {
             this->col.B = float(framenum) * (1.0 / float(frames_up));
-        } else if(framenum >= frames_down+frames_up) {
-            this->col.B = 1.0 - (float(framenum-frames_up)*(1.0/float(frames_down)));
+        } else if(framenum >= frames_up) {
+            int progress = framenum - frames_up;
+            this->col.B = 1.0 - (float(progress)*(1.0/float(frames_down)));
         }
         leds.ClearTo(this->col);
         leds.Show();

@@ -47,6 +47,8 @@ void loop() {
 				case 'Z': anim_buzz_team(6); break;
 				case 'c': anim_set_anim(COUNTER, 50); break;
 				case 'C': anim_set_anim(COUNTER, random(NUM_LEDS)); break;
+				case 'p': anim_set_anim(COLOURPULSE, 0); break;
+				case 'P': anim_set_anim(COLOURPULSE, 2); break;
 				default:
 					Serial.print('#');
 					break;
