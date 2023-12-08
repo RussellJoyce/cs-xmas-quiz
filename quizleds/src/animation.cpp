@@ -16,8 +16,8 @@ TeamPulse teampulse;
 BuzzSweep buzzsweep;
 BuzzFlash buzzflash;
 BuzzCentre buzzcentre;
+Counter counter;
 Animation* current_anim = &noanim;
-
 
 void anim_init() {
     leds.Begin();
@@ -42,6 +42,9 @@ void anim_set_anim(AnimID id, int param) {
             break;
         case TEAMPULSE:
             current_anim = &teampulse;
+            break;
+        case COUNTER:
+            current_anim = &counter;
             break;
         case BUZZSWEEP1:
             current_anim = &buzzsweep;
@@ -310,6 +313,31 @@ void TeamPulse::tick() {
         leds.Show();
     }
 };
+
+
+//-------------------------------------------------------------------------------------------------------
+
+void Counter::start(int param) {
+    this->c = param;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(i < this->c) {
+            leds.SetPixelColor(ledlookup[i], RgbColor(255, 255, 255));
+        } else {
+            leds.SetPixelColor(ledlookup[i], HsbColor(((float)rand()) / RAND_MAX, 1.0, 0.5));
+        }
+    }
+    leds.Show();
+}
+
+void Counter::tick() {
+    for(int i = this->c; i < NUM_LEDS; i++) {
+        HsbColor col = leds.GetPixelColor(ledlookup[i]);
+        col.B -= 0.01;
+        if(col.B < 0) col.B = 0;
+        leds.SetPixelColor(ledlookup[i], col);
+    }
+    leds.Show();
+}
 
 //-------------------------------------------------------------------------------------------------------
 

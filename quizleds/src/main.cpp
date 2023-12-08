@@ -45,6 +45,8 @@ void loop() {
 				case 'b': setLEDsNoAnim(RgbColor(0,0,255)); break;
 				case 'z': anim_buzz_team(0); break;
 				case 'Z': anim_buzz_team(6); break;
+				case 'c': anim_set_anim(COUNTER, 50); break;
+				case 'C': anim_set_anim(COUNTER, random(NUM_LEDS)); break;
 				default:
 					Serial.print('#');
 					break;

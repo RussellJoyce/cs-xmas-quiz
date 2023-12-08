@@ -127,6 +127,8 @@ void network_tick() {
 	//   qtt - pulse string team colour
 	// Music levels
 	//   mlllLLLrrrRRR
+	// Counter
+	//   rxxx - Set the strings to the desired timer number (xxx = 0 to NUMLEDS)
 
 	//Check for a command to handle
 	if(command_to_parse[0] != 0) {
@@ -192,6 +194,13 @@ void network_tick() {
 				}
 				break;
 			}
+			case 'r': {
+				if(command_length >= 4) {
+					int c = (int) bytesToInt(&command_to_parse[1]);
+					anim_set_anim(COUNTER, c);
+				}
+				break;
+			} 
 			default:
 				Serial.printf("LED Command %c\n", dat[0]);
 				break;
