@@ -53,7 +53,7 @@ class BuzzerScene: SKScene {
 		self.numTeams = numTeams
 		self.webSocket = webSocket;
 		
-		let bgImage = SKSpriteNode(imageNamed: "abstract-tree-and-stars")
+		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size

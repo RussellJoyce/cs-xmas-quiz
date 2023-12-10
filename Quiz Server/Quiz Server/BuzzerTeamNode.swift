@@ -86,7 +86,7 @@ class BuzzerTeamNode: SKNode {
 		particles1.particlePositionRange = CGVector(dx: 0, dy: height)
 		particles1.xAcceleration = -450
 		particles1.yAcceleration = 0
-		particles1.numParticlesToEmit = 200
+		particles1.numParticlesToEmit = 250
 		particles1.removeWhenDone()
 		
 		let particles2 = SKEmitterNode(fileNamed: "BuzzParticles")!
@@ -98,7 +98,7 @@ class BuzzerTeamNode: SKNode {
 		particles2.particlePositionRange = CGVector(dx: 0, dy: height)
 		particles2.xAcceleration = 450
 		particles2.yAcceleration = 0
-		particles2.numParticlesToEmit = 200
+		particles2.numParticlesToEmit = 250
 		particles2.removeWhenDone()
 		
 		let particles3 = SKEmitterNode(fileNamed: "BuzzParticles")!
@@ -110,7 +110,7 @@ class BuzzerTeamNode: SKNode {
 		particles3.particlePositionRange = CGVector(dx: width, dy: 0)
 		particles3.xAcceleration = 0
 		particles3.yAcceleration = 360
-		particles3.numParticlesToEmit = 800
+		particles3.numParticlesToEmit = 900
 		particles3.removeWhenDone()
 		
 		let particles4 = SKEmitterNode(fileNamed: "BuzzParticles")!
@@ -122,7 +122,7 @@ class BuzzerTeamNode: SKNode {
 		particles4.particlePositionRange = CGVector(dx: width, dy: 0)
 		particles4.xAcceleration = 0
 		particles4.yAcceleration = -360
-		particles4.numParticlesToEmit = 800
+		particles4.numParticlesToEmit = 900
 		particles4.removeWhenDone()
 		
 		glow.position = CGPoint.zero
