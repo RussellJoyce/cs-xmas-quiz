@@ -15,7 +15,7 @@ const certchain = 'certs/fullchain1.pem';
 
 //DNS record
 const dnshostname = 'iangray.me.uk';
-const hostaddress = '192.168.0.2';
+const hostaddress = '192.168.1.2';
 
 const wclientHttpsServer = https.createServer({
     key: fs.readFileSync(certkey, 'utf8'),
