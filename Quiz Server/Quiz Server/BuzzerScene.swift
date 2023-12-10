@@ -41,7 +41,7 @@ class BuzzerScene: SKScene {
 	fileprivate let filternode = SKEffectNode()
 	fileprivate var ledcount : Float = 0;
 
-	
+
 	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket: WebSocket?) {
 		if setUp {
 			return
@@ -53,7 +53,7 @@ class BuzzerScene: SKScene {
 		self.numTeams = numTeams
 		self.webSocket = webSocket;
 		
-		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
+		let bgImage = SKSpriteNode(imageNamed: "purple-texture-blurred")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
@@ -65,6 +65,12 @@ class BuzzerScene: SKScene {
 		filternode.shouldRasterize = true
 		filternode.addChild(bgImage)
 		self.addChild(filternode)
+		
+		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
+		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
+		snow1.zPosition = 1
+		snow1.particlePositionRange.dx = 2500
+		self.addChild(snow1)
 		
 		let pulseupaction = SKAction.customAction(withDuration: 0.15, actionBlock: {
 			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: "inputEV")
