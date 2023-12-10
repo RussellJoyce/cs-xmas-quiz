@@ -80,7 +80,9 @@ class StartupView: NSViewController {
 		let numTeams = Int(numTeamsInput.intValue)
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-		delegate.startQuiz(screen: screen, serial: serial, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
+		
+		//Do not attempt to open the serial port
+		delegate.startQuiz(screen: screen, serial: nil, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {
