@@ -127,6 +127,7 @@ class TimerScene: SKScene {
 
 		mainNode.position = CGPoint(x: 750, y: self.size.height - 360)
 		countmainNode.position = CGPoint(x: 460, y: self.size.height - 700)
+		countmainNode.alpha = 0.0
 		
 		text.fontSize = 300
 		text.fontColor = NSColor.white
