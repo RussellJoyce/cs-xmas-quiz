@@ -87,6 +87,7 @@ class TimerScene: SKScene {
 				   self.run(self.hornSound)
 				   leds?.stringPointlessCorrect()
 				   webSocket?.pulseWhite()
+				   self.audioNode.run(SKAction.stop())
 				   let p = SKEmitterNode(fileNamed: "SparksUp2")!
 				   p.position = CGPoint(x: self.centrePoint.x, y: 0)
 				   p.zPosition = 2
