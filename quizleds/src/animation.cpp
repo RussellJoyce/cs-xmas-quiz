@@ -16,6 +16,7 @@ TeamPulse teampulse;
 BuzzSweep buzzsweep;
 BuzzFlash buzzflash;
 BuzzCentre buzzcentre;
+BuzzRainbow buzzrainbow;
 Counter counter;
 Animation* current_anim = &noanim;
 
@@ -68,13 +69,16 @@ void anim_set_anim(AnimID id, int param) {
         case BUZZCENTRE:
             current_anim = &buzzcentre;
             break;
+        case BUZZRAINBOW:
+            current_anim = &buzzrainbow;
+            break;
     }
     framenum = 0;
     if(current_anim != 0)
         current_anim->start(param);
 }
 
-AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE};
+AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW};
 
 
 //Play a buzzer animation. If animtoplay == -1 then cycles animations each buzz
@@ -425,6 +429,7 @@ void BuzzFlash::tick() {
 //-------------------------------------------------------------------------------------------------------
 
 void BuzzCentre::start(int param) {
+    this->col = team_col(param);
 	for(int i = 0; i < NUM_LEDS; i++) {
 		target[i] = HsbColor(this->col.H, 1.0, 0);
 		current[i] = HsbColor(this->col.H, 1.0, 0);
@@ -449,3 +454,35 @@ void BuzzCentre::tick() {
 }
 
 
+//-------------------------------------------------------------------------------------------------------
+
+void BuzzRainbow::start(int param) {
+    this->col = team_col(param);
+	clearLEDs();
+}
+
+void BuzzRainbow::tick() {
+    if(framenum < 60) {
+        for(int i = 0; i < NUM_LEDS; i++) {
+            float huev = 0.005 * (i + framenum*3);
+            if(huev > 1.0) huev = huev - 1.0;
+            leds.SetPixelColor(ledlookup[i], HsbColor(huev, 1.0, 1.0));
+        }
+        leds.Show();
+    } else {
+        for(int i = 0; i < NUM_LEDS; i++) {
+            HslColor cur = leds.GetPixelColor(i);
+
+            if(fabs(cur.H - this->col.H) < 0.02) {
+                cur.H = this->col.H;
+            } else if(cur.H > this->col.H) {
+                cur.H -= 0.02;
+            } else {
+                cur.H += 0.02;
+            }
+
+            leds.SetPixelColor(i, cur);
+        }
+        leds.Show();
+    }
+}
