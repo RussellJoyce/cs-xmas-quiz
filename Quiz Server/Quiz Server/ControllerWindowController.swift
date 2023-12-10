@@ -186,9 +186,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         if testMode {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on)
-            }
-            else {
-                quizView.buzzerReleased(team: sender.tag, type: .test)
+				quizView.buzzerReleased(team: sender.tag, type: .test)
+				sender.state = NSControl.StateValue.off
             }
         }
         else {

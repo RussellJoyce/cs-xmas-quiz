@@ -365,14 +365,14 @@ class TextScene: SKScene {
 		emitters.removeAll()
 		
 		//Quick dirty test code
-		teamGuess(teamid: 1, guess: "abc'", roundid: 1, showroundno: true);
+		/*teamGuess(teamid: 1, guess: "abc'", roundid: 1, showroundno: true);
 		teamGuess(teamid: 2, guess: "abc!", roundid: 2, showroundno: true);
 		teamGuess(teamid: 3, guess: "sss", roundid: 3, showroundno: true);
 		teamGuess(teamid: 4, guess: "sss", roundid: 3, showroundno: true);
 		teamGuess(teamid: 5, guess: "ddd", roundid: 3, showroundno: true);
 		teamGuess(teamid: 6, guess: "def", roundid: 3, showroundno: true);
 		teamGuess(teamid: 7, guess: "xxx", roundid: 4, showroundno: true);
-		teamGuess(teamid: 8, guess: "abc", roundid: 4, showroundno: true);
+		teamGuess(teamid: 8, guess: "abc", roundid: 4, showroundno: true);*/
 	}
 
 }
