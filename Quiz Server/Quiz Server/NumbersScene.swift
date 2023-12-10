@@ -305,7 +305,7 @@ class NumbersScene: SKScene {
 						lastDist = teamDistances[teNo].distance
 					}
 				} else {
-					if teNo > teamDistances.count / 2 && teamDistances[teNo].distance != teamDistances[teNo-1].distance {
+					if teNo > (teamDistances.count / 2 - 1) && teamDistances[teNo].distance != teamDistances[teNo-1].distance {
 						break
 					}
 				}
@@ -378,9 +378,29 @@ class NumbersScene: SKScene {
 		teamGuess(teamid : 4, guess : 40)
 		teamGuess(teamid : 5, guess : 50)
 		teamGuess(teamid : 6, guess : 50)
-		teamGuess(teamid : 7, guess : 50)
+		teamGuess(teamid : 7, guess : 55)
 		teamGuess(teamid : 8, guess : 60)
-		teamGuess(teamid : 9, guess : 70)*/
+		teamGuess(teamid : 9, guess : 70)
+		teamGuess(teamid : 10, guess : 70)
+		teamGuess(teamid : 11, guess : 70)
+		teamGuess(teamid : 12, guess : 70)
+		teamGuess(teamid : 13, guess : 80)*/
+		
+		
+		/*teamGuess(teamid : 0, guess : 0)
+		teamGuess(teamid : 1, guess : 1)
+		teamGuess(teamid : 2, guess : 2)
+		teamGuess(teamid : 3, guess : 3)
+		teamGuess(teamid : 4, guess : 4)
+		teamGuess(teamid : 5, guess : 5)
+		teamGuess(teamid : 6, guess : 6)
+		teamGuess(teamid : 7, guess : 7)
+		teamGuess(teamid : 8, guess : 8)
+		teamGuess(teamid : 9, guess : 9)
+		teamGuess(teamid : 10, guess : 10)
+		teamGuess(teamid : 11, guess : 11)
+		teamGuess(teamid : 12, guess : 12)
+		teamGuess(teamid : 13, guess : 13)*/
 		
 	}
 

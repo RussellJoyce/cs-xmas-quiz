@@ -159,6 +159,8 @@ class TextScene: SKScene {
 		self.webSocket = webSocket
 		self.numTeams = numTeams
 		
+		teamGuesses = [(roundid: Int, guess: String)?]()
+		
 		let bgImage = SKSpriteNode(imageNamed: "background2")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
@@ -230,10 +232,11 @@ class TextScene: SKScene {
 	func initUnique(file: String) {
 		uniques = []
 		do {
-			let data = try String(contentsOfFile:file, encoding: String.Encoding.utf8)
+			let data = try String(contentsOfFile:file, encoding: String.Encoding.ascii)
 			uniques = data.components(separatedBy: "\n")
 			uniques = uniques!.filter { $0 != "" }
 			uniques = uniques!.map { sanitiseString($0) }
+			print("Unique correct answers are: ", uniques!)
 		} catch let err as NSError {
 			print(err)
 		}
@@ -303,6 +306,12 @@ class TextScene: SKScene {
 		str = str.trimmingCharacters(in: .whitespacesAndNewlines)
 		str = str.trimmingCharacters(in: .punctuationCharacters)
 		str = str.trimmingCharacters(in: .symbols)
+		str = str.replacingOccurrences(of: "\"", with: "")
+		str = str.replacingOccurrences(of: "\'", with: "")
+		str = str.replacingOccurrences(of: "-", with: " ")
+		str = str.replacingOccurrences(of: "&", with: " ")
+		str = str.replacingOccurrences(of: "(", with: "")
+		str = str.replacingOccurrences(of: ")", with: "")
 		return str
 	}
 	
@@ -365,14 +374,18 @@ class TextScene: SKScene {
 		emitters.removeAll()
 		
 		//Quick dirty test code
-		/*teamGuess(teamid: 1, guess: "abc'", roundid: 1, showroundno: true);
-		teamGuess(teamid: 2, guess: "abc!", roundid: 2, showroundno: true);
-		teamGuess(teamid: 3, guess: "sss", roundid: 3, showroundno: true);
+		/*teamGuess(teamid: 0, guess: "let\"s dance", roundid: 3, showroundno: true);
+		teamGuess(teamid: 1, guess: "Sound and Vision", roundid: 1, showroundno: true);
+		teamGuess(teamid: 2, guess: "sound and vision", roundid: 2, showroundno: true);
+		teamGuess(teamid: 3, guess: "let's dance", roundid: 3, showroundno: true);
 		teamGuess(teamid: 4, guess: "sss", roundid: 3, showroundno: true);
 		teamGuess(teamid: 5, guess: "ddd", roundid: 3, showroundno: true);
 		teamGuess(teamid: 6, guess: "def", roundid: 3, showroundno: true);
-		teamGuess(teamid: 7, guess: "xxx", roundid: 4, showroundno: true);
-		teamGuess(teamid: 8, guess: "abc", roundid: 4, showroundno: true);*/
+		teamGuess(teamid: 7, guess: "drive-in saturday", roundid: 4, showroundno: true);
+		teamGuess(teamid: 8, guess: "Where Are We Now", roundid: 4, showroundno: true);
+		teamGuess(teamid: 11, guess: "Jean Genie", roundid: 3, showroundno: true);
+		teamGuess(teamid: 12, guess: "Jean Genie", roundid: 4, showroundno: true);
+		teamGuess(teamid: 13, guess: "abc", roundid: 4, showroundno: true);*/
 	}
 
 }
