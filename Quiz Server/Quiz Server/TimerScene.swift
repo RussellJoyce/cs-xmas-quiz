@@ -113,17 +113,7 @@ class TimerScene: SKScene {
 			})
 		])
 		
-		pulseActionNoTick = SKAction.sequence([
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = false
-			}),
-			pulseupaction,
-			mainaction,
-			pulsednaction,
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = true
-			})
-		])
+		pulseActionNoTick = mainaction
 
 		mainNode.position = CGPoint(x: 750, y: self.size.height - 360)
 		countmainNode.position = CGPoint(x: 460, y: self.size.height - 700)
