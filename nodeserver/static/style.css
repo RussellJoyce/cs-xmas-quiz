@@ -232,3 +232,9 @@ body {
 #text {
     align-items: start;
 }
+
+.error {
+    color: red;
+}
+
+

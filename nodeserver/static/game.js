@@ -43,7 +43,7 @@ function connect() {
                 break;
             case "px":
                 //The team we reqested wasn't available
-                document.getElementById("teamtitle").innerHTML = "Team already taken <hr>";
+                document.getElementById("teamtitle").innerHTML = "<span class=\"error\">Team already taken</span> <hr>";
                 setTimeout(function(){document.getElementById("teamtitle").innerHTML = "Please select your team <hr>" }, 2000);
                 break;
             case "on":
