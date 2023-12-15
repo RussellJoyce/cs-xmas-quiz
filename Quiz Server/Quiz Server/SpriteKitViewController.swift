@@ -22,6 +22,7 @@ class SpriteKitViewController: NSViewController {
 	let geographyScene = GeographyScene()
 	let textScene = TextScene()
 	let numbersScene = NumbersScene()
+	let truefalseScene = TrueFalseScene()
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
@@ -40,6 +41,7 @@ class SpriteKitViewController: NSViewController {
 		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
         musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		timerScene.setUpScene(size: skView.bounds.size, leds: leds, webSocket: webSocket)
+		truefalseScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
@@ -125,6 +127,8 @@ class SpriteKitViewController: NSViewController {
 			scene = textScene
 		case .numbers:
 			scene = numbersScene
+		case .trueFalse:
+			scene = truefalseScene
 		default:
 			scene = nil
 		}
@@ -157,6 +161,8 @@ class SpriteKitViewController: NSViewController {
 			textScene.reset()
 		case .numbers:
 			numbersScene.reset()
+		case .trueFalse:
+			truefalseScene.reset()
 		default:
 			break
 		}
@@ -172,10 +178,6 @@ class SpriteKitViewController: NSViewController {
 			buzzerScene.buzzerPressed(team: team, type: type, buzzerQueueMode: buzzerQueueMode, quietMode: quietMode)
         case .music:
 			musicScene.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode)
-		case .timer:
-			break
-		case .geography:
-			break
 		default:
 			break
 		}
@@ -187,14 +189,6 @@ class SpriteKitViewController: NSViewController {
 			idleScene.buzzerReleased(team: team, type: type)
 		case .test:
 			testScene.buzzerReleased(team: team, type: type)
-		case .buzzers:
-			break
-        case .music:
-            break
-		case .timer:
-			break
-		case .geography:
-			break
 		default:
 			break
 		}
@@ -288,5 +282,18 @@ class SpriteKitViewController: NSViewController {
 	
 	func textScoreUnique() {
 		textScene.scoreUnique()
+	}
+	
+	
+	func trueFalseStart() {
+		truefalseScene.start()
+	}
+	
+	func trueFalseShowAnswer(ans : Bool) {
+		truefalseScene.showAnswer(ans: ans)
+	}
+	
+	func trueFalseTeamGuess(teamid : Int, guess : Bool) {
+		truefalseScene.teamGuess(teamid: teamid, guess: guess)
 	}
 }

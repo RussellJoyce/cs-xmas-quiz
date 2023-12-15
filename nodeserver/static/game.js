@@ -157,16 +157,15 @@ buzzer.addEventListener(eventtouse, function(event) {
 
 higher.addEventListener(eventtouse, function(event) {
     if(myid > 0 && myid <= 99) {
-        ws.send('zz' + myid);
+        ws.send('hi' + myid);
     }
 });
 
-// We *don't* attach to lower, because 'higher' is buzz and 'lower' is do nothing ;)
-// lower.addEventListener(eventtouse, function(event) {
-//     if(myid > 0 && myid <= 10) {
-//         ws.send('lo' + myid);
-//     }
-// });
+lower.addEventListener(eventtouse, function(event) {
+    if(myid > 0 && myid <= 99) {
+        ws.send('lo' + myid);
+    }
+});
 
 
 function removeTextmodeHandlers() {

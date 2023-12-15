@@ -25,8 +25,7 @@ enum RoundType {
 class QuizViewController: NSViewController {
     
     let spriteKitView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
-	let trueFalseView = TrueFalseViewController(nibName: "TrueFalseViewController", bundle: nil)
-	
+
 	var currentRound = RoundType.none
     var currentRoundView: NSView?
     var quizLeds: QuizLeds?
@@ -38,29 +37,21 @@ class QuizViewController: NSViewController {
         super.viewDidLoad()
         
         spriteKitView.leds = quizLeds
-        trueFalseView.leds = quizLeds
-		
 		spriteKitView.webSocket = webSocket
-
 		spriteKitView.numTeams = numTeams
-		trueFalseView.numTeams = numTeams
-		
 		spriteKitView.geographyScene.imagesPath = geographyImagesPath
-        
         spriteKitView.view.frame = view.bounds
-		trueFalseView.view.frame = view.bounds
-        
+
         setRound(round: RoundType.idle)
     }
     
     func resetRound() {
 		switch (currentRound) {
 		case .none:
-			break // Do nothing
-		case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+			break
+		default:
 			spriteKitView.reset()
-		case .trueFalse:
-			trueFalseView.reset()
+			break;
 		}
     }
     
@@ -75,10 +66,8 @@ class QuizViewController: NSViewController {
 			switch (currentRound) {
 			case .none:
 				currentRoundView = nil
-			case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+			default:
 				currentRoundView = spriteKitView.view
-			case .trueFalse:
-				currentRoundView = trueFalseView.view
 			}
 			
 			if currentRoundView != lastRoundView {
@@ -105,10 +94,8 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+		default:
 			spriteKitView.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode, buzzerQueueMode: buzzerQueueMode, quietMode: quietMode)
-        case .trueFalse:
-			trueFalseView.buzzerPressed(team: team)
         }
     }
     
@@ -120,10 +107,8 @@ class QuizViewController: NSViewController {
         switch (currentRound) {
         case .none:
             break // Do nothing
-        case .idle, .test, .buzzers, .music, .timer, .geography, .text, .numbers:
+		default:
             spriteKitView.buzzerReleased(team: team, type: type)
-		case .trueFalse:
-			break // Do nothing
         }
     }
     
@@ -156,13 +141,17 @@ class QuizViewController: NSViewController {
 	}
 	
 	func trueFalseStart() {
-		trueFalseView.start()
+		spriteKitView.trueFalseStart()
 	}
 	
 	func trueFalseAnswer(ans : Bool) {
-		trueFalseView.answer(ans: ans)
+		spriteKitView.trueFalseShowAnswer(ans: ans)
 	}
     
+	func trueFalseTeamGuess(teamid : Int, guess : Bool) {
+		spriteKitView.trueFalseTeamGuess(teamid: teamid, guess: guess)
+	}
+	
     func buzzersNextTeam() {
         spriteKitView.nextBuzzerTeam()
     }

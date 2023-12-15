@@ -469,6 +469,22 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				} else {
 					print("Invalid Geography guess")
 				}
+			case "hi":
+				//A team has voted "true or higher"
+				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
+					let team = idx - 1 // Make zero-indexed
+					if (!buzzersDisabled && team < numTeams) {
+						quizView.trueFalseTeamGuess(teamid: team, guess: true)
+					}
+				}
+			case "lo":
+				//A team has voted "false or lower"
+				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
+					let team = idx - 1 // Make zero-indexed
+					if (!buzzersDisabled && team < numTeams) {
+						quizView.trueFalseTeamGuess(teamid: team, guess: false)
+					}
+				}
 			case "tt":
 				if (tabView.selectedTabViewItem == tabitemText) {
 					//A team has guessed a text answer

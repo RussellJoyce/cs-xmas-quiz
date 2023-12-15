@@ -32,6 +32,7 @@
 		3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462A237DB6B0009DBD0C /* altBuzz3.wav */; };
 		3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462C237DBF88009DBD0C /* altBuzz4.wav */; };
 		3C971C902396A50E000346A7 /* emojsplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C971C8E2396A50E000346A7 /* emojsplosion.sks */; };
+		3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */; };
 		3CC862842B138BDC0060A7E0 /* drums.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CC862822B138BDC0060A7E0 /* drums.wav */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score100.wav */; };
@@ -169,6 +170,7 @@
 		3C93462A237DB6B0009DBD0C /* altBuzz3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz3.wav; sourceTree = "<group>"; };
 		3C93462C237DBF88009DBD0C /* altBuzz4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz4.wav; sourceTree = "<group>"; };
 		3C971C8E2396A50E000346A7 /* emojsplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = emojsplosion.sks; sourceTree = "<group>"; };
+		3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrueFalseScene.swift; sourceTree = "<group>"; };
 		3CC862822B138BDC0060A7E0 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
 		3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Starscream.xcodeproj; path = ../Starscream/Starscream.xcodeproj; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
@@ -302,6 +304,7 @@
 				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
 				3CF78EF923954DB9007FC394 /* NumbersScene.swift */,
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
+				3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */,
 			);
 			name = "SpriteKit Scenes";
 			sourceTree = "<group>";
@@ -610,6 +613,7 @@
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
+				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
 				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
 				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
 				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
