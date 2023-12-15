@@ -53,8 +53,6 @@
 		461672391DF838150049C8D1 /* locationnumber.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672381DF838150049C8D1 /* locationnumber.sks */; };
 		461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672421DF87C470049C8D1 /* BoggleSparks.sks */; };
 		4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */ = {isa = PBXBuildFile; fileRef = 461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */; };
-		4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4620DC971A30C400006EABA1 /* QuizViewController.swift */; };
-		4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4620DC981A30C400006EABA1 /* QuizView.xib */; };
 		4634F74F21B6DBD600C9862F /* SnowBackground.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4634F74D21B6DBD600C9862F /* SnowBackground.sks */; };
 		463EA5DC2396D6CC00118892 /* scratch2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5D82396D6CC00118892 /* scratch2.wav */; };
 		463EA5DE2396D6CC00118892 /* scratch1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5DA2396D6CC00118892 /* scratch1.wav */; };
@@ -195,8 +193,6 @@
 		461672421DF87C470049C8D1 /* BoggleSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparks.sks; sourceTree = "<group>"; };
 		461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BoggleSparksBonus.sks; sourceTree = "<group>"; };
 		4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NeutraDisp Titling.otf"; sourceTree = "<group>"; };
-		4620DC971A30C400006EABA1 /* QuizViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizViewController.swift; sourceTree = "<group>"; };
-		4620DC981A30C400006EABA1 /* QuizView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuizView.xib; sourceTree = "<group>"; };
 		4634F74D21B6DBD600C9862F /* SnowBackground.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SnowBackground.sks; sourceTree = "<group>"; };
 		463EA5D82396D6CC00118892 /* scratch2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch2.wav; sourceTree = "<group>"; };
 		463EA5DA2396D6CC00118892 /* scratch1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch1.wav; sourceTree = "<group>"; };
@@ -352,8 +348,6 @@
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
-				4620DC981A30C400006EABA1 /* QuizView.xib */,
-				4620DC971A30C400006EABA1 /* QuizViewController.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
@@ -572,7 +566,6 @@
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				3C8517E92B238A6900BBCABA /* minutetimer.mp3 in Resources */,
 				3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */,
-				4620DC9A1A30C400006EABA1 /* QuizView.xib in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */,
@@ -596,7 +589,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
-				4620DC991A30C400006EABA1 /* QuizViewController.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */,
 				46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */,

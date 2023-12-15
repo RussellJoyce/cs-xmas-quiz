@@ -26,15 +26,17 @@ class SpriteKitViewController: NSViewController {
 	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
+	
+	let transitionDuration = 1.0
 	var transitions = [SKTransition]()
+	
 	var webSocket: WebSocket?
+	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
 		skView.ignoresSiblingOrder = true
-		//skView.showsFPS = true
-		//skView.showsNodeCount = true
 		
 		idleScene.setUpScene(size: skView.bounds.size, leds: leds, websocket: webSocket)
 		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
@@ -46,62 +48,21 @@ class SpriteKitViewController: NSViewController {
 		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
 		
-		let transitionDuration = 1.0
-		
-		var transition = SKTransition.doorsCloseVertical(withDuration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.doorsOpenVertical(withDuration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.doorway(withDuration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.flipHorizontal(withDuration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-
-		transition = SKTransition.flipVertical(withDuration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.moveIn(with: .down, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.moveIn(with: .up, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.push(with: .down, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.push(with: .up, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.reveal(with: .down, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
-		
-		transition = SKTransition.reveal(with: .up, duration: transitionDuration)
-		transition.pausesIncomingScene = false
-		transition.pausesOutgoingScene = false
-		transitions.append(transition)
+		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
+		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))
+		transitions.append(SKTransition.doorway(withDuration: transitionDuration))
+		transitions.append(SKTransition.flipHorizontal(withDuration: transitionDuration))
+		transitions.append(SKTransition.flipVertical(withDuration: transitionDuration))
+		transitions.append(SKTransition.moveIn(with: .down, duration: transitionDuration))
+		transitions.append(SKTransition.moveIn(with: .up, duration: transitionDuration))
+		transitions.append(SKTransition.push(with: .down, duration: transitionDuration))
+		transitions.append(SKTransition.push(with: .up, duration: transitionDuration))
+		transitions.append(SKTransition.reveal(with: .down, duration: transitionDuration))
+		transitions.append(SKTransition.reveal(with: .up, duration: transitionDuration))
+		for t in transitions {
+			t.pausesIncomingScene = false
+			t.pausesOutgoingScene = false
+		}
 		
 	}
 	
@@ -141,6 +102,8 @@ class SpriteKitViewController: NSViewController {
 		else {
 			skView.presentScene(scene)
 		}
+		
+		reset()
 	}
 	
 	func reset() {
@@ -235,21 +198,11 @@ class SpriteKitViewController: NSViewController {
 	}
 	
 	func startTimer(music: Bool) {
-		switch (currentRound) {
-		case .timer:
-			timerScene.startTimer(music: music)
-		default:
-			break
-		}
+		timerScene.startTimer(music: music)
 	}
 	
 	func stopTimer() {
-		switch (currentRound) {
-		case .timer:
-			timerScene.stopTimer()
-		default:
-			break
-		}
+		timerScene.stopTimer()
 	}
 	
 	func textTeamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
@@ -283,7 +236,6 @@ class SpriteKitViewController: NSViewController {
 	func textScoreUnique() {
 		textScene.scoreUnique()
 	}
-	
 	
 	func trueFalseStart() {
 		truefalseScene.start()

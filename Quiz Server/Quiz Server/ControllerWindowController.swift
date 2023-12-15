@@ -16,6 +16,19 @@ enum BuzzerType {
 	case disabled
 }
 
+enum RoundType {
+	case none
+	case idle
+	case test
+	case buzzers
+	case music
+	case trueFalse
+	case timer
+	case geography
+	case text
+	case numbers
+}
+
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
 
     @IBOutlet weak var buzzerButton1: NSButton!
@@ -78,8 +91,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 
-	let quizView = QuizViewController(nibName: "QuizView", bundle: nil)
-    var quizWindow: NSWindow?
+	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
+	var quizWindow: NSWindow?
 	
 	var socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
 	
@@ -88,13 +101,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socket.write(string: s)
 		}
 	}
-	
+
     override func windowDidLoad() {
         super.windowDidLoad()
         
         // Open serial port
         quizLeds?.openSerial()
-        quizView.quizLeds = quizLeds
+        quizView.leds = quizLeds
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -114,7 +127,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		quizView.numTeams = numTeams
 		quizView.webSocket = socket
-		quizView.geographyImagesPath = geographyImagesPath
+		quizView.geographyScene.imagesPath = geographyImagesPath
 		
         if (testMode) {
             // Show quiz view in floating window
@@ -169,6 +182,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
 		//tabView.removeTabViewItem(tabitemTimer)
+		
+		quizView.setRound(round: RoundType.idle)
+
     }
 	
     func windowWillClose(_ notification: Notification) {
@@ -264,7 +280,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
-        quizView.resetRound()
+        quizView.reset()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
@@ -289,19 +305,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func trueFalseTrue(_ sender: NSButton) {
-		quizView.trueFalseAnswer(ans: true)
+		quizView.trueFalseShowAnswer(ans: true)
 	}
 	
 	@IBAction func trueFalseFalse(_ sender: NSButton) {
-		quizView.trueFalseAnswer(ans: false)
+		quizView.trueFalseShowAnswer(ans: false)
 	}
 	
     @IBAction func buzzersNextTeam(_ sender: AnyObject) {
-        quizView.buzzersNextTeam()
+		quizView.nextBuzzerTeam()
     }
     
     @IBAction func musicNextTeam(_ sender: AnyObject) {
-        quizView.musicNextTeam()
+		quizView.nextMusicTeam()
     }
     
     @IBAction func musicPlay(_ sender: AnyObject) {
@@ -409,10 +425,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizView.resetRound()
+		quizView.reset()
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
-		quizView.geoStartQuestion(question: Int(geoStepper.intValue))
+		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
 	}
 	
 	@IBAction func textScoreUnique(_ sender: Any) {
@@ -420,7 +436,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {
-		quizView.geoShowWinner(x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
+		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
 	}
 	
 	func websocketDidConnect(socket: WebSocketClient) {
@@ -464,7 +480,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-						quizView.geoTeamAnswered(team: team - 1, x: x, y: y) //make zero indexed
+						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
 					}
 				} else {
 					print("Invalid Geography guess")
@@ -505,7 +521,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 								//Update the guesses in the controller window
 								var val = ""
 								for team in 0..<numTeams {
-									if let tg = quizView.spriteKitView.textScene.teamGuesses[team] {
+									if let tg = quizView.textScene.teamGuesses[team] {
 										val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
 									}
 								}
@@ -538,7 +554,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 									//Update the guesses in the controller window
 									var val = ""
 									for team in 0..<numTeams {
-										if let tg = quizView.spriteKitView.numbersScene.teamGuesses[team] {
+										if let tg = quizView.numbersScene.teamGuesses[team] {
 											val = "\(val) Team \(team+1): \(String(tg))\n"
 										}
 									}
