@@ -1,6 +1,3 @@
-[submodule "ORSSerialPort"]
-	path = ORSSerialPort
-	url = https://github.com/armadsen/ORSSerialPort.git
 [submodule "Starscream"]
 	path = Starscream
 	url = https://github.com/daltoniam/Starscream.git

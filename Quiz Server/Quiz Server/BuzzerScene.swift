@@ -11,8 +11,6 @@ import SpriteKit
 import Starscream
 
 class BuzzerScene: SKScene {
-	
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 15
 	var webSocket: WebSocket?
@@ -42,14 +40,13 @@ class BuzzerScene: SKScene {
 	fileprivate var ledcount : Float = 0;
 
 
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.numTeams = numTeams
 		self.webSocket = webSocket;
 		
@@ -95,17 +92,12 @@ class BuzzerScene: SKScene {
 			tickSound,
 			SKAction.run({ () -> Void in
 				self.ledcount = self.ledcount + (100/Float(self.starttime))
-				let ledstodec = Int(floor(self.ledcount))
-				for _ in 0..<ledstodec {
-					self.leds?.stringPointlessDec()
-				}
 				self.ledcount -= floor(self.ledcount)
 				
 				self.time -= 1
 				if(self.time == 0) {
 					self.timer?.invalidate()
 					self.run(self.hornSound)
-					leds?.stringPointlessCorrect()
 					let p = SKEmitterNode(fileNamed: "SparksUp2")!
 					p.position = CGPoint(x: self.centrePoint.x, y: 0)
 					p.zPosition = 2
@@ -161,7 +153,6 @@ class BuzzerScene: SKScene {
 	
 	func reset() {
 		if !(timer != nil && timer!.isValid) {
-			leds?.stringOff()
 			webSocket?.ledsOff();
 		}
 		teamEnabled = [Bool](repeating: true, count: numTeams)
@@ -187,11 +178,9 @@ class BuzzerScene: SKScene {
 					buzzSound(quietMode)
 					if let t = timer {
 						if !t.isValid {
-							leds?.stringTeamAnimate(team: team)
 							webSocket?.buzz(team: team)
 						}
 					} else {
-						leds?.stringTeamAnimate(team: team)
 						webSocket?.buzz(team: team)
 					}
 					nextTeamNumber = 1
@@ -221,7 +210,6 @@ class BuzzerScene: SKScene {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			leds?.stringTeamColour(team: team)
 			webSocket?.setTeamColour(team: team)
 			nextTeamNumber += 1
 		}
@@ -231,13 +219,11 @@ class BuzzerScene: SKScene {
 		time = secs
 		starttime = secs
 		timer?.invalidate()
-		leds?.stringPointlessReset()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(BuzzerScene.tick), userInfo: nil, repeats: true)
 		RunLoop.main.add(timer!, forMode: RunLoop.Mode.common)
 	}
 	
 	func stopTimer() {
-		leds?.stringOff()
 		webSocket?.ledsOff()
 		timer?.invalidate()
 	}

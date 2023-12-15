@@ -18,7 +18,6 @@ enum TeamType {
 
 class TestScene: SKScene {
 	
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 15
 	var buzzerPresses = [Int]()
@@ -36,14 +35,13 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "floppydisk", "star"]
 	
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = webSocket
 		self.numTeams = numTeams
 		
@@ -107,7 +105,6 @@ class TestScene: SKScene {
 	}
 	
 	func reset() {
-		leds?.stringOff()
 		webSocket?.ledsOff()
 		for team in numbers {
 			team.fontColor = NSColor.white
@@ -132,7 +129,6 @@ class TestScene: SKScene {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team%10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
-		leds?.stringTestOn(team: team)
 		webSocket?.pulseTeamColour(team: team)
 		
 		for node in imageSparks[team] {
@@ -156,8 +152,6 @@ class TestScene: SKScene {
 					self.numbers[team].fontColor = NSColor.white
 					self.sparksUp[team].particleBirthRate = 0
 					self.sparksDown[team].particleBirthRate = 0
-					self.leds?.stringTestOff(team: team)
-					
 					for node in self.imageSparks[team] {
 						node.particleBirthRate = 0
 					}
@@ -168,8 +162,6 @@ class TestScene: SKScene {
 			self.numbers[team].fontColor = NSColor.white
 			self.sparksUp[team].particleBirthRate = 0
 			self.sparksDown[team].particleBirthRate = 0
-			self.leds?.stringTestOff(team: team)
-			
 			for node in self.imageSparks[team] {
 				node.particleBirthRate = 0
 			}

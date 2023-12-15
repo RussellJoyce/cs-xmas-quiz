@@ -13,19 +13,17 @@ import Starscream
 class IdleScene: SKScene {
 	
 	var snowmojis = [SKEmitterNode]()
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "party", "crazy"]
 	var webSocket: WebSocket?
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, websocket: WebSocket?) {
+	func setUpScene(size: CGSize, websocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = websocket;
 		
 		let date = Date()
@@ -242,7 +240,6 @@ class IdleScene: SKScene {
 	
 	func reset() {
 		webSocket?.megamas()
-		leds?.stringAnimation(animation: 2)
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}

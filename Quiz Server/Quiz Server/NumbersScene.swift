@@ -165,7 +165,6 @@ class NumbersTeamNode: SKNode {
 class NumbersScene: SKScene {
 	
 	var teamGuesses = [Int?]()
-	var leds: QuizLeds?
 	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	var numTeams = 10
@@ -175,14 +174,13 @@ class NumbersScene: SKScene {
 	var revealed = false
 	var emitters = [SKEmitterNode]()
 
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = webSocket
 		self.numTeams = numTeams
 		self.revealed = false
@@ -226,7 +224,6 @@ class NumbersScene: SKScene {
 
 	func teamGuess(teamid : Int, guess : Int) {
 		self.run(blopSound)
-		leds?.stringPulseTeamColour(team: teamid)
 		webSocket?.pulseTeamColour(team: teamid)
 		teamGuesses[teamid] = guess
 		teamBoxes[teamid].resetTextSize()
@@ -240,7 +237,6 @@ class NumbersScene: SKScene {
 		//First press just plays a big honk and shows everything
 		if(!revealed) {
 			self.run(hornSound)
-			leds?.stringPointlessCorrect()
 			webSocket?.pulseWhite()
 			
 			let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
@@ -352,7 +348,6 @@ class NumbersScene: SKScene {
 	
 
 	func reset() {
-        leds?.stringOff()
 		webSocket?.ledsOff()
 		self.revealed = false
 		

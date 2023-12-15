@@ -18,7 +18,6 @@ class TrueFalseScene: SKScene {
 	var counting = false
 	var teamEnabled = [Bool]()
 	var teamGuesses = [Bool?]()
-	var leds: QuizLeds?
 	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
@@ -31,14 +30,13 @@ class TrueFalseScene: SKScene {
 	
 	var timeLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = webSocket
 		self.numTeams = numTeams
 		

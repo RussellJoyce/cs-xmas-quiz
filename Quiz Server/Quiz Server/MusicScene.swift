@@ -13,7 +13,6 @@ import Starscream
 
 class MusicScene: SKScene {
 	
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 15
 	
@@ -43,19 +42,17 @@ class MusicScene: SKScene {
             let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
             let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
             
-            leds?.stringMusic(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
 			webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
         }
     }
     
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = webSocket
 		self.numTeams = numTeams
         
@@ -79,7 +76,6 @@ class MusicScene: SKScene {
     }
 	
 	func reset() {
-        leds?.stringOff()
 		webSocket?.ledsOff()
         pauseMusic()
 		teamEnabled = [Bool](repeating: false, count: numTeams)
@@ -107,7 +103,6 @@ class MusicScene: SKScene {
 					firstBuzzTime = Date()
 					buzzSound()
 					pauseMusic()
-					leds?.stringTeamAnimate(team: team)
 					webSocket?.buzz(team: team)
 					box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
 					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
@@ -176,7 +171,6 @@ class MusicScene: SKScene {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			leds?.stringTeamColour(team: team)
 			webSocket?.setTeamColour(team: team)
 			nextTeamNumber += 1
 		}
@@ -207,7 +201,6 @@ class MusicScene: SKScene {
     
     func pauseMusic() {
         music?.pause()
-        leds?.stringOff()
 		webSocket?.ledsOff()
     }
     
@@ -215,7 +208,6 @@ class MusicScene: SKScene {
         music?.stop()
         music?.currentTime = 0
         music?.prepareToPlay()
-        leds?.stringOff()
 		webSocket?.ledsOff()
     }
 }

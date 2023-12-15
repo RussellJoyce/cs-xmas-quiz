@@ -11,7 +11,6 @@ import SpriteKit
 
 class GeographyScene: SKScene {
 	
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	var numTeams = 8
 	var answering = false
@@ -24,7 +23,7 @@ class GeographyScene: SKScene {
 	
 	var geogReveal = -1
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, numTeams: Int) {
+	func setUpScene(size: CGSize, numTeams: Int) {
 		if setUp {
 			return
 		}
@@ -33,7 +32,6 @@ class GeographyScene: SKScene {
 		reset()
 		
 		self.size = size
-		self.leds = leds
 		self.numTeams = numTeams
 		
 		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
@@ -289,6 +287,5 @@ class GeographyScene: SKScene {
 		updateText()
 		mainImage.removeAllChildren()
 		mainImage.texture = SKTexture(imageNamed: "geostart")
-		leds?.stringAnimation(animation: 1)
 	}
 }

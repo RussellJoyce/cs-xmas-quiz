@@ -15,7 +15,6 @@ import Starscream
 
 class TimerScene: SKScene {
 
-	var leds: QuizLeds?
 	fileprivate var setUp = false
 	fileprivate var correct: Int = 0
 	fileprivate var time: Int = 60
@@ -41,14 +40,13 @@ class TimerScene: SKScene {
 	let timerSound = SKAction.playSoundFileNamed("minutetimer", waitForCompletion: false)
 	let audioNode = SKAudioNode(url: Bundle.main.url(forResource: "minutetimer", withExtension: "mp3")!)
 	
-	func setUpScene(size: CGSize, leds: QuizLeds?, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.leds = leds
 		self.webSocket = webSocket;
 		correct = 0
 		time = 60
@@ -85,7 +83,6 @@ class TimerScene: SKScene {
 			   if(self.time == 0) {
 				   self.timer?.invalidate()
 				   self.run(self.hornSound)
-				   leds?.stringPointlessCorrect()
 				   webSocket?.pulseWhite()
 				   self.audioNode.run(SKAction.stop())
 				   let p = SKEmitterNode(fileNamed: "SparksUp2")!
@@ -177,7 +174,6 @@ class TimerScene: SKScene {
 		timer?.invalidate()
 		updateAnswers()
 		updateTime()
-		leds?.stringPointlessReset()
 		audioNode.run(SKAction.stop())
 	}
 	

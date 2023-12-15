@@ -60,7 +60,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	var quizScreen: NSScreen?
-    var quizLeds: QuizLeds?
     var testMode = true
 	var numTeams = 15
     var buzzersEnabled = [Bool]()
@@ -104,10 +103,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        
-        // Open serial port
-        quizLeds?.openSerial()
-        quizView.leds = quizLeds
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -189,11 +184,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     func windowWillClose(_ notification: Notification) {
         // Turn off all buzzer and animation LEDs
-		quizLeds?.stringOff()
 		socket.ledsOff()
-		
-        // Cleanly close serial port and game controller
-        quizLeds?.closeSerial()
     }
     
     @IBAction func pressedNumber(_ sender: NSButton) {

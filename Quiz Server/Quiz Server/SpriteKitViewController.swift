@@ -23,7 +23,6 @@ class SpriteKitViewController: NSViewController {
 	let textScene = TextScene()
 	let numbersScene = NumbersScene()
 	let truefalseScene = TrueFalseScene()
-	var leds: QuizLeds?
 	var currentRound = RoundType.none
 	var numTeams = 10
 	
@@ -38,15 +37,15 @@ class SpriteKitViewController: NSViewController {
 		
 		skView.ignoresSiblingOrder = true
 		
-		idleScene.setUpScene(size: skView.bounds.size, leds: leds, websocket: webSocket)
-		testScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-		buzzerScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-        musicScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-		timerScene.setUpScene(size: skView.bounds.size, leds: leds, webSocket: webSocket)
-		truefalseScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-		geographyScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams)
-		textScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
-		numbersScene.setUpScene(size: skView.bounds.size, leds: leds, numTeams: numTeams, webSocket: webSocket)
+		idleScene.setUpScene(size: skView.bounds.size, websocket: webSocket)
+		testScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		buzzerScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+        musicScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		timerScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		truefalseScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		geographyScene.setUpScene(size: skView.bounds.size, numTeams: numTeams)
+		textScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		numbersScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
 		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))

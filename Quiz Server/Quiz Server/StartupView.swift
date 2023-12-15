@@ -20,8 +20,6 @@ class StartupView: NSViewController {
 	@IBOutlet weak var numTeamsInput: NSTextField!
 	
 	var allScreens: [NSScreen]?
-    var allPorts: [ORSSerialPort]?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,24 +44,6 @@ class StartupView: NSViewController {
         else {
             print("Error enumerating screens");
         }
-        
-        let serialPortManager = ORSSerialPortManager.shared()
-        allPorts = serialPortManager.availablePorts as [ORSSerialPort]
-        
-        if let ports = allPorts {
-            print("Found \(ports.count) serial port(s):")
-            
-            if ports.count > 0 {
-                serialSelector.removeAllItems()
-                
-                for port in ports {
-                    print("  \(port.name)")
-                    serialSelector.addItem(withTitle: port.name)
-                }
-                
-                serialSelector.isEnabled = true
-            }
-        }
 
 		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
         musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Music"
@@ -75,14 +55,12 @@ class StartupView: NSViewController {
     
     @IBAction func startQuiz(_ sender: AnyObject) {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
-        let serial = (allPorts != nil && (allPorts?.count)! > 0) ? allPorts?[serialSelector.indexOfSelectedItem] : nil
         let test = testMode.state == NSControl.StateValue.on;
 		let numTeams = Int(numTeamsInput.intValue)
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
-		
-		//Do not attempt to open the serial port
-		delegate.startQuiz(screen: screen, serial: nil, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
+
+		delegate.startQuiz(screen: screen, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {

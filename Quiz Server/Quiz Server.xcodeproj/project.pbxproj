@@ -39,8 +39,6 @@
 		3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF561A306820003DEA9F /* counter_soft_end.wav */; };
 		3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF571A306820003DEA9F /* counter_sting.wav */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
-		3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDC49271A378031000203E3 /* TrueFalseViewController.swift */; };
-		3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CDC49281A378031000203E3 /* TrueFalseViewController.xib */; };
 		3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3CF41C1F1C04C7D100785564 /* TimerSpray.sks */; };
 		3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF78EF923954DB9007FC394 /* NumbersScene.swift */; };
 		3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3CF78EFC2396A11A007FC394 /* tada.mp3 */; };
@@ -59,11 +57,6 @@
 		463EA5DF2396D6CC00118892 /* scratch3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 463EA5DB2396D6CC00118892 /* scratch3.wav */; };
 		463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */ = {isa = PBXBuildFile; fileRef = 463FDE811A39039500FA9B3F /* Snowmoji.sks */; };
 		46498C831A3F366700CAFACC /* Snow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46498C821A3F366700CAFACC /* Snow.sks */; };
-		464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */; };
-		464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */; };
-		464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19231BE7E44700F0491B /* ORSSerialPort.m */; };
-		464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19251BE7E44700F0491B /* ORSSerialPortManager.m */; };
-		464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 464E19271BE7E44700F0491B /* ORSSerialRequest.m */; };
 		4654E6F31C0B71EF0048F5D9 /* SparksDownImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */; };
 		4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */ = {isa = PBXBuildFile; fileRef = 4656CA1A1A39100200A70F91 /* SparksDown.sks */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
@@ -87,7 +80,6 @@
 		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
 		46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */; };
 		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
-		46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */; };
 		46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF9D07239672FF00D019A3 /* MusicScene.swift */; };
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EE3976239EA694006298D1 /* SparksLeft.sks */; };
@@ -176,8 +168,6 @@
 		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
 		3CD1DF571A306820003DEA9F /* counter_sting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_sting.wav; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		3CDC49271A378031000203E3 /* TrueFalseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrueFalseViewController.swift; sourceTree = "<group>"; };
-		3CDC49281A378031000203E3 /* TrueFalseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrueFalseViewController.xib; sourceTree = "<group>"; };
 		3CF41C1F1C04C7D100785564 /* TimerSpray.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimerSpray.sks; sourceTree = "<group>"; };
 		3CF78EF923954DB9007FC394 /* NumbersScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumbersScene.swift; sourceTree = "<group>"; };
 		3CF78EFC2396A11A007FC394 /* tada.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tada.mp3; sourceTree = "<group>"; };
@@ -199,16 +189,6 @@
 		463EA5DB2396D6CC00118892 /* scratch3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = scratch3.wav; sourceTree = "<group>"; };
 		463FDE811A39039500FA9B3F /* Snowmoji.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snowmoji.sks; sourceTree = "<group>"; };
 		46498C821A3F366700CAFACC /* Snow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Snow.sks; sourceTree = "<group>"; };
-		464E191E1BE7E44700F0491B /* ORSSerialBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialBuffer.h; path = ../ORSSerialPort/Source/ORSSerialBuffer.h; sourceTree = "<group>"; };
-		464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialBuffer.m; path = ../ORSSerialPort/Source/ORSSerialBuffer.m; sourceTree = "<group>"; };
-		464E19201BE7E44700F0491B /* ORSSerialPacketDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPacketDescriptor.h; path = ../ORSSerialPort/Source/ORSSerialPacketDescriptor.h; sourceTree = "<group>"; };
-		464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPacketDescriptor.m; path = ../ORSSerialPort/Source/ORSSerialPacketDescriptor.m; sourceTree = "<group>"; };
-		464E19221BE7E44700F0491B /* ORSSerialPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPort.h; path = ../ORSSerialPort/Source/ORSSerialPort.h; sourceTree = "<group>"; };
-		464E19231BE7E44700F0491B /* ORSSerialPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPort.m; path = ../ORSSerialPort/Source/ORSSerialPort.m; sourceTree = "<group>"; };
-		464E19241BE7E44700F0491B /* ORSSerialPortManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialPortManager.h; path = ../ORSSerialPort/Source/ORSSerialPortManager.h; sourceTree = "<group>"; };
-		464E19251BE7E44700F0491B /* ORSSerialPortManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialPortManager.m; path = ../ORSSerialPort/Source/ORSSerialPortManager.m; sourceTree = "<group>"; };
-		464E19261BE7E44700F0491B /* ORSSerialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ORSSerialRequest.h; path = ../ORSSerialPort/Source/ORSSerialRequest.h; sourceTree = "<group>"; };
-		464E19271BE7E44700F0491B /* ORSSerialRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ORSSerialRequest.m; path = ../ORSSerialPort/Source/ORSSerialRequest.m; sourceTree = "<group>"; };
 		4654E6F21C0B71EF0048F5D9 /* SparksDownImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDownImage.sks; sourceTree = "<group>"; };
 		4656CA1A1A39100200A70F91 /* SparksDown.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksDown.sks; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
@@ -233,8 +213,6 @@
 		46BBD3CC21B83DED0010319E /* ClockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockNode.swift; sourceTree = "<group>"; };
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnniversaryNode.swift; sourceTree = "<group>"; };
-		46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Quiz Server-Bridging-Header.h"; sourceTree = "<group>"; };
-		46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizLeds.swift; sourceTree = "<group>"; };
 		46DF9D07239672FF00D019A3 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
 		46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUpImage.sks; sourceTree = "<group>"; };
 		46EE3976239EA694006298D1 /* SparksLeft.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = SparksLeft.sks; path = Playgrounds/Anniversary.playground/Resources/SparksLeft.sks; sourceTree = SOURCE_ROOT; };
@@ -319,7 +297,6 @@
 			children = (
 				3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */,
 				46BBC4561DF383F400C41112 /* SwiftyJSON */,
-				46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */,
 				46B0254C1A1BF0590088294B /* Frameworks */,
 				46056EB61A19624E00C37628 /* Quiz Server */,
 				46056EB51A19624E00C37628 /* Products */,
@@ -347,12 +324,9 @@
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
-				46DAD0781A30BABE00A7D9AF /* QuizLeds.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
-				3CDC49271A378031000203E3 /* TrueFalseViewController.swift */,
-				3CDC49281A378031000203E3 /* TrueFalseViewController.xib */,
 				3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */,
 			);
 			path = "Quiz Server";
@@ -419,24 +393,6 @@
 				46BBD3D021B847980010319E /* Clock.playground */,
 			);
 			path = Playgrounds;
-			sourceTree = "<group>";
-		};
-		46DAD06B1A2F68DD00A7D9AF /* ORSSerialPort */ = {
-			isa = PBXGroup;
-			children = (
-				464E191E1BE7E44700F0491B /* ORSSerialBuffer.h */,
-				464E191F1BE7E44700F0491B /* ORSSerialBuffer.m */,
-				464E19201BE7E44700F0491B /* ORSSerialPacketDescriptor.h */,
-				464E19211BE7E44700F0491B /* ORSSerialPacketDescriptor.m */,
-				464E19221BE7E44700F0491B /* ORSSerialPort.h */,
-				464E19231BE7E44700F0491B /* ORSSerialPort.m */,
-				464E19241BE7E44700F0491B /* ORSSerialPortManager.h */,
-				464E19251BE7E44700F0491B /* ORSSerialPortManager.m */,
-				464E19261BE7E44700F0491B /* ORSSerialRequest.h */,
-				464E19271BE7E44700F0491B /* ORSSerialRequest.m */,
-				46DAD06C1A2F690B00A7D9AF /* Quiz Server-Bridging-Header.h */,
-			);
-			name = ORSSerialPort;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -562,7 +518,6 @@
 				4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
-				3CDC492A1A378031000203E3 /* TrueFalseViewController.xib in Resources */,
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				3C8517E92B238A6900BBCABA /* minutetimer.mp3 in Resources */,
 				3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */,
@@ -594,21 +549,14 @@
 				46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
-				464E192C1BE7E44700F0491B /* ORSSerialRequest.m in Sources */,
 				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
-				464E192B1BE7E44700F0491B /* ORSSerialPortManager.m in Sources */,
-				464E19291BE7E44700F0491B /* ORSSerialPacketDescriptor.m in Sources */,
-				464E192A1BE7E44700F0491B /* ORSSerialPort.m in Sources */,
 				46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
-				464E19281BE7E44700F0491B /* ORSSerialBuffer.m in Sources */,
-				46DAD0791A30BABE00A7D9AF /* QuizLeds.swift in Sources */,
-				3CDC49291A378031000203E3 /* TrueFalseViewController.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
@@ -754,9 +702,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2019.1;
+				CURRENT_PROJECT_VERSION = 2023.1;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -768,10 +717,9 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2019.1;
+				MARKETING_VERSION = 2023.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Quiz Server";
-				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -784,9 +732,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = NO;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2019.1;
+				CURRENT_PROJECT_VERSION = 2023.1;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -798,10 +747,9 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 2019.1;
+				MARKETING_VERSION = 2023.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "rj.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "Quiz Server";
-				SWIFT_OBJC_BRIDGING_HEADER = "Quiz Server-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 			};

@@ -29,15 +29,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("Screens changed!")
     }
 	
-	func startQuiz(screen: NSScreen?, serial: ORSSerialPort?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String, uniquePath: String) {
+	func startQuiz(screen: NSScreen?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String, uniquePath: String) {
         window.close()
 		
 		controllerWindow.numTeams = numberOfTeams
         controllerWindow.testMode = testMode
         controllerWindow.quizScreen = screen
-        if let serial = serial {
-            controllerWindow.quizLeds = QuizLeds(serialPort: serial)
-        }
 		controllerWindow.geographyImagesPath = geographyImagesPath
         controllerWindow.musicPath = musicPath
 		controllerWindow.uniquePath = uniquePath
