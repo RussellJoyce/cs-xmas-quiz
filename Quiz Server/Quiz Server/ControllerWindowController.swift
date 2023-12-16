@@ -53,20 +53,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var quieterBuzzes: NSButton!
 	@IBOutlet weak var timerShowCounter: NSButton!
 
-	@IBAction func timerShowCounterChange(_ sender: NSButton) {
-		quizView.timerScene.showCounter(timerShowCounter.state == .on)
-	}
-	
-	var quizScreen: NSScreen?
-    var testMode = true
-	var numTeams = 15
-    var buzzersEnabled = [Bool]()
-    var buzzersDisabled = false
-    var buzzerButtons = [NSButton]()
-	var geographyImagesPath: String?
-    var musicPath: String?
-	var uniquePath: String?
-    
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet var tabitemTimer: NSTabViewItem!
 	@IBOutlet var tabView: NSTabView!
@@ -88,6 +74,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 
+	
+	var quizScreen: NSScreen?
+	var testMode = true
+	var numTeams = 15
+	var buzzersEnabled = [Bool]()
+	var buzzersDisabled = false
+	var buzzerButtons = [NSButton]()
+	var geographyImagesPath: String?
+	var musicPath: String?
+	var uniquePath: String?
+	
 	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
 	var quizWindow: NSWindow?
 	
@@ -406,6 +403,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func timerStartWithMusic(_ sender: Any) {
 		quizView.timerScene.startTimer(music: true)
+	}
+	
+	@IBAction func timerShowCounterChange(_ sender: NSButton) {
+		quizView.timerScene.showCounter(timerShowCounter.state == .on)
 	}
 	
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
