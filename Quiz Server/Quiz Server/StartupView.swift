@@ -11,7 +11,6 @@ import Cocoa
 class StartupView: NSViewController {
     
     @IBOutlet weak var screenSelector: NSPopUpButton!
-    @IBOutlet weak var serialSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var testMode: NSButton!
 	@IBOutlet weak var geographyImagesPath: NSTextField!

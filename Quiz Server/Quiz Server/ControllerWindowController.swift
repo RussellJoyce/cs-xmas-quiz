@@ -168,7 +168,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						uniqueFile.addItem(withTitle: file)
 					}
 				}
-				uniqueChooseFile(musicFile)
+				uniqueChooseFile(uniqueFile)
 			} catch {
 				print("Error while enumerating files \(uniquePath): \(error.localizedDescription)")
 			}
