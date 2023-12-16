@@ -170,7 +170,6 @@
 		465FDFE71A372E5E00734431 /* eight.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = eight.wav; sourceTree = "<group>"; };
 		466894E7239E99A1009CB9CC /* SnowtopCaps.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SnowtopCaps.otf; sourceTree = "<group>"; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
-		4688FDF52397C0E10028503F /* Music.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Music.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		468B090A1FD6005D0052047A /* Shower.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Shower.sks; sourceTree = "<group>"; };
 		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
 		46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpriteKitViewController.xib; sourceTree = "<group>"; };
@@ -343,7 +342,6 @@
 			isa = PBXGroup;
 			children = (
 				46EE3979239EA6D8006298D1 /* Anniversary.playground */,
-				4688FDF52397C0E10028503F /* Music.playground */,
 				46BBD3D021B847980010319E /* Clock.playground */,
 			);
 			path = Playgrounds;

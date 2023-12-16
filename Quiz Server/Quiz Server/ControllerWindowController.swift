@@ -54,7 +54,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var timerShowCounter: NSButton!
 
 	@IBAction func timerShowCounterChange(_ sender: NSButton) {
-		quizView.timerShowCounter(timerShowCounter.state == .on)
+		quizView.timerScene.showCounter(timerShowCounter.state == .on)
 	}
 	
 	var quizScreen: NSScreen?
@@ -291,52 +291,52 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
 	@IBAction func trueFalseStart(_ sender: NSButton) {
-		quizView.trueFalseStart()
+		quizView.truefalseScene.start()
 	}
 	
 	@IBAction func trueFalseTrue(_ sender: NSButton) {
-		quizView.trueFalseShowAnswer(ans: true)
+		quizView.truefalseScene.showAnswer(ans: true)
 	}
 	
 	@IBAction func trueFalseFalse(_ sender: NSButton) {
-		quizView.trueFalseShowAnswer(ans: false)
+		quizView.truefalseScene.showAnswer(ans: false)
 	}
 	
     @IBAction func buzzersNextTeam(_ sender: AnyObject) {
-		quizView.nextBuzzerTeam()
+		quizView.buzzerScene.nextTeam()
     }
     
     @IBAction func musicNextTeam(_ sender: AnyObject) {
-		quizView.nextMusicTeam()
+		quizView.musicScene.nextTeam()
     }
     
     @IBAction func musicPlay(_ sender: AnyObject) {
-        quizView.musicPlay()
-    }
+        quizView.musicScene.resumeMusic()
+	}
     
     @IBAction func musicPause(_ sender: AnyObject) {
-        quizView.musicPause()
+		quizView.musicScene.pauseMusic()
     }
     
     @IBAction func musicStop(_ sender: AnyObject) {
-        quizView.musicStop()
+        quizView.musicScene.stopMusic()
     }
     
 	@IBAction func startBuzzerTimer(_ sender: Any) {
 		if let secs = Int(buzzerTimerTime.stringValue) {
-			quizView.startBuzzerTimer(secs)
+			quizView.buzzerScene.startTimer(secs)
 		}
 	}
 	
 	@IBAction func stopBuzzerTimer(_ sender: Any) {
-		quizView.stopBuzzerTimer()
+		quizView.buzzerScene.stopTimer()
 	}
 	
 	
 	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
         if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
             let path =  musicPath + "/" + fileName
-            quizView.musicSetFile(file: path)
+			quizView.musicScene.initMusic(file: path)
         }
         else {
             print("Error choosing music file")
@@ -346,7 +346,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
 		if let uniquePath = uniquePath, let fileName = sender.selectedItem?.title {
 			let path =  uniquePath + "/" + fileName
-			quizView.uniqueSetFile(file: path)
+			quizView.textScene.initUnique(file: path)
 		}
 		else {
 			print("Error choosing unique list")
@@ -354,19 +354,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func startTimer(_ sender: AnyObject) {
-		quizView.startTimer(music: false)
+		quizView.timerScene.startTimer(music: false)
 	}
 	
 	@IBAction func stopTimer(_ sender: AnyObject) {
-		quizView.stopTimer()
+		quizView.timerScene.stopTimer()
 	}
 	
 	@IBAction func timerIncrement(_ sender: AnyObject) {
-		quizView.timerIncrement()
+		quizView.timerScene.timerIncrement()
 	}
 	
 	@IBAction func timerDecrement(_ sender: AnyObject) {
-		quizView.timerDecrement()
+		quizView.timerScene.timerDecrement()
 	}
 	
 	@IBAction func setTeamType(_ sender: NSPopUpButton) {
@@ -374,13 +374,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		if (team < numTeams) {
 			switch sender.indexOfSelectedItem {
 			case 0:
-				quizView.setTeamType(team: team, type: .christmas)
+				quizView.testScene.setTeamType(team: team, type: .christmas)
 			case 1:
-				quizView.setTeamType(team: team, type: .academic)
+				quizView.testScene.setTeamType(team: team, type: .academic)
 			case 2:
-				quizView.setTeamType(team: team, type: .ibm)
+				quizView.testScene.setTeamType(team: team, type: .ibm)
 			default:
-				quizView.setTeamType(team: team, type: .christmas)
+				quizView.testScene.setTeamType(team: team, type: .christmas)
 			}
 		}
 	}
@@ -401,16 +401,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	@IBAction func textShowGuesses(_ sender: Any) {
 		textAllowAnswers.state = .off
-		quizView.textShowGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
+		quizView.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
 	@IBAction func timerStartWithMusic(_ sender: Any) {
-		quizView.startTimer(music: true)
+		quizView.timerScene.startTimer(music: true)
 	}
 	
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
-		quizView.numbersShowGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
+		quizView.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
 	}
 	
 	
@@ -422,27 +422,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func textScoreUnique(_ sender: Any) {
-		quizView.textScoreUnique()
+		quizView.textScene.scoreUnique()
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {
 		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
-	}
-	
-	func websocketDidConnect(socket: WebSocketClient) {
-		print("Websocket connected.")
-	}
-	
-	func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
-		//print("Got data: " . data)
-	}
-	
-	func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
-		print("Websocket disconnected.")
-		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-			socket.connect()
-		}
 	}
 	
 	@IBOutlet var textTeamGuesses: NSTextField!
@@ -480,7 +464,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams) {
-						quizView.trueFalseTeamGuess(teamid: team, guess: true)
+						quizView.truefalseScene.teamGuess(teamid: team, guess: true)
 					}
 				}
 			case "lo":
@@ -488,7 +472,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams) {
-						quizView.trueFalseTeamGuess(teamid: team, guess: false)
+						quizView.truefalseScene.teamGuess(teamid: team, guess: false)
 					}
 				}
 			case "tt":
@@ -501,7 +485,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							if let team = Int(vals[0]) {
 								let guessText = String(vals[1].prefix(20))
 							
-								quizView.textTeamGuess(
+								quizView.textScene.teamGuess(
 									teamid: team - 1, //make zero indexed
 									guess: guessText,
 									roundid: Int(textQuestionNumber.intValue),
@@ -536,11 +520,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						
 								let guess = Int(guessText)
 								if guess != nil {
-									quizView.numbersTeamGuess(
-										teamid: team - 1, //make zero indexed
-										guess: guess!
-									)
-									
+									quizView.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
+
 									//Update the guesses in the controller window
 									var val = ""
 									for team in 0..<numTeams {
@@ -576,6 +557,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .disconnected(let reason, let code):
 			socketIsConnected = false
 			print("websocket is disconnected: \(reason) with code: \(code)")
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+				self.socket.connect()
+			}
 		case .text(let string):
 			websocketDidReceiveMessage(text: string)
 		case .binary(let data):
