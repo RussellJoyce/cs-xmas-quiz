@@ -12,9 +12,8 @@ import Starscream
 extension WebSocket {
 	
 	func sendIfConnected(_ s : String) {
-		if isConnected {
-			write(string: s)
-		}
+		let cwc = self.delegate as! ControllerWindowController
+		cwc.socketWriteIfConnected(s)
 	}
 	
 	func ledsOff() {

@@ -17,6 +17,8 @@
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
+		3C78068A2B2D1F83007D58AE /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 3C7806892B2D1F83007D58AE /* Starscream */; };
+		3C78068D2B2D2D18007D58AE /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 3C78068C2B2D2D18007D58AE /* SwiftyJSON */; };
 		3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C7F5E581DF454AA008075B8 /* locationstar.sks */; };
 		3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */; };
 		3C8517E52B2243A000BBCABA /* quietbuzz2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E32B22439F00BBCABA /* quietbuzz2.mp3 */; };
@@ -25,8 +27,6 @@
 		3C872EB21C03D35100A2B397 /* tick.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB11C03D35100A2B397 /* tick.mp3 */; };
 		3C872EB41C03D47A00A2B397 /* blop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB31C03D47A00A2B397 /* blop.mp3 */; };
 		3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C872EB51C03D53000A2B397 /* airhorn.mp3 */; };
-		3C8DD5191FB89672007DA61F /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6C3C681FB2140B0096D530 /* Starscream.framework */; };
-		3C8DD51A1FB89679007DA61F /* Starscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C6C3C681FB2140B0096D530 /* Starscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C934627237DAEED009DBD0C /* altBuzz1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C934626237DAEED009DBD0C /* altBuzz1.wav */; };
 		3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C934628237DB637009DBD0C /* altBuzz2.wav */; };
 		3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462A237DB6B0009DBD0C /* altBuzz3.wav */; };
@@ -75,7 +75,6 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
-		46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBC4571DF383F400C41112 /* SwiftyJSON.swift */; };
 		46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BBC4601DF39AA000C41112 /* Boggle.plist */; };
 		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
 		46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */; };
@@ -86,30 +85,6 @@
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		3C6C3C671FB2140B0096D530 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 33CCF0921F5DDC030099B092;
-			remoteInfo = Starscream;
-		};
-		3C6C3C691FB2140B0096D530 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 335FA2021F5DF71D00F6D2EC;
-			remoteInfo = "Starscream Tests";
-		};
-		3C8DD5151FB8966A007DA61F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 33CCF0841F5DDC030099B092;
-			remoteInfo = Starscream;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		46B025701A1BF4ED0088294B /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -117,7 +92,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3C8DD51A1FB89679007DA61F /* Starscream.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,7 +136,6 @@
 		3C971C8E2396A50E000346A7 /* emojsplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = emojsplosion.sks; sourceTree = "<group>"; };
 		3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrueFalseScene.swift; sourceTree = "<group>"; };
 		3CC862822B138BDC0060A7E0 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
-		3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Starscream.xcodeproj; path = ../Starscream/Starscream.xcodeproj; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score100.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score100.wav; sourceTree = "<group>"; };
 		3CD1DF561A306820003DEA9F /* counter_soft_end.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_soft_end.wav; sourceTree = "<group>"; };
@@ -208,7 +181,6 @@
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
-		46BBC4571DF383F400C41112 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		46BBC4601DF39AA000C41112 /* Boggle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Boggle.plist; sourceTree = "<group>"; };
 		46BBD3CC21B83DED0010319E /* ClockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockNode.swift; sourceTree = "<group>"; };
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -225,10 +197,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C8DD5191FB89672007DA61F /* Starscream.framework in Frameworks */,
 				46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */,
 				3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */,
 				46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */,
+				3C78068D2B2D2D18007D58AE /* SwiftyJSON in Frameworks */,
+				3C78068A2B2D1F83007D58AE /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,20 +256,9 @@
 			name = "SpriteKit Scenes";
 			sourceTree = "<group>";
 		};
-		3CD1765D1DDB4AA900F54D47 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3C6C3C681FB2140B0096D530 /* Starscream.framework */,
-				3C6C3C6A1FB2140B0096D530 /* Starscream Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		46056EAB1A19624E00C37628 = {
 			isa = PBXGroup;
 			children = (
-				3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */,
-				46BBC4561DF383F400C41112 /* SwiftyJSON */,
 				46B0254C1A1BF0590088294B /* Frameworks */,
 				46056EB61A19624E00C37628 /* Quiz Server */,
 				46056EB51A19624E00C37628 /* Products */,
@@ -377,14 +339,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		46BBC4561DF383F400C41112 /* SwiftyJSON */ = {
-			isa = PBXGroup;
-			children = (
-				46BBC4571DF383F400C41112 /* SwiftyJSON.swift */,
-			);
-			path = SwiftyJSON;
-			sourceTree = "<group>";
-		};
 		46BBD3CF21B847980010319E /* Playgrounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -411,9 +365,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				3C8DD5161FB8966A007DA61F /* PBXTargetDependency */,
 			);
 			name = "Quiz Server";
+			packageProductDependencies = (
+				3C7806892B2D1F83007D58AE /* Starscream */,
+				3C78068C2B2D2D18007D58AE /* SwiftyJSON */,
+			);
 			productName = QuizServer;
 			productReference = 46056EB41A19624E00C37628 /* Quiz Server.app */;
 			productType = "com.apple.product-type.application";
@@ -445,37 +402,18 @@
 				Base,
 			);
 			mainGroup = 46056EAB1A19624E00C37628;
+			packageReferences = (
+				3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */,
+				3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+			);
 			productRefGroup = 46056EB51A19624E00C37628 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 3CD1765D1DDB4AA900F54D47 /* Products */;
-					ProjectRef = 3CD1765C1DDB4AA900F54D47 /* Starscream.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				46056EB31A19624E00C37628 /* Quiz Server */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		3C6C3C681FB2140B0096D530 /* Starscream.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Starscream.framework;
-			remoteRef = 3C6C3C671FB2140B0096D530 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3C6C3C6A1FB2140B0096D530 /* Starscream Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Starscream Tests.xctest";
-			remoteRef = 3C6C3C691FB2140B0096D530 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		46056EB21A19624E00C37628 /* Resources */ = {
@@ -546,7 +484,6 @@
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */,
-				46BBC4581DF383F400C41112 /* SwiftyJSON.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
 				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,
@@ -565,14 +502,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		3C8DD5161FB8966A007DA61F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Starscream;
-			targetProxy = 3C8DD5151FB8966A007DA61F /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		46056EBD1A19624E00C37628 /* MainMenu.xib */ = {
@@ -777,6 +706,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.6;
+			};
+		};
+		3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3C7806892B2D1F83007D58AE /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+		3C78068C2B2D2D18007D58AE /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 46056EAC1A19624E00C37628 /* Project object */;
 }

@@ -47,8 +47,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton14: NSButton!
 	@IBOutlet weak var buzzerButton15: NSButton!
 	
-	
-	
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
@@ -93,10 +91,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
 	var quizWindow: NSWindow?
 	
-	var socket = WebSocket(url: URL(string: "ws://localhost:8091/")!)
-	
-	private func socketWriteIfConnected(_ s : String) {
-		if socket.isConnected {
+	var socket = WebSocket(request: URLRequest(url: URL(string: "ws://localhost:8091/")!))
+	var socketIsConnected = false
+						   
+	func socketWriteIfConnected(_ s : String) {
+		if socketIsConnected {
 			socket.write(string: s)
 		}
 	}
@@ -449,7 +448,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var textTeamGuesses: NSTextField!
 	@IBOutlet var numbersTeamGuesses: NSTextField!
 	
-	public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+	public func websocketDidReceiveMessage(text: String) {
 		if(text.count >= 3) {
 			switch(String(text.prefix(2))) {
 			case "co":
@@ -568,4 +567,41 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
 		socketWriteIfConnected("di\(sender.tag)")
 	}
+	
+	func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {
+		switch event {
+		case .connected(let headers):
+			socketIsConnected = true
+			print("websocket is connected: \(headers)")
+		case .disconnected(let reason, let code):
+			socketIsConnected = false
+			print("websocket is disconnected: \(reason) with code: \(code)")
+		case .text(let string):
+			websocketDidReceiveMessage(text: string)
+		case .binary(let data):
+			print("Received binary data: \(data.count)")
+		case .ping(_):
+			break
+		case .pong(_):
+			break
+		case .viabilityChanged(_):
+			break
+		case .reconnectSuggested(_):
+			break
+		case .cancelled:
+			socketIsConnected = false
+		case .error(let error):
+			socketIsConnected = false
+			if let e = error as? WSError {
+				print("websocket encountered an error: \(e.message)")
+			} else if let e = error {
+				print("websocket encountered an error: \(e.localizedDescription)")
+			} else {
+				print("websocket encountered an error")
+			}
+		case .peerClosed:
+			break
+		}
+	}
+	
 }
