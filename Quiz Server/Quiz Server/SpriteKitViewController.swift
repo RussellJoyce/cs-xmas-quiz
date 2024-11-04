@@ -23,6 +23,7 @@ class SpriteKitViewController: NSViewController {
 	let textScene = TextScene()
 	let numbersScene = NumbersScene()
 	let truefalseScene = TrueFalseScene()
+	let scoresScene = ScoresScene()
 	var currentRound = RoundType.none
 	var numTeams = 10
 	
@@ -46,6 +47,7 @@ class SpriteKitViewController: NSViewController {
 		geographyScene.setUpScene(size: skView.bounds.size, numTeams: numTeams)
 		textScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		scoresScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
 		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))
@@ -89,6 +91,8 @@ class SpriteKitViewController: NSViewController {
 			scene = numbersScene
 		case .trueFalse:
 			scene = truefalseScene
+		case .scores:
+			scene = scoresScene
 		default:
 			scene = nil
 		}
@@ -125,6 +129,8 @@ class SpriteKitViewController: NSViewController {
 			numbersScene.reset()
 		case .trueFalse:
 			truefalseScene.reset()
+		case .scores:
+			scoresScene.reset()
 		default:
 			break
 		}

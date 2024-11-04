@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,21 @@
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
+		3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C772FEB2CD79AA000F2E6FC /* Scores.swift */; };
+		3C772FF12CD7C28900F2E6FC /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3C772FF02CD7C28900F2E6FC /* ConfettiSwiftUI */; };
+		3C772FF92CD7CD4000F2E6FC /* ScoresBackground.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FF82CD7CD4000F2E6FC /* ScoresBackground.sks */; };
+		3C772FFB2CD8E06200F2E6FC /* StarGlow.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFA2CD8E06200F2E6FC /* StarGlow.sks */; };
+		3C7730072CD928EB00F2E6FC /* score6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730012CD928EB00F2E6FC /* score6.wav */; };
+		3C7730082CD928EB00F2E6FC /* score8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730032CD928EB00F2E6FC /* score8.wav */; };
+		3C7730092CD928EB00F2E6FC /* score5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730002CD928EB00F2E6FC /* score5.wav */; };
+		3C77300A2CD928EB00F2E6FC /* score7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730022CD928EB00F2E6FC /* score7.wav */; };
+		3C77300B2CD928EB00F2E6FC /* score9.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730042CD928EB00F2E6FC /* score9.wav */; };
+		3C77300C2CD928EB00F2E6FC /* score4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFF2CD928EB00F2E6FC /* score4.wav */; };
+		3C77300D2CD928EB00F2E6FC /* topscore.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730062CD928EB00F2E6FC /* topscore.mp3 */; };
+		3C77300E2CD928EB00F2E6FC /* score1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFC2CD928EB00F2E6FC /* score1.wav */; };
+		3C77300F2CD928EB00F2E6FC /* score10.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C7730052CD928EB00F2E6FC /* score10.wav */; };
+		3C7730102CD928EB00F2E6FC /* score3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFE2CD928EB00F2E6FC /* score3.wav */; };
+		3C7730112CD928EB00F2E6FC /* score2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFD2CD928EB00F2E6FC /* score2.wav */; };
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
 		3C78068A2B2D1F83007D58AE /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 3C7806892B2D1F83007D58AE /* Starscream */; };
@@ -119,6 +134,20 @@
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
+		3C772FEB2CD79AA000F2E6FC /* Scores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scores.swift; sourceTree = "<group>"; };
+		3C772FF82CD7CD4000F2E6FC /* ScoresBackground.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ScoresBackground.sks; sourceTree = "<group>"; };
+		3C772FFA2CD8E06200F2E6FC /* StarGlow.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = StarGlow.sks; sourceTree = "<group>"; };
+		3C772FFC2CD928EB00F2E6FC /* score1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score1.wav; sourceTree = "<group>"; };
+		3C772FFD2CD928EB00F2E6FC /* score2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score2.wav; sourceTree = "<group>"; };
+		3C772FFE2CD928EB00F2E6FC /* score3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score3.wav; sourceTree = "<group>"; };
+		3C772FFF2CD928EB00F2E6FC /* score4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score4.wav; sourceTree = "<group>"; };
+		3C7730002CD928EB00F2E6FC /* score5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score5.wav; sourceTree = "<group>"; };
+		3C7730012CD928EB00F2E6FC /* score6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score6.wav; sourceTree = "<group>"; };
+		3C7730022CD928EB00F2E6FC /* score7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score7.wav; sourceTree = "<group>"; };
+		3C7730032CD928EB00F2E6FC /* score8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score8.wav; sourceTree = "<group>"; };
+		3C7730042CD928EB00F2E6FC /* score9.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score9.wav; sourceTree = "<group>"; };
+		3C7730052CD928EB00F2E6FC /* score10.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = score10.wav; sourceTree = "<group>"; };
+		3C7730062CD928EB00F2E6FC /* topscore.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = topscore.mp3; sourceTree = "<group>"; };
 		3C77C8A11DEF69E10088B36A /* location.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = location.sks; sourceTree = "<group>"; };
 		3C77C8A21DEF69E10088B36A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3C7F5E581DF454AA008075B8 /* locationstar.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = locationstar.sks; sourceTree = "<group>"; };
@@ -196,6 +225,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C772FF12CD7C28900F2E6FC /* ConfettiSwiftUI in Frameworks */,
 				46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */,
 				3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */,
 				46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */,
@@ -215,12 +245,14 @@
 				461672421DF87C470049C8D1 /* BoggleSparks.sks */,
 				461672491DF87DA30049C8D1 /* BoggleSparksBonus.sks */,
 				4606F5E41BF926E200D2599B /* BuzzGlow.sks */,
+				3C772FFA2CD8E06200F2E6FC /* StarGlow.sks */,
 				4606F5E31BF926E200D2599B /* BuzzParticles.sks */,
 				3C77C8A11DEF69E10088B36A /* location.sks */,
 				461672381DF838150049C8D1 /* locationnumber.sks */,
 				3C7F5E581DF454AA008075B8 /* locationstar.sks */,
 				46498C821A3F366700CAFACC /* Snow.sks */,
 				4634F74D21B6DBD600C9862F /* SnowBackground.sks */,
+				3C772FF82CD7CD4000F2E6FC /* ScoresBackground.sks */,
 				463FDE811A39039500FA9B3F /* Snowmoji.sks */,
 				46596C821A38E04800822FB7 /* spark.png */,
 				4656CA1A1A39100200A70F91 /* SparksDown.sks */,
@@ -239,6 +271,7 @@
 		3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				3C772FEB2CD79AA000F2E6FC /* Scores.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				46DF9D07239672FF00D019A3 /* MusicScene.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
@@ -324,6 +357,17 @@
 				3CD1DF571A306820003DEA9F /* counter_sting.wav */,
 				46056EB81A19624E00C37628 /* Info.plist */,
 				46BBC4601DF39AA000C41112 /* Boggle.plist */,
+				3C772FFC2CD928EB00F2E6FC /* score1.wav */,
+				3C772FFD2CD928EB00F2E6FC /* score2.wav */,
+				3C772FFE2CD928EB00F2E6FC /* score3.wav */,
+				3C772FFF2CD928EB00F2E6FC /* score4.wav */,
+				3C7730002CD928EB00F2E6FC /* score5.wav */,
+				3C7730012CD928EB00F2E6FC /* score6.wav */,
+				3C7730022CD928EB00F2E6FC /* score7.wav */,
+				3C7730032CD928EB00F2E6FC /* score8.wav */,
+				3C7730042CD928EB00F2E6FC /* score9.wav */,
+				3C7730052CD928EB00F2E6FC /* score10.wav */,
+				3C7730062CD928EB00F2E6FC /* topscore.mp3 */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -368,6 +412,7 @@
 			packageProductDependencies = (
 				3C7806892B2D1F83007D58AE /* Starscream */,
 				3C78068C2B2D2D18007D58AE /* SwiftyJSON */,
+				3C772FF02CD7C28900F2E6FC /* ConfettiSwiftUI */,
 			);
 			productName = QuizServer;
 			productReference = 46056EB41A19624E00C37628 /* Quiz Server.app */;
@@ -392,7 +437,7 @@
 				};
 			};
 			buildConfigurationList = 46056EAF1A19624E00C37628 /* Build configuration list for PBXProject "Quiz Server" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -403,6 +448,7 @@
 			packageReferences = (
 				3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */,
 				3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				3C772FEF2CD7C28900F2E6FC /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 46056EB51A19624E00C37628 /* Products */;
 			projectDirPath = "";
@@ -436,6 +482,7 @@
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */,
 				3C971C902396A50E000346A7 /* emojsplosion.sks in Resources */,
+				3C772FFB2CD8E06200F2E6FC /* StarGlow.sks in Resources */,
 				46596C831A38E04800822FB7 /* SparksUp.sks in Resources */,
 				463EA5DE2396D6CC00118892 /* scratch1.wav in Resources */,
 				3CD1DF591A306820003DEA9F /* counter_score100.wav in Resources */,
@@ -446,12 +493,24 @@
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
 				3C934629237DB637009DBD0C /* altBuzz2.wav in Resources */,
+				3C772FF92CD7CD4000F2E6FC /* ScoresBackground.sks in Resources */,
 				46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */,
 				3C8517E52B2243A000BBCABA /* quietbuzz2.mp3 in Resources */,
 				3CC862842B138BDC0060A7E0 /* drums.wav in Resources */,
 				3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */,
 				4606F5E61BF926E200D2599B /* BuzzGlow.sks in Resources */,
 				4606F5E51BF926E200D2599B /* BuzzParticles.sks in Resources */,
+				3C7730072CD928EB00F2E6FC /* score6.wav in Resources */,
+				3C7730082CD928EB00F2E6FC /* score8.wav in Resources */,
+				3C7730092CD928EB00F2E6FC /* score5.wav in Resources */,
+				3C77300A2CD928EB00F2E6FC /* score7.wav in Resources */,
+				3C77300B2CD928EB00F2E6FC /* score9.wav in Resources */,
+				3C77300C2CD928EB00F2E6FC /* score4.wav in Resources */,
+				3C77300D2CD928EB00F2E6FC /* topscore.mp3 in Resources */,
+				3C77300E2CD928EB00F2E6FC /* score1.wav in Resources */,
+				3C77300F2CD928EB00F2E6FC /* score10.wav in Resources */,
+				3C7730102CD928EB00F2E6FC /* score3.wav in Resources */,
+				3C7730112CD928EB00F2E6FC /* score2.wav in Resources */,
 				3CD1DF5A1A306820003DEA9F /* counter_soft_end.wav in Resources */,
 				3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */,
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
@@ -489,6 +548,7 @@
 				46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
+				3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */,
 				46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
@@ -706,6 +766,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3C772FEF2CD7C28900F2E6FC /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/daltoniam/Starscream.git";
@@ -725,6 +793,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3C772FF02CD7C28900F2E6FC /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C772FEF2CD7C28900F2E6FC /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
+		};
 		3C7806892B2D1F83007D58AE /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */;

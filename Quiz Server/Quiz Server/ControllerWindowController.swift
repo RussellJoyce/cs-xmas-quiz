@@ -27,6 +27,7 @@ enum RoundType {
 	case geography
 	case text
 	case numbers
+	case scores
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
@@ -65,7 +66,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
 	@IBOutlet var tabitemNumbers: NSTabViewItem!
-    
+	@IBOutlet var tabitemScores: NSTabViewItem!
+	
     @IBOutlet weak var musicFile: NSPopUpButton!
 	@IBOutlet weak var uniqueFile: NSPopUpButton!
 	
@@ -74,6 +76,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 
+	@IBOutlet var scoresText: NSTextView!
 	
 	var quizScreen: NSScreen?
 	var testMode = true
@@ -261,6 +264,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
+		case tabitemScores:
+			socketWriteIfConnected("vibuzzer")
+			quizView.setRound(round: RoundType.scores)
 		default:
 			break
 		}
@@ -432,6 +438,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBOutlet var textTeamGuesses: NSTextField!
 	@IBOutlet var numbersTeamGuesses: NSTextField!
+	
+	
+	@IBAction func scoresInitText(_ sender: Any) {
+		var s = ""
+		for x in 1...numTeams {
+			s = s + "\(x),\n"
+		}
+		scoresText.string = s
+	}
+	
+	@IBAction func scoresParseAndReset(_ sender: Any) {
+		quizView.scoresScene.parseAndReset(scoreText: scoresText.string)
+	}
+	
+	@IBAction func scoresShowNext(_ sender: Any) {
+		quizView.scoresScene.next()
+	}
+	
 	
 	public func websocketDidReceiveMessage(text: String) {
 		if(text.count >= 3) {
