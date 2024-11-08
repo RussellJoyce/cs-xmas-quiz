@@ -76,6 +76,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 
+	@IBOutlet var scoresOutput: NSTextField!
 	@IBOutlet var scoresText: NSTextView!
 	
 	var quizScreen: NSScreen?
@@ -102,6 +103,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
     override func windowDidLoad() {
         super.windowDidLoad()
+		
+		//Connect any output UI elements
+		quizView.scoresScene.output = scoresOutput
 		
 		//Connect to Node server
 		print("Connect to Node server...")

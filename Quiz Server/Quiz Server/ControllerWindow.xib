@@ -34,6 +34,7 @@
                 <outlet property="numbersAllowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
                 <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
                 <outlet property="quieterBuzzes" destination="EOs-rc-2CU" id="OZm-0m-IfW"/>
+                <outlet property="scoresOutput" destination="mxH-b9-Xel" id="EPU-wf-phZ"/>
                 <outlet property="scoresText" destination="nUs-YF-jmA" id="MjU-mf-Kk6"/>
                 <outlet property="tabView" destination="SaY-do-P3f" id="ldq-kO-31n"/>
                 <outlet property="tabitemBuzzers" destination="zkE-YU-uHw" id="tqo-kG-iLP"/>
@@ -1193,7 +1194,7 @@ Answers</string>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZRL-oQ-wuX">
-                                            <rect key="frame" x="11" y="117" width="179" height="37"/>
+                                            <rect key="frame" x="11" y="117" width="206" height="62"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Parse and Reset Anim" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GJl-RS-z86">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1204,7 +1205,7 @@ Answers</string>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CsS-SV-AdW">
-                                            <rect key="frame" x="24" y="167" width="153" height="37"/>
+                                            <rect key="frame" x="11" y="212" width="125" height="37"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Initialise Text" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ffG-wy-qsL">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1215,7 +1216,7 @@ Answers</string>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="69L-09-a9U">
-                                            <rect key="frame" x="51" y="59" width="98" height="37"/>
+                                            <rect key="frame" x="11" y="20" width="206" height="63"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Show Next" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="22l-Ch-6fu">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1226,17 +1227,17 @@ Answers</string>
                                             </connections>
                                         </button>
                                         <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPM-on-FTo">
-                                            <rect key="frame" x="333" y="17" width="546" height="221"/>
+                                            <rect key="frame" x="282" y="18" width="235" height="221"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Fag-Ir-clm">
-                                                <rect key="frame" x="0.0" y="0.0" width="531" height="221"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="220" height="221"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="nUs-YF-jmA">
-                                                        <rect key="frame" x="0.0" y="0.0" width="531" height="221"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="220" height="221"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="minSize" width="531" height="221"/>
+                                                        <size key="minSize" width="220" height="221"/>
                                                         <size key="maxSize" width="555" height="10000000"/>
                                                     </textView>
                                                 </subviews>
@@ -1246,10 +1247,19 @@ Answers</string>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="CgK-hw-DLP">
-                                                <rect key="frame" x="531" y="0.0" width="15" height="221"/>
+                                                <rect key="frame" x="220" y="0.0" width="15" height="221"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mxH-b9-Xel">
+                                            <rect key="frame" x="573" y="24" width="291" height="210"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" borderStyle="border" title="No score data" id="ksy-Pe-smM">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                 </view>
                             </tabViewItem>

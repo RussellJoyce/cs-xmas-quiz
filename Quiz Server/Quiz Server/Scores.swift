@@ -16,15 +16,18 @@ class ScoresScene: SKScene {
 	var numTeams = 15
 	var webSocket: WebSocket?
 	
-	var scores : [(Int, Int)] = []
+	var scores : [(Int, Int, Int)] = []
 	var teamBoxes = [ScoreNode]()
 	var displayIndex = 0
 	
 	var scoreSounds = [SKAction]()
 	var lastScoreSound = 0
 	let topScoreNoise = SKAction.playSoundFileNamed("topscore", waitForCompletion: false)
+	let simpleScoreNoise = SKAction.playSoundFileNamed("score5", waitForCompletion: false)
 	
 	let snow1 = SKEmitterNode(fileNamed: "ScoresBackground")!
+	
+	var output : NSTextField!
 	
 	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
 		if setUp {
@@ -34,7 +37,7 @@ class ScoresScene: SKScene {
 		
 		self.size = size
 		self.numTeams = numTeams
-		self.webSocket = webSocket;
+		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
 		bgImage.zPosition = 0
@@ -85,6 +88,7 @@ class ScoresScene: SKScene {
 		
 		lastScoreSound = 0
 		scoreSounds.shuffle()
+		output.stringValue = "Ready"
 	}
 	
 	
@@ -95,12 +99,16 @@ class ScoresScene: SKScene {
 	
 	func parseStringToPairs(_ input: String) -> [(Int, Int)]? {
 		var pairs = [(Int, Int)]()
-		
-		let lines = input.split(separator: "\n")
-		
+		let lines = input.replacingOccurrences(of: "\r", with: "").split(separator: "\n")
 		for line in lines {
 			do {
-				let components = line.split(separator: ",")
+				//Split on either tab or comma
+				var components : [Substring.SubSequence]
+				if line.split(separator: ",").count != 2 {
+					components = line.split(separator: "\t")
+				} else {
+					components = line.split(separator: ",")
+				}
 				
 				if components.count == 2 {
 					guard let x = Int(components[0].trimmingCharacters(in: .whitespaces)),
@@ -111,30 +119,75 @@ class ScoresScene: SKScene {
 				}
 			} catch {
 				print("Error parsing line '\(line)': \(error)")
+				output.stringValue = "Error parsing line '\(line)': \(error)"
 				return nil
 			}
 		}
 		
 		print("Number of teams with valid scores: \(pairs.count)")
+		output.stringValue = "Number of teams with valid scores: \(pairs.count)"
 		return pairs
 	}
 
 	func parseAndReset(scoreText : String) {
 		if let res = parseStringToPairs(scoreText) {
-			scores = res.sorted { $0.1 < $1.1 }
-			print(scores)
+			
+			//Determine ranks
+			var rankedScores : [(Int, Int, Int)] = []
+			var lastScore = -1
+			var currentRank = 0
+			var skipped = 1
+			for i in res.sorted(by: { $0.1 > $1.1 }) {
+				if i.1 != lastScore {
+					lastScore = i.1
+					currentRank += skipped
+					skipped = 1
+				} else {
+					skipped += 1
+				}
+				rankedScores.append((currentRank, i.0, i.1))
+			}
+			
+			scores = rankedScores.sorted { $0.0 > $1.0 }
+			output.stringValue = scores.map({"\($0): Team \($1) (\($2))"}).joined(separator: "\n")
+			
 		} else {
 			print("Failed to parse input.")
 		}
 		displayIndex = 0
 	}
 	
+	func numberAsEmoji(_ n: Int) -> String {
+		func conv(_ n: Int) -> String {
+			switch n {
+			case 0: return "0️⃣"
+			case 1: return "1️⃣"
+			case 2: return "2️⃣"
+			case 3: return "3️⃣"
+			case 4: return "4️⃣"
+			case 5: return "5️⃣"
+			case 6: return "6️⃣"
+			case 7: return "7️⃣"
+			case 8: return "8️⃣"
+			case 9: return "9️⃣"
+			default: return ""
+			}
+		}
+		if n > 10 {
+			return conv(n/10) + conv(n%10)
+		} else {
+			return conv(n)
+		}
+	}
+	
+	
 	func next() {
 		
 		if displayIndex < scores.count {
 			//Add a team box
 			//BuzzerTeamNode expects team number to be zero based
-			let box = ScoreNode(team: scores[displayIndex].0 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, altText: "Team \(scores[displayIndex].0): \(scores[displayIndex].1) points")
+			let s = scores[displayIndex]
+			let box = ScoreNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
 			box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -144,14 +197,15 @@ class ScoresScene: SKScene {
 			if displayIndex == scores.count - 1 {
 				self.run(topScoreNoise)
 			} else {
-				if scoreSounds.count > 1 {
+				/*if scoreSounds.count > 1 {
 					if lastScoreSound > scoreSounds.count - 1 {
 						lastScoreSound = 0
 						scoreSounds.shuffle()
 					}
 					self.run(scoreSounds[lastScoreSound])
 					lastScoreSound += 1
-				}
+				}*/
+				self.run(simpleScoreNoise)
 			}
 			
 			//LEDs expect zero based team ids
