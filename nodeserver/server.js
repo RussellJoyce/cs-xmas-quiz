@@ -9,13 +9,13 @@ var clients = {};
 var lastView = "buzzer";
 var lastGeoImage = "start.jpg";
 
-//Certificates for SSL
-const certkey = 'certs/privkey1.pem';
-const certchain = 'certs/fullchain1.pem';
-
 //DNS record
-const dnshostname = 'iangray.me.uk';
+const dnshostname = 'christmasquiz.win';
 const hostaddress = '192.168.1.2';
+
+//Certificates for SSL
+const certkey = 'certs/archive/' + dnshostname + '/privkey1.pem';
+const certchain = 'certs/archive/' + dnshostname + '/fullchain1.pem';
 
 const wclientHttpsServer = https.createServer({
     key: fs.readFileSync(certkey, 'utf8'),
@@ -190,7 +190,7 @@ wclient.on('connection', function connection(ws, req) {
 
 // Server to redirect HTTP requests to HTTPS
 const http = express();
-http.get('*', function(req, res) {  
+http.get('*', function(req, res) {
     res.redirect('https://' + req.headers.host + req.url);
 });
 http.listen(80, "0.0.0.0", function(){
@@ -215,9 +215,9 @@ dnsserver.on('request', function (request, response) {
     //console.log("DNS request for " + request.question[0].name)
     response.answer.push(
         dns.A({
-            //name: request.question[0].name, 
+            //name: request.question[0].name,
             name: dnshostname,
-            address: hostaddress, 
+            address: hostaddress,
             ttl: 10}));
     response.send();
 });
