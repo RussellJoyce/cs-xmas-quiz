@@ -8,6 +8,7 @@
 
 import Cocoa
 import SpriteKit
+import Starscream
 
 class GeographyScene: SKScene {
 	
@@ -16,6 +17,8 @@ class GeographyScene: SKScene {
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
 	var imagesPath : String?
+
+	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let mainImage = SKSpriteNode(imageNamed: "geostart")
@@ -23,7 +26,7 @@ class GeographyScene: SKScene {
 	
 	var geogReveal = -1
 	
-	func setUpScene(size: CGSize, numTeams: Int) {
+	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -33,6 +36,7 @@ class GeographyScene: SKScene {
 		
 		self.size = size
 		self.numTeams = numTeams
+		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
 		bgImage.zPosition = 0.0
@@ -40,12 +44,19 @@ class GeographyScene: SKScene {
 		bgImage.size = self.size
 		
 		self.addChild(bgImage)
-
+		
 		mainImage.position = CGPoint(x: 150, y: 50.0)
 		mainImage.size.width = 1300.0
 		mainImage.size.height = 867.0
 		mainImage.zPosition = 1.0
 		bgImage.addChild(mainImage)
+		
+		let border = SKShapeNode(rect: mainImage.frame)
+		border.fillColor = NSColor.clear
+		border.strokeColor = NSColor.black
+		border.lineWidth = 5
+		border.zPosition = 1000.0
+		bgImage.addChild(border)
 		
 		text.fontSize = 70
 		text.fontColor = NSColor.black
@@ -60,7 +71,7 @@ class GeographyScene: SKScene {
 		answersText.horizontalAlignmentMode = .left
 		answersText.verticalAlignmentMode = .top
 		answersText.zPosition = 6.0
-		answersText.position = CGPoint(x: 50, y: self.frame.height - 150)
+		answersText.position = CGPoint(x: 50, y: self.frame.height - 100)
 		answersText.numberOfLines = 10
 
 		
@@ -114,7 +125,7 @@ class GeographyScene: SKScene {
 		p.particleColorSequence = nil
 		mainImage.addChild(p)
 		
-		if team > 0 && team <= 10 {
+		if team > 0 && team <= 19 {
 			let numbers = SKEmitterNode(fileNamed: "locationnumber")!
 			numbers.position = point
 			numbers.zPosition = 9.0
@@ -135,16 +146,23 @@ class GeographyScene: SKScene {
 			answering = true;
 			mainImage.removeAllChildren()
 			
-//			teamguesses[0] = (10, 10)
-//			teamguesses[1] = (20, 20)
-//			teamguesses[2] = (30, 30)
-//			teamguesses[3] = (40, 40)
-//			teamguesses[4] = (10, 50)
-//			teamguesses[5] = (20, 50)
-//			teamguesses[6] = (30, 60)
-//			teamguesses[7] = (40, 70)
-//			teamguesses[8] = (70, 60)
-//			teamguesses[9] = (90, 70)
+			// Quick dirty test code
+			/*
+			teamguesses[0] = (10, 10)
+			teamguesses[1] = (15, 15)
+			teamguesses[2] = (20, 20)
+			teamguesses[3] = (25, 25)
+			teamguesses[4] = (30, 30)
+			teamguesses[5] = (35, 35)
+			teamguesses[6] = (40, 40)
+			teamguesses[7] = (45, 45)
+			teamguesses[8] = (50, 50)
+			teamguesses[9] = (55, 55)
+			teamguesses[10] = (60, 60)
+			teamguesses[11] = (65, 65)
+			teamguesses[12] = (70, 70)
+			teamguesses[13] = (75, 75)
+			 */
 			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
@@ -218,7 +236,7 @@ class GeographyScene: SKScene {
 		case 10:
 			return "🔟"
 		default:
-			return ""
+			return "🆖"
 		}
 	}
 	
@@ -256,13 +274,14 @@ class GeographyScene: SKScene {
 	
 	
 	
-	func teamAnswered(team: Int, x: Int, y: Int) {
+	func teamAnswered(team: Int, x: Int, y: Int, skips : [NSButton]) {
 		if !answering {
 			print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
 			if(team < teamguesses.count) {
 				teamguesses[team] = (x, y)
 			}
-			updateText()
+			updateTextWithSkips(skips)
+			webSocket?.pulseTeamColour(team: team)
 		}
 	}
 	
@@ -278,7 +297,19 @@ class GeographyScene: SKScene {
 		}
 	}
 	
+	func updateTextWithSkips(_ skips : [NSButton]) {
+		answersText.text = ""
+		text.fontSize = 70
+		text.text = "Teams Remaining: "
+		for i in 0 ..< numTeams {
+			if teamguesses[i] == nil && skips[i].state == .on {
+				text.text! += String(i+1) + " "
+			}
+		}
+	}
+	
 	func reset() {
+		webSocket?.ledsOff()
 		answering = false
 		teamguesses = []
 		for _ in 0 ..< numTeams {

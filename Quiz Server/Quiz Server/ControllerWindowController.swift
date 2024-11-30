@@ -48,6 +48,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton14: NSButton!
 	@IBOutlet weak var buzzerButton15: NSButton!
 	
+	@IBOutlet var skip1: NSButton!
+	@IBOutlet var skip2: NSButton!
+	@IBOutlet var skip3: NSButton!
+	@IBOutlet var skip4: NSButton!
+	@IBOutlet var skip5: NSButton!
+	@IBOutlet var skip6: NSButton!
+	@IBOutlet var skip7: NSButton!
+	@IBOutlet var skip8: NSButton!
+	@IBOutlet var skip9: NSButton!
+	@IBOutlet var skip10: NSButton!
+	@IBOutlet var skip11: NSButton!
+	@IBOutlet var skip12: NSButton!
+	@IBOutlet var skip13: NSButton!
+	@IBOutlet var skip14: NSButton!
+	@IBOutlet var skip15: NSButton!
+	@IBOutlet var skip16: NSButton!
+	
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
@@ -85,6 +102,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
+	var skipButtons = [NSButton]()
 	var geographyImagesPath: String?
 	var musicPath: String?
 	var uniquePath: String?
@@ -120,6 +138,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				buzzerButtons.append(allBuzzerButtons[i])
 				buzzerButtons[i].isEnabled = true
 				buzzersEnabled.append(true)
+			}
+		}
+		
+		let allSkipButtons : [NSButton] = [skip1, skip2, skip3, skip4, skip5, skip6, skip7, skip8, skip9, skip10, skip11, skip12, skip13, skip14, skip15, skip16]
+		for i in 0..<numTeams {
+			if i < allSkipButtons.count {
+				skipButtons.append(allSkipButtons[i])
 			}
 		}
 		
@@ -483,7 +508,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
+						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y, skips: skipButtons) //make zero indexed
 					}
 				} else {
 					print("Invalid Geography guess")

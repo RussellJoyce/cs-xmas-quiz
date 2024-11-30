@@ -44,7 +44,7 @@ class SpriteKitViewController: NSViewController {
         musicScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		timerScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		truefalseScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		geographyScene.setUpScene(size: skView.bounds.size, numTeams: numTeams)
+		geographyScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		textScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
 		scoresScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
