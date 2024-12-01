@@ -209,7 +209,7 @@ class ScoresScene: SKScene {
 			}
 			
 			//LEDs expect zero based team ids
-			webSocket?.buzz(team: scores[displayIndex].0 - 1)
+			webSocket?.buzz(team: scores[displayIndex].1 - 1)
 			
 			//Shuffle down any existing boxes
 			if displayIndex > 0 {
