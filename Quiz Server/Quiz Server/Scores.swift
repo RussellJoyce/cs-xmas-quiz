@@ -48,13 +48,9 @@ class ScoresScene: SKScene {
 		
 		//Load team sounds
 		do {
-			let docsArray = try FileManager.default.contentsOfDirectory(atPath: Bundle.main.resourcePath!)
-			for fileName in docsArray {
-				if fileName.starts(with: "score") {
-					scoreSounds.append(SKAction.playSoundFileNamed(fileName, waitForCompletion: false))
-				}
+			for i in 1...14 {
+				scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))
 			}
-			scoreSounds.shuffle()
 		} catch {
 			print(error)
 		}
@@ -87,7 +83,6 @@ class ScoresScene: SKScene {
 		displayIndex = 0
 		
 		lastScoreSound = 0
-		scoreSounds.shuffle()
 		output.stringValue = "Ready"
 	}
 	
@@ -197,15 +192,9 @@ class ScoresScene: SKScene {
 			if displayIndex == scores.count - 1 {
 				self.run(topScoreNoise)
 			} else {
-				/*if scoreSounds.count > 1 {
-					if lastScoreSound > scoreSounds.count - 1 {
-						lastScoreSound = 0
-						scoreSounds.shuffle()
-					}
-					self.run(scoreSounds[lastScoreSound])
-					lastScoreSound += 1
-				}*/
-				self.run(simpleScoreNoise)
+				if displayIndex < scoreSounds.count {
+					self.run(scoreSounds[displayIndex])
+				}
 			}
 			
 			//LEDs expect zero based team ids

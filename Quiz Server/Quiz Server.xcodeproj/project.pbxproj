@@ -47,6 +47,20 @@
 		3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462A237DB6B0009DBD0C /* altBuzz3.wav */; };
 		3C93462D237DBF88009DBD0C /* altBuzz4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C93462C237DBF88009DBD0C /* altBuzz4.wav */; };
 		3C971C902396A50E000346A7 /* emojsplosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C971C8E2396A50E000346A7 /* emojsplosion.sks */; };
+		3CB99F962CFCB57B00B704E2 /* orch8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8F2CFCB57B00B704E2 /* orch8.wav */; };
+		3CB99F972CFCB57B00B704E2 /* orch6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8D2CFCB57B00B704E2 /* orch6.wav */; };
+		3CB99F982CFCB57B00B704E2 /* orch3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8A2CFCB57B00B704E2 /* orch3.wav */; };
+		3CB99F992CFCB57B00B704E2 /* orch1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F882CFCB57B00B704E2 /* orch1.wav */; };
+		3CB99F9A2CFCB57B00B704E2 /* orch14.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F952CFCB57B00B704E2 /* orch14.wav */; };
+		3CB99F9B2CFCB57B00B704E2 /* orch2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F892CFCB57B00B704E2 /* orch2.wav */; };
+		3CB99F9C2CFCB57B00B704E2 /* orch9.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F902CFCB57B00B704E2 /* orch9.wav */; };
+		3CB99F9D2CFCB57B00B704E2 /* orch13.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F942CFCB57B00B704E2 /* orch13.wav */; };
+		3CB99F9E2CFCB57B00B704E2 /* orch11.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F922CFCB57B00B704E2 /* orch11.wav */; };
+		3CB99F9F2CFCB57B00B704E2 /* orch7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8E2CFCB57B00B704E2 /* orch7.wav */; };
+		3CB99FA02CFCB57B00B704E2 /* orch10.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F912CFCB57B00B704E2 /* orch10.wav */; };
+		3CB99FA12CFCB57B00B704E2 /* orch4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8B2CFCB57B00B704E2 /* orch4.wav */; };
+		3CB99FA22CFCB57B00B704E2 /* orch5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8C2CFCB57B00B704E2 /* orch5.wav */; };
+		3CB99FA32CFCB57B00B704E2 /* orch12.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F932CFCB57B00B704E2 /* orch12.wav */; };
 		3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */; };
 		3CC862842B138BDC0060A7E0 /* drums.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CC862822B138BDC0060A7E0 /* drums.wav */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
@@ -163,6 +177,20 @@
 		3C93462A237DB6B0009DBD0C /* altBuzz3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz3.wav; sourceTree = "<group>"; };
 		3C93462C237DBF88009DBD0C /* altBuzz4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = altBuzz4.wav; sourceTree = "<group>"; };
 		3C971C8E2396A50E000346A7 /* emojsplosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = emojsplosion.sks; sourceTree = "<group>"; };
+		3CB99F882CFCB57B00B704E2 /* orch1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch1.wav; sourceTree = "<group>"; };
+		3CB99F892CFCB57B00B704E2 /* orch2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch2.wav; sourceTree = "<group>"; };
+		3CB99F8A2CFCB57B00B704E2 /* orch3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch3.wav; sourceTree = "<group>"; };
+		3CB99F8B2CFCB57B00B704E2 /* orch4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch4.wav; sourceTree = "<group>"; };
+		3CB99F8C2CFCB57B00B704E2 /* orch5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch5.wav; sourceTree = "<group>"; };
+		3CB99F8D2CFCB57B00B704E2 /* orch6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch6.wav; sourceTree = "<group>"; };
+		3CB99F8E2CFCB57B00B704E2 /* orch7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch7.wav; sourceTree = "<group>"; };
+		3CB99F8F2CFCB57B00B704E2 /* orch8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch8.wav; sourceTree = "<group>"; };
+		3CB99F902CFCB57B00B704E2 /* orch9.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch9.wav; sourceTree = "<group>"; };
+		3CB99F912CFCB57B00B704E2 /* orch10.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch10.wav; sourceTree = "<group>"; };
+		3CB99F922CFCB57B00B704E2 /* orch11.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch11.wav; sourceTree = "<group>"; };
+		3CB99F932CFCB57B00B704E2 /* orch12.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch12.wav; sourceTree = "<group>"; };
+		3CB99F942CFCB57B00B704E2 /* orch13.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch13.wav; sourceTree = "<group>"; };
+		3CB99F952CFCB57B00B704E2 /* orch14.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch14.wav; sourceTree = "<group>"; };
 		3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrueFalseScene.swift; sourceTree = "<group>"; };
 		3CC862822B138BDC0060A7E0 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
@@ -346,6 +374,20 @@
 				3C872EB51C03D53000A2B397 /* airhorn.mp3 */,
 				3CF78EFC2396A11A007FC394 /* tada.mp3 */,
 				3C872EB31C03D47A00A2B397 /* blop.mp3 */,
+				3CB99F882CFCB57B00B704E2 /* orch1.wav */,
+				3CB99F892CFCB57B00B704E2 /* orch2.wav */,
+				3CB99F8A2CFCB57B00B704E2 /* orch3.wav */,
+				3CB99F8B2CFCB57B00B704E2 /* orch4.wav */,
+				3CB99F8C2CFCB57B00B704E2 /* orch5.wav */,
+				3CB99F8D2CFCB57B00B704E2 /* orch6.wav */,
+				3CB99F8E2CFCB57B00B704E2 /* orch7.wav */,
+				3CB99F8F2CFCB57B00B704E2 /* orch8.wav */,
+				3CB99F902CFCB57B00B704E2 /* orch9.wav */,
+				3CB99F912CFCB57B00B704E2 /* orch10.wav */,
+				3CB99F922CFCB57B00B704E2 /* orch11.wav */,
+				3CB99F932CFCB57B00B704E2 /* orch12.wav */,
+				3CB99F942CFCB57B00B704E2 /* orch13.wav */,
+				3CB99F952CFCB57B00B704E2 /* orch14.wav */,
 				3C872EB11C03D35100A2B397 /* tick.mp3 */,
 				3C5E2A4C1A37D0F9000D6447 /* timer.wav */,
 				3C5E2A4D1A37D0F9000D6447 /* timerend.wav */,
@@ -477,6 +519,20 @@
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */,
 				3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */,
+				3CB99F962CFCB57B00B704E2 /* orch8.wav in Resources */,
+				3CB99F972CFCB57B00B704E2 /* orch6.wav in Resources */,
+				3CB99F982CFCB57B00B704E2 /* orch3.wav in Resources */,
+				3CB99F992CFCB57B00B704E2 /* orch1.wav in Resources */,
+				3CB99F9A2CFCB57B00B704E2 /* orch14.wav in Resources */,
+				3CB99F9B2CFCB57B00B704E2 /* orch2.wav in Resources */,
+				3CB99F9C2CFCB57B00B704E2 /* orch9.wav in Resources */,
+				3CB99F9D2CFCB57B00B704E2 /* orch13.wav in Resources */,
+				3CB99F9E2CFCB57B00B704E2 /* orch11.wav in Resources */,
+				3CB99F9F2CFCB57B00B704E2 /* orch7.wav in Resources */,
+				3CB99FA02CFCB57B00B704E2 /* orch10.wav in Resources */,
+				3CB99FA12CFCB57B00B704E2 /* orch4.wav in Resources */,
+				3CB99FA22CFCB57B00B704E2 /* orch5.wav in Resources */,
+				3CB99FA32CFCB57B00B704E2 /* orch12.wav in Resources */,
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
 				4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */,
 				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
