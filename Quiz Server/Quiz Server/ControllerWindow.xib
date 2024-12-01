@@ -1462,7 +1462,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Fag-Ir-clm">
                                                 <rect key="frame" x="0.0" y="0.0" width="220" height="221"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="nUs-YF-jmA">
                                                         <rect key="frame" x="0.0" y="0.0" width="220" height="221"/>
@@ -1482,11 +1482,11 @@ Answers</string>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
-                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mxH-b9-Xel">
-                                            <rect key="frame" x="573" y="24" width="291" height="210"/>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mxH-b9-Xel">
+                                            <rect key="frame" x="567" y="4" width="297" height="251"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" borderStyle="border" title="No score data" id="ksy-Pe-smM">
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" metaFont="system" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
