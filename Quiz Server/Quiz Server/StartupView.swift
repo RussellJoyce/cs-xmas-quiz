@@ -17,6 +17,7 @@ class StartupView: NSViewController {
     @IBOutlet weak var musicPath: NSTextField!
 	@IBOutlet weak var uniquePath: NSTextField!
 	@IBOutlet weak var numTeamsInput: NSTextField!
+	@IBOutlet weak var debugMode: NSButton!
 	
 	var allScreens: [NSScreen]?
     
@@ -59,7 +60,7 @@ class StartupView: NSViewController {
 		
         let delegate = NSApplication.shared.delegate as! AppDelegate
 
-		delegate.startQuiz(screen: screen, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue)
+		delegate.startQuiz(screen: screen, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue, debugMode: debugMode.state == .on)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {

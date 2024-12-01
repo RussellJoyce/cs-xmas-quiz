@@ -106,6 +106,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var geographyImagesPath: String?
 	var musicPath: String?
 	var uniquePath: String?
+	var debugMode: Bool = false
 	
 	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
 	var quizWindow: NSWindow?
@@ -206,7 +207,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
 		//tabView.removeTabViewItem(tabitemTimer)
 		
-		quizView.setRound(round: RoundType.idle)
+		quizView.setRound(round: RoundType.idle, debug: debugMode)
 
     }
 	
@@ -260,49 +261,49 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		switch(tabViewItem!) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.idle)
+			quizView.setRound(round: RoundType.idle, debug: debugMode)
 		case tabitemTest:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.test)
+			quizView.setRound(round: RoundType.test, debug: debugMode)
 		case tabitemBuzzers:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.buzzers)
+			quizView.setRound(round: RoundType.buzzers, debug: debugMode)
         case tabitemMusic:
             socketWriteIfConnected("vibuzzer")
-            quizView.setRound(round: RoundType.music)
+            quizView.setRound(round: RoundType.music, debug: debugMode)
 		case tabitemtruefalse:
 			socketWriteIfConnected("vihigherlower")
-			quizView.setRound(round: RoundType.trueFalse)
+			quizView.setRound(round: RoundType.trueFalse, debug: debugMode)
 		case tabitemTimer:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.timer)
+			quizView.setRound(round: RoundType.timer, debug: debugMode)
 		case tabitemGeography:
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-			quizView.setRound(round: RoundType.geography)
+			quizView.setRound(round: RoundType.geography, debug: debugMode)
 		case tabitemNumbers:
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers)
+			quizView.setRound(round: RoundType.numbers, debug: debugMode)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
 		case tabitemText:
 			socketWriteIfConnected("vitext")
-			quizView.setRound(round: RoundType.text)
+			quizView.setRound(round: RoundType.text, debug: debugMode)
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
 		case tabitemScores:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.scores)
+			quizView.setRound(round: RoundType.scores, debug: debugMode)
 		default:
 			break
 		}
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
-        quizView.reset()
+		quizView.reset(debugMode)
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
@@ -315,7 +316,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			textAllowAnswers.state = .on
 		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers)
+			quizView.setRound(round: RoundType.numbers, debug: debugMode)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
@@ -451,7 +452,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizView.reset()
+		quizView.reset(debugMode)
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
@@ -484,7 +485,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func scoresShowNext(_ sender: Any) {
 		quizView.scoresScene.next()
 	}
-	
 	
 	public func websocketDidReceiveMessage(text: String) {
 		if(text.count >= 3) {

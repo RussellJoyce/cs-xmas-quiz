@@ -67,7 +67,7 @@ class SpriteKitViewController: NSViewController {
 		
 	}
 	
-	func setRound(round: RoundType) {
+	func setRound(round: RoundType, debug: Bool) {
 		currentRound = round
 		
 		var scene : SKScene?
@@ -106,10 +106,10 @@ class SpriteKitViewController: NSViewController {
 			skView.presentScene(scene)
 		}
 		
-		reset()
+		reset(debug)
 	}
 	
-	func reset() {
+	func reset(_ debug: Bool) {
 		switch (currentRound) {
 		case .idle:
 			idleScene.reset()
@@ -122,7 +122,7 @@ class SpriteKitViewController: NSViewController {
 		case .timer:
 			timerScene.reset()
 		case .geography:
-			geographyScene.reset()
+			geographyScene.reset(debugMode: debug)
 		case .text:
 			textScene.reset()
 		case .numbers:

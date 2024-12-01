@@ -17,7 +17,7 @@ class GeographyScene: SKScene {
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
 	var imagesPath : String?
-
+	var debug = false
 	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -32,7 +32,7 @@ class GeographyScene: SKScene {
 		}
 		setUp = true
 		
-		reset()
+		reset(debugMode: debug)
 		
 		self.size = size
 		self.numTeams = numTeams
@@ -147,20 +147,22 @@ class GeographyScene: SKScene {
 			mainImage.removeAllChildren()
 			
 			// Quick dirty test code
-			teamguesses[0] = (10, 10)
-			teamguesses[1] = (15, 15)
-			teamguesses[2] = (20, 20)
-			teamguesses[3] = (25, 25)
-			teamguesses[4] = (30, 30)
-			teamguesses[5] = (35, 35)
-			teamguesses[6] = (40, 40)
-			teamguesses[7] = (45, 45)
-			teamguesses[8] = (50, 50)
-			teamguesses[9] = (55, 55)
-			teamguesses[10] = (60, 60)
-			teamguesses[11] = (65, 65)
-			teamguesses[12] = (70, 70)
-			teamguesses[13] = (75, 75)
+			if(debug) {
+				teamguesses[0] = (10, 10)
+				teamguesses[1] = (15, 15)
+				teamguesses[2] = (20, 20)
+				teamguesses[3] = (25, 25)
+				teamguesses[4] = (30, 30)
+				teamguesses[5] = (35, 35)
+				teamguesses[6] = (40, 40)
+				teamguesses[7] = (45, 45)
+				teamguesses[8] = (50, 50)
+				teamguesses[9] = (55, 55)
+				teamguesses[10] = (60, 60)
+				teamguesses[11] = (65, 65)
+				teamguesses[12] = (70, 70)
+				teamguesses[13] = (75, 75)
+			}
 			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
@@ -310,9 +312,10 @@ class GeographyScene: SKScene {
 		}
 	}
 	
-	func reset() {
+	func reset(debugMode: Bool) {
 		webSocket?.ledsOff()
 		answering = false
+		debug = debugMode
 		teamguesses = []
 		for _ in 0 ..< numTeams {
 			teamguesses += [nil]

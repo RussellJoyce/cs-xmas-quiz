@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -14,6 +15,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="debugMode" destination="6fO-g5-Oiz" id="AOb-0m-Nme"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -486,6 +488,14 @@ DQ
                             <action selector="startQuiz:" target="9BG-lO-pnL" id="CXo-DS-23r"/>
                         </connections>
                     </button>
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6fO-g5-Oiz">
+                        <rect key="frame" x="283" y="132" width="112" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="check" title="Debug Mode" bezelStyle="regularSquare" imagePosition="left" inset="2" id="CkJ-MO-FKF">
+                            <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="9Zo-H4-VCv" firstAttribute="leading" secondItem="Qsu-Et-3OI" secondAttribute="trailing" constant="8" id="2m2-Rk-eNL"/>
@@ -510,6 +520,7 @@ DQ
         </window>
         <viewController nibName="" id="9BG-lO-pnL" customClass="StartupView" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="debugMode" destination="6fO-g5-Oiz" id="Ext-2m-poR"/>
                 <outlet property="geographyImagesPath" destination="h66-8w-5Om" id="0N3-Q1-AMQ"/>
                 <outlet property="musicPath" destination="znj-cr-uxp" id="KUl-kw-qTf"/>
                 <outlet property="numTeamsInput" destination="jX2-fN-sfe" id="5Qp-Kt-otq"/>
