@@ -147,7 +147,6 @@ class GeographyScene: SKScene {
 			mainImage.removeAllChildren()
 			
 			// Quick dirty test code
-			/*
 			teamguesses[0] = (10, 10)
 			teamguesses[1] = (15, 15)
 			teamguesses[2] = (20, 20)
@@ -162,7 +161,6 @@ class GeographyScene: SKScene {
 			teamguesses[11] = (65, 65)
 			teamguesses[12] = (70, 70)
 			teamguesses[13] = (75, 75)
-			 */
 			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
@@ -247,8 +245,12 @@ class GeographyScene: SKScene {
 			text.text = ""
 			answersText.text = emojiNum(order) + ": Team " + String(id + 1) + "\n"
 		} else {
-			if(order <= 3) {
+			if(order == 1) {
 				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " ⭐️\n"
+			} else if(order <= 3) {
+				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " 🎉\n"
+			} else if(order <= sorted.count / 2) {
+				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " 👍\n"
 			} else {
 				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + "\n"
 			}
