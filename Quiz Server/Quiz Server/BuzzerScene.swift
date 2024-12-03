@@ -166,7 +166,7 @@ class BuzzerScene: SKScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzerQueueMode: Bool, quietMode: Bool) {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzerQueueMode: Bool, quietMode: Bool, buzzerSounds : Bool) {
 		if buzzes.count == 0 || (buzzes.count > 0 && buzzerQueueMode) {
 			if teamEnabled[team] && buzzes.count < 5 {
 				teamEnabled[team] = false
@@ -175,7 +175,9 @@ class BuzzerScene: SKScene {
 				
 				if buzzNumber == 0 {
 					firstBuzzTime = Date()
-					buzzSound(quietMode)
+					if buzzerSounds {
+						buzzSound(quietMode)
+					}
 					if let t = timer {
 						if !t.isValid {
 							webSocket?.buzz(team: team)
