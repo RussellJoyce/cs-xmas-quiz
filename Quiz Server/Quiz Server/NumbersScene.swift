@@ -280,6 +280,10 @@ class NumbersScene: SKScene {
 			
 			teamDistances = teamDistances.sorted(by: {$0.distance < $1.distance})
 
+			if teamDistances.count == 0 {
+				return
+			}
+			
 			let winColours = [
 				NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.3, alpha: 0.9),
 				NSColor(calibratedRed: 1.0, green: 1.0, blue: 0.1, alpha: 0.9),
