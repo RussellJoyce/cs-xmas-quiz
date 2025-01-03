@@ -47,15 +47,9 @@ class ScoresScene: SKScene {
 		self.addChild(bgImage)
 		
 		//Load team sounds
-		do {
-			for i in 1...14 {
-				scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))
-			}
-		} catch {
-			print(error)
+		for i in 1...14 {
+			scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))
 		}
-		
-		
 		
 		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
 		snow1.zPosition = 1

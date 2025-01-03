@@ -70,7 +70,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerQueueMode: NSButton!
 	@IBOutlet weak var quieterBuzzes: NSButton!
 	@IBOutlet weak var timerShowCounter: NSButton!
-
+	@IBOutlet weak var blankVideo: NSButton!
+	
 	@IBOutlet weak var buzzerSounds: NSButton!
 	
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
@@ -89,6 +90,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     @IBOutlet weak var musicFile: NSPopUpButton!
 	@IBOutlet weak var uniqueFile: NSPopUpButton!
+	@IBOutlet weak var videoFile: NSPopUpButton!
 	
 	@IBOutlet var textAllowAnswers: NSButton!
 	
@@ -182,9 +184,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             do {
                 let files = try FileManager.default.contentsOfDirectory(atPath: musicPath)
                 for file in files.sorted() {
-                    if (!file.hasPrefix(".")) {
-                        musicFile.addItem(withTitle: file)
-                    }
+					if !file.hasPrefix(".") {
+						if file.hasSuffix(".mp3") || file.hasSuffix(".wav") {
+							musicFile.addItem(withTitle: file)
+						}
+						if file.hasSuffix(".mov") || file.hasSuffix(".mp4") || file.hasSuffix(".mpeg") || file.hasSuffix(".avi") {
+							videoFile.addItem(withTitle: file)
+						}
+					}
                 }
                 musicChooseFile(musicFile)
             } catch {
@@ -223,7 +230,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         //  otherwise, buttons will disable buzzers
         if testMode {
             if (sender.state == NSControl.StateValue.on) {
-				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on)
+				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
 				quizView.buzzerReleased(team: sender.tag, type: .test)
 				sender.state = NSControl.StateValue.off
             }
@@ -498,7 +505,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
-						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on)
+						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
 						DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 							self.quizView.buzzerReleased(team: team, type: .websocket)
 						}
@@ -603,6 +610,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
 		socketWriteIfConnected("di\(sender.tag)")
+	}
+	
+	@IBAction func playVideo(_ sender: Any) {
+		quizView.musicScene.resumeVideo()
+	}
+	
+	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
+		if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
+			let path =  musicPath + "/" + fileName
+			quizView.musicScene.prepareVideo(file: path)
+		}
+		else {
+			print("Error choosing video file")
+		}
 	}
 	
 	func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {

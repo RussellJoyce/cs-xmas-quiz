@@ -136,7 +136,7 @@ class SpriteKitViewController: NSViewController {
 		}
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool, buzzerQueueMode: Bool, quietMode : Bool, buzzerSounds : Bool) {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool, buzzerQueueMode: Bool, quietMode : Bool, buzzerSounds : Bool, blankVideo: Bool) {
 		switch (currentRound) {
 		case .idle:
 			idleScene.buzzerPressed(team: team, type: type)
@@ -145,7 +145,7 @@ class SpriteKitViewController: NSViewController {
 		case .buzzers:
 			buzzerScene.buzzerPressed(team: team, type: type, buzzerQueueMode: buzzerQueueMode, quietMode: quietMode, buzzerSounds: buzzerSounds)
         case .music:
-			musicScene.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode)
+			musicScene.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode, blankVideo: blankVideo)
 		default:
 			break
 		}

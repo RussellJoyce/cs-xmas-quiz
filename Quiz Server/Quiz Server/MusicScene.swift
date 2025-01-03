@@ -15,7 +15,7 @@ class MusicScene: SKScene {
 	
 	fileprivate var setUp = false
 	var numTeams = 15
-	
+
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
 	var teamEnabled = [Bool](repeating: true, count: 15)
@@ -25,6 +25,9 @@ class MusicScene: SKScene {
 	var teamBoxes = [BuzzerTeamNode]()
     var music: AVAudioPlayer?
 	var webSocket : WebSocket?
+	var video: SKVideoNode?
+	var videoEffect = SKEffectNode()
+
 	
 	var lastAltBuzzIndex = 0
 	
@@ -55,7 +58,7 @@ class MusicScene: SKScene {
 		self.size = size
 		self.webSocket = webSocket
 		self.numTeams = numTeams
-        
+
         buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
@@ -64,8 +67,16 @@ class MusicScene: SKScene {
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
-        
 		self.addChild(bgImage)
+		
+		videoEffect.name = "videoEffect"
+		videoEffect.filter = CIFilter(name: "CIGaussianBlur")
+		videoEffect.filter?.setDefaults()
+		videoEffect.filter?.setValue(0, forKey: "inputRadius")
+		videoEffect.shouldEnableEffects = true
+		videoEffect.zPosition = 1000
+		self.addChild(videoEffect)
+		
 	}
 	
 	func buzzSound() {
@@ -87,72 +98,92 @@ class MusicScene: SKScene {
 			teamBox.removeFromParent()
 		}
 		teamBoxes.removeAll()
+		
+		videoEffect.filter?.setValue(0, forKey: "inputRadius")
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool) {
+	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool, blankVideo : Bool) {
 		if teamEnabled[team] && (buzzes.count < 5 || buzzcocksMode == true) {
 			teamEnabled[team] = false
 			
 			buzzes.append(team)
 			
-			if buzzNumber == 0 {
-				nextTeamNumber = 1
-				
-				var box : BuzzerTeamNode;
-				if buzzcocksMode == false {
-					firstBuzzTime = Date()
-					buzzSound()
-					pauseMusic()
-					webSocket?.buzz(team: team)
-					box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
-					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
-				} else {
-					var timeString : String;
-					if let stTime = firstBuzzTime {
-						let timeDifference = Date().timeIntervalSince(stTime)
-						let wholeSeconds = Int(timeDifference)
-						let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
-						timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
-						//let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
-						//let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
-						//timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
+			//Create a BuzzerTeamNode and put it somewhere in the scene
+			//The layout varies based on audio or video, and whether we are pausing or not
+			
+			if video == nil {
+				//We are playing music
+				if buzzNumber == 0 {
+					nextTeamNumber = 1
+					var box : BuzzerTeamNode;
+					if buzzcocksMode == false {
+						firstBuzzTime = Date()
+						buzzSound()
+						pauseMusic()
+						webSocket?.buzz(team: team)
+						box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
+						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
 					} else {
-						timeString = "()"
-					}
-					box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
-					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 100)
-				}
-				box.zPosition = 1
-				teamBoxes.append(box)
-				self.addChild(box)
-				
-			} else {
-				var box : BuzzerTeamNode;
-				if buzzcocksMode == false {
-					box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
-					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
-				} else {
-					var timeString : String;
-					if let stTime = firstBuzzTime {
-						let timeDifference = Date().timeIntervalSince(stTime)
-						let wholeSeconds = Int(timeDifference)
-						let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
-						timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
-						//let diffComponents = Calendar.current.dateComponents([.second, .nanosecond], from: stTime, to: Date())
-						//let nanostring = "\(diffComponents.nanosecond ?? 0 / 100000000)".prefix(1)
-						//timeString = "(\(diffComponents.second ?? 0).\(nanostring) sec)"
-					} else {
-						timeString = "()"
-					}
-					//We have a few layouts for larger team numbers
-					if numTeams <= 10 {
+						var timeString : String;
+						if let stTime = firstBuzzTime {
+							let timeDifference = Date().timeIntervalSince(stTime)
+							let wholeSeconds = Int(timeDifference)
+							let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
+							timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
+						} else {
+							timeString = "()"
+						}
 						box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
-						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
-					} else { //This will work up to about 15
-						box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, addGlow: false, altText: "Team \(team + 1) \(timeString)")
-						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 120) - CGFloat(buzzNumber * 65))
+						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 100)
 					}
+					box.zPosition = 1
+					teamBoxes.append(box)
+					self.addChild(box)
+					
+				} else {
+					var box : BuzzerTeamNode;
+					if buzzcocksMode == false {
+						box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
+						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
+					} else {
+						var timeString : String;
+						if let stTime = firstBuzzTime {
+							let timeDifference = Date().timeIntervalSince(stTime)
+							let wholeSeconds = Int(timeDifference)
+							let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
+							timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
+						} else {
+							timeString = "()"
+						}
+						//We have a few layouts for larger team numbers
+						if numTeams <= 10 {
+							box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
+						} else { //This will work up to about 15
+							box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, addGlow: false, altText: "Team \(team + 1) \(timeString)")
+							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 120) - CGFloat(buzzNumber * 65))
+						}
+					}
+					box.zPosition = 1
+					teamBoxes.append(box)
+					self.addChild(box)
 				}
+			} else {
+				//We are playing a video
+				var box : BuzzerTeamNode;
+				if buzzNumber == 0 {
+					nextTeamNumber = 1
+					buzzSound()
+					video?.pause()
+					webSocket?.buzz(team: team)
+				}
+
+				if blankVideo {
+					videoEffect.filter?.setValue(40, forKey: "inputRadius")
+				}
+				
+				box = BuzzerTeamNode(team: team, width: 350, height: 90, fontSize: 50, addGlow: buzzNumber == 0)
+				box.position = CGPoint(x: 250, y: (self.size.height - 230) - CGFloat(buzzNumber * 120))
 				box.zPosition = 1
 				teamBoxes.append(box)
 				self.addChild(box)
@@ -191,6 +222,29 @@ class MusicScene: SKScene {
         music?.prepareToPlay()
     }
     
+	
+	func prepareVideo(file: String) {
+		if video != nil {
+			reset()
+		}
+		video = nil
+		
+		let videoUrl = URL(fileURLWithPath: file)
+		video = SKVideoNode(url: videoUrl)
+		video!.position = CGPoint(x: self.frame.midX + 200, y: self.frame.midY)
+		video!.size = CGSize(width: 1400, height: 840)
+		video!.zPosition = 1000
+		videoEffect.addChild(video!)
+
+	}
+	
+	func resumeVideo() {
+		reset()
+		video?.play()
+		videoEffect.filter?.setValue(0, forKey: "inputRadius")
+		teamEnabled = [Bool](repeating: true, count: numTeams)
+	}
+	
     func resumeMusic() {
         reset()
 		firstBuzzTime = Date()
@@ -209,5 +263,7 @@ class MusicScene: SKScene {
         music?.currentTime = 0
         music?.prepareToPlay()
 		webSocket?.ledsOff()
-    }
+		video?.pause()
+		video?.removeFromParent()
+	}
 }
