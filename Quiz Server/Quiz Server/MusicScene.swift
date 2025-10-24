@@ -265,5 +265,6 @@ class MusicScene: SKScene {
 		webSocket?.ledsOff()
 		video?.pause()
 		video?.removeFromParent()
+		video = nil
 	}
 }
