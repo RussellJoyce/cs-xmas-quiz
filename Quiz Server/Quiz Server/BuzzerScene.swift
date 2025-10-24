@@ -193,13 +193,14 @@ class BuzzerScene: SKScene {
 					box.zPosition = 1
 					teamBoxes.append(box)
 					self.addChild(box)
-					
+					box.runShimmerEffect(width: CGFloat(1000), height: CGFloat(200))
 				} else {
 					let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false)
 					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
 					box.zPosition = 1
 					teamBoxes.append(box)
 					self.addChild(box)
+					box.runShimmerEffect(width: CGFloat(800), height: CGFloat(130))
 				}
 				
 				buzzNumber += 1

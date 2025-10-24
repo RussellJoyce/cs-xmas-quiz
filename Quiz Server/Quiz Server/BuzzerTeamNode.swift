@@ -172,6 +172,51 @@ class BuzzerTeamNode: SKNode {
 	func stopGlow() {
 		glow.particleBirthRate = 0
 	}
+	
+	func runShimmerEffect(width: CGFloat, height: CGFloat) {
+	    // Parameters for the shimmer angle and size
+	    let shimmerWidth = CGFloat(200)
+	    let shimmerHeight = height * 1
+	    let texture = BuzzerTeamNode.makeAngledGradientTexture(width: shimmerWidth, height: shimmerHeight)
+	    let shimmer = SKSpriteNode(texture: texture, size: CGSize(width: shimmerWidth, height: shimmerHeight))
+	    shimmer.alpha = 0.65
+	    shimmer.zPosition = 20
+	    shimmer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+	    shimmer.position = CGPoint(x: -width/2 + shimmerWidth/2, y: 0)
+	    shimmer.blendMode = .add
+	    self.addChild(shimmer)
+
+	    // Animate shimmer
+		let move = SKAction.moveBy(x: width*0.80, y: 0, duration: 0.3)
+		move.timingMode = .easeOut
+	    let fade = SKAction.fadeOut(withDuration: 0.7)
+	    let group = SKAction.group([move, fade])
+	    let sequence = SKAction.sequence([group, SKAction.removeFromParent()])
+	    shimmer.run(sequence)
+	}
+
+	static func makeAngledGradientTexture(width: CGFloat, height: CGFloat) -> SKTexture {
+	    let size = CGSize(width: width, height: height)
+	    let image = NSImage(size: size)
+	    image.lockFocus()
+	    let context = NSGraphicsContext.current!.cgContext
+	    let colorSpace = CGColorSpaceCreateDeviceRGB()
+	    let colors: [CGColor] = [
+	        NSColor.white.withAlphaComponent(0.0).cgColor,
+	        NSColor.white.withAlphaComponent(0.95).cgColor,
+	        NSColor.white.withAlphaComponent(0.95).cgColor,
+	        NSColor.white.withAlphaComponent(0.0).cgColor
+	    ]
+	    let locations: [CGFloat] = [0.0, 0.2, 0.3, 1.0]
+	    let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations)!
+
+	    let start = CGPoint(x: 200, y: height/2-10)
+	    let end = CGPoint(x: 0, y: height/2)
+	    context.drawLinearGradient(gradient, start: start, end: end, options: [])
+	    image.unlockFocus()
+
+	    return SKTexture(image: image)
+	}
 }
 
 
