@@ -105,7 +105,6 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
-		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
 		46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */; };
 		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
 		46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF9D07239672FF00D019A3 /* MusicScene.swift */; };
@@ -238,7 +237,6 @@
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
-		46BBD3CC21B83DED0010319E /* ClockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockNode.swift; sourceTree = "<group>"; };
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnniversaryNode.swift; sourceTree = "<group>"; };
 		46DF9D07239672FF00D019A3 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
@@ -305,7 +303,6 @@
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
-				46BBD3CC21B83DED0010319E /* ClockNode.swift */,
 				46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */,
 				46A7393A1BFAB46A00E03DE5 /* TestScene.swift */,
 				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
@@ -600,7 +597,6 @@
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
 				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
-				46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */,
