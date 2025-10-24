@@ -36,6 +36,7 @@ class BuzzerScene: SKScene {
 	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	fileprivate var pulseAction: SKAction?
+	fileprivate var buzzPulseAction: SKAction?
 	fileprivate let filternode = SKEffectNode()
 	fileprivate var ledcount : Float = 0;
 
@@ -50,14 +51,14 @@ class BuzzerScene: SKScene {
 		self.numTeams = numTeams
 		self.webSocket = webSocket;
 		
-		let bgImage = SKSpriteNode(imageNamed: "purple-texture-blurred")
+		let bgImage = SKSpriteNode(imageNamed: "red2")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		
 		let exfilter = CIFilter(name: "CIExposureAdjust")
 		exfilter?.setDefaults()
-		exfilter?.setValue(1, forKey: "inputEV")
+		exfilter?.setValue(0, forKey: "inputEV")
 		filternode.filter = exfilter
 		filternode.shouldRasterize = true
 		filternode.addChild(bgImage)
@@ -69,31 +70,31 @@ class BuzzerScene: SKScene {
 		snow1.particlePositionRange.dx = 2500
 		self.addChild(snow1)
 		
-		let pulseupaction = SKAction.customAction(withDuration: 0.15, actionBlock: {
-			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: "inputEV")
+		let pulseupaction = SKAction.customAction(withDuration: 0.05, actionBlock: {
+			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue((time*3), forKey: "inputEV")
 			self.filternode.shouldRasterize = false
 			self.filternode.shouldRasterize = true
 		})
 		
 		let pulsednaction = SKAction.customAction(withDuration: 0.25, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue(1 + (0.25 - time)*3, forKey: "inputEV")
+			(node as! SKEffectNode).filter!.setValue((0.25 - time)*3, forKey: "inputEV")
 			self.filternode.shouldRasterize = false
 			self.filternode.shouldRasterize = true
 		})
 		
-		pulseupaction.timingMode = .easeInEaseOut
-		pulsednaction.timingMode = .easeInEaseOut
+		let makeNotRaster = SKAction.run({() -> Void in self.filternode.shouldRasterize = false})
+		let makeRaster = SKAction.run({() -> Void in self.filternode.shouldRasterize = true})
+		
+		pulseupaction.timingMode = .easeOut
+		pulsednaction.timingMode = .easeOut
 		
 		pulseAction = SKAction.sequence([
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = false
-			}),
+			makeNotRaster,
 			pulseupaction,
 			tickSound,
 			SKAction.run({ () -> Void in
 				self.ledcount = self.ledcount + (100/Float(self.starttime))
 				self.ledcount -= floor(self.ledcount)
-				
 				self.time -= 1
 				if(self.time == 0) {
 					self.timer?.invalidate()
@@ -106,11 +107,11 @@ class BuzzerScene: SKScene {
 				}
 			}),
 			pulsednaction,
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = true
-			})
+			makeRaster
 		])
 		
+		//Pulse for when a team buzzes
+		buzzPulseAction = SKAction.sequence([makeNotRaster, pulseupaction, pulsednaction, makeRaster])
 		
 		//Load any alternative Buzzer sounds
 		do {
@@ -202,6 +203,7 @@ class BuzzerScene: SKScene {
 				}
 				
 				buzzNumber += 1
+				filternode.run(buzzPulseAction!)
 			}
 		}
 	}

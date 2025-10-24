@@ -77,53 +77,37 @@ class BuzzerTeamNode: SKNode {
 		textShadow.filter = filter;
 		textShadow.addChild(shadowText)
 		
-		let particles1 = SKEmitterNode(fileNamed: "BuzzParticles")!
-		particles1.position = CGPoint(x: (width/2)-10, y: 0)
-		particles1.zPosition = 2
-		particles1.particleColor = particleColour
-		particles1.particleColorSequence = nil
-		particles1.emissionAngle = 0.0
-		particles1.particlePositionRange = CGVector(dx: 0, dy: height)
-		particles1.xAcceleration = -450
-		particles1.yAcceleration = 0
-		particles1.numParticlesToEmit = 250
-		particles1.removeWhenDone()
+		let particles1 = makeEmitter(
+			position: CGPoint(x: (width/2)-10, y: 0),
+			color: particleColour,
+			emissionAngle: 0.0, // right
+			positionRange: CGVector(dx: 0, dy: height),
+			numParticles: 250
+		)
 		
-		let particles2 = SKEmitterNode(fileNamed: "BuzzParticles")!
-		particles2.position = CGPoint(x: -((width/2)-10), y: 0)
-		particles2.zPosition = 2
-		particles2.particleColor = particleColour
-		particles2.particleColorSequence = nil
-		particles2.emissionAngle = .pi
-		particles2.particlePositionRange = CGVector(dx: 0, dy: height)
-		particles2.xAcceleration = 450
-		particles2.yAcceleration = 0
-		particles2.numParticlesToEmit = 250
-		particles2.removeWhenDone()
+		let particles2 = makeEmitter(
+			position: CGPoint(x: -((width/2)-10), y: 0),
+			color: particleColour,
+			emissionAngle: .pi, // left
+			positionRange: CGVector(dx: 0, dy: height),
+			numParticles: 250
+		)
 		
-		let particles3 = SKEmitterNode(fileNamed: "BuzzParticles")!
-		particles3.position = CGPoint(x: 0, y: -((height/2)-10))
-		particles3.zPosition = 2
-		particles3.particleColor = particleColour
-		particles3.particleColorSequence = nil
-		particles3.emissionAngle = 3.0 * .pi / 2.0
-		particles3.particlePositionRange = CGVector(dx: width, dy: 0)
-		particles3.xAcceleration = 0
-		particles3.yAcceleration = 360
-		particles3.numParticlesToEmit = 900
-		particles3.removeWhenDone()
+		let particles3 = makeEmitter(
+			position: CGPoint(x: 0, y: -((height/2)-10)),
+			color: particleColour,
+			emissionAngle: 3.0 * .pi / 2.0, // down
+			positionRange: CGVector(dx: width, dy: 0),
+			numParticles: 900
+		)
 		
-		let particles4 = SKEmitterNode(fileNamed: "BuzzParticles")!
-		particles4.position = CGPoint(x: 0, y: (height/2)-10)
-		particles4.zPosition = 2
-		particles4.particleColor = particleColour
-		particles4.particleColorSequence = nil
-		particles4.emissionAngle = .pi / 2.0
-		particles4.particlePositionRange = CGVector(dx: width, dy: 0)
-		particles4.xAcceleration = 0
-		particles4.yAcceleration = -360
-		particles4.numParticlesToEmit = 900
-		particles4.removeWhenDone()
+		let particles4 = makeEmitter(
+			position: CGPoint(x: 0, y: (height/2)-10),
+			color: particleColour,
+			emissionAngle: .pi / 2.0, // up
+			positionRange: CGVector(dx: width, dy: 0),
+			numParticles: 900
+		)
 		
 		glow.position = CGPoint.zero
 		glow.particlePositionRange = CGVector(dx: Double(width) * 1.2, dy: Double(height) * 1.2)
@@ -148,6 +132,18 @@ class BuzzerTeamNode: SKNode {
 		
 		mainNode.run(entranceGroup)
 		
+		// Color flash effect for bgBox
+		let flash = SKAction.sequence([
+			SKAction.run { bgBox.fillColor = .white },
+			SKAction.wait(forDuration: 0.07),
+			SKAction.customAction(withDuration: 0.5) { node, elapsedTime in
+				guard let shape = node as? SKShapeNode else { return }
+				let t = CGFloat(elapsedTime) / 0.5
+				shape.fillColor = .white.blended(withFraction: t, of: bgColour) ?? bgColour
+			}
+		])
+		bgBox.run(flash)
+		
 		self.addChild(particles1)
 		self.addChild(particles2)
 		self.addChild(particles3)
@@ -155,6 +151,20 @@ class BuzzerTeamNode: SKNode {
 		self.addChild(glow)
 	}
 	
+	private func makeEmitter(position: CGPoint, color: NSColor, emissionAngle: CGFloat, positionRange: CGVector, numParticles: Int, zPosition: CGFloat = 2) -> SKEmitterNode {
+		let emitter = SKEmitterNode(fileNamed: "BuzzParticles")!
+		emitter.position = position
+		emitter.zPosition = zPosition
+		emitter.particleColor = color
+		emitter.particleColorSequence = nil
+		emitter.emissionAngle = emissionAngle
+		emitter.emissionAngleRange = .pi / 2
+		emitter.particlePositionRange = positionRange
+		emitter.numParticlesToEmit = numParticles
+		emitter.removeWhenDone()
+		return emitter
+	}
+
 	func startGlow() {
 		glow.particleBirthRate = glow.particlePositionRange.dx / 10.0
 	}
@@ -174,3 +184,4 @@ extension SKEmitterNode {
 		}
 	}
 }
+
