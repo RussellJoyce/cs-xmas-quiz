@@ -45,7 +45,8 @@ class BuzzerTeamNode: SKNode {
 		shadow.fillColor = NSColor(white: 0.1, alpha: 0.5)
 		shadow.lineWidth = 0.0
 		
-		let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let text = SKLabelNode(fontNamed: "Electronic Highway Sign")
+		//let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		if let at = altText {
 			text.text = at;
 		} else {
@@ -58,10 +59,10 @@ class BuzzerTeamNode: SKNode {
 		text.zPosition = 6
 		text.position = CGPoint.zero
 		
-		let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let shadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
 		shadowText.text = text.text
 		shadowText.fontSize = fontSize
-		shadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
+		shadowText.fontColor = NSColor(white: 0, alpha: 1.0)
 		shadowText.horizontalAlignmentMode = .center
 		shadowText.verticalAlignmentMode = .center
 		shadowText.zPosition = 5
