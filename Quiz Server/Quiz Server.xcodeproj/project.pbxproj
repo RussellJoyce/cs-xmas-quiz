@@ -104,7 +104,6 @@
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
 		46BBC4541DF0768600C41112 /* EHSMB.TTF in CopyFiles */ = {isa = PBXBuildFile; fileRef = 46BBC4461DF0725600C41112 /* EHSMB.TTF */; };
-		46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 46BBC4601DF39AA000C41112 /* Boggle.plist */; };
 		46BBD3CD21B83DED0010319E /* ClockNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46BBD3CC21B83DED0010319E /* ClockNode.swift */; };
 		46C132B0239EA626004AFAA2 /* AnniversaryNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */; };
 		46C8C03E1DF8896600A989D6 /* NeutraDisp Titling.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4616724D1DF8891D0049C8D1 /* NeutraDisp Titling.otf */; };
@@ -237,7 +236,6 @@
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
 		46BBC4461DF0725600C41112 /* EHSMB.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = EHSMB.TTF; sourceTree = "<group>"; };
-		46BBC4601DF39AA000C41112 /* Boggle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Boggle.plist; sourceTree = "<group>"; };
 		46BBD3CC21B83DED0010319E /* ClockNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockNode.swift; sourceTree = "<group>"; };
 		46BBD3D021B847980010319E /* Clock.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Clock.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46C132AF239EA626004AFAA2 /* AnniversaryNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnniversaryNode.swift; sourceTree = "<group>"; };
@@ -398,7 +396,6 @@
 				3CD1DF561A306820003DEA9F /* counter_soft_end.wav */,
 				3CD1DF571A306820003DEA9F /* counter_sting.wav */,
 				46056EB81A19624E00C37628 /* Info.plist */,
-				46BBC4601DF39AA000C41112 /* Boggle.plist */,
 				3C772FFC2CD928EB00F2E6FC /* score1.wav */,
 				3C772FFD2CD928EB00F2E6FC /* score2.wav */,
 				3C772FFE2CD928EB00F2E6FC /* score3.wav */,
@@ -514,7 +511,6 @@
 				463EA5DC2396D6CC00118892 /* scratch2.wav in Resources */,
 				3C77C8A31DEF69E10088B36A /* location.sks in Resources */,
 				3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */,
-				46BBC4611DF39AA000C41112 /* Boggle.plist in Resources */,
 				3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */,
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */,
