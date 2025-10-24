@@ -59,7 +59,7 @@ function connect() {
                 console.log("Server requests setting view: " + event.data.slice(2));
                 lastview = event.data.slice(2);
                 toggleState(true);
-                
+
                 if(event.data.slice(2) == "text") {
                     setView("text");
                     document.getElementById("textbox").type = "text";
@@ -186,7 +186,7 @@ function textboxhandler(event) {
     }
     textbox.style.animationName = "textboxpulse";
     removeTextmodeHandlers();
-    
+
     return false //Prevent submission (and therefore a page reload)
 }
 
@@ -263,7 +263,7 @@ document.addEventListener('touchend', function (event) {
 setInterval(function() {
     console.log("ping...");
     ws.send("pi");
-}, 10000) //ten seconds
+}, 5000) //five seconds
 
 
 connect();

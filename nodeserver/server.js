@@ -14,8 +14,8 @@ const dnshostname = 'christmasquiz.win';
 const hostaddress = '192.168.1.2';
 
 //Certificates for SSL
-const certkey = 'certs/archive/' + dnshostname + '/privkey1.pem';
-const certchain = 'certs/archive/' + dnshostname + '/fullchain1.pem';
+const certkey = 'certs/live/' + dnshostname + '/privkey.pem';
+const certchain = 'certs/live/' + dnshostname + '/fullchain.pem';
 
 const wclientHttpsServer = https.createServer({
     key: fs.readFileSync(certkey, 'utf8'),
@@ -102,6 +102,14 @@ wserver.on('connection', function(ws) {
                         console.log("Geography image: " + lastGeoImage);
                         sendMessageToAllClients(message);
                         break;
+                    case "ls":
+                        const idList = Object.values(clients)
+                          .filter(c => c.timestamp > (Date.now() - 10000))
+                          .map(c => c.id).join(",");
+                        wserver.clients.forEach(client => {
+                            client.send("lr" + idList);
+                        });
+                        break;
                     default:
                         //Else just forward it on to all clients
                         console.log("To all: " + message);
@@ -146,6 +154,9 @@ wclient.on('connection', function connection(ws, req) {
         //Messages from the clients to the quiz software
         try {
             if(message.length >= 2) {
+                //Maintain client timestamp to track activity
+                clients[client].timestamp = Date.now();
+
                 //If the client has not yet picked a valid team, we only listen for the 'pt' message
                 if(clients[client].id == null) {
                     if(message.slice(0,2) == "pt") {

@@ -65,6 +65,22 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var skip15: NSButton!
 	@IBOutlet var skip16: NSButton!
 	
+	@IBOutlet weak var st1: NSBox!
+	@IBOutlet weak var st2: NSBox!
+	@IBOutlet weak var st3: NSBox!
+	@IBOutlet weak var st4: NSBox!
+	@IBOutlet weak var st5: NSBox!
+	@IBOutlet weak var st6: NSBox!
+	@IBOutlet weak var st7: NSBox!
+	@IBOutlet weak var st8: NSBox!
+	@IBOutlet weak var st9: NSBox!
+	@IBOutlet weak var st10: NSBox!
+	@IBOutlet weak var st11: NSBox!
+	@IBOutlet weak var st12: NSBox!
+	@IBOutlet weak var st13: NSBox!
+	@IBOutlet weak var st14: NSBox!
+	@IBOutlet weak var st15: NSBox!
+	
 	@IBOutlet var textShowQuestionNumbers: NSButton!
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
@@ -260,6 +276,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
+		socketWriteIfConnected("ls")
+		
 		switch(tabViewItem!) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
@@ -493,7 +511,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	public func websocketDidReceiveMessage(text: String) {
-		if(text.count >= 3) {
+		if(text.count >= 2) {
 			switch(String(text.prefix(2))) {
 			case "co":
 				break;
@@ -507,6 +525,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							self.quizView.buzzerReleased(team: team, type: .websocket)
 						}
 					}
+				}
+			case "lr":
+				//Recived a list of connected clients
+				print(text)
+				let trm = text.dropFirst(2) //Drop the "lr"
+				let teamnumbers = trm.split(separator: ",").compactMap { Int($0) }
+				
+				let allStats = [st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13, st14, st15]
+				for i in 0..<allStats.count {
+                    let box = allStats[i]!
+					box.fillColor = teamnumbers.contains(i+1) ? NSColor.green : NSColor.black
 				}
 			case "ii":
 				//A team has answered in the Geography round
@@ -665,3 +694,4 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 }
+
