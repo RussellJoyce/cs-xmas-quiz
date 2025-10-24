@@ -12,7 +12,6 @@ import Starscream
 
 class BuzzerScene: SKScene {
 	fileprivate var setUp = false
-	var numTeams = 15
 	var webSocket: WebSocket?
 	
 	let useAlternateBuzzers = false
@@ -41,14 +40,13 @@ class BuzzerScene: SKScene {
 	fileprivate var ledcount : Float = 0;
 
 
-	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.numTeams = numTeams
 		self.webSocket = webSocket;
 		
 		let bgImage = SKSpriteNode(imageNamed: "red2")
@@ -156,7 +154,7 @@ class BuzzerScene: SKScene {
 		if !(timer != nil && timer!.isValid) {
 			webSocket?.ledsOff();
 		}
-		teamEnabled = [Bool](repeating: true, count: numTeams)
+		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0

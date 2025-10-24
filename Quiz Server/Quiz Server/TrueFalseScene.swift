@@ -22,7 +22,6 @@ class TrueFalseScene: SKScene {
 	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
 	fileprivate var timer: Timer?
-	var numTeams = 10
 	var teamBoxes = [TrueFalseTeamNode]()
 	
 	var tickSound = SKAction.playSoundFileNamed("timer", waitForCompletion: false)
@@ -30,7 +29,7 @@ class TrueFalseScene: SKScene {
 	
 	var timeLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 		
-	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -38,7 +37,6 @@ class TrueFalseScene: SKScene {
 		
 		self.size = size
 		self.webSocket = webSocket
-		self.numTeams = numTeams
 		
 		let bgImage = SKSpriteNode(imageNamed: "background2")
 		bgImage.zPosition = 0
@@ -56,13 +54,13 @@ class TrueFalseScene: SKScene {
 		timeLabel.position = CGPoint(x: self.centrePoint.x, y: self.frame.height - 200)
 		self.addChild(timeLabel)
 		
-		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		var boxheight : Int = 150
-		if(numTeams > 10) {
+		if(Settings.shared.numTeams > 10) {
 			boxheight = 100
 		}
 		
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			var yOffset : Int
 			if team >= halfway {
 				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
@@ -73,7 +71,7 @@ class TrueFalseScene: SKScene {
 				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
 				y: CGFloat(boxheight + 10 + yOffset)
 			)
-			let box = TrueFalseTeamNode(team: team, width: 600, height: boxheight, position: position, fontsize: numTeams >= 10 ? 60 : 40)
+			let box = TrueFalseTeamNode(team: team, width: 600, height: boxheight, position: position, fontsize: Settings.shared.numTeams >= 10 ? 60 : 40)
 			
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -87,10 +85,10 @@ class TrueFalseScene: SKScene {
 		self.timer?.invalidate()
 		self.timeLabel.text = ""
 		
-		teamGuesses = [Bool?](repeating: nil, count: numTeams)
-		teamEnabled = [Bool](repeating: true, count: numTeams)
+		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
+		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
 		
-		for i in 0..<numTeams {
+		for i in 0..<Settings.shared.numTeams {
 			teamBoxes[i].guessLabel.text = "Team \(i + 1)"
 			teamBoxes[i].setEnabled(true)
 		}
@@ -110,7 +108,7 @@ class TrueFalseScene: SKScene {
 	
 	func start() {
 		self.time = TrueFalseScene.TIMEOUT
-		teamGuesses = [Bool?](repeating: nil, count: numTeams)
+		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 		
 		timer?.invalidate()
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(TrueFalseScene.tick), userInfo: nil, repeats: true)
@@ -144,7 +142,7 @@ class TrueFalseScene: SKScene {
 	}
 	
 	func revealTeamGuesses() {
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			if teamEnabled[team] {
 				teamBoxes[team].setEnabled(true)
 				if teamGuesses[team] != nil {
@@ -161,7 +159,7 @@ class TrueFalseScene: SKScene {
 	}
 	
 	func showAnswer(ans: Bool) {
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			if teamGuesses[team] == nil {
 				teamEnabled[team] = false
 			} else {

@@ -25,7 +25,6 @@ class SpriteKitViewController: NSViewController {
 	let truefalseScene = TrueFalseScene()
 	let scoresScene = ScoresScene()
 	var currentRound = RoundType.none
-	var numTeams = 10
 	
 	let transitionDuration = 1.0
 	var transitions = [SKTransition]()
@@ -39,15 +38,15 @@ class SpriteKitViewController: NSViewController {
 		skView.ignoresSiblingOrder = true
 		
 		idleScene.setUpScene(size: skView.bounds.size, websocket: webSocket)
-		testScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		buzzerScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-        musicScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		testScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		buzzerScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+        musicScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		timerScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
-		truefalseScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		geographyScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		textScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		numbersScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
-		scoresScene.setUpScene(size: skView.bounds.size, numTeams: numTeams, webSocket: webSocket)
+		truefalseScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		geographyScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		textScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		numbersScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		scoresScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
 		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))
@@ -67,7 +66,7 @@ class SpriteKitViewController: NSViewController {
 		
 	}
 	
-	func setRound(round: RoundType, debug: Bool) {
+	func setRound(round: RoundType) {
 		currentRound = round
 		
 		var scene : SKScene?
@@ -106,10 +105,10 @@ class SpriteKitViewController: NSViewController {
 			skView.presentScene(scene)
 		}
 		
-		reset(debug)
+		reset()
 	}
 	
-	func reset(_ debug: Bool) {
+	func reset() {
 		switch (currentRound) {
 		case .idle:
 			idleScene.reset()
@@ -122,7 +121,7 @@ class SpriteKitViewController: NSViewController {
 		case .timer:
 			timerScene.reset()
 		case .geography:
-			geographyScene.reset(debugMode: debug)
+			geographyScene.reset()
 		case .text:
 			textScene.reset()
 		case .numbers:

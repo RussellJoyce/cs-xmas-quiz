@@ -13,11 +13,9 @@ import Starscream
 class GeographyScene: SKScene {
 	
 	fileprivate var setUp = false
-	var numTeams = 8
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
 	var imagesPath : String?
-	var debug = false
 	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -26,16 +24,15 @@ class GeographyScene: SKScene {
 	
 	var geogReveal = -1
 	
-	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
-		reset(debugMode: debug)
+		reset()
 		
 		self.size = size
-		self.numTeams = numTeams
 		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
@@ -147,7 +144,7 @@ class GeographyScene: SKScene {
 			mainImage.removeAllChildren()
 			
 			// Quick dirty test code
-			if(debug) {
+			if(Settings.shared.debug) {
 				teamguesses[0] = (10, 10)
 				teamguesses[1] = (15, 15)
 				teamguesses[2] = (20, 20)
@@ -294,7 +291,7 @@ class GeographyScene: SKScene {
 		answersText.text = ""
 		text.fontSize = 70
 		text.text = "Teams Remaining: "
-		for i in 0 ..< numTeams {
+		for i in 0 ..< Settings.shared.numTeams {
 			if teamguesses[i] == nil {
 				text.text! += String(i+1) + " "
 			}
@@ -305,19 +302,18 @@ class GeographyScene: SKScene {
 		answersText.text = ""
 		text.fontSize = 70
 		text.text = "Teams Remaining: "
-		for i in 0 ..< numTeams {
+		for i in 0 ..< Settings.shared.numTeams {
 			if teamguesses[i] == nil && skips[i].state == .on {
 				text.text! += String(i+1) + " "
 			}
 		}
 	}
 	
-	func reset(debugMode: Bool) {
+	func reset() {
 		webSocket?.ledsOff()
 		answering = false
-		debug = debugMode
 		teamguesses = []
-		for _ in 0 ..< numTeams {
+		for _ in 0 ..< Settings.shared.numTeams {
 			teamguesses += [nil]
 		}
 		updateText()

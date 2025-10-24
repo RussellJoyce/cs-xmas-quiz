@@ -167,14 +167,13 @@ class NumbersScene: SKScene {
 	var teamGuesses = [Int?]()
 	var webSocket: WebSocket?
 	fileprivate var setUp = false
-	var numTeams = 10
 	var teamBoxes = [NumbersTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
 	var revealed = false
 	var emitters = [SKEmitterNode]()
 
-	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -182,7 +181,6 @@ class NumbersScene: SKScene {
 		
 		self.size = size
 		self.webSocket = webSocket
-		self.numTeams = numTeams
 		self.revealed = false
 		
 		let bgImage = SKSpriteNode(imageNamed: "blue-snow")
@@ -192,14 +190,14 @@ class NumbersScene: SKScene {
 		
 		self.addChild(bgImage)
 		
-		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		
 		var boxheight : Int = 150
-		if(numTeams > 10) {
+		if(Settings.shared.numTeams > 10) {
 			boxheight = 100
 		}
 		
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			var yOffset : Int
 			if team >= halfway {
 				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
@@ -212,7 +210,7 @@ class NumbersScene: SKScene {
 				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
 				y: CGFloat(boxheight + 10 + yOffset)
 			)
-			let box = NumbersTeamNode(team: team, width: 700, height: boxheight, position: position, fontsize: numTeams >= 10 ? 60 : 40)
+			let box = NumbersTeamNode(team: team, width: 700, height: boxheight, position: position, fontsize: Settings.shared.numTeams >= 10 ? 60 : 40)
 			
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -250,9 +248,9 @@ class NumbersScene: SKScene {
 				self.addChild(p)
 			}
 			
-			for team in 0..<numTeams {
+			for team in 0..<Settings.shared.numTeams {
 				if let tg = teamGuesses[team] {
-					teamBoxes[team].setTextSize(size: numTeams >= 10 ? 60 : 40)
+					teamBoxes[team].setTextSize(size: Settings.shared.numTeams >= 10 ? 60 : 40)
 					teamBoxes[team].singleLabel.text = "\(tg)"
 					teamBoxes[team].guessLabel.text = ""
 				} else {
@@ -269,7 +267,7 @@ class NumbersScene: SKScene {
 			//Work out which is closest to the actual answer
 			var teamDistances = [(team : Int, distance : Int)]()
 			
-			for team in 0..<numTeams {
+			for team in 0..<Settings.shared.numTeams {
 				if let teamGuessText = teamBoxes[team].singleLabel.text {
 					if let teamGuessInt = Int(teamGuessText) {
 						let dist = abs(teamGuessInt - actualAnswer)
@@ -355,7 +353,7 @@ class NumbersScene: SKScene {
 		webSocket?.ledsOff()
 		self.revealed = false
 		
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].singleLabel.text = ""

@@ -19,7 +19,6 @@ enum TeamType {
 class TestScene: SKScene {
 	
 	fileprivate var setUp = false
-	var numTeams = 15
 	var buzzerPresses = [Int]()
 	var webSocket : WebSocket?
 	
@@ -35,7 +34,7 @@ class TestScene: SKScene {
 	let christmasSparks = ["snowflake", "floppydisk", "star"]
 	
 	
-	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -43,15 +42,14 @@ class TestScene: SKScene {
 		
 		self.size = size
 		self.webSocket = webSocket
-		self.numTeams = numTeams
 		
 		self.backgroundColor = NSColor.black
 		
-		for i in 0..<numTeams {
+		for i in 0..<Settings.shared.numTeams {
 			
-			let brkpoint = (numTeams / 2) + 1
+			let brkpoint = (Settings.shared.numTeams / 2) + 1
 			
-			let xPos = i < ((numTeams / 2) + 1) ?
+			let xPos = i < ((Settings.shared.numTeams / 2) + 1) ?
 				Double(i + 1) * (Double(size.width) / (Double(brkpoint) + 1.5)) :
 				Double((i + 1) - brkpoint) * (Double(size.width) / (Double(brkpoint-1) + 1.5))
 			let yPos = i < brkpoint ?
@@ -122,7 +120,7 @@ class TestScene: SKScene {
 			}
 		}
 		
-		buzzerPresses = [Int](repeating: 0, count: numTeams)
+		buzzerPresses = [Int](repeating: 0, count: Settings.shared.numTeams)
 	}
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {

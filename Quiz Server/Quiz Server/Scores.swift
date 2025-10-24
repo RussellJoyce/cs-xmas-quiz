@@ -13,7 +13,6 @@ import Starscream
 
 class ScoresScene: SKScene {
 	fileprivate var setUp = false
-	var numTeams = 15
 	var webSocket: WebSocket?
 	
 	var scores : [(Int, Int, Int)] = []
@@ -29,14 +28,13 @@ class ScoresScene: SKScene {
 	
 	var output : NSTextField!
 	
-	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.numTeams = numTeams
 		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")

@@ -69,6 +69,7 @@
 		3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF571A306820003DEA9F /* counter_sting.wav */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CF41C211C04C7D100785564 /* TimerSpray.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3CF41C1F1C04C7D100785564 /* TimerSpray.sks */; };
+		3CF749212EABE57F00A38676 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF749202EABE57800A38676 /* Settings.swift */; };
 		3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF78EF923954DB9007FC394 /* NumbersScene.swift */; };
 		3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3CF78EFC2396A11A007FC394 /* tada.mp3 */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
@@ -198,6 +199,7 @@
 		3CD1DF571A306820003DEA9F /* counter_sting.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_sting.wav; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CF41C1F1C04C7D100785564 /* TimerSpray.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimerSpray.sks; sourceTree = "<group>"; };
+		3CF749202EABE57800A38676 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3CF78EF923954DB9007FC394 /* NumbersScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumbersScene.swift; sourceTree = "<group>"; };
 		3CF78EFC2396A11A007FC394 /* tada.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tada.mp3; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -348,6 +350,7 @@
 				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
 				3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */,
+				3CF749202EABE57800A38676 /* Settings.swift */,
 			);
 			path = "Quiz Server";
 			sourceTree = "<group>";
@@ -608,6 +611,7 @@
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
+				3CF749212EABE57F00A38676 /* Settings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

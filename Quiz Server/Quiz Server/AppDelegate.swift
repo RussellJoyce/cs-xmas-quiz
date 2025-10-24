@@ -29,17 +29,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("Screens changed!")
     }
 	
-	func startQuiz(screen: NSScreen?, testMode: Bool, numberOfTeams: Int, geographyImagesPath: String, musicPath: String, uniquePath: String, debugMode: Bool) {
+	func startQuiz(screen: NSScreen?, windowedMode: Bool) {
         window.close()
-		
-		controllerWindow.numTeams = numberOfTeams
-        controllerWindow.testMode = testMode
+        controllerWindow.windowedMode = windowedMode
         controllerWindow.quizScreen = screen
-		controllerWindow.geographyImagesPath = geographyImagesPath
-        controllerWindow.musicPath = musicPath
-		controllerWindow.uniquePath = uniquePath
-		controllerWindow.debugMode = debugMode
-		
         controllerWindow.showWindow(self)
     }
 }

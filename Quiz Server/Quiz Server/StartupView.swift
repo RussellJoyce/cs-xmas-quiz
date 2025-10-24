@@ -12,7 +12,7 @@ class StartupView: NSViewController {
     
     @IBOutlet weak var screenSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
-    @IBOutlet weak var testMode: NSButton!
+    @IBOutlet weak var windowedMode: NSButton!
 	@IBOutlet weak var geographyImagesPath: NSTextField!
     @IBOutlet weak var musicPath: NSTextField!
 	@IBOutlet weak var uniquePath: NSTextField!
@@ -55,23 +55,20 @@ class StartupView: NSViewController {
     
     @IBAction func startQuiz(_ sender: AnyObject) {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
-        let test = testMode.state == NSControl.StateValue.on;
-		let numTeams = Int(numTeamsInput.intValue)
-		
+        let windowed = windowedMode.state == NSControl.StateValue.on;
         let delegate = NSApplication.shared.delegate as! AppDelegate
 
-		delegate.startQuiz(screen: screen, testMode: test, numberOfTeams: numTeams, geographyImagesPath: geographyImagesPath.stringValue, musicPath: musicPath.stringValue, uniquePath: uniquePath.stringValue, debugMode: debugMode.state == .on)
+		Settings.shared.geographyImagesPath = geographyImagesPath.stringValue
+		Settings.shared.musicPath = musicPath.stringValue
+		Settings.shared.uniquePath = uniquePath.stringValue
+		Settings.shared.numTeams = Int(numTeamsInput.intValue)
+		Settings.shared.debug = debugMode.state == NSControl.StateValue.on
+		
+		delegate.startQuiz(screen: screen, windowedMode: windowed)
     }
 	
 	@IBAction func geographyPathBrowse(_ sender: Any) {
-		let dialog = NSOpenPanel();
-		dialog.title = "Geography round images folder"
-		dialog.showsHiddenFiles = false
-		dialog.canChooseDirectories = true
-		dialog.canChooseFiles = false
-		dialog.canCreateDirectories = false
-		dialog.allowsMultipleSelection = false
-		dialog.directoryURL = URL(fileURLWithPath: geographyImagesPath.stringValue, isDirectory: true)
+		let dialog = createDialog(title: "Geography round images folder", path: geographyImagesPath.stringValue)
 		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
 			let result = dialog.url // Pathname of the file
 			if (result != nil) {
@@ -82,14 +79,7 @@ class StartupView: NSViewController {
 	}
     
     @IBAction func musicPathBrowse(_ sender: Any) {
-        let dialog = NSOpenPanel();
-        dialog.title = "Music round music folder"
-        dialog.showsHiddenFiles = false
-        dialog.canChooseDirectories = true
-        dialog.canChooseFiles = false
-        dialog.canCreateDirectories = false
-        dialog.allowsMultipleSelection = false
-        dialog.directoryURL = URL(fileURLWithPath: musicPath.stringValue, isDirectory: true)
+        let dialog = createDialog(title: "Music round music folder", path: musicPath.stringValue)
         if (dialog.runModal() == NSApplication.ModalResponse.OK) {
             let result = dialog.url
             if (result != nil) {
@@ -101,14 +91,7 @@ class StartupView: NSViewController {
 	
 	
 	@IBAction func uniquePathBrowse(_ sender: NSButton) {
-		let dialog = NSOpenPanel();
-		dialog.title = "Folder of unique lists"
-		dialog.showsHiddenFiles = false
-		dialog.canChooseDirectories = true
-		dialog.canChooseFiles = false
-		dialog.canCreateDirectories = false
-		dialog.allowsMultipleSelection = false
-		dialog.directoryURL = URL(fileURLWithPath: uniquePath.stringValue, isDirectory: true)
+		let dialog = createDialog(title: "Folder of unique lists", path: uniquePath.stringValue)
 		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
 			let result = dialog.url
 			if (result != nil) {
@@ -117,5 +100,19 @@ class StartupView: NSViewController {
 			}
 		}
 	}
+	
+	
+	func createDialog(title : String, path : String) -> NSOpenPanel {
+		let dialog = NSOpenPanel();
+		dialog.title = title
+		dialog.showsHiddenFiles = false
+		dialog.canChooseDirectories = true
+		dialog.canChooseFiles = false
+		dialog.canCreateDirectories = false
+		dialog.allowsMultipleSelection = false
+		dialog.directoryURL = URL(fileURLWithPath: path, isDirectory: true)
+		return dialog
+	}
+	
 	
 }

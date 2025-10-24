@@ -490,9 +490,9 @@ DQ
                 <outlet property="numTeamsInput" destination="jX2-fN-sfe" id="5Qp-Kt-otq"/>
                 <outlet property="screenSelector" destination="9Zo-H4-VCv" id="g6C-QK-QJa"/>
                 <outlet property="startButton" destination="3ly-hv-dYY" id="LeE-DQ-bWy"/>
-                <outlet property="testMode" destination="BzV-d4-VFP" id="hd1-4Q-fNA"/>
                 <outlet property="uniquePath" destination="ccY-6r-GQo" id="RLf-ru-KDO"/>
                 <outlet property="view" destination="EiT-Mj-1SZ" id="nHa-hc-OfF"/>
+                <outlet property="windowedMode" destination="BzV-d4-VFP" id="hd1-4Q-fNA"/>
             </connections>
         </viewController>
     </objects>

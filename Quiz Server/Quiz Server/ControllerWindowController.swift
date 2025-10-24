@@ -101,16 +101,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var scoresText: NSTextView!
 	
 	var quizScreen: NSScreen?
-	var testMode = true
-	var numTeams = 15
+	var windowedMode = true
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
 	var skipButtons = [NSButton]()
-	var geographyImagesPath: String?
-	var musicPath: String?
-	var uniquePath: String?
-	var debugMode: Bool = false
 	
 	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
 	var quizWindow: NSWindow?
@@ -138,7 +133,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		// Trim number of buttons down to match number of teams
 		// We only handle 15 test buzzers up here
 		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10, buzzerButton11, buzzerButton12, buzzerButton13, buzzerButton14, buzzerButton15]
-		for i in 0..<numTeams {
+		for i in 0..<Settings.shared.numTeams {
 			if i < allBuzzerButtons.count {
 				buzzerButtons.append(allBuzzerButtons[i])
 				buzzerButtons[i].isEnabled = true
@@ -147,17 +142,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		let allSkipButtons : [NSButton] = [skip1, skip2, skip3, skip4, skip5, skip6, skip7, skip8, skip9, skip10, skip11, skip12, skip13, skip14, skip15, skip16]
-		for i in 0..<numTeams {
+		for i in 0..<Settings.shared.numTeams {
 			if i < allSkipButtons.count {
 				skipButtons.append(allSkipButtons[i])
 			}
 		}
 		
-		quizView.numTeams = numTeams
 		quizView.webSocket = socket
-		quizView.geographyScene.imagesPath = geographyImagesPath
-		
-        if (testMode) {
+
+        if (windowedMode) {
             // Show quiz view in floating window
             quizWindow = NSWindow(contentViewController: quizView)
             quizWindow?.title = "Quiz Test"
@@ -180,9 +173,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		socketWriteIfConnected("vibuzzer")
         
-        if let musicPath = musicPath {
+        if Settings.shared.musicPath != "" {
             do {
-                let files = try FileManager.default.contentsOfDirectory(atPath: musicPath)
+				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.musicPath)
                 for file in files.sorted() {
 					if !file.hasPrefix(".") {
 						if file.hasSuffix(".mp3") || file.hasSuffix(".wav") {
@@ -195,13 +188,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 }
                 musicChooseFile(musicFile)
             } catch {
-                print("Error while enumerating files \(musicPath): \(error.localizedDescription)")
+                print("Error while enumerating files \(Settings.shared.musicPath): \(error.localizedDescription)")
             }
         }
 		
-		if let uniquePath = uniquePath {
+		if Settings.shared.uniquePath != "" {
 			do {
-				let files = try FileManager.default.contentsOfDirectory(atPath: uniquePath)
+				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.uniquePath)
 				for file in files.sorted() {
 					if (!file.hasPrefix(".")) {
 						uniqueFile.addItem(withTitle: file)
@@ -209,14 +202,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				}
 				uniqueChooseFile(uniqueFile)
 			} catch {
-				print("Error while enumerating files \(uniquePath): \(error.localizedDescription)")
+				print("Error while enumerating files \(Settings.shared.uniquePath): \(error.localizedDescription)")
 			}
 		}
 		
 		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
 		//tabView.removeTabViewItem(tabitemTimer)
 		
-		quizView.setRound(round: RoundType.idle, debug: debugMode)
+		quizView.setRound(round: RoundType.idle)
 
     }
 	
@@ -228,7 +221,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func pressedNumber(_ sender: NSButton) {
         // If using windowed test mode, buttons will act as virtual buzzers,
         //  otherwise, buttons will disable buzzers
-        if testMode {
+        if windowedMode {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
 				quizView.buzzerReleased(team: sender.tag, type: .test)
@@ -251,7 +244,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func disableAllBuzzers(_ sender: NSButton) {
         if (sender.state == NSControl.StateValue.on) {
             buzzersDisabled = true
-            for i in 0..<numTeams {
+            for i in 0..<Settings.shared.numTeams {
                 quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
 				socketWriteIfConnected("of" + String(i + 1))
@@ -259,7 +252,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         }
         else {
             buzzersDisabled = false
-			for i in 0..<numTeams {
+			for i in 0..<Settings.shared.numTeams {
                 buzzerButtons[i].isEnabled = true
 				socketWriteIfConnected("on" + String(i + 1))
             }
@@ -270,49 +263,49 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		switch(tabViewItem!) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.idle, debug: debugMode)
+			quizView.setRound(round: RoundType.idle)
 		case tabitemTest:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.test, debug: debugMode)
+			quizView.setRound(round: RoundType.test)
 		case tabitemBuzzers:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.buzzers, debug: debugMode)
+			quizView.setRound(round: RoundType.buzzers)
         case tabitemMusic:
             socketWriteIfConnected("vibuzzer")
-            quizView.setRound(round: RoundType.music, debug: debugMode)
+            quizView.setRound(round: RoundType.music)
 		case tabitemtruefalse:
 			socketWriteIfConnected("vihigherlower")
-			quizView.setRound(round: RoundType.trueFalse, debug: debugMode)
+			quizView.setRound(round: RoundType.trueFalse)
 		case tabitemTimer:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.timer, debug: debugMode)
+			quizView.setRound(round: RoundType.timer)
 		case tabitemGeography:
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-			quizView.setRound(round: RoundType.geography, debug: debugMode)
+			quizView.setRound(round: RoundType.geography)
 		case tabitemNumbers:
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers, debug: debugMode)
+			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
 		case tabitemText:
 			socketWriteIfConnected("vitext")
-			quizView.setRound(round: RoundType.text, debug: debugMode)
+			quizView.setRound(round: RoundType.text)
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
 		case tabitemScores:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.scores, debug: debugMode)
+			quizView.setRound(round: RoundType.scores)
 		default:
 			break
 		}
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
-		quizView.reset(debugMode)
+		quizView.reset()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
@@ -325,7 +318,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			textAllowAnswers.state = .on
 		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers, debug: debugMode)
+			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
@@ -376,9 +369,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
 	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
-        if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
-            let path =  musicPath + "/" + fileName
-			quizView.musicScene.initMusic(file: path)
+		if Settings.shared.musicPath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path =  Settings.shared.musicPath + "/" + fileName
+				quizView.musicScene.initMusic(file: path)
+			}
         }
         else {
             print("Error choosing music file")
@@ -386,12 +381,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
 	
 	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
-		if let uniquePath = uniquePath, let fileName = sender.selectedItem?.title {
-			let path =  uniquePath + "/" + fileName
-			quizView.textScene.initUnique(file: path)
-		}
-		else {
-			print("Error choosing unique list")
+		if Settings.shared.uniquePath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path = Settings.shared.uniquePath + "/" + fileName
+				quizView.textScene.initUnique(file: path)
+			}
+			else {
+				print("Error choosing unique list")
+			}
 		}
 	}
 	
@@ -413,7 +410,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func setTeamType(_ sender: NSPopUpButton) {
 		let team = sender.tag
-		if (team < numTeams) {
+		if (team < Settings.shared.numTeams) {
 			switch sender.indexOfSelectedItem {
 			case 0:
 				quizView.testScene.setTeamType(team: team, type: .christmas)
@@ -461,7 +458,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizView.reset(debugMode)
+		quizView.reset()
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
@@ -481,7 +478,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func scoresInitText(_ sender: Any) {
 		var s = ""
-		for x in 1...numTeams {
+		for x in 1...Settings.shared.numTeams {
 			s = s + "\(x),\n"
 		}
 		scoresText.string = s
@@ -504,7 +501,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has buzzed
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < numTeams && buzzersEnabled[team]) {
+					if (!buzzersDisabled && team < Settings.shared.numTeams && buzzersEnabled[team]) {
 						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
 						DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
 							self.quizView.buzzerReleased(team: team, type: .websocket)
@@ -526,7 +523,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has voted "true or higher"
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < numTeams) {
+					if (!buzzersDisabled && team < Settings.shared.numTeams) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: true)
 					}
 				}
@@ -534,7 +531,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has voted "false or lower"
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < numTeams) {
+					if (!buzzersDisabled && team < Settings.shared.numTeams) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: false)
 					}
 				}
@@ -557,7 +554,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 								
 								//Update the guesses in the controller window
 								var val = ""
-								for team in 0..<numTeams {
+								for team in 0..<Settings.shared.numTeams {
 									if let tg = quizView.textScene.teamGuesses[team] {
 										val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
 									}
@@ -587,7 +584,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 									//Update the guesses in the controller window
 									var val = ""
-									for team in 0..<numTeams {
+									for team in 0..<Settings.shared.numTeams {
 										if let tg = quizView.numbersScene.teamGuesses[team] {
 											val = "\(val) Team \(team+1): \(String(tg))\n"
 										}
@@ -617,12 +614,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
-		if let musicPath = musicPath, let fileName = sender.selectedItem?.title {
-			let path =  musicPath + "/" + fileName
-			quizView.musicScene.prepareVideo(file: path)
-		}
-		else {
-			print("Error choosing video file")
+		if Settings.shared.musicPath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path = Settings.shared.musicPath + "/" + fileName
+				quizView.musicScene.prepareVideo(file: path)
+			}
+			else {
+				print("Error choosing video file")
+			}
 		}
 	}
 	

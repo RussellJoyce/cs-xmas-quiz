@@ -14,7 +14,6 @@ import Starscream
 class MusicScene: SKScene {
 	
 	fileprivate var setUp = false
-	var numTeams = 15
 
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
@@ -49,7 +48,7 @@ class MusicScene: SKScene {
         }
     }
     
-	func setUpScene(size: CGSize, numTeams: Int, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
@@ -57,7 +56,6 @@ class MusicScene: SKScene {
 		
 		self.size = size
 		self.webSocket = webSocket
-		self.numTeams = numTeams
 
         buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
@@ -89,7 +87,7 @@ class MusicScene: SKScene {
 	func reset() {
 		webSocket?.ledsOff()
         pauseMusic()
-		teamEnabled = [Bool](repeating: false, count: numTeams)
+		teamEnabled = [Bool](repeating: false, count: Settings.shared.numTeams)
 		buzzNumber = 0
 		buzzes.removeAll()
 		nextTeamNumber = 0
@@ -156,7 +154,7 @@ class MusicScene: SKScene {
 							timeString = "()"
 						}
 						//We have a few layouts for larger team numbers
-						if numTeams <= 10 {
+						if Settings.shared.numTeams <= 10 {
 							box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, addGlow: false, altText: "Team \(team + 1) \(timeString)")
 							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
 						} else { //This will work up to about 15
@@ -242,13 +240,13 @@ class MusicScene: SKScene {
 		reset()
 		video?.play()
 		videoEffect.filter?.setValue(0, forKey: "inputRadius")
-		teamEnabled = [Bool](repeating: true, count: numTeams)
+		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
 	}
 	
     func resumeMusic() {
         reset()
 		firstBuzzTime = Date()
-		teamEnabled = [Bool](repeating: true, count: numTeams)
+		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
 		music?.play()
         music?.updateMeters()
     }

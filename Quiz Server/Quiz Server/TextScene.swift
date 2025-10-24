@@ -139,7 +139,6 @@ class TextScene: SKScene {
 	var teamGuesses = [(roundid: Int, guess: String)?]()
 	var webSocket : WebSocket?
 	fileprivate var setUp = false
-	var numTeams = 10
 	var teamBoxes = [TextTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	//let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
@@ -147,7 +146,7 @@ class TextScene: SKScene {
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	
-	func setUpScene(size: CGSize, numTeams: Int, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
 			return
 		}
@@ -155,7 +154,6 @@ class TextScene: SKScene {
 		
 		self.size = size
 		self.webSocket = webSocket
-		self.numTeams = numTeams
 		
 		teamGuesses = [(roundid: Int, guess: String)?]()
 		
@@ -166,14 +164,14 @@ class TextScene: SKScene {
 		
 		self.addChild(bgImage)
 		
-		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		
 		var boxheight : Int = 150
-		if(numTeams > 10) {
+		if(Settings.shared.numTeams > 10) {
 			boxheight = 100
 		}
 	
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			var yOffset : Int
 			if team >= halfway {
 				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
@@ -254,7 +252,7 @@ class TextScene: SKScene {
 			self.addChild(p)
 		}
 		
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			if let tg = teamGuesses[team] {
 				
 				if(tg.guess.count) > 13 {
@@ -282,7 +280,7 @@ class TextScene: SKScene {
 	
 	func isTeamAnswerUnique(_ team : Int) -> Bool {
 		if let ourguess = teamGuesses[team] {
-			for tid in 0..<numTeams {
+			for tid in 0..<Settings.shared.numTeams {
 				if tid != team {
 					if let tg = teamGuesses[tid] {
 						if tg.guess == ourguess.guess {
@@ -316,7 +314,7 @@ class TextScene: SKScene {
 			print("Unique correct answers are: ", uniques)
 			
 			//Convert team guesses to a comparable format
-			for team in 0..<numTeams {
+			for team in 0..<Settings.shared.numTeams {
 				if teamGuesses[team] != nil {
 					teamGuesses[team]!.guess = sanitiseString(teamGuesses[team]!.guess);
 				}
@@ -324,7 +322,7 @@ class TextScene: SKScene {
 			
 			
 			//First mark all correct answers
-			for team in 0..<numTeams {
+			for team in 0..<Settings.shared.numTeams {
 				if let tg = teamGuesses[team] {
 					if uniques.contains(tg.guess)  {
 						//team is right but might not be unique
@@ -353,7 +351,7 @@ class TextScene: SKScene {
 	
 	func reset() {
 		webSocket?.ledsOff()
-		for team in 0..<numTeams {
+		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].roundLabel.text = ""
@@ -369,18 +367,20 @@ class TextScene: SKScene {
 		emitters.removeAll()
 		
 		//Quick dirty test code
-		/*teamGuess(teamid: 0, guess: "let\"s dance", roundid: 3, showroundno: true);
-		teamGuess(teamid: 1, guess: "Sound and Vision", roundid: 1, showroundno: true);
-		teamGuess(teamid: 2, guess: "sound and vision", roundid: 2, showroundno: true);
-		teamGuess(teamid: 3, guess: "let's dance", roundid: 3, showroundno: true);
-		teamGuess(teamid: 4, guess: "sss", roundid: 3, showroundno: true);
-		teamGuess(teamid: 5, guess: "ddd", roundid: 3, showroundno: true);
-		teamGuess(teamid: 6, guess: "def", roundid: 3, showroundno: true);
-		teamGuess(teamid: 7, guess: "drive-in saturday", roundid: 4, showroundno: true);
-		teamGuess(teamid: 8, guess: "Where Are We Now", roundid: 4, showroundno: true);
-		teamGuess(teamid: 11, guess: "Jean Genie", roundid: 3, showroundno: true);
-		teamGuess(teamid: 12, guess: "Jean Genie", roundid: 4, showroundno: true);
-		teamGuess(teamid: 13, guess: "abc", roundid: 4, showroundno: true);*/
+		if Settings.shared.debug {
+			teamGuess(teamid: 0, guess: "let\"s dance", roundid: 3, showroundno: true);
+			teamGuess(teamid: 1, guess: "Sound and Vision", roundid: 1, showroundno: true);
+			teamGuess(teamid: 2, guess: "sound and vision", roundid: 2, showroundno: true);
+			teamGuess(teamid: 3, guess: "let's dance", roundid: 3, showroundno: true);
+			teamGuess(teamid: 4, guess: "sss", roundid: 3, showroundno: true);
+			teamGuess(teamid: 5, guess: "ddd", roundid: 3, showroundno: true);
+			teamGuess(teamid: 6, guess: "def", roundid: 3, showroundno: true);
+			teamGuess(teamid: 7, guess: "drive-in saturday", roundid: 4, showroundno: true);
+			teamGuess(teamid: 8, guess: "Where Are We Now", roundid: 4, showroundno: true);
+			teamGuess(teamid: 11, guess: "Jean Genie", roundid: 3, showroundno: true);
+			teamGuess(teamid: 12, guess: "Jean Genie", roundid: 4, showroundno: true);
+			teamGuess(teamid: 13, guess: "abc", roundid: 4, showroundno: true);
+		}
 	}
 
 }
