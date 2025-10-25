@@ -119,7 +119,7 @@ class MusicScene: SKScene {
 						buzzSound()
 						pauseMusic()
 						webSocket?.buzz(team: team)
-						box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true)
+						box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, entranceShimmer: true)
 						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
 					} else {
 						var timeString : String;
@@ -131,7 +131,7 @@ class MusicScene: SKScene {
 						} else {
 							timeString = "()"
 						}
-						box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, altText: "Team \(team + 1) \(timeString)")
+						box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
 						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 100)
 					}
 					box.zPosition = 1
@@ -141,7 +141,7 @@ class MusicScene: SKScene {
 				} else {
 					var box : BuzzerTeamNode;
 					if buzzcocksMode == false {
-						box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100)
+						box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, entranceShimmer: true)
 						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
 					} else {
 						var timeString : String;
@@ -155,10 +155,10 @@ class MusicScene: SKScene {
 						}
 						//We have a few layouts for larger team numbers
 						if Settings.shared.numTeams <= 10 {
-							box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, altText: "Team \(team + 1) \(timeString)")
+							box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
 							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
 						} else { //This will work up to about 15
-							box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, altText: "Team \(team + 1) \(timeString)")
+							box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
 							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 120) - CGFloat(buzzNumber * 65))
 						}
 					}
@@ -180,7 +180,7 @@ class MusicScene: SKScene {
 					videoEffect.filter?.setValue(40, forKey: "inputRadius")
 				}
 				
-				box = BuzzerTeamNode(team: team, width: 350, height: 90, fontSize: 50, addGlow: buzzNumber == 0)
+				box = BuzzerTeamNode(team: team, width: 350, height: 90, fontSize: 50, addGlow: buzzNumber == 0, entranceShimmer: true)
 				box.position = CGPoint(x: 250, y: (self.size.height - 230) - CGFloat(buzzNumber * 120))
 				box.zPosition = 1
 				teamBoxes.append(box)

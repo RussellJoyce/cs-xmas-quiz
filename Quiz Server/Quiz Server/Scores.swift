@@ -174,12 +174,11 @@ class ScoresScene: SKScene {
 			//Add a team box
 			//BuzzerTeamNode expects team number to be zero based
 			let s = scores[displayIndex]
-			let box = BuzzerTeamNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, glowType: "StarGlow", altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
+			let box = BuzzerTeamNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, glowType: "StarGlow", entranceShimmer: true, altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
 			box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)
-			box.runShimmerEffect(width: 1000, height: 150)
 			
 			//Play a sound, cycle through the sounds, shuffle the list when we've played them all once
 			if displayIndex == scores.count - 1 {

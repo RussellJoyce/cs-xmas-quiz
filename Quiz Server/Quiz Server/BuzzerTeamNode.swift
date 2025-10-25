@@ -15,7 +15,7 @@ class BuzzerTeamNode: SKNode {
 	
 	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat,
 					 addGlow: Bool = false, glowType: String = "BuzzGlow",
-					 entranceFlash: Bool = true, entranceParticles: Bool = false,
+					 entranceFlash: Bool = true, entranceParticles: Bool = false, entranceShimmer: Bool = false,
 					 altText: String? = nil) {
 		self.init()
 		
@@ -160,6 +160,10 @@ class BuzzerTeamNode: SKNode {
 		
 		if(glow != nil) {
 			self.addChild(glow!)
+		}
+		
+		if entranceShimmer {
+			runShimmerEffect(width: CGFloat(width), height: CGFloat(height))
 		}
 	}
 	
