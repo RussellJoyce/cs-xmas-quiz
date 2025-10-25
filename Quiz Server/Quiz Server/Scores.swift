@@ -16,7 +16,7 @@ class ScoresScene: SKScene {
 	var webSocket: WebSocket?
 	
 	var scores : [(Int, Int, Int)] = []
-	var teamBoxes = [ScoreNode]()
+	var teamBoxes = [BuzzerTeamNode]()
 	var displayIndex = 0
 	
 	var scoreSounds = [SKAction]()
@@ -174,7 +174,7 @@ class ScoresScene: SKScene {
 			//Add a team box
 			//BuzzerTeamNode expects team number to be zero based
 			let s = scores[displayIndex]
-			let box = ScoreNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
+			let box = BuzzerTeamNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, glowType: "StarGlow", altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
 			box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
 			box.zPosition = 1
 			teamBoxes.append(box)
@@ -212,147 +212,3 @@ class ScoresScene: SKScene {
 	}
 	
 }
-
-
-
-class ScoreNode: SKNode {
-	
-	let glow = SKEmitterNode(fileNamed: "StarGlow")!
-	
-	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat, addGlow: Bool, altText: String) {
-		self.init()
-		
-		var teamHue = CGFloat(team) / 10.0
-		if teamHue > 1.0 {
-			teamHue -= 1.0
-		}
-		let bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
-		
-		let scale = SKAction.scale(to: 1, duration: 0.2)
-		scale.timingMode = .easeOut
-		let fade = SKAction.fadeIn(withDuration: 0.2)
-		fade.timingMode = .easeOut
-		let entranceGroup = SKAction.group([fade, scale])
-		
-		let mainNode = SKNode()
-		mainNode.position = CGPoint.zero
-		
-		let bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
-		bgBox.zPosition = 4
-		bgBox.position = CGPoint.zero
-		bgBox.fillColor = bgColour
-		bgBox.lineWidth = 0.0
-		
-		let shadow = SKShapeNode(rectOf: CGSize(width: width + 20, height: height + 20))
-		shadow.zPosition = 3
-		shadow.position = CGPoint.zero
-		shadow.fillColor = NSColor(white: 0.1, alpha: 0.5)
-		shadow.lineWidth = 0.0
-		
-		let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		text.text = altText;
-		text.fontSize = fontSize
-		text.fontColor = NSColor.white
-		text.horizontalAlignmentMode = .center
-		text.verticalAlignmentMode = .center
-		text.zPosition = 6
-		text.position = CGPoint.zero
-		
-		let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		shadowText.text = text.text
-		shadowText.fontSize = fontSize
-		shadowText.fontColor = NSColor(white: 0.1, alpha: 0.8)
-		shadowText.horizontalAlignmentMode = .center
-		shadowText.verticalAlignmentMode = .center
-		shadowText.zPosition = 5
-		shadowText.position = CGPoint.zero
-		
-		let textShadow = SKEffectNode()
-		textShadow.shouldEnableEffects = true
-		textShadow.shouldRasterize = true
-		textShadow.zPosition = 5
-		let filter = CIFilter(name: "CIGaussianBlur")
-		filter?.setDefaults()
-		filter?.setValue(fontSize / 5.8, forKey: "inputRadius")
-		textShadow.filter = filter;
-		textShadow.addChild(shadowText)
-		
-		glow.position = CGPoint.zero
-		glow.particlePositionRange = CGVector(dx: Double(width) * 1.2, dy: Double(height) * 1.2)
-		glow.zPosition = 1
-		if addGlow {
-			startGlow()
-		}
-		else {
-			stopGlow()
-		}
-		
-		mainNode.addChild(bgBox)
-		mainNode.addChild(shadow)
-		mainNode.addChild(text)
-		mainNode.addChild(textShadow)
-		mainNode.alpha = 0
-		mainNode.setScale(1.8)
-		
-		self.addChild(mainNode)
-		
-		mainNode.run(entranceGroup)
-		
-		self.addChild(glow)
-	}
-	
-	func startGlow() {
-		glow.particleBirthRate = glow.particlePositionRange.dx / 10.0
-	}
-	
-	func stopGlow() {
-		glow.particleBirthRate = 0
-	}
-	
-	func runShimmerEffect(width: CGFloat, height: CGFloat) {
-		// Parameters for the shimmer angle and size
-		let shimmerWidth = CGFloat(200)
-		let shimmerHeight = height * 1
-		let texture = BuzzerTeamNode.makeAngledGradientTexture(width: shimmerWidth, height: shimmerHeight)
-		let shimmer = SKSpriteNode(texture: texture, size: CGSize(width: shimmerWidth, height: shimmerHeight))
-		shimmer.alpha = 0.65
-		shimmer.zPosition = 20
-		shimmer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-		shimmer.position = CGPoint(x: -width/2 + shimmerWidth/2, y: 0)
-		shimmer.blendMode = .add
-		self.addChild(shimmer)
-
-		// Animate shimmer
-		let move = SKAction.moveBy(x: width*0.80, y: 0, duration: 0.3)
-		move.timingMode = .easeOut
-		let fade = SKAction.fadeOut(withDuration: 0.7)
-		let group = SKAction.group([move, fade])
-		let sequence = SKAction.sequence([group, SKAction.removeFromParent()])
-		shimmer.run(sequence)
-	}
-
-	static func makeAngledGradientTexture(width: CGFloat, height: CGFloat) -> SKTexture {
-		let size = CGSize(width: width, height: height)
-		let image = NSImage(size: size)
-		image.lockFocus()
-		let context = NSGraphicsContext.current!.cgContext
-		let colorSpace = CGColorSpaceCreateDeviceRGB()
-		let colors: [CGColor] = [
-			NSColor.white.withAlphaComponent(0.0).cgColor,
-			NSColor.white.withAlphaComponent(0.95).cgColor,
-			NSColor.white.withAlphaComponent(0.95).cgColor,
-			NSColor.white.withAlphaComponent(0.0).cgColor
-		]
-		let locations: [CGFloat] = [0.0, 0.2, 0.3, 1.0]
-		let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations)!
-
-		let start = CGPoint(x: 200, y: height/2-10)
-		let end = CGPoint(x: 0, y: height/2)
-		context.drawLinearGradient(gradient, start: start, end: end, options: [])
-		image.unlockFocus()
-
-		return SKTexture(image: image)
-	}
-	
-}
-
