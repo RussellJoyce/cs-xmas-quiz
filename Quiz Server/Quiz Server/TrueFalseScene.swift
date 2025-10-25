@@ -10,6 +10,7 @@ import Foundation
 import Cocoa
 import SpriteKit
 import Starscream
+import AVFoundation
 
 class TrueFalseScene: SKScene {
 	
@@ -25,8 +26,10 @@ class TrueFalseScene: SKScene {
 	fileprivate var timer: Timer?
 	var teamBoxes = [TrueFalseTeamNode]()
 	
-	var tickSound = SKAction.playSoundFileNamed("timer", waitForCompletion: false)
-	var tickEnd = SKAction.playSoundFileNamed("timerend", waitForCompletion: false)
+	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
+	let tickEnd = SKAction.playSoundFileNamed("timerend.wav", waitForCompletion: false)
+	let tensionend = SKAction.playSoundFileNamed("counter_score100.wav", waitForCompletion: false)
+	var music: AVAudioPlayer?
 	
 	var timeLabel: OutlinedLabelNode!
 		
@@ -145,6 +148,17 @@ class TrueFalseScene: SKScene {
 			self.timeLabel.text = "GO!"
 			self.addParticles()
 			self.createFire()
+
+			music = nil
+			if let musicUrl = Bundle.main.url(forResource: "counter_soft_end", withExtension: "wav") {
+				do {
+					try music = AVAudioPlayer(contentsOf: musicUrl)
+				} catch let error {
+					print(error.localizedDescription)
+				}
+				music?.play()
+			}
+			
 		} else {
 			//Stopping
 			self.counting = false
@@ -152,6 +166,9 @@ class TrueFalseScene: SKScene {
 			self.timeLabel.text = ""
 			self.revealTeamGuesses()
 			self.stopFire()
+			
+			music?.pause()
+			self.run(self.tensionend)
 		}
 	}
 	
