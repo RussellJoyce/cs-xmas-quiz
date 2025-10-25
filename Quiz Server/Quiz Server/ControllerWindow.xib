@@ -315,7 +315,7 @@
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kRN-6S-na2">
                                             <rect key="frame" x="326" y="51" width="246" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="by Ian Gray &amp; Russell Joyce, 2014-2024" id="XGM-rO-MLQ">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="by Ian Gray &amp; Russell Joyce, 2014-2025" id="XGM-rO-MLQ">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1871,7 +1871,7 @@ Answers</string>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="143" y="399"/>
+            <point key="canvasLocation" x="141" y="408"/>
         </window>
         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" id="LGu-sd-Sz4">
             <rect key="frame" x="0.0" y="0.0" width="37" height="16"/>

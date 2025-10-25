@@ -31,6 +31,7 @@ enum RoundType {
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
+    private var periodicTimer: Timer!
 
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
@@ -227,9 +228,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		quizView.setRound(round: RoundType.idle)
 
+        // Start periodic task every 2 seconds
+        periodicTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(runPeriodicTask), userInfo: nil, repeats: true)
+    }
+    
+    @objc private func runPeriodicTask() {
+		socketWriteIfConnected("ls")
     }
 	
     func windowWillClose(_ notification: Notification) {
+		periodicTimer?.invalidate()
+		
         // Turn off all buzzer and animation LEDs
 		socket.ledsOff()
     }
@@ -276,8 +285,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
-		socketWriteIfConnected("ls")
-		
 		switch(tabViewItem!) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
