@@ -18,6 +18,7 @@ class TrueFalseScene: SKScene {
 	var counting = false
 	var teamEnabled = [Bool]()
 	var teamGuesses = [Bool?]()
+	var fireEmitter = SKEmitterNode(fileNamed: "SparksUp2")!
 	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
@@ -27,7 +28,7 @@ class TrueFalseScene: SKScene {
 	var tickSound = SKAction.playSoundFileNamed("timer", waitForCompletion: false)
 	var tickEnd = SKAction.playSoundFileNamed("timerend", waitForCompletion: false)
 	
-	var timeLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+	var timeLabel: OutlinedLabelNode!
 		
 	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
@@ -38,20 +39,23 @@ class TrueFalseScene: SKScene {
 		self.size = size
 		self.webSocket = webSocket
 		
-		let bgImage = SKSpriteNode(imageNamed: "background2")
+		let bgImage = SKSpriteNode(imageNamed: "blackflakes")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		self.addChild(bgImage)
 		
 		
-		timeLabel.text = "5"
-		timeLabel.fontSize = 120
-		timeLabel.fontColor = NSColor.black
-		timeLabel.horizontalAlignmentMode = .center
-		timeLabel.verticalAlignmentMode = .center
+		timeLabel = OutlinedLabelNode(
+			text: "5",
+			fontNamed: ".AppleSystemUIFontBold",
+			fontSize: 120,
+			fontColor: NSColor.white,
+			outlineColor: NSColor.black,
+			outlineWidth: 6.0
+		)
+		timeLabel.positionInParent = CGPoint(x: self.centrePoint.x, y: self.frame.height - 200)
 		timeLabel.zPosition = 6
-		timeLabel.position = CGPoint(x: self.centrePoint.x, y: self.frame.height - 200)
 		self.addChild(timeLabel)
 		
 		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
@@ -78,6 +82,14 @@ class TrueFalseScene: SKScene {
 			self.addChild(box)
 		}
 		
+		//Fire emitter
+		fireEmitter.position = CGPoint(x: self.centrePoint.x, y: -50)
+		fireEmitter.zPosition = 2
+		fireEmitter.numParticlesToEmit = 0
+		fireEmitter.particleSpeed = 700
+		fireEmitter.particleBirthRate = 0
+		self.addChild(fireEmitter)
+		
 		reset()
 	}
 	
@@ -93,10 +105,14 @@ class TrueFalseScene: SKScene {
 			teamBoxes[i].setEnabled(true)
 		}
 		self.time = TrueFalseScene.TIMEOUT
+		self.counting = false
+		self.stopFire();
 	}
 	
 	func addParticles() {
 		let timeParticles = SKEmitterNode(fileNamed: "BuzzGlow")!
+		timeParticles.particleColorSequence = nil
+		timeParticles.particleColor = NSColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
 		timeParticles.position = timeLabel.position
 		timeParticles.zPosition = 2
 		timeParticles.particlePositionRange.dx = 200
@@ -118,6 +134,33 @@ class TrueFalseScene: SKScene {
 		counting = true;
 		self.webSocket?.setCounterValue(val: 200)
 		self.run(self.tickSound)
+	}
+	
+	func startNoTimer() {
+		if self.counting == false {
+			//Starting
+			self.counting = true
+			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
+			webSocket?.write(string: "ha") //Also clear emphasis just in case
+			self.timeLabel.text = "GO!"
+			self.addParticles()
+			self.createFire()
+		} else {
+			//Stopping
+			self.counting = false
+			self.webSocket?.pulseWhite()
+			self.timeLabel.text = ""
+			self.revealTeamGuesses()
+			self.stopFire()
+		}
+	}
+	
+	func createFire() {
+		fireEmitter.particleBirthRate = 3000
+	}
+	
+	func stopFire() {
+		fireEmitter.particleBirthRate = 0
 	}
 	
 	@objc func tick() {
@@ -173,14 +216,13 @@ class TrueFalseScene: SKScene {
 	}
 	
 	func teamGuess(teamid : Int, guess : Bool) {
-		if counting {
+		if counting && teamEnabled[teamid] {
 			teamGuesses[teamid] = guess
+			teamBoxes[teamid].setIfGuessed(true)
+			teamBoxes[teamid].pulseBox()
 		}
 	}
-	
 }
-	
-
 
 class TrueFalseTeamNode: SKNode {
 	
@@ -194,6 +236,7 @@ class TrueFalseTeamNode: SKNode {
 	static let bgColourTrue = NSColor(calibratedHue: 0.3, saturation: 0.4, brightness: 0.9, alpha: 0.9)
 	static let bgColourFalse = NSColor(calibratedHue: 0, saturation: 0.4, brightness: 0.9, alpha: 0.9)
 	static let bgColourDisabled = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.4, alpha: 0.9)
+	static let bgColourGuessed = NSColor(calibratedHue: 0.5, saturation: 0.5, brightness: 0.9, alpha: 0.9)
 	static let textColStd = NSColor.black
 	static let textColOut = NSColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1)
 	
@@ -211,6 +254,10 @@ class TrueFalseTeamNode: SKNode {
 	
 	func setGuessColour(_ g : Bool) {
 		bgBox.fillColor = g ? TrueFalseTeamNode.bgColourTrue : TrueFalseTeamNode.bgColourFalse
+	}
+	
+	func setIfGuessed(_ g : Bool) {
+		bgBox.fillColor = g ? TrueFalseTeamNode.bgColourGuessed : TrueFalseTeamNode.bgColour
 	}
 	
 	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat) {
@@ -239,6 +286,13 @@ class TrueFalseTeamNode: SKNode {
 		self.addChild(bgBox)
 		self.addChild(guessLabel)
 	}
+	
+	func pulseBox() {
+		let pulseSequence = SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.1), SKAction.scale(to: 1.0, duration: 0.5)])
+		pulseSequence.timingMode = .easeInEaseOut
+		self.run(pulseSequence)
+	}
+	
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

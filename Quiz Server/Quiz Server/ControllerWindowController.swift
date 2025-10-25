@@ -357,6 +357,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.truefalseScene.start()
 	}
 	
+	@IBAction func trueFalseStartNoTimer(_ sender: NSButton) {
+		quizView.truefalseScene.startNoTimer()
+	}
+	
 	@IBAction func trueFalseTrue(_ sender: NSButton) {
 		quizView.truefalseScene.showAnswer(ans: true)
 	}
