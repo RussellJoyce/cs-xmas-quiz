@@ -5,32 +5,12 @@ html {
 }
 
 body {
-    background-image: url("images/bg2.jpg");
-    background-color: #002b0d;
+    /*background-image: url("images/bg2.jpg");
+    background-color: #002b0d;*/
+    height: 100vh;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
     overflow: hidden;
-}
-
-.buttonOn {
-    background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
-    background-color:#44c767;
-    border:2px solid #18ab29;
-
-    -moz-box-shadow: 0px 0px 24px 3px #41822f;
-    -webkit-box-shadow: 0px 0px 24px 3px #41822f;
-    box-shadow: 0px 0px 24px 3px #222222;
-}
-
-
-.buttonOn:active {
-    background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
-    background-color:#e4685d;
-    transform: translate(-50%, -49%);
-}
-
-.buttonOff {
-    background:linear-gradient(to bottom, #f7f7f7 5%, #bab1ba 100%);
-    background-color:#f7f7f7;
-    border:2px solid #bab1ba;
+    color: white;
 }
 
 .view {
@@ -58,6 +38,31 @@ body {
     user-select: none;
 }
 
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for the main buzzer */
+
+.buttonOn {
+    background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
+    background-color:#44c767;
+    border:2px solid #18ab29;
+
+    -moz-box-shadow: 0px 0px 24px 3px #41822f;
+    -webkit-box-shadow: 0px 0px 24px 3px #41822f;
+    box-shadow: 0px 0px 24px 3px #222222;
+}
+
+.buttonOn:active {
+    background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
+    background-color:#e4685d;
+    transform: translate(-50%, -49%);
+}
+
+.buttonOff {
+    background:linear-gradient(to bottom, #f7f7f7 5%, #bab1ba 100%);
+    background-color:#f7f7f7;
+    border:2px solid #bab1ba;
+}
+
 .theButton {
     -moz-border-radius:13px;
     -webkit-border-radius:13px;
@@ -71,8 +76,8 @@ body {
     text-shadow:0px 1px 4px #2f6627;
 }
 
-
-
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for Higher and Lower / True and False */
 
 .higherLowerButton {
     -moz-border-radius:13px;
@@ -105,6 +110,9 @@ body {
 .higherLowerButton#higher.buttonOn:active {
     transform: translate(0%, -1%) !important;
 }
+
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for the team selection dialog */
 
 .teamgrid-container {
     display: grid;
@@ -155,6 +163,13 @@ body {
     padding: 10px
 }
 
+.error {
+    color: red;
+}
+
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for text input */
+
 .smallButtonOn {
     background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
     background-color:#44c767;
@@ -163,7 +178,6 @@ body {
     -webkit-box-shadow: 0px 0px 24px 3px #41822f;
     box-shadow: 0px 0px 24px 3px #41822f;
 }
-
 
 .smallButtonOn:active {
     background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
@@ -180,42 +194,14 @@ body {
     font-family:Arial;
     font-size:34px;
     text-decoration:none;
-    text-shadow:0px 1px 4px #2f6627; 
+    text-shadow:0px 1px 4px #2f6627;
     margin-top: 10px;
     text-align: center;
 }
 
-
-.imageDisabled {
-    filter: blur(5px) grayscale(100%);
-    transition: 0.8s;
-}
-
-#geoimg {
-    height:100%;
-    width:100%;
-    background-size: 100% 100%;
-}
-
-
-#geomark {
-  background-image: url(images/cross.png);
-  background-repeat: no-repeat;
-  background-size: 50px 50px;
-  font-size: 50px;
-  height: 50px;
-  width: 50px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: none;
-}
-
-
 #textenterbutton {
     font-size: 330%;
 }
-
 
 @keyframes textboxpulse {
     0%  {background-color:white;}
@@ -233,8 +219,41 @@ body {
     align-items: start;
 }
 
-.error {
-    color: red;
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for geography round */
+
+.imageDisabled {
+    filter: blur(5px) grayscale(100%);
+    transition: 0.8s;
+}
+#geoimg {
+    height:100%;
+    width:100%;
+    background-size: 100% 100%;
 }
 
+#geomark {
+  background-image: url(images/cross.png);
+  background-repeat: no-repeat;
+  background-size: 50px 50px;
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
 
+/*-------------------------------------------------------------------------------------------*/
+/* Styles for falling snow */
+
+.snowflake {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(white, white);
+  /* Workaround for Chromium's selective color inversion */
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px white);
+}

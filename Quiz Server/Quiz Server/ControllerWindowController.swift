@@ -528,7 +528,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				}
 			case "lr":
 				//Recived a list of connected clients
-				print(text)
 				let trm = text.dropFirst(2) //Drop the "lr"
 				let teamnumbers = trm.split(separator: ",").compactMap { Int($0) }
 				
