@@ -82,6 +82,23 @@ function connect() {
                 toggleState(true);
                 geoimg.style.backgroundImage = "url(geography/" + event.data.slice(2) + ")";
                 break;
+            case "hh":
+                //Add class .higherLowerSelected to the higher button
+                console.log("Higher was accepted by server");
+                document.getElementById("higher").classList.add("higherLowerSelected");
+                document.getElementById("lower").classList.remove("higherLowerSelected");
+                break;
+            case "hl":
+                //Add class .higherLowerSelected to the lower button
+                console.log("Lower was accepted by server");
+                document.getElementById("lower").classList.add("higherLowerSelected");
+                document.getElementById("higher").classList.remove("higherLowerSelected");
+                break;
+            case "hn":
+                //Reset selection
+                document.getElementById("higher").classList.remove("higherLowerSelected");
+                document.getElementById("lower").classList.remove("higherLowerSelected");
+                break;
             case "pb":
                 console.log("Ping back");
                 break;

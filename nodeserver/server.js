@@ -62,29 +62,25 @@ wserver.on('connection', function(ws) {
         try {
             if(message.length >= 2) { //All valid messages are 2 or more characters long
                 switch(message.slice(0,2)) {
-                    case "on":
+                    case "on": //Activate buzzer
+                    case "of": //Deactivate buzzer
+                    case "hh": //Emphasise higher
+                    case "hl": //Emphasise lower
+                    case "hn": //Deemphasise higher and lower
                         if(id = parseInt(message.slice(2))) {
                             if(c = getClientByID(id)) {
-                                console.log("On: " + id);
-                                c.sock.send("on");
+                              console.log("Sending message to client " + id + ": " + message.slice(0,2));
+                              c.sock.send(message.slice(0,2));
                             } //else client not connected
                         }
                         break;
-                    case "of":
-                        if(id = parseInt(message.slice(2))) {
-                            if(c = getClientByID(id)) {
-                                console.log("Off: " + id);
-                                c.sock.send("of");
-                            } //else client not connected
-                        }
-                        break;
-                    case "le":
+                    case "le": //Set LED function
                         console.log("To LEDs: " + message);
                         wleds.clients.forEach(function each(c) {
                             c.send(message.slice(2));
                         });
                         break;
-                    case "di":
+                    case "di": //Disconnect client
                         const team = parseInt(message.slice(2));
                         console.log("Disconnect request from quiz software for team " + team);
                         if(c = getClientByID(team)) {
@@ -92,23 +88,26 @@ wserver.on('connection', function(ws) {
                             c.id = null;
                         } //else client not connected
                         break;
-                    case "vi":
+                    case "vi": //Set view
                         lastView = message.slice(2);
                         console.log("View change to view: " + lastView);
                         sendMessageToAllClients(message);
                         break;
-                    case "im":
+                    case "im": //Set geography image
                         lastGeoImage = message.slice(2);
                         console.log("Geography image: " + lastGeoImage);
                         sendMessageToAllClients(message);
                         break;
-                    case "ls":
+                    case "ls": //List clients
                         const idList = Object.values(clients)
                           .filter(c => c.timestamp > (Date.now() - 10000))
                           .map(c => c.id).join(",");
                         wserver.clients.forEach(client => {
                             client.send("lr" + idList);
                         });
+                        break;
+                    case "ha": //Reset all higher/lowers
+                        sendMessageToAllClients("hn");
                         break;
                     default:
                         //Else just forward it on to all clients

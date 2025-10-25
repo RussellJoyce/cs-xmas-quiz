@@ -31,7 +31,7 @@ enum RoundType {
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
-    private var periodicTimer: Timer!
+    private var clientListTimer: Timer!
 
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
@@ -229,15 +229,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.setRound(round: RoundType.idle)
 
         // Start periodic task every 2 seconds
-        periodicTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(runPeriodicTask), userInfo: nil, repeats: true)
+        clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
     }
     
-    @objc private func runPeriodicTask() {
+    @objc private func clientListTask() {
+		//Periodically check to see what clients are connected. The reply will be "lr" and the handler will parse this to set the indicators
 		socketWriteIfConnected("ls")
     }
 	
     func windowWillClose(_ notification: Notification) {
-		periodicTimer?.invalidate()
+		clientListTimer?.invalidate()
 		
         // Turn off all buzzer and animation LEDs
 		socket.ledsOff()
@@ -347,6 +348,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
+		} else if (tabView.selectedTabViewItem == tabitemtruefalse) {
+			socketWriteIfConnected("ha")
 		}
     }
     
@@ -560,6 +563,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < Settings.shared.numTeams) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: true)
+						
+						if quizView.truefalseScene.counting {
+							socketWriteIfConnected("hh" + String(team+1))
+						}
 					}
 				}
 			case "lo":
@@ -568,6 +575,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < Settings.shared.numTeams) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: false)
+						
+						if quizView.truefalseScene.counting {
+							socketWriteIfConnected("hl" + String(team+1))
+						}
 					}
 				}
 			case "tt":

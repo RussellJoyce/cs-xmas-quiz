@@ -103,12 +103,17 @@ body {
     align-items: center;
 }
 
+.higherLowerSelected {
+    background:linear-gradient(to bottom, pink 5%, hotpink 100%);
+    background-color:hotpink;
+}
+
 .higherLowerButton#lower.buttonOn:active {
     transform: translate(0%, 1%) !important;
 }
 
 .higherLowerButton#higher.buttonOn:active {
-    transform: translate(0%, -1%) !important;
+    transform: translate(0%, 1%) !important;
 }
 
 /*-------------------------------------------------------------------------------------------*/
