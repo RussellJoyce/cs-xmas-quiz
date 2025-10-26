@@ -248,7 +248,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		if virtualBuzzersBtn.state == .on {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
-				quizView.buzzerReleased(team: sender.tag, type: .test)
+				quizView.buzzerReleased(team: sender.tag, type: .websocket)
 				sender.state = NSControl.StateValue.off
             }
         }
@@ -271,6 +271,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             for i in 0..<Settings.shared.numTeams {
                 quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
+				buzzersEnabled[i] = false
 				socketWriteIfConnected("of" + String(i + 1))
             }
         }
@@ -279,6 +280,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			for i in 0..<Settings.shared.numTeams {
                 buzzerButtons[i].isEnabled = true
 				buzzerButtons[i].state = .off
+				buzzersEnabled[i] = true
 				socketWriteIfConnected("on" + String(i + 1))
             }
         }
