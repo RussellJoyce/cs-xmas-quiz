@@ -33,6 +33,9 @@ enum RoundType {
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
     private var clientListTimer: Timer!
 
+	
+	@IBOutlet weak var virtualBuzzersBtn: NSButton!
+	
     @IBOutlet weak var buzzerButton1: NSButton!
     @IBOutlet weak var buzzerButton2: NSButton!
     @IBOutlet weak var buzzerButton3: NSButton!
@@ -167,25 +170,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		quizView.webSocket = socket
 
-        if (windowedMode) {
-            // Show quiz view in floating window
-            quizWindow = NSWindow(contentViewController: quizView)
-            quizWindow?.title = "Quiz Test"
-            quizWindow?.styleMask = NSWindow.StyleMask.titled
-            quizWindow?.makeKeyAndOrderFront(self)
-            self.window?.orderFront(self)
-        }
-        else {
-            // Show quiz view on selected screen (resized to fit)
-            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal,
-                toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-                multiplier: 1, constant: quizScreen!.frame.width))
-            quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view,
-                attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal,
-                toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-                multiplier: 1, constant: quizScreen!.frame.height))
-            quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
+		if quizWindow == nil {
+			quizWindow = NSWindow(contentViewController: quizView)
+			quizWindow?.title = "Quiz Main Display"
+			quizWindow?.styleMask = [.titled, .resizable, .closable]
+			quizWindow?.makeKeyAndOrderFront(self)
+		}
+		
+        if (!windowedMode) {
+			//Old exclusive fullscreen method
+			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.width,
+								   relatedBy: NSLayoutConstraint.Relation.equal,toItem: nil,
+								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
+								   multiplier: 1, constant: quizScreen!.frame.width))
+			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.height,
+								   relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
+								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
+								   multiplier: 1, constant: quizScreen!.frame.height))
+			quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
         }
 		
 		socketWriteIfConnected("vibuzzer")
@@ -223,15 +225,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		//To make the UI less unwieldy, remove at start up the items we wont need at the moment
-		//tabView.removeTabViewItem(tabitemTimer)
-		
 		quizView.setRound(round: RoundType.idle)
 
         // Start periodic task every 2 seconds
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
     }
-    
+	
     @objc private func clientListTask() {
 		//Periodically check to see what clients are connected. The reply will be "lr" and the handler will parse this to set the indicators
 		socketWriteIfConnected("ls")
@@ -245,9 +244,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func pressedNumber(_ sender: NSButton) {
-        // If using windowed test mode, buttons will act as virtual buzzers,
-        //  otherwise, buttons will disable buzzers
-        if windowedMode {
+        // The buttons can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on the state of virtualBuzzersBtn
+		if virtualBuzzersBtn.state == .on {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
 				quizView.buzzerReleased(team: sender.tag, type: .test)
@@ -280,6 +278,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             buzzersDisabled = false
 			for i in 0..<Settings.shared.numTeams {
                 buzzerButtons[i].isEnabled = true
+				buzzerButtons[i].state = .off
 				socketWriteIfConnected("on" + String(i + 1))
             }
         }
@@ -523,6 +522,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func scoresShowNext(_ sender: Any) {
 		quizView.scoresScene.next()
 	}
+	
+	@IBAction func vitualBuzzersPress(_ sender: NSButton) {
+		if virtualBuzzersBtn.state == .on {
+			virtualBuzzersBtn.title = "Virtual Buzzers"
+		} else {
+			virtualBuzzersBtn.title = "Disable Buzzers"
+		}
+	}
+	
 	
 	public func websocketDidReceiveMessage(text: String) {
 		if(text.count >= 2) {
