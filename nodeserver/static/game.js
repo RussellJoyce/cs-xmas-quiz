@@ -195,6 +195,10 @@ function removeTextmodeHandlers() {
 function textboxhandler(event) {
     if(lastview == "numbers" && !(/^\d+$/.test(textbox.value))) {
         console.log("Invalid number format")
+
+        document.getElementById("textenterbutton").innerHTML = "❌ Numbers Only 😵";
+        setTimeout(function(){document.getElementById("textenterbutton").innerHTML = "Enter" }, 2000);
+
         return false;
     }
 
