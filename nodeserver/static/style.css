@@ -8,7 +8,7 @@ body {
     /*background-image: url("images/bg2.jpg");
     background-color: #002b0d;*/
     height: 100vh;
-    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    background: radial-gradient(ellipse at bottom, #2c2765 10%, #090a0f 100%);
     overflow: hidden;
     color: white;
 }
@@ -42,17 +42,20 @@ body {
 /* Styles for the main buzzer */
 
 .buttonOn {
-    background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
+    background:radial-gradient(ellipse at bottom, #44d7a7 15%, #3caf2a 100%);
     background-color:#44c767;
     border:2px solid #18ab29;
 
     -moz-box-shadow: 0px 0px 24px 3px #41822f;
     -webkit-box-shadow: 0px 0px 24px 3px #41822f;
     box-shadow: 0px 0px 24px 3px #222222;
+
+    transition: transform 0.05s ease-in-out;
 }
 
 .buttonOn:active {
-    background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
+    background:linear-gradient(to bottom, #e4985d 5%, #eb675e 100%);
+    border:2px solid #74480d;
     background-color:#e4685d;
     transform: translate(-50%, -49%);
 }
@@ -73,7 +76,7 @@ body {
     font-family:Arial;
     font-size:67px;
     text-decoration:none;
-    text-shadow:0px 1px 4px #2f6627;
+    text-shadow:3px 3px 2px #101010;
 }
 
 /*-------------------------------------------------------------------------------------------*/
