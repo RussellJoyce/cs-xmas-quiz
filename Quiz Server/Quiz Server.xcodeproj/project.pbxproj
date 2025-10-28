@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C0CCCC02EAEB21F008862F8 /* IdleScene.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */; };
+		3C0CCCC22EB00F4C008862F8 /* lemming.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC12EB00F4C008862F8 /* lemming.sks */; };
 		3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C1FFA0F239E8E33000160B1 /* fireworks.sks */; };
 		3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */; };
 		3C3012562EAD48FF00F80B71 /* OutlinedLabelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */; };
+		3C30125A2EAE90B400F80B71 /* Idle2Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */; };
 		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
 		3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */; };
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
@@ -139,9 +142,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = IdleScene.xcassets; sourceTree = "<group>"; };
+		3C0CCCC12EB00F4C008862F8 /* lemming.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = lemming.sks; sourceTree = "<group>"; };
 		3C1FFA0F239E8E33000160B1 /* fireworks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireworks.sks; sourceTree = "<group>"; };
 		3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEDWebSocket.swift; sourceTree = "<group>"; };
 		3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedLabelNode.swift; sourceTree = "<group>"; };
+		3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Idle2Scene.swift; sourceTree = "<group>"; };
 		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
 		3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TextSceneSparks.sks; sourceTree = "<group>"; };
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
@@ -290,6 +296,7 @@
 				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				3C1FFA0F239E8E33000160B1 /* fireworks.sks */,
+				3C0CCCC12EB00F4C008862F8 /* lemming.sks */,
 			);
 			name = Particles;
 			sourceTree = "<group>";
@@ -297,6 +304,7 @@
 		3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
@@ -345,6 +353,7 @@
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
 				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
 				3C77C8A21DEF69E10088B36A /* Assets.xcassets */,
+				3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */,
 				46056EBB1A19624E00C37628 /* Images.xcassets */,
 				3C366CC51FBC48FF006BA9B1 /* Particles */,
 				46056EB71A19624E00C37628 /* Supporting Files */,
@@ -519,6 +528,7 @@
 				3CB99F972CFCB57B00B704E2 /* orch6.wav in Resources */,
 				3CB99F982CFCB57B00B704E2 /* orch3.wav in Resources */,
 				3CB99F992CFCB57B00B704E2 /* orch1.wav in Resources */,
+				3C0CCCC02EAEB21F008862F8 /* IdleScene.xcassets in Resources */,
 				3CB99F9A2CFCB57B00B704E2 /* orch14.wav in Resources */,
 				3CB99F9B2CFCB57B00B704E2 /* orch2.wav in Resources */,
 				3CB99F9C2CFCB57B00B704E2 /* orch9.wav in Resources */,
@@ -568,6 +578,7 @@
 				4656CA1B1A39100200A70F91 /* SparksDown.sks in Resources */,
 				3C8517E92B238A6900BBCABA /* minutetimer.mp3 in Resources */,
 				3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */,
+				3C0CCCC22EB00F4C008862F8 /* lemming.sks in Resources */,
 				3CD1DF5B1A306820003DEA9F /* counter_sting.wav in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				461672431DF87C470049C8D1 /* BoggleSparks.sks in Resources */,
@@ -600,6 +611,7 @@
 				46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
+				3C30125A2EAE90B400F80B71 /* Idle2Scene.swift in Sources */,
 				3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,

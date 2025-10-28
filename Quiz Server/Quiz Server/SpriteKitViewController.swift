@@ -14,7 +14,7 @@ class SpriteKitViewController: NSViewController {
 	
 	@IBOutlet weak var skView: SKView!
 	
-	let idleScene = IdleScene()
+	let idleScene = Idle2Scene()
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
     let musicScene = MusicScene()
