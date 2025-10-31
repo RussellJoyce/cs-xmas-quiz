@@ -133,6 +133,7 @@ class Idle2Scene: SKScene {
 	}
 	
 	func addCharacters() {
+		let mario = frames(basename: "mario", numFrames: 2)
 		let sonic = frames(basename: "sonic", numFrames: 4)
 		let sonicroll = frames(basename: "sonicroll", numFrames: 8)
 		let threepwood = frames(basename: "threep", numFrames: 6)
@@ -142,7 +143,7 @@ class Idle2Scene: SKScene {
 		let duck = frames(basename: "duck", numFrames: 4)
 		let link = frames(basename: "link", numFrames: 4)
 		let pacman = frames(basename: "pacman", numFrames: 4)
-		let hornet = frames(basename: "hornet", numFrames: 8)
+		//let hornet = frames(basename: "hornet", numFrames: 8)
 		let alucard = frames(basename: "alucard", numFrames: 16)
 		let tails = frames(basename: "tails", numFrames: 2)
 		
@@ -150,13 +151,13 @@ class Idle2Scene: SKScene {
 		let rv = Int.random(in: 0...1) == 0 //50/50 chance
 		
 		if characterQueue.isEmpty {
-			characterQueue = Array(0...12).shuffled()
+			characterQueue = Array(0...11).shuffled()
 		}
 		let charIndex = characterQueue.removeFirst()
 		
 		switch charIndex {
-		case 0: addMario(y: y)
-		case 1: addCharBasic(y: y, reverse: rv, size: CGSize(width: 120, height: 120), duration: 3.5, textures: sonic, frametime: 0.1)
+		case 0: addJumpingChar(y: y, reverse: rv, size: CGSize(width: 150, height: 150), duration: 7.0, textures: mario, jumptextures: [SKTexture(imageNamed: "mario2")], frametime: 0.2)
+		case 1: addJumpingChar(y: y, reverse: rv, size: CGSize(width: 120, height: 120), duration: 3.5, textures: sonic, jumptextures: sonicroll, frametime: 0.1)
 		case 2: addCharBasic(y: y, reverse: rv, size: CGSize(width: 120, height: 190), duration: 12.0, textures: threepwood, frametime: 0.1)
 		case 3: addCharBasic(y: y, reverse: rv, size: CGSize(width: 100, height: 150), duration: 9.0, textures: yoshi, frametime: 0.1)
 		case 4: addCharBasic(y: y, reverse: rv, size: CGSize(width: 100, height: 100), duration: 10.0, textures: kirby, frametime: 0.1)
@@ -166,8 +167,8 @@ class Idle2Scene: SKScene {
 		case 8: addCharBasic(y: y, reverse: rv, size: CGSize(width: 120, height: 120), duration: 8.0, textures: link, frametime: 0.1)
 		case 9: addCharBasic(y: y, reverse: rv, size: CGSize(width: 120, height: 120), duration: 8.0, textures: pacman, frametime: 0.15)
 		case 10: addCharBasic(y: y+150, reverse: rv, size: CGSize(width: 160, height: 160), duration: 10.0, textures: tails, frametime: 0.15)
-		//case 10: addCharBasic(y: y, reverse: rv, size: CGSize(width: 310, height: 200), duration: 6.0, textures: hornet, frametime: 0.1, flip: true)
 		case 11: addCharBasic(y: y, reverse: rv, size: CGSize(width: 176, height: 200), duration: 10.0, textures: alucard, frametime: 0.05)
+		//case --: addCharBasic(y: y, reverse: rv, size: CGSize(width: 310, height: 200), duration: 6.0, textures: hornet, frametime: 0.1, flip: true)
 		
 		default:
 			break
@@ -198,42 +199,64 @@ class Idle2Scene: SKScene {
 		self.addChild(char)
 	}
 	
-	func addMario(y: CGFloat) {
-		let mario = SKSpriteNode(imageNamed: "mario1")
-		mario.position = CGPoint(x: -150, y: y)
-		mario.size = CGSize(width: 150, height: 150)
-		mario.zPosition = 1
-		self.addChild(mario)
-		let walk = SKAction.repeatForever(SKAction.animate(with: [SKTexture(imageNamed: "mario1"), SKTexture(imageNamed: "mario2")], timePerFrame: 0.2))
-		mario.run(walk, withKey: "walk")
+	func addJumpingChar(y: CGFloat, reverse: Bool, size : CGSize, duration: TimeInterval, textures: [SKTexture], jumptextures: [SKTexture], frametime: CGFloat) {
+		let char = SKSpriteNode(imageNamed: "mario1")
+		char.size = size
+		char.zPosition = 1
+		self.addChild(char)
+		let walk = SKAction.repeatForever(SKAction.animate(with: textures, timePerFrame: frametime))
+		let jumpanim = SKAction.repeatForever(SKAction.animate(with: jumptextures, timePerFrame: frametime))
+		char.run(walk, withKey: "walk")
 
-		// Animation distances
-		let startX: CGFloat = -150
-		let jumpX = CGFloat.random(in: 500...1200)
-		let jumpDistance: CGFloat = 350
-		let endX: CGFloat = 2500
-		let afterJumpStartX = jumpX + jumpDistance
+		// Animation distances and positions
+		let jumpDistance: CGFloat = 450
+		let jumpHeight: CGFloat = 220
+		let leftEdge: CGFloat = -150
+		let rightEdge: CGFloat = 2500
+		let startX, jumpX, afterJumpStartX, endX: CGFloat
+		
+		if !reverse {
+			startX = leftEdge
+			endX = rightEdge
+			jumpX = startX + CGFloat.random(in: 500...1200)
+			afterJumpStartX = jumpX + jumpDistance
+			char.xScale = 1
+		} else {
+			startX = rightEdge
+			endX = leftEdge
+			jumpX = startX - CGFloat.random(in: 500...1200)
+			afterJumpStartX = jumpX - jumpDistance
+			char.xScale = -1
+		}
+		
+		char.position = CGPoint(x: startX, y: y)
+
 		let totalDistance = abs(jumpX - startX) + jumpDistance + abs(endX - afterJumpStartX)
-		let totalDuration: TimeInterval = 9.0 // Choose the overall speed
-		let speed = totalDistance / CGFloat(totalDuration) // points per second
+		let speed = totalDistance / CGFloat(duration) // points per second
 
 		// Calculate durations
 		let beforeJumpDuration = abs(jumpX - startX) / speed
 		let jumpDuration = jumpDistance / speed
 		let afterJumpDuration = abs(endX - afterJumpStartX) / speed
-
-		let initialMove = SKAction.moveTo(x: jumpX, duration: beforeJumpDuration)
-		let removeWalk = SKAction.run { mario.removeAction(forKey: "walk") }
-		let jumpHeight: CGFloat = 220
+		
 		let jumpPath = CGMutablePath()
 		jumpPath.move(to: .zero)
-		jumpPath.addQuadCurve(to: CGPoint(x: jumpDistance, y: 0), control: CGPoint(x: jumpDistance/2, y: jumpHeight))
-		let jump = SKAction.follow(jumpPath, asOffset: true, orientToPath: false, duration: jumpDuration)
-		let restartWalk = SKAction.run { mario.run(walk, withKey: "walk") }
-		let afterJumpMove = SKAction.moveTo(x: endX, duration: afterJumpDuration)
-		let remove = SKAction.removeFromParent()
-		let sequence = SKAction.sequence([initialMove, removeWalk, jump, restartWalk, afterJumpMove, remove])
-		mario.run(sequence)
+		if !reverse {
+			jumpPath.addQuadCurve(to: CGPoint(x: jumpDistance, y: 0), control: CGPoint(x: jumpDistance / 2, y: jumpHeight))
+		} else {
+			jumpPath.addQuadCurve(to: CGPoint(x: -jumpDistance, y: 0), control: CGPoint(x: -jumpDistance / 2, y: jumpHeight))
+		}
+
+		char.run(SKAction.sequence([
+			SKAction.moveTo(x: jumpX, duration: beforeJumpDuration),
+			SKAction.run { char.removeAction(forKey: "walk") },
+			SKAction.run { char.run(jumpanim, withKey: "jump") },
+			SKAction.follow(jumpPath, asOffset: true, orientToPath: false, duration: jumpDuration),
+			SKAction.run { char.removeAction(forKey: "jump") },
+			SKAction.run { char.run(walk, withKey: "walk") },
+			SKAction.moveTo(x: endX, duration: afterJumpDuration),
+			SKAction.removeFromParent()
+		]))
 	}
 	
 	func addLemmingExplosion(at position: CGPoint) {
