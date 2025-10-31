@@ -99,6 +99,14 @@ function connect() {
                 document.getElementById("higher").classList.remove("higherLowerSelected");
                 document.getElementById("lower").classList.remove("higherLowerSelected");
                 break;
+            case "h1":
+                document.getElementById("higher").innerHTML = "<span>HIGHER</span>";
+                document.getElementById("lower").innerHTML = "<span>LOWER</span>";
+                break;
+            case "h2":
+                document.getElementById("higher").innerHTML = "<span>TRUE</span>";
+                document.getElementById("lower").innerHTML = "<span>FALSE</span>";
+                break;
             case "pb":
                 console.log("Ping back");
                 break;

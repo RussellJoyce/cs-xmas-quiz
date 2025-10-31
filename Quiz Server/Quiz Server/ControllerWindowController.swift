@@ -120,6 +120,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var scoresOutput: NSTextField!
 	@IBOutlet var scoresText: NSTextView!
 	
+	@IBOutlet weak var trueButton: NSButton!
+	@IBOutlet weak var falseButton: NSButton!
+	@IBOutlet weak var trueFalseToggle: NSButton!
+	
 	var quizScreen: NSScreen?
 	var windowedMode = true
 	var buzzersEnabled = [Bool]()
@@ -684,6 +688,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 	}
+	
+	
+	@IBAction func trueFalseToggled(_ sender: Any) {
+		if trueFalseToggle.state == .on {
+			trueButton.title = "True"
+			falseButton.title = "False"
+			trueFalseToggle.title = "True/False Mode"
+			socketWriteIfConnected("h2")
+		} else {
+			trueButton.title = "Higher"
+			falseButton.title = "Lower"
+			trueFalseToggle.title = "Higher/Lower Mode"
+			socketWriteIfConnected("h1")
+		}
+		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
+	}
+	
 	
 	func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {
 		switch event {

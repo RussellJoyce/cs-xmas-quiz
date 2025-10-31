@@ -24,6 +24,7 @@ class TrueFalseScene: SKScene {
 	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
 	fileprivate var timer: Timer?
+	fileprivate var mode: Bool = true
 	var teamBoxes = [TrueFalseTeamNode]()
 	
 	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
@@ -96,6 +97,11 @@ class TrueFalseScene: SKScene {
 		reset()
 	}
 	
+	func setMode(_ tfmode : Bool) {
+		//If true then set to True/False mode, else Higher/Lower mode
+		mode = tfmode
+	}
+	
 	func reset() {
 		self.timer?.invalidate()
 		self.timeLabel.text = ""
@@ -110,6 +116,7 @@ class TrueFalseScene: SKScene {
 		self.time = TrueFalseScene.TIMEOUT
 		self.counting = false
 		self.stopFire();
+		self.webSocket?.write(string: mode ? "h2" : "h1")
 	}
 	
 	func addParticles() {
@@ -206,7 +213,11 @@ class TrueFalseScene: SKScene {
 			if teamEnabled[team] {
 				teamBoxes[team].setEnabled(true)
 				if teamGuesses[team] != nil {
-					teamBoxes[team].guessLabel.text = teamGuesses[team]! ? "Team \(team + 1): TRUE" : "Team \(team + 1): FALSE"
+					if mode {
+						teamBoxes[team].guessLabel.text = teamGuesses[team]! ? "Team \(team + 1): TRUE" : "Team \(team + 1): FALSE"
+					} else {
+						teamBoxes[team].guessLabel.text = teamGuesses[team]! ? "Team \(team + 1): HIGHER" : "Team \(team + 1): LOWER"
+					}
 					teamBoxes[team].setGuessColour(teamGuesses[team]!)
 				} else {
 					teamBoxes[team].guessLabel.text = "Team \(team + 1) no guess"
