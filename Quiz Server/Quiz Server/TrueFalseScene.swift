@@ -117,7 +117,7 @@ class TrueFalseScene: SKScene {
 		self.time = TrueFalseScene.TIMEOUT
 		self.counting = false
 		self.stopFire();
-		self.webSocket?.write(string: mode ? "h2" : "h1")
+		self.webSocket?.sendIfConnected(mode ? "h2" : "h1")
 	}
 	
 	func addParticles() {
@@ -156,7 +156,7 @@ class TrueFalseScene: SKScene {
 			//Starting
 			self.counting = true
 			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
-			webSocket?.write(string: "ha") //Also clear emphasis just in case
+			webSocket?.sendIfConnected("ha") //Also clear emphasis just in case
 			self.timeLabel.text = "GO!"
 			self.addParticles()
 			self.createFire()
