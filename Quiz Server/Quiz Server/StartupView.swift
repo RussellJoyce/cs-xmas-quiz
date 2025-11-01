@@ -51,6 +51,14 @@ class StartupView: NSViewController {
 		
         startButton.isEnabled = true
     }
+	
+	override func viewDidAppear() {
+		//If we are not holding cmd, then just start the quiz immediately
+		super.viewDidAppear()
+		if !NSEvent.modifierFlags.contains(.command) {
+			startQuiz(self)
+		}
+	}
     
     @IBAction func startQuiz(_ sender: AnyObject) {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
@@ -97,3 +105,4 @@ class StartupView: NSViewController {
 	}
 	
 }
+
