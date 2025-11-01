@@ -31,9 +31,7 @@ enum RoundType {
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
-    private var clientListTimer: Timer!
-
-	
+    
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
 	
     @IBOutlet weak var buzzerButton1: NSButton!
@@ -52,23 +50,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerButton14: NSButton!
 	@IBOutlet weak var buzzerButton15: NSButton!
 	
-	@IBOutlet var skip1: NSButton!
-	@IBOutlet var skip2: NSButton!
-	@IBOutlet var skip3: NSButton!
-	@IBOutlet var skip4: NSButton!
-	@IBOutlet var skip5: NSButton!
-	@IBOutlet var skip6: NSButton!
-	@IBOutlet var skip7: NSButton!
-	@IBOutlet var skip8: NSButton!
-	@IBOutlet var skip9: NSButton!
-	@IBOutlet var skip10: NSButton!
-	@IBOutlet var skip11: NSButton!
-	@IBOutlet var skip12: NSButton!
-	@IBOutlet var skip13: NSButton!
-	@IBOutlet var skip14: NSButton!
-	@IBOutlet var skip15: NSButton!
-	@IBOutlet var skip16: NSButton!
-	
 	@IBOutlet weak var st1: NSBox!
 	@IBOutlet weak var st2: NSBox!
 	@IBOutlet weak var st3: NSBox!
@@ -85,64 +66,30 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var st14: NSBox!
 	@IBOutlet weak var st15: NSBox!
 	
-	@IBOutlet var textShowQuestionNumbers: NSButton!
-	@IBOutlet weak var buzzcocksMode: NSButton!
-	@IBOutlet weak var buzzerQueueMode: NSButton!
-	@IBOutlet weak var quieterBuzzes: NSButton!
-	@IBOutlet weak var timerShowCounter: NSButton!
-	@IBOutlet weak var blankVideo: NSButton!
-	
-	@IBOutlet weak var buzzerSounds: NSButton!
-	
+	@IBOutlet var tabView: NSTabView!
 	@IBOutlet var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet var tabitemTimer: NSTabViewItem!
-	@IBOutlet var tabView: NSTabView!
-	
-	@IBOutlet weak var buzzerTimerTime: NSTextField!
 	@IBOutlet var tabitemIdle: NSTabViewItem!
 	@IBOutlet var tabitemTest: NSTabViewItem!
 	@IBOutlet var tabitemBuzzers: NSTabViewItem!
-    @IBOutlet var tabitemMusic: NSTabViewItem!
+	@IBOutlet var tabitemMusic: NSTabViewItem!
 	@IBOutlet var tabitemGeography: NSTabViewItem!
 	@IBOutlet var tabitemText: NSTabViewItem!
 	@IBOutlet var tabitemNumbers: NSTabViewItem!
 	@IBOutlet var tabitemScores: NSTabViewItem!
 	
-    @IBOutlet weak var musicFile: NSPopUpButton!
-	@IBOutlet weak var uniqueFile: NSPopUpButton!
-	@IBOutlet weak var videoFile: NSPopUpButton!
 	
-	@IBOutlet var textAllowAnswers: NSButton!
-	
-	@IBOutlet weak var numbersAllowAnswers: NSButton!
-	@IBOutlet weak var numbersActualAnswer: NSTextField!
-
-	@IBOutlet var scoresOutput: NSTextField!
-	@IBOutlet var scoresText: NSTextView!
-	
-	@IBOutlet weak var trueButton: NSButton!
-	@IBOutlet weak var falseButton: NSButton!
-	@IBOutlet weak var trueFalseToggle: NSButton!
-	
+	//General
+	//--------------------------------------------------------------------------------------------------------------------------
 	var quizScreen: NSScreen?
 	var windowedMode = true
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
-	var skipButtons = [NSButton]()
-	
 	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
 	var quizWindow: NSWindow?
 	
-	var socket = WebSocket(request: URLRequest(url: URL(string: "ws://localhost:8091/")!))
-	var socketIsConnected = false
-						   
-	func socketWriteIfConnected(_ s : String) {
-		if socketIsConnected {
-			socket.write(string: s)
-		}
-	}
-
+	
     override func windowDidLoad() {
         super.windowDidLoad()
 		
@@ -229,26 +176,37 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
+		//Default to Idle on load regardless of what we left it on in Interface Builder
 		quizView.setRound(round: RoundType.idle)
 
-        // Start periodic task every 2 seconds
+        // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
     }
+	
+	func windowWillClose(_ notification: Notification) {
+		clientListTimer?.invalidate()
+		socket.ledsOff()
+	}
+	
+	private var clientListTimer: Timer!
 	
     @objc private func clientListTask() {
 		//Periodically check to see what clients are connected. The reply will be "lr" and the handler will parse this to set the indicators
 		socketWriteIfConnected("ls")
     }
 	
-    func windowWillClose(_ notification: Notification) {
-		clientListTimer?.invalidate()
-		
-        // Turn off all buzzer and animation LEDs
-		socket.ledsOff()
-    }
+
+	
+	@IBAction func vitualBuzzersPress(_ sender: NSButton) {
+		if virtualBuzzersBtn.state == .on {
+			virtualBuzzersBtn.title = "Virtual Buzzers"
+		} else {
+			virtualBuzzersBtn.title = "Disable Buzzers"
+		}
+	}
     
     @IBAction func pressedNumber(_ sender: NSButton) {
-        // The buttons can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on the state of virtualBuzzersBtn
+        // Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
 		if virtualBuzzersBtn.state == .on {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
@@ -289,6 +247,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             }
         }
     }
+	
+	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
+		socketWriteIfConnected("di\(sender.tag)")
+	}
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		switch(tabViewItem!) {
@@ -357,186 +319,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("ha")
 		}
     }
-    
-	@IBAction func trueFalseStart(_ sender: NSButton) {
-		quizView.truefalseScene.start()
-	}
 	
-	@IBAction func trueFalseStartNoTimer(_ sender: NSButton) {
-		quizView.truefalseScene.startNoTimer()
-	}
+	//--------------------------------------------------------------------------------------------------------------------------
+	//Websockets
+	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBAction func trueFalseTrue(_ sender: NSButton) {
-		quizView.truefalseScene.showAnswer(ans: true)
-	}
-	
-	@IBAction func trueFalseFalse(_ sender: NSButton) {
-		quizView.truefalseScene.showAnswer(ans: false)
-	}
-	
-    @IBAction func buzzersNextTeam(_ sender: AnyObject) {
-		quizView.buzzerScene.nextTeam()
-    }
-    
-    @IBAction func musicNextTeam(_ sender: AnyObject) {
-		quizView.musicScene.nextTeam()
-    }
-    
-    @IBAction func musicPlay(_ sender: AnyObject) {
-        quizView.musicScene.resumeMusic()
-	}
-    
-    @IBAction func musicPause(_ sender: AnyObject) {
-		quizView.musicScene.pauseMusic()
-    }
-    
-    @IBAction func musicStop(_ sender: AnyObject) {
-        quizView.musicScene.stopMusic()
-    }
-    
-	@IBAction func startBuzzerTimer(_ sender: Any) {
-		if let secs = Int(buzzerTimerTime.stringValue) {
-			quizView.buzzerScene.startTimer(secs)
+	var socket = WebSocket(request: URLRequest(url: URL(string: "ws://localhost:8091/")!))
+	var socketIsConnected = false
+						   
+	func socketWriteIfConnected(_ s : String) {
+		if socketIsConnected {
+			socket.write(string: s)
 		}
 	}
-	
-	@IBAction func stopBuzzerTimer(_ sender: Any) {
-		quizView.buzzerScene.stopTimer()
-	}
-	
-	
-	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
-		if Settings.shared.musicPath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path =  Settings.shared.musicPath + "/" + fileName
-				quizView.musicScene.initMusic(file: path)
-			}
-        }
-        else {
-            print("Error choosing music file")
-        }
-    }
-	
-	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
-		if Settings.shared.uniquePath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path = Settings.shared.uniquePath + "/" + fileName
-				quizView.textScene.initUnique(file: path)
-			}
-			else {
-				print("Error choosing unique list")
-			}
-		}
-	}
-	
-	@IBAction func startTimer(_ sender: AnyObject) {
-		quizView.timerScene.startTimer(music: false)
-	}
-	
-	@IBAction func stopTimer(_ sender: AnyObject) {
-		quizView.timerScene.stopTimer()
-	}
-	
-	@IBAction func timerIncrement(_ sender: AnyObject) {
-		quizView.timerScene.timerIncrement()
-	}
-	
-	@IBAction func timerDecrement(_ sender: AnyObject) {
-		quizView.timerScene.timerDecrement()
-	}
-	
-	@IBAction func setTeamType(_ sender: NSPopUpButton) {
-		let team = sender.tag
-		if (team < Settings.shared.numTeams) {
-			switch sender.indexOfSelectedItem {
-			case 0:
-				quizView.testScene.setTeamType(team: team, type: .christmas)
-			case 1:
-				quizView.testScene.setTeamType(team: team, type: .academic)
-			case 2:
-				quizView.testScene.setTeamType(team: team, type: .ibm)
-			default:
-				quizView.testScene.setTeamType(team: team, type: .christmas)
-			}
-		}
-	}
-	
-	@IBOutlet var geoAnswerX: NSTextField!
-	@IBOutlet var geoAnswerY: NSTextField!
-	@IBOutlet var geoQuestionNumber: NSTextField!
-	@IBOutlet var geoStepper: NSStepper!
-	
-	@IBAction func geoStepperChange(_ sender: Any) {
-		geoQuestionNumber.stringValue = geoStepper.stringValue
-	}
-	
-	@IBOutlet var textQuestionNumber: NSTextField!
-	@IBOutlet var textStepper: NSStepper!
-	@IBAction func textStepperChange(_ sender: Any) {
-		textQuestionNumber.stringValue = textStepper.stringValue
-	}
-	@IBAction func textShowGuesses(_ sender: Any) {
-		textAllowAnswers.state = .off
-		quizView.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
-	}
-	
-	@IBAction func timerStartWithMusic(_ sender: Any) {
-		quizView.timerScene.startTimer(music: true)
-	}
-	
-	@IBAction func timerShowCounterChange(_ sender: NSButton) {
-		quizView.timerScene.showCounter(timerShowCounter.state == .on)
-	}
-	
-	@IBAction func numbersShowAnswers(_ sender: NSButton) {
-		numbersAllowAnswers.state = .off
-		quizView.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
-	}
-	
-	
-	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizView.reset()
-		socketWriteIfConnected("vigeo")
-		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
-		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
-	}
-	
-	@IBAction func textScoreUnique(_ sender: Any) {
-		quizView.textScene.scoreUnique()
-	}
-	
-	@IBAction func geoShowWinner(_ sender: Any) {
-		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
-	}
-	
-	@IBOutlet var textTeamGuesses: NSTextField!
-	@IBOutlet var numbersTeamGuesses: NSTextField!
-	
-	
-	@IBAction func scoresInitText(_ sender: Any) {
-		var s = ""
-		for x in 1...Settings.shared.numTeams {
-			s = s + "\(x),\n"
-		}
-		scoresText.string = s
-	}
-	
-	@IBAction func scoresParseAndReset(_ sender: Any) {
-		quizView.scoresScene.parseAndReset(scoreText: scoresText.string)
-	}
-	
-	@IBAction func scoresShowNext(_ sender: Any) {
-		quizView.scoresScene.next()
-	}
-	
-	@IBAction func vitualBuzzersPress(_ sender: NSButton) {
-		if virtualBuzzersBtn.state == .on {
-			virtualBuzzersBtn.title = "Virtual Buzzers"
-		} else {
-			virtualBuzzersBtn.title = "Disable Buzzers"
-		}
-	}
-	
 	
 	public func websocketDidReceiveMessage(text: String) {
 		if(text.count >= 2) {
@@ -561,7 +356,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				
 				let allStats = [st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13, st14, st15]
 				for i in 0..<allStats.count {
-                    let box = allStats[i]!
+					let box = allStats[i]!
 					box.fillColor = teamnumbers.contains(i+1) ? NSColor.green : NSColor.black
 				}
 			case "ii":
@@ -668,43 +463,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 	}
-
-	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
-		socketWriteIfConnected("di\(sender.tag)")
-	}
-	
-	@IBAction func playVideo(_ sender: Any) {
-		quizView.musicScene.resumeVideo()
-	}
-	
-	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
-		if Settings.shared.musicPath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path = Settings.shared.musicPath + "/" + fileName
-				quizView.musicScene.prepareVideo(file: path)
-			}
-			else {
-				print("Error choosing video file")
-			}
-		}
-	}
-	
-	
-	@IBAction func trueFalseToggled(_ sender: Any) {
-		if trueFalseToggle.state == .on {
-			trueButton.title = "True"
-			falseButton.title = "False"
-			trueFalseToggle.title = "True/False Mode"
-			socketWriteIfConnected("h2")
-		} else {
-			trueButton.title = "Higher"
-			falseButton.title = "Lower"
-			trueFalseToggle.title = "Higher/Lower Mode"
-			socketWriteIfConnected("h1")
-		}
-		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
-	}
-	
 	
 	func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {
 		switch event {
@@ -743,6 +501,286 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .peerClosed:
 			break
 		}
+	}
+	
+	
+	
+	//--------------------------------------------------------------------------------------------------------------------------
+	// Round-specific controls and actions
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	//Buzzer
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet weak var buzzerSounds: NSButton!
+	@IBOutlet weak var quieterBuzzes: NSButton!
+	@IBOutlet weak var buzzerTimerTime: NSTextField!
+
+	@IBAction func buzzersNextTeam(_ sender: AnyObject) {
+		quizView.buzzerScene.nextTeam()
+	}
+	
+	@IBAction func startBuzzerTimer(_ sender: Any) {
+		if let secs = Int(buzzerTimerTime.stringValue) {
+			quizView.buzzerScene.startTimer(secs)
+		}
+	}
+	
+	@IBAction func stopBuzzerTimer(_ sender: Any) {
+		quizView.buzzerScene.stopTimer()
+	}
+	
+	
+	//Music/Video
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet weak var buzzcocksMode: NSButton!
+	@IBOutlet weak var buzzerQueueMode: NSButton!
+	@IBOutlet weak var blankVideo: NSButton!
+	@IBOutlet weak var musicFile: NSPopUpButton!
+	@IBOutlet weak var videoFile: NSPopUpButton!
+	
+	
+	@IBAction func musicNextTeam(_ sender: AnyObject) {
+		quizView.musicScene.nextTeam()
+	}
+	
+	@IBAction func musicPlay(_ sender: AnyObject) {
+		quizView.musicScene.resumeMusic()
+	}
+	
+	@IBAction func musicPause(_ sender: AnyObject) {
+		quizView.musicScene.pauseMusic()
+	}
+	
+	@IBAction func musicStop(_ sender: AnyObject) {
+		quizView.musicScene.stopMusic()
+	}
+
+	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
+		if Settings.shared.musicPath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path =  Settings.shared.musicPath + "/" + fileName
+				quizView.musicScene.initMusic(file: path)
+			}
+		}
+		else {
+			print("Error choosing music file")
+		}
+	}
+	
+	@IBAction func playVideo(_ sender: Any) {
+		quizView.musicScene.resumeVideo()
+	}
+	
+	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
+		if Settings.shared.musicPath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path = Settings.shared.musicPath + "/" + fileName
+				quizView.musicScene.prepareVideo(file: path)
+			}
+			else {
+				print("Error choosing video file")
+			}
+		}
+	}
+	
+	
+	//Timer
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet weak var timerShowCounter: NSButton!
+	
+	@IBAction func startTimer(_ sender: AnyObject) {
+		quizView.timerScene.startTimer(music: false)
+	}
+	
+	@IBAction func stopTimer(_ sender: AnyObject) {
+		quizView.timerScene.stopTimer()
+	}
+	
+	@IBAction func timerIncrement(_ sender: AnyObject) {
+		quizView.timerScene.timerIncrement()
+	}
+	
+	@IBAction func timerDecrement(_ sender: AnyObject) {
+		quizView.timerScene.timerDecrement()
+	}
+	
+	@IBAction func timerStartWithMusic(_ sender: Any) {
+		quizView.timerScene.startTimer(music: true)
+	}
+	
+	@IBAction func timerShowCounterChange(_ sender: NSButton) {
+		quizView.timerScene.showCounter(timerShowCounter.state == .on)
+	}
+	
+	
+	//Text and numbers
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet var textAllowAnswers: NSButton!
+	@IBOutlet var textShowQuestionNumbers: NSButton!
+	@IBOutlet var textQuestionNumber: NSTextField!
+	@IBOutlet var textStepper: NSStepper!
+	@IBOutlet var textTeamGuesses: NSTextField!
+	@IBOutlet weak var uniqueFile: NSPopUpButton!
+	
+	@IBAction func textStepperChange(_ sender: Any) {
+		textQuestionNumber.stringValue = textStepper.stringValue
+	}
+	@IBAction func textShowGuesses(_ sender: Any) {
+		textAllowAnswers.state = .off
+		quizView.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
+	}
+	
+	@IBAction func textScoreUnique(_ sender: Any) {
+		quizView.textScene.scoreUnique()
+	}
+
+	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
+		if Settings.shared.uniquePath != "" {
+			if let fileName = sender.selectedItem?.title {
+				let path = Settings.shared.uniquePath + "/" + fileName
+				quizView.textScene.initUnique(file: path)
+			}
+			else {
+				print("Error choosing unique list")
+			}
+		}
+	}
+	
+	@IBOutlet weak var numbersAllowAnswers: NSButton!
+	@IBOutlet weak var numbersActualAnswer: NSTextField!
+	@IBOutlet var numbersTeamGuesses: NSTextField!
+	
+	@IBAction func numbersShowAnswers(_ sender: NSButton) {
+		numbersAllowAnswers.state = .off
+		quizView.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
+	}
+	
+	
+	//Scores
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet var scoresOutput: NSTextField!
+	@IBOutlet var scoresText: NSTextView!
+	
+	@IBAction func scoresInitText(_ sender: Any) {
+		var s = ""
+		for x in 1...Settings.shared.numTeams {
+			s = s + "\(x),\n"
+		}
+		scoresText.string = s
+	}
+	
+	@IBAction func scoresParseAndReset(_ sender: Any) {
+		quizView.scoresScene.parseAndReset(scoreText: scoresText.string)
+	}
+	
+	@IBAction func scoresShowNext(_ sender: Any) {
+		quizView.scoresScene.next()
+	}
+	
+
+	//True/False
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet weak var trueButton: NSButton!
+	@IBOutlet weak var falseButton: NSButton!
+	@IBOutlet weak var trueFalseToggle: NSButton!
+	@IBOutlet weak var truefalseSounds: NSButton!
+
+	@IBAction func trueFalseStart(_ sender: NSButton) {
+		quizView.truefalseScene.start(sounds: truefalseSounds.state == .on)
+	}
+	
+	@IBAction func trueFalseStartNoTimer(_ sender: NSButton) {
+		quizView.truefalseScene.startNoTimer(sounds: truefalseSounds.state == .on)
+	}
+	
+	@IBAction func trueFalseTrue(_ sender: NSButton) {
+		quizView.truefalseScene.showAnswer(ans: true)
+	}
+	
+	@IBAction func trueFalseFalse(_ sender: NSButton) {
+		quizView.truefalseScene.showAnswer(ans: false)
+	}
+	
+	@IBAction func trueFalseToggled(_ sender: Any) {
+		if trueFalseToggle.state == .on {
+			trueButton.title = "True"
+			falseButton.title = "False"
+			trueFalseToggle.title = "True/False Mode"
+			socketWriteIfConnected("h2")
+		} else {
+			trueButton.title = "Higher"
+			falseButton.title = "Lower"
+			trueFalseToggle.title = "Higher/Lower Mode"
+			socketWriteIfConnected("h1")
+		}
+		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
+	}
+	
+	//Test
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBAction func setTeamType(_ sender: NSPopUpButton) {
+		let team = sender.tag
+		if (team < Settings.shared.numTeams) {
+			switch sender.indexOfSelectedItem {
+			case 0:
+				quizView.testScene.setTeamType(team: team, type: .christmas)
+			case 1:
+				quizView.testScene.setTeamType(team: team, type: .academic)
+			case 2:
+				quizView.testScene.setTeamType(team: team, type: .ibm)
+			default:
+				quizView.testScene.setTeamType(team: team, type: .christmas)
+			}
+		}
+	}
+	
+	
+	//Geography
+	//--------------------------------------------------------------------------------------------------------------------------
+	
+	@IBOutlet var skip1: NSButton!
+	@IBOutlet var skip2: NSButton!
+	@IBOutlet var skip3: NSButton!
+	@IBOutlet var skip4: NSButton!
+	@IBOutlet var skip5: NSButton!
+	@IBOutlet var skip6: NSButton!
+	@IBOutlet var skip7: NSButton!
+	@IBOutlet var skip8: NSButton!
+	@IBOutlet var skip9: NSButton!
+	@IBOutlet var skip10: NSButton!
+	@IBOutlet var skip11: NSButton!
+	@IBOutlet var skip12: NSButton!
+	@IBOutlet var skip13: NSButton!
+	@IBOutlet var skip14: NSButton!
+	@IBOutlet var skip15: NSButton!
+	@IBOutlet var skip16: NSButton!
+	var skipButtons = [NSButton]()
+	
+	@IBOutlet var geoAnswerX: NSTextField!
+	@IBOutlet var geoAnswerY: NSTextField!
+	@IBOutlet var geoQuestionNumber: NSTextField!
+	@IBOutlet var geoStepper: NSStepper!
+	
+	@IBAction func geoStepperChange(_ sender: Any) {
+		geoQuestionNumber.stringValue = geoStepper.stringValue
+	}
+	
+	@IBAction func geoStartQuestion(_ sender: Any) {
+		quizView.reset()
+		socketWriteIfConnected("vigeo")
+		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
+		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
+	}
+	
+	@IBAction func geoShowWinner(_ sender: Any) {
+		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
 	}
 	
 }

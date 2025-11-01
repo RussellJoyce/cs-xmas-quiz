@@ -25,6 +25,7 @@ class TrueFalseScene: SKScene {
 	fileprivate var time: Int = TIMEOUT
 	fileprivate var timer: Timer?
 	fileprivate var mode: Bool = true
+	fileprivate var tickSounds : Bool = true
 	var teamBoxes = [TrueFalseTeamNode]()
 	
 	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
@@ -132,21 +133,25 @@ class TrueFalseScene: SKScene {
 		self.addChild(timeParticles)
 	}
 	
-	func start() {
+	func start(sounds: Bool) {
 		self.time = TrueFalseScene.TIMEOUT
 		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 		
 		timer?.invalidate()
+		tickSounds = sounds
 		timer = Timer(timeInterval: 1.0, target: self, selector: #selector(TrueFalseScene.tick), userInfo: nil, repeats: true)
 		RunLoop.main.add(timer!, forMode: RunLoop.Mode.common)
 		self.timeLabel.text = String(TrueFalseScene.TIMEOUT)
 		addParticles()
 		counting = true;
 		self.webSocket?.setCounterValue(val: 200)
-		self.run(self.tickSound)
+		
+		if sounds {
+			self.run(self.tickSound)
+		}
 	}
 	
-	func startNoTimer() {
+	func startNoTimer(sounds: Bool) {
 		if self.counting == false {
 			//Starting
 			self.counting = true
@@ -157,13 +162,15 @@ class TrueFalseScene: SKScene {
 			self.createFire()
 
 			music = nil
-			if let musicUrl = Bundle.main.url(forResource: "counter_soft_end", withExtension: "wav") {
-				do {
-					try music = AVAudioPlayer(contentsOf: musicUrl)
-				} catch let error {
-					print(error.localizedDescription)
+			if sounds {
+				if let musicUrl = Bundle.main.url(forResource: "counter_soft_end", withExtension: "wav") {
+					do {
+						try music = AVAudioPlayer(contentsOf: musicUrl)
+					} catch let error {
+						print(error.localizedDescription)
+					}
+					music?.play()
 				}
-				music?.play()
 			}
 			
 		} else {
@@ -174,8 +181,10 @@ class TrueFalseScene: SKScene {
 			self.revealTeamGuesses()
 			self.stopFire()
 			
-			music?.pause()
-			self.run(self.tensionend)
+			if sounds {
+				music?.pause()
+				self.run(self.tensionend)
+			}
 		}
 	}
 	
@@ -195,11 +204,15 @@ class TrueFalseScene: SKScene {
 			if(self.time > 0) {
 				self.timeLabel.text = String(self.time)
 				self.addParticles()
-				self.run(self.tickSound)
+				if self.tickSounds {
+					self.run(self.tickSound)
+				}
 			} else {
 				self.counting = false
 				self.timer?.invalidate()
-				self.run(self.tickEnd)
+				if self.tickSounds {
+					self.run(self.tickEnd)
+				}
 				self.webSocket?.pulseWhite()
 				self.timeLabel.text = ""
 				self.revealTeamGuesses()
