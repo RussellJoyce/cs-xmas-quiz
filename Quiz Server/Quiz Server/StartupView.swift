@@ -52,7 +52,6 @@ class StartupView: NSViewController {
         startButton.isEnabled = true
     }
     
-    
     @IBAction func startQuiz(_ sender: AnyObject) {
 		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
         let windowed = windowedMode.state == NSControl.StateValue.on;
@@ -66,43 +65,20 @@ class StartupView: NSViewController {
 		
 		delegate.startQuiz(screen: screen, windowedMode: windowed)
     }
-	
+
 	@IBAction func geographyPathBrowse(_ sender: Any) {
-		let dialog = createDialog(title: "Geography round images folder", path: geographyImagesPath.stringValue)
-		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
-			let result = dialog.url // Pathname of the file
-			if (result != nil) {
-				let path = result!.path
-				geographyImagesPath.stringValue = path
-			}
-		}
+		createDialog(title: "Geography round images folder", textField: geographyImagesPath)
 	}
     
     @IBAction func musicPathBrowse(_ sender: Any) {
-        let dialog = createDialog(title: "Music round music folder", path: musicPath.stringValue)
-        if (dialog.runModal() == NSApplication.ModalResponse.OK) {
-            let result = dialog.url
-            if (result != nil) {
-                let path = result!.path
-                musicPath.stringValue = path
-            }
-        }
+		createDialog(title: "Music round music folder", textField: musicPath)
     }
 	
-	
 	@IBAction func uniquePathBrowse(_ sender: NSButton) {
-		let dialog = createDialog(title: "Folder of unique lists", path: uniquePath.stringValue)
-		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
-			let result = dialog.url
-			if (result != nil) {
-				let path = result!.path
-				uniquePath.stringValue = path
-			}
-		}
+		createDialog(title: "Folder of unique lists", textField: uniquePath)
 	}
 	
-	
-	func createDialog(title : String, path : String) -> NSOpenPanel {
+	func createDialog(title : String, textField : NSTextField) {
 		let dialog = NSOpenPanel();
 		dialog.title = title
 		dialog.showsHiddenFiles = false
@@ -110,9 +86,14 @@ class StartupView: NSViewController {
 		dialog.canChooseFiles = false
 		dialog.canCreateDirectories = false
 		dialog.allowsMultipleSelection = false
-		dialog.directoryURL = URL(fileURLWithPath: path, isDirectory: true)
-		return dialog
+		dialog.directoryURL = URL(fileURLWithPath: textField.stringValue, isDirectory: true)
+		
+		if (dialog.runModal() == NSApplication.ModalResponse.OK) {
+			let result = dialog.url
+			if (result != nil) {
+				textField.stringValue = result!.path
+			}
+		}
 	}
-	
 	
 }
