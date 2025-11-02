@@ -10,12 +10,6 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-enum TeamType {
-	case christmas
-	case academic
-	case ibm
-}
-
 class TestScene: SKScene {
 	
 	fileprivate var setUp = false
@@ -28,11 +22,7 @@ class TestScene: SKScene {
 	var sparksUp = [SKEmitterNode]()
 	var sparksDown = [SKEmitterNode]()
 	var imageSparks = [[SKEmitterNode]]()
-	
-	let ibmSparks = ["ibm-i", "ibm-b", "ibm-m"]
-	let academicSparks = ["mortarboard", "mortarboard", "mortarboard"]
 	let christmasSparks = ["snowflake", "floppydisk", "star"]
-	
 	
 	func setUpScene(size: CGSize, webSocket : WebSocket?) {
 		if setUp {
@@ -164,23 +154,6 @@ class TestScene: SKScene {
 			for node in self.imageSparks[team] {
 				node.particleBirthRate = 0
 			}
-		}
-	}
-	
-	func setTeamType(team: Int, type: TeamType) {
-		var images: [String]
-		
-		switch type {
-		case .christmas:
-			images = christmasSparks
-		case .academic:
-			images = academicSparks
-		case .ibm:
-			images = ibmSparks
-		}
-		
-		for (i, node) in imageSparks[team].enumerated() {
-			node.particleTexture = SKTexture(imageNamed: images[i / 2])
 		}
 	}
 }

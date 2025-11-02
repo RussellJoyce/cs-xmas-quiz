@@ -20,6 +20,8 @@ class Idle2Scene: SKScene {
 				 "present", "floppydisk", "snowflake", "party", "crazy",
 				 "ian", "richard", "nootnoot", "cold", "poop", "drunk"]
 	
+	var teamNumberNodes: [SKNode] = []
+	
 	func setUpScene(size: CGSize, websocket: WebSocket?) {
 		if setUp {
 			return
@@ -50,19 +52,13 @@ class Idle2Scene: SKScene {
 			self.addChild(snowmoji)
 		}
 		
-		/*addSnow(emittername: "Snowmoji", birthRate: 0.042, particleScale: 0.4, zPosition: 11, particleTexture: "ian")
-		addSnow(emittername: "Snowmoji", birthRate: 0.036, particleScale: 0.4, zPosition: 11, particleTexture: "richard")
-		addSnow(emittername: "Snowmoji", birthRate: 0.018, particleScale: 0.4, zPosition: 11, particleTexture: "oo")
-		addSnow(emittername: "Snowmoji", birthRate: 0.022, particleScale: 0.4, zPosition: 11, particleTexture: "nootnoot")
-		addSnow(emittername: "Snowmoji", birthRate: 0.031, particleScale: 0.4, zPosition: 11, particleTexture: "cold")
-		addSnow(emittername: "Snowmoji", birthRate: 0.005, particleScale: 0.4, zPosition: 11, particleTexture: "poop")
-		addSnow(emittername: "Snowmoji", birthRate: 0.02, particleScale: 0.4, zPosition: 11, particleTexture: "drunk")*/
-		
 		let year = Calendar.current.component(.year, from: Date())
 		addText(year: String(year))
 		addLights()
 		firework()
 		addCharacters()
+		
+		addTeamNumbers()
 	}
 	
 	func addSnow(emittername : String, birthRate : CGFloat, particleScale : CGFloat, zPosition : CGFloat, particleTexture : String? = nil) {
@@ -345,10 +341,117 @@ class Idle2Scene: SKScene {
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {
 		snowmojis[team % snowmojis.count].particleBirthRate = 20
+		teamNodeTrigger(teamno: team)
 	}
 	
 	func buzzerReleased(team: Int, type: BuzzerType) {
 		snowmojis[team % snowmojis.count].particleBirthRate = 0
+	}
+	
+	
+
+	func addTeamNumbers() {
+		// Remove any existing composite team nodes
+		for node in teamNumberNodes { node.removeFromParent() }
+		teamNumberNodes.removeAll()
+		
+		let numTeams = Settings.shared.numTeams
+		guard numTeams > 0 else { return }
+		let margin: CGFloat = 32
+		let availableWidth = size.width - margin * 2
+		let spacing = availableWidth / CGFloat(numTeams)
+		let baseY = margin
+
+		for i in 0..<numTeams {
+			let centerX = margin + spacing * (CGFloat(i) + 0.5)
+			let composite = SKNode()
+			composite.position = CGPoint(x: centerX, y: 0)
+			composite.zPosition = 100
+			composite.name = "teamNumberGroup"
+			composite.alpha = 0.0
+
+			let teamLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
+			teamLabel.text = "Team"
+			teamLabel.fontSize = 20
+			teamLabel.fontColor = .white
+			teamLabel.horizontalAlignmentMode = .center
+			teamLabel.verticalAlignmentMode = .bottom
+			teamLabel.position = CGPoint(x: 0, y: baseY + 80)
+			composite.addChild(teamLabel)
+
+			let numLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
+			numLabel.text = "\(i + 1)"
+			numLabel.fontSize = 80
+			numLabel.fontColor = .white
+			numLabel.horizontalAlignmentMode = .center
+			numLabel.verticalAlignmentMode = .top
+			numLabel.position = CGPoint(x: 0, y: baseY + 78)
+			composite.addChild(numLabel)
+
+			addChild(composite)
+			teamNumberNodes.append(composite)
+		}
+	}
+	
+	func teamNodeTrigger(teamno : Int) {
+		guard teamno < teamNumberNodes.count else { return }
+		let node = teamNumberNodes[teamno]
+
+		// Stop previous actions
+		node.removeAllActions()
+		for case let label as SKLabelNode in node.children {
+			label.removeAllActions()
+		}
+		
+		// White fade in for both labels
+		for case let label as SKLabelNode in node.children {
+			label.fontColor = .white
+		}
+		let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.15)
+		node.run(fadeIn)
+		
+		//Circular particle spray. Can't emit on a circle, so create a circle of emitters angled outwards.
+		let circleRadius: CGFloat = 50
+		let emitterCount = 40
+		for _ in 0..<emitterCount {
+			if let part = SKEmitterNode(fileNamed: "teambuzzed") {
+				// Place this emitter at a random point on a ring
+				let angle = CGFloat.random(in: 0..<2 * .pi)
+				let x = node.position.x + cos(angle) * circleRadius
+				let y = node.position.y + 90 + sin(angle) * circleRadius
+				part.emissionAngle = angle
+				part.position = CGPoint(x: x, y: y)
+				part.zPosition = node.zPosition - 1
+				part.removeWhenDone()
+				self.addChild(part)
+			}
+		}
+		
+		node.setScale(1.2)
+		let shrink = SKAction.scale(to: 1, duration: 0.2)
+		shrink.timingMode = .easeIn
+		node.run(shrink)
+		
+		// Animate both labels to team color over 0.4 seconds
+		let teamColor = NSColor(calibratedHue: CGFloat(teamno % 10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+		let colorAction = SKAction.customAction(withDuration: 0.4) { n, t in
+			for case let label as SKLabelNode in n.children {
+				let frac = CGFloat(t) / 0.4
+				label.fontColor = .white.blended(withFraction: frac, of: teamColor) ?? .white
+			}
+		}
+		node.run(SKAction.sequence([
+			SKAction.wait(forDuration: 0.15),
+			colorAction
+		]))
+		
+		// After 3 seconds, fade out
+		let fadeOut = SKAction.fadeAlpha(to: 0.0, duration: 1.5)
+		let delay = SKAction.wait(forDuration: 1.5)
+		node.run(SKAction.sequence([
+			delay,
+			fadeOut
+		]))
 	}
 }
 

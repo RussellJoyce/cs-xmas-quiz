@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3C0CCCC02EAEB21F008862F8 /* IdleScene.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */; };
 		3C0CCCC22EB00F4C008862F8 /* lemming.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC12EB00F4C008862F8 /* lemming.sks */; };
+		3C0CCCC42EB794F3008862F8 /* teambuzzed.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */; };
 		3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C1FFA0F239E8E33000160B1 /* fireworks.sks */; };
 		3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */; };
 		3C3012562EAD48FF00F80B71 /* OutlinedLabelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */; };
@@ -144,6 +145,7 @@
 /* Begin PBXFileReference section */
 		3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = IdleScene.xcassets; sourceTree = "<group>"; };
 		3C0CCCC12EB00F4C008862F8 /* lemming.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = lemming.sks; sourceTree = "<group>"; };
+		3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = teambuzzed.sks; sourceTree = "<group>"; };
 		3C1FFA0F239E8E33000160B1 /* fireworks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireworks.sks; sourceTree = "<group>"; };
 		3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEDWebSocket.swift; sourceTree = "<group>"; };
 		3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedLabelNode.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				3C1FFA0F239E8E33000160B1 /* fireworks.sks */,
+				3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */,
 				3C0CCCC12EB00F4C008862F8 /* lemming.sks */,
 			);
 			name = Particles;
@@ -524,6 +527,7 @@
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */,
 				3CF78EFD2396A11A007FC394 /* tada.mp3 in Resources */,
+				3C0CCCC42EB794F3008862F8 /* teambuzzed.sks in Resources */,
 				3CB99F962CFCB57B00B704E2 /* orch8.wav in Resources */,
 				3CB99F972CFCB57B00B704E2 /* orch6.wav in Resources */,
 				3CB99F982CFCB57B00B704E2 /* orch3.wav in Resources */,

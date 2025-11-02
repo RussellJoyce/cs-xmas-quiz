@@ -176,6 +176,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
+		//We don't currently need the Test view
+		tabView.removeTabViewItem(tabitemTest)
+		
 		//Default to Idle on load regardless of what we left it on in Interface Builder
 		quizView.setRound(round: RoundType.idle)
 
@@ -725,22 +728,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//Test
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBAction func setTeamType(_ sender: NSPopUpButton) {
-		let team = sender.tag
-		if (team < Settings.shared.numTeams) {
-			switch sender.indexOfSelectedItem {
-			case 0:
-				quizView.testScene.setTeamType(team: team, type: .christmas)
-			case 1:
-				quizView.testScene.setTeamType(team: team, type: .academic)
-			case 2:
-				quizView.testScene.setTeamType(team: team, type: .ibm)
-			default:
-				quizView.testScene.setTeamType(team: team, type: .christmas)
-			}
-		}
-	}
-	
+
 	
 	//Geography
 	//--------------------------------------------------------------------------------------------------------------------------
