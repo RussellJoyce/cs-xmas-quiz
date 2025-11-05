@@ -22,6 +22,10 @@ class Idle2Scene: SKScene {
 	
 	var teamNumberNodes: [SKNode] = []
 	
+	private var timeSinceLastSpawn: TimeInterval = 0.0
+	private var nextSpawnInterval: TimeInterval = 1.0
+	private var lastUpdateTime: TimeInterval = 0
+	
 	func setUpScene(size: CGSize, websocket: WebSocket?) {
 		if setUp {
 			return
@@ -55,11 +59,27 @@ class Idle2Scene: SKScene {
 		let year = Calendar.current.component(.year, from: Date())
 		addText(year: String(year))
 		addLights()
-		firework()
-		addCharacters()
-		
+		addFireworks()
 		addTeamNumbers()
 	}
+	
+	override func update(_ currentTime: TimeInterval) {
+		guard !isPaused else { return }
+		if lastUpdateTime == 0 {
+			lastUpdateTime = currentTime
+		}
+		
+		let delta = currentTime - lastUpdateTime
+		lastUpdateTime = currentTime
+		
+		timeSinceLastSpawn += delta
+		if timeSinceLastSpawn >= nextSpawnInterval {
+			addCharacters()
+			timeSinceLastSpawn = 0
+			nextSpawnInterval = Double.random(in: 3.0 ... 6.0)
+		}
+	}
+	
 	
 	func addSnow(emittername : String, birthRate : CGFloat, particleScale : CGFloat, zPosition : CGFloat, particleTexture : String? = nil) {
 		let p = SKEmitterNode(fileNamed: emittername)!
@@ -170,7 +190,7 @@ class Idle2Scene: SKScene {
 			break
 		}
 
-		Timer.scheduledTimer(withTimeInterval: Double.random(in: 3.0 ... 6.0), repeats: false) {_ in self.addCharacters()}
+		//Timer.scheduledTimer(withTimeInterval: Double.random(in: 3.0 ... 6.0), repeats: false) {_ in self.addCharacters()}
 	}
 
 	func addCharBasic(y: CGFloat, reverse: Bool, size : CGSize, duration: TimeInterval, textures: [SKTexture], frametime: CGFloat, flip: Bool = false) {
@@ -302,7 +322,7 @@ class Idle2Scene: SKScene {
 		self.addChild(lights)	
 	}
 	
-	func firework() {
+	func addFireworks() {
 		let parts = SKEmitterNode(fileNamed: "fireworks")!
 		parts.position = CGPoint(x: 20 + Int.random(in: 0..<1880), y: 700 + Int.random(in: 0..<360))
 		parts.zPosition = 1
@@ -312,7 +332,7 @@ class Idle2Scene: SKScene {
 		)
 		parts.removeWhenDone()
 		self.addChild(parts)
-		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.firework()}
+		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.addFireworks()}
 	}
 	
 	func reset() {
