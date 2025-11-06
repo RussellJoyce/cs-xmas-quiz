@@ -29,6 +29,8 @@ class BuzzerScene: SKScene {
 	var altBuzzNoise = [SKAction]()
 	var lastAltBuzzIndex = 0
 	
+	var snow1 : SKEmitterNode?
+	
 	fileprivate var time: Int = 30
 	fileprivate var starttime: Int = 30
 	fileprivate var timer: Timer?
@@ -61,12 +63,6 @@ class BuzzerScene: SKScene {
 		filternode.shouldRasterize = true
 		filternode.addChild(bgImage)
 		self.addChild(filternode)
-		
-		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
-		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
-		snow1.zPosition = 1
-		snow1.particlePositionRange.dx = 2500
-		self.addChild(snow1)
 		
 		let pulseupaction = SKAction.customAction(withDuration: 0.05, actionBlock: {
 			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue((time*3), forKey: "inputEV")
@@ -126,6 +122,20 @@ class BuzzerScene: SKScene {
 		
 		//self.addChild(bgImage)
 	}
+	
+	override func didMove(to view: SKView) {
+		super.didMove(to: view)
+		if let sn = snow1 {
+			sn.removeFromParent()
+		}
+		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
+		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
+		snow1.zPosition = 1
+		snow1.particlePositionRange.dx = 2500
+		snow1.advanceSimulationTime(8) //Calculate to immediately fill screen
+		self.addChild(snow1)
+	}
+	
 	
 	func buzzSound(_ quietMode: Bool) {
 		if timer != nil && timer!.isValid {

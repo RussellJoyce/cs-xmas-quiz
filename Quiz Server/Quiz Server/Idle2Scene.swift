@@ -21,6 +21,7 @@ class Idle2Scene: SKScene {
 				 "ian", "richard", "nootnoot", "cold", "poop", "drunk"]
 	
 	var teamNumberNodes: [SKNode] = []
+	var snow1, snow2, snow3 : SKEmitterNode?
 	
 	private var timeSinceLastSpawn: TimeInterval = 0.0
 	private var nextSpawnInterval: TimeInterval = 1.0
@@ -43,10 +44,6 @@ class Idle2Scene: SKScene {
 		bgImageLayer1.zPosition = 0
 		self.addChild(bgImageLayer1)
 		
-		addSnow(emittername: "SnowBackground", birthRate: 8, particleScale: 0.2, zPosition: 1)
-		addSnow(emittername: "Snow", birthRate: 5, particleScale: 0.3, zPosition: 20)
-		addSnow(emittername: "Snow", birthRate: 5, particleScale: 0.4, zPosition: 24)
-		
 		for emojiname in emoji {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
 			snowmoji.particleTexture = SKTexture(imageNamed: emojiname)
@@ -61,6 +58,12 @@ class Idle2Scene: SKScene {
 		addLights()
 		addFireworks()
 		addTeamNumbers()
+	}
+	
+	override func didMove(to view: SKView) {
+		snow1 = addSnow(existingSnowNode: snow1, emittername: "SnowBackground", birthRate: 10, particleScale: 0.2, zPosition: 1)
+		snow2 = addSnow(existingSnowNode: snow2, emittername: "Snow", birthRate: 7, particleScale: 0.3, zPosition: 20)
+		snow3 = addSnow(existingSnowNode: snow3, emittername: "Snow", birthRate: 7, particleScale: 0.4, zPosition: 24)
 	}
 	
 	override func update(_ currentTime: TimeInterval) {
@@ -81,17 +84,25 @@ class Idle2Scene: SKScene {
 	}
 	
 	
-	func addSnow(emittername : String, birthRate : CGFloat, particleScale : CGFloat, zPosition : CGFloat, particleTexture : String? = nil) {
-		let p = SKEmitterNode(fileNamed: emittername)!
-		p.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
-		p.particleBirthRate = birthRate
-		p.particleScale = particleScale
-		p.zPosition = zPosition
-		p.particleRotationSpeed = 1.0
-		if let pt = particleTexture {
-			p.particleTexture = SKTexture(imageNamed: pt)
+	func addSnow(existingSnowNode: SKEmitterNode?, emittername: String, birthRate: CGFloat, particleScale: CGFloat, zPosition: CGFloat, particleTexture: String? = nil) -> SKEmitterNode? {
+		if let sn = existingSnowNode {
+			sn.removeFromParent()
 		}
-		self.addChild(p)
+	
+		if let p = SKEmitterNode(fileNamed: emittername) {
+			p.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
+			p.particleBirthRate = birthRate
+			p.particleScale = particleScale
+			p.zPosition = zPosition
+			p.particleRotationSpeed = 1.0
+			if let pt = particleTexture {
+				p.particleTexture = SKTexture(imageNamed: pt)
+			}
+			p.advanceSimulationTime(8)
+			self.addChild(p)
+			return p
+		}
+		return nil
 	}
 
 	func addText(year : String) {

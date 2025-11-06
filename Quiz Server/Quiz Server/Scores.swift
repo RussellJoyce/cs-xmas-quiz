@@ -24,7 +24,7 @@ class ScoresScene: SKScene {
 	let topScoreNoise = SKAction.playSoundFileNamed("topscore", waitForCompletion: false)
 	let simpleScoreNoise = SKAction.playSoundFileNamed("score5", waitForCompletion: false)
 	
-	let snow1 = SKEmitterNode(fileNamed: "ScoresBackground")!
+	var snow1 : SKEmitterNode?
 	
 	var output : NSTextField!
 	
@@ -48,22 +48,24 @@ class ScoresScene: SKScene {
 		for i in 1...14 {
 			scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))
 		}
-		
-		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
-		snow1.zPosition = 1
-		snow1.particlePositionRange.dx = 2500
-		//snow1.particleColorBlendFactor = 1.0
-		//snow1.particleColorSequence = nil
-		self.addChild(snow1)
-		
-	}
-	
-	override func update(_ currentTime: TimeInterval) {
-		//let colors = [SKColor.red, SKColor.green, SKColor.blue, SKColor.white, SKColor.cyan, SKColor.magenta, SKColor.yellow]
-		//snow1.particleColor = colors[Int(arc4random_uniform(UInt32(colors.count)))]
 	}
 
-	
+	override func didMove(to view: SKView) {
+		super.didMove(to: view)
+		// Remove existing snow emitter if present
+		if let sn = snow1 {
+			sn.removeFromParent()
+		}
+		
+		// Create a new snow emitter
+		let newSnow = SKEmitterNode(fileNamed: "ScoresBackground")!
+		newSnow.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
+		newSnow.zPosition = 1
+		newSnow.particlePositionRange.dx = 2500
+		newSnow.advanceSimulationTime(8)
+		snow1 = newSnow
+		self.addChild(snow1!)
+	}
 	
 	func reset() {
 		webSocket?.ledsOff();
