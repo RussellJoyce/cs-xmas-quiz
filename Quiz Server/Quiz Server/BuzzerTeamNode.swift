@@ -13,6 +13,10 @@ class BuzzerTeamNode: SKNode {
 	
 	var glow : SKEmitterNode?
 	
+	//let font = "Electronic Highway Sign"
+	//let font = ".AppleSystemUIFontBold"
+	let font = "PT Sans Caption Bold"
+	
 	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat,
 					 addGlow: Bool = false, glowType: String = "BuzzGlow",
 					 entranceFlash: Bool = true, entranceParticles: Bool = false, entranceShimmer: Bool = false,
@@ -48,8 +52,7 @@ class BuzzerTeamNode: SKNode {
 		shadow.fillColor = NSColor(white: 0.1, alpha: 0.5)
 		shadow.lineWidth = 0.0
 		
-		let text = SKLabelNode(fontNamed: "Electronic Highway Sign")
-		//let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
+		let text = SKLabelNode(fontNamed: font)
 		if let at = altText {
 			text.text = at;
 		} else {
@@ -62,7 +65,7 @@ class BuzzerTeamNode: SKNode {
 		text.zPosition = 6
 		text.position = CGPoint.zero
 		
-		let shadowText = SKLabelNode(fontNamed: "Electronic Highway Sign")
+		let shadowText = SKLabelNode(fontNamed: font)
 		shadowText.text = text.text
 		shadowText.fontSize = fontSize
 		shadowText.fontColor = NSColor(white: 0, alpha: 1.0)
