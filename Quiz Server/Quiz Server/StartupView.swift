@@ -16,6 +16,7 @@ class StartupView: NSViewController {
 	@IBOutlet weak var geographyImagesPath: NSTextField!
     @IBOutlet weak var musicPath: NSTextField!
 	@IBOutlet weak var uniquePath: NSTextField!
+	@IBOutlet weak var pointlessPath: NSTextField!
 	@IBOutlet weak var numTeamsInput: NSTextField!
 	@IBOutlet weak var debugMode: NSButton!
 	
@@ -48,6 +49,7 @@ class StartupView: NSViewController {
 		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
         musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Music"
 		uniquePath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Unique"
+		pointlessPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Pointless"
 		
         startButton.isEnabled = true
     }
@@ -68,6 +70,7 @@ class StartupView: NSViewController {
 		Settings.shared.geographyImagesPath = geographyImagesPath.stringValue
 		Settings.shared.musicPath = musicPath.stringValue
 		Settings.shared.uniquePath = uniquePath.stringValue
+		Settings.shared.pointlessPath = pointlessPath.stringValue
 		Settings.shared.numTeams = Int(numTeamsInput.intValue)
 		Settings.shared.debug = debugMode.state == NSControl.StateValue.on
 		
@@ -85,6 +88,12 @@ class StartupView: NSViewController {
 	@IBAction func uniquePathBrowse(_ sender: NSButton) {
 		createDialog(title: "Folder of unique lists", textField: uniquePath)
 	}
+	
+	@IBAction func pointlessPathBrowse(_ sender: Any) {
+		createDialog(title: "Folder of pointless questions", textField: pointlessPath)
+	}
+	
+	
 	
 	func createDialog(title : String, textField : NSTextField) {
 		let dialog = NSOpenPanel();

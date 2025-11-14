@@ -15,6 +15,7 @@ final class Settings {
 	var geographyImagesPath: String = ""
 	var musicPath: String = ""
 	var uniquePath: String = ""
+	var pointlessPath: String = ""
 	
 	var numTeams: Int = 14
 }

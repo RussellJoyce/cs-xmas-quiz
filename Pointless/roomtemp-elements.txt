@@ -1,0 +1,12 @@
+Elements that are gases at room temperature
+Argon,15
+Chlorine,6
+Flourine,4
+Helium,26
+Hydrogen,45
+Krypton,2
+Neon,14
+Nitrogen,44
+Oxygen,76
+Radon,2
+Xenon,4

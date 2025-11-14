@@ -16,9 +16,10 @@ class OutlinedLabelNode: SKNode {
     private let outlineWidth: CGFloat
     
     var text: String? {
-        didSet {
-            mainLabel.text = text
-            outlineLabels.forEach { $0.text = text }
+        get { mainLabel.text }
+        set {
+            mainLabel.text = newValue
+            outlineLabels.forEach { $0.text = newValue }
         }
     }
     

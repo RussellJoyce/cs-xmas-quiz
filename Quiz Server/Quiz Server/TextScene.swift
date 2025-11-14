@@ -163,7 +163,7 @@ class TextScene: SKScene {
 		bgImage.size = self.size
 		
 		self.addChild(bgImage)
-		
+			
 		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		
 		var boxheight : Int = 150

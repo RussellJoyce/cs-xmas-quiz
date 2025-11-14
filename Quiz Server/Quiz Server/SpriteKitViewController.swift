@@ -24,6 +24,7 @@ class SpriteKitViewController: NSViewController {
 	let numbersScene = NumbersScene()
 	let truefalseScene = TrueFalseScene()
 	let scoresScene = ScoresScene()
+	let pointlessScene = PointlessScene()
 	var currentRound = RoundType.none
 	
 	let transitionDuration = 1.0
@@ -47,6 +48,7 @@ class SpriteKitViewController: NSViewController {
 		textScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		numbersScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		scoresScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
+		pointlessScene.setUpScene(size: skView.bounds.size, webSocket: webSocket)
 		
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
 		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))
@@ -92,6 +94,8 @@ class SpriteKitViewController: NSViewController {
 			scene = truefalseScene
 		case .scores:
 			scene = scoresScene
+		case .pointless:
+			scene = pointlessScene
 		default:
 			scene = nil
 		}
@@ -130,6 +134,8 @@ class SpriteKitViewController: NSViewController {
 			truefalseScene.reset()
 		case .scores:
 			scoresScene.reset()
+		case .pointless:
+			pointlessScene.reset()
 		default:
 			break
 		}

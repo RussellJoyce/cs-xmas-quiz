@@ -19,6 +19,8 @@
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
+		3C63A1402EC4E2300044C951 /* PointlessScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */; };
+		3C63A1422EC6516C0044C951 /* SparksPointless.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C63A1412EC6516C0044C951 /* SparksPointless.sks */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
 		3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C772FEB2CD79AA000F2E6FC /* Scores.swift */; };
 		3C772FF12CD7C28900F2E6FC /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3C772FF02CD7C28900F2E6FC /* ConfettiSwiftUI */; };
@@ -155,6 +157,8 @@
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
+		3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointlessScene.swift; sourceTree = "<group>"; };
+		3C63A1412EC6516C0044C951 /* SparksPointless.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = SparksPointless.sks; path = "Quiz Server/SparksPointless.sks"; sourceTree = SOURCE_ROOT; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
 		3C772FEB2CD79AA000F2E6FC /* Scores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scores.swift; sourceTree = "<group>"; };
 		3C772FF82CD7CD4000F2E6FC /* ScoresBackground.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ScoresBackground.sks; sourceTree = "<group>"; };
@@ -295,6 +299,7 @@
 				3C5CC8B21C03E18F00308572 /* SparksUp2.sks */,
 				46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */,
 				46EE3976239EA694006298D1 /* SparksLeft.sks */,
+				3C63A1412EC6516C0044C951 /* SparksPointless.sks */,
 				3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */,
 				3CF41C1F1C04C7D100785564 /* TimerSpray.sks */,
 				3C1FFA0F239E8E33000160B1 /* fireworks.sks */,
@@ -308,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */,
+				3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
@@ -555,6 +561,7 @@
 				4634F74F21B6DBD600C9862F /* SnowBackground.sks in Resources */,
 				3C872EB61C03D53000A2B397 /* airhorn.mp3 in Resources */,
 				3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */,
+				3C63A1422EC6516C0044C951 /* SparksPointless.sks in Resources */,
 				3C93462B237DB6B0009DBD0C /* altBuzz3.wav in Resources */,
 				463FDE821A39039500FA9B3F /* Snowmoji.sks in Resources */,
 				46596C841A38E04800822FB7 /* spark.png in Resources */,
@@ -623,6 +630,7 @@
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
+				3C63A1402EC4E2300044C951 /* PointlessScene.swift in Sources */,
 				3CF749212EABE57F00A38676 /* Settings.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

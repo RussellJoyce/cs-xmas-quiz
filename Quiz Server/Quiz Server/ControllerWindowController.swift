@@ -28,6 +28,7 @@ enum RoundType {
 	case text
 	case numbers
 	case scores
+	case pointless
 }
 
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
@@ -77,7 +78,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemText: NSTabViewItem!
 	@IBOutlet var tabitemNumbers: NSTabViewItem!
 	@IBOutlet var tabitemScores: NSTabViewItem!
-	
+	@IBOutlet var tabitemPointless: NSTabViewItem!
 	
 	//General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -95,6 +96,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		//Connect any output UI elements
 		quizView.scoresScene.output = scoresOutput
+		quizView.pointlessScene.textAnswers = pointlessTextAnswers
+		quizView.pointlessScene.textQuestion = pointlessTextQuestion
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -175,6 +178,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				print("Error while enumerating files \(Settings.shared.uniquePath): \(error.localizedDescription)")
 			}
 		}
+		
+		if Settings.shared.pointlessPath != "" {
+			do {
+				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.pointlessPath)
+				for file in files.sorted() {
+					if (!file.hasPrefix(".")) {
+						pointlessQuestionSelector.addItem(withTitle: file)
+					}
+				}
+				pointlessQuestionSelected(pointlessQuestionSelector!)
+			} catch {
+				print("Error while enumerating files \(Settings.shared.pointlessPath): \(error.localizedDescription)")
+			}
+		}
+		
 		
 		//We don't currently need the Test view
 		tabView.removeTabViewItem(tabitemTest)
@@ -295,6 +313,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemScores:
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.scores)
+		case tabitemPointless:
+			socketWriteIfConnected("vitext")
+			quizView.setRound(round: RoundType.pointless)
 		default:
 			break
 		}
@@ -398,15 +419,30 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				}
 			case "tt":
-				if (tabView.selectedTabViewItem == tabitemText) {
-					//A team has guessed a text answer
-					if textAllowAnswers.state == .on {
-						let details = text.suffix(text.count - 2)
-						let vals = details.components(separatedBy: ",")
-						if(vals.count >= 2) {
-							if let team = Int(vals[0]) {
-								let guessText = String(vals[1].prefix(20))
+				
+				//A team has guessed a textual answer. Parse it and route to appropriate scene
+				if (
+					(tabView.selectedTabViewItem == tabitemText && textAllowAnswers.state == .on) ||
+					(tabView.selectedTabViewItem == tabitemNumbers && numbersAllowAnswers.state == .on) ||
+					(tabView.selectedTabViewItem == tabitemPointless && pointlessAllowAnswers.state == .on) ) {
+					
+					let details = text.suffix(text.count - 2)
+					let vals = details.components(separatedBy: ",")
+					if(vals.count >= 2) {
+						if let team = Int(vals[0]) {
+							let guessText = String(vals[1].prefix(20)) //TODO Max size of 20 is too low?
 							
+							//Now route the logic according to the current round
+							switch tabView.selectedTabViewItem {
+							case tabitemText:
+								// Update the guesses in the controller window
+								textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+									if let tg = quizView.textScene.teamGuesses[team] {
+										return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
+									}
+									return nil
+								}.joined(separator: "\n")
+								
 								quizView.textScene.teamGuess(
 									teamid: team - 1, //make zero indexed
 									guess: guessText,
@@ -414,52 +450,32 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 									showroundno: (textShowQuestionNumbers.state == .on) ? true : false
 								)
 								
-								//Update the guesses in the controller window
-								var val = ""
-								for team in 0..<Settings.shared.numTeams {
-									if let tg = quizView.textScene.teamGuesses[team] {
-										val = "\(val) Team \(team+1): \(tg.guess) (\(tg.roundid))\n"
-									}
-								}
-								textTeamGuesses.stringValue = val
-								
-							} else {
-								print("Invalid Text guess: Bad Int conversion")
-							}
-						} else {
-							print("Invalid Text guess: Bad comma separation")
-						}
-					}
-				} else {
-					//A team has guessed a number answer
-					
-					if numbersAllowAnswers.state == .on {
-						let details = text.suffix(text.count - 2)
-						let vals = details.components(separatedBy: ",")
-						if(vals.count >= 2) {
-							if let team = Int(vals[0]) {
-								let guessText = String(vals[1].prefix(20))
-						
+							case tabitemNumbers:
 								let guess = Int(guessText)
 								if guess != nil {
 									quizView.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
-
-									//Update the guesses in the controller window
-									var val = ""
-									for team in 0..<Settings.shared.numTeams {
-										if let tg = quizView.numbersScene.teamGuesses[team] {
-											val = "\(val) Team \(team+1): \(String(tg))\n"
-										}
-									}
-									numbersTeamGuesses.stringValue = val
-									
-								} else {
-									print("Invalid Numbers guess: Bad Int conversion")
 								}
+								
+								// Update the guesses in the controller window
+								numbersTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+									if let tg = quizView.numbersScene.teamGuesses[team] {
+										return "Team \(team + 1): \(tg)"
+									}
+									return nil
+								}.joined(separator: "\n")
+								
+							case tabitemPointless:
+								quizView.pointlessScene.teamGuess(team: team-1, guess: guessText)
+								
+							default:
+								break
 							}
+						} else {
+							print("Invalid Text guess: Bad Int conversion")
 						}
+					} else {
+						print("Invalid Text guess: Bad comma separation")
 					}
-					
 				}
 			default:
 				print("Unknown message: " + text)
@@ -771,5 +787,33 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
 	}
 	
+	
+	//Pointless
+	//--------------------------------------------------------------------------------------------------------------------------
+	@IBOutlet weak var pointlessQuestionSelector: NSPopUpButton!
+	@IBOutlet weak var pointlessTextQuestion: NSTextField!
+	@IBOutlet weak var pointlessTextAnswers: NSTextField!
+	@IBOutlet weak var pointlessAllowAnswers: NSButton!
+	
+	@IBAction func pointlessShowAnswers(_ sender: Any) {
+		quizView.pointlessScene.showAnswers()
+	}
+
+	@IBAction func pointlessRunScoring(_ sender: Any) {
+		quizView.pointlessScene.runScoring()
+	}
+	
+	@IBAction func pointlessQuestionSelected(_ sender: Any) {
+		if Settings.shared.pointlessPath != "" {
+			if let title = pointlessQuestionSelector.selectedItem?.title {
+				let path = Settings.shared.pointlessPath + "/" + title
+				quizView.pointlessScene.changeToQuestion(path: path)
+			}
+		}
+	}
+
+	@IBAction func pointlessTest(_ sender: Any) {
+		quizView.pointlessScene.debugTest()
+	}
 }
 

@@ -17,19 +17,32 @@ class BuzzerTeamNode: SKNode {
 	//let font = ".AppleSystemUIFontBold"
 	let font = "PT Sans Caption Bold"
 	
+	var bgBox : SKShapeNode?
+	var bgColour : NSColor?
+	var teamHue = CGFloat(0.0)
+	
+	var textLabel: SKLabelNode?
+	var shadowLabel: SKLabelNode?
+	
+	private var width : Int = 0
+	private var height : Int = 0
+	
 	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat,
 					 addGlow: Bool = false, glowType: String = "BuzzGlow",
 					 entranceFlash: Bool = true, entranceParticles: Bool = false, entranceShimmer: Bool = false,
 					 altText: String? = nil) {
 		self.init()
 		
-		var teamHue = CGFloat(team) / 10.0
+		self.width = width
+		self.height = height
+		
+		teamHue = CGFloat(team) / 10.0
 		if teamHue > 1.0 {
 			teamHue -= 1.0
 		}
 		let particleColour = NSColor(calibratedHue: teamHue, saturation: 0.6, brightness: 1.0, alpha: 1.0)
 		let glowColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		let bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
+		bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
 		
 		let scale = SKAction.scale(to: 1, duration: 0.2)
 		scale.timingMode = .easeOut
@@ -40,11 +53,11 @@ class BuzzerTeamNode: SKNode {
 		let mainNode = SKNode()
 		mainNode.position = CGPoint.zero
 		
-		let bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
-		bgBox.zPosition = 4
-		bgBox.position = CGPoint.zero
-		bgBox.fillColor = bgColour
-		bgBox.lineWidth = 0.0
+		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
+		bgBox!.zPosition = 4
+		bgBox!.position = CGPoint.zero
+		bgBox!.fillColor = bgColour!
+		bgBox!.lineWidth = 0.0
 		
 		let shadow = SKShapeNode(rectOf: CGSize(width: width + 20, height: height + 20))
 		shadow.zPosition = 3
@@ -74,6 +87,9 @@ class BuzzerTeamNode: SKNode {
 		shadowText.zPosition = 5
 		shadowText.position = CGPoint.zero
 		
+		self.textLabel = text
+		self.shadowLabel = shadowText
+		
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
@@ -97,7 +113,7 @@ class BuzzerTeamNode: SKNode {
 			stopGlow()
 		}
 		
-		mainNode.addChild(bgBox)
+		mainNode.addChild(bgBox!)
 		mainNode.addChild(shadow)
 		mainNode.addChild(text)
 		mainNode.addChild(textShadow)
@@ -110,16 +126,7 @@ class BuzzerTeamNode: SKNode {
 		
 		// Color flash effect for bgBox
 		if entranceFlash {
-			let flash = SKAction.sequence([
-				SKAction.run { bgBox.fillColor = .white },
-				SKAction.wait(forDuration: 0.07),
-				SKAction.customAction(withDuration: 0.5) { node, elapsedTime in
-					guard let shape = node as? SKShapeNode else { return }
-					let t = CGFloat(elapsedTime) / 0.5
-					shape.fillColor = .white.blended(withFraction: t, of: bgColour) ?? bgColour
-				}
-			])
-			bgBox.run(flash)
+			runEntranceFlash()
 		}
 		
 		if entranceParticles {
@@ -165,10 +172,25 @@ class BuzzerTeamNode: SKNode {
 			self.addChild(glow!)
 		}
 		
-		if entranceShimmer {
-			runShimmerEffect(width: CGFloat(width), height: CGFloat(height))
+		if entranceShimmer { runShimmerEffect() }
+	}
+	
+	
+	func runEntranceFlash() {
+		if let bgBox = bgBox, let bgColour = bgColour {
+			let flash = SKAction.sequence([
+				SKAction.run { bgBox.fillColor = .white },
+				SKAction.wait(forDuration: 0.07),
+				SKAction.customAction(withDuration: 0.5) { node, elapsedTime in
+					guard let shape = node as? SKShapeNode else { return }
+					let t = CGFloat(elapsedTime) / 0.5
+					shape.fillColor = .white.blended(withFraction: t, of: bgColour) ?? bgColour
+				}
+			])
+			bgBox.run(flash)
 		}
 	}
+	
 	
 	private func makeEmitter(position: CGPoint, color: NSColor, emissionAngle: CGFloat, positionRange: CGVector, numParticles: Int, zPosition: CGFloat = 2) -> SKEmitterNode {
 		let emitter = SKEmitterNode(fileNamed: "BuzzParticles")!
@@ -194,21 +216,20 @@ class BuzzerTeamNode: SKNode {
 		glow?.particleBirthRate = 0
 	}
 	
-	func runShimmerEffect(width: CGFloat, height: CGFloat) {
+	func runShimmerEffect(shimmerWidth : CGFloat = 100.0) {
 	    // Parameters for the shimmer angle and size
-	    let shimmerWidth = CGFloat(200)
-	    let shimmerHeight = height * 1
+		let shimmerHeight = CGFloat(self.height)
 	    let texture = BuzzerTeamNode.makeAngledGradientTexture(width: shimmerWidth, height: shimmerHeight)
 	    let shimmer = SKSpriteNode(texture: texture, size: CGSize(width: shimmerWidth, height: shimmerHeight))
 	    shimmer.alpha = 0.65
 	    shimmer.zPosition = 20
 	    shimmer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-	    shimmer.position = CGPoint(x: -width/2 + shimmerWidth/2, y: 0)
+		shimmer.position = CGPoint(x: -CGFloat(self.width)/2.0 + shimmerWidth/2.0, y: 0)
 	    shimmer.blendMode = .add
 	    self.addChild(shimmer)
 
 	    // Animate shimmer
-		let move = SKAction.moveBy(x: width*0.80, y: 0, duration: 0.3)
+		let move = SKAction.moveBy(x: CGFloat(self.width)-shimmerWidth, y: 0, duration: 0.3)
 		move.timingMode = .easeOut
 	    let fade = SKAction.fadeOut(withDuration: 0.7)
 	    let group = SKAction.group([move, fade])
@@ -237,6 +258,51 @@ class BuzzerTeamNode: SKNode {
 	    image.unlockFocus()
 
 	    return SKTexture(image: image)
+	}
+	
+	func updateText(_ newText: String) {
+		textLabel?.text = newText
+		shadowLabel?.text = newText
+	}
+	
+	func runPop() {
+	    let scaleUp = SKAction.scale(to: 1.25, duration: 0.12)
+	    scaleUp.timingMode = .easeOut
+	    let scaleDown = SKAction.scale(to: 1.0, duration: 0.18)
+	    scaleDown.timingMode = .easeIn
+	    let popSequence = SKAction.sequence([scaleUp, scaleDown])
+	    textLabel?.run(popSequence)
+	    shadowLabel?.run(popSequence)
+	}
+	
+	func fadeBackgroundColor(to targetColor: NSColor, duration: TimeInterval) {
+	    guard let bgBox = self.bgBox, let startColor = self.bgColour else { return }
+	    // Store the original color so bgColour property remains accurate
+	    self.bgColour = targetColor
+	    let fadeAction = SKAction.customAction(withDuration: duration) { node, elapsedTime in
+	        let fraction = CGFloat(elapsedTime) / CGFloat(duration)
+	        let currentColor = startColor.blended(withFraction: fraction, of: targetColor) ?? targetColor
+	        bgBox.fillColor = currentColor
+	    }
+	    bgBox.run(fadeAction)
+	}
+
+	func fadeTextColor(to targetColor: NSColor, duration: TimeInterval) {
+	    guard let textLabel = self.textLabel, let startTextColor = textLabel.fontColor else { return }
+	    let fadeAction = SKAction.customAction(withDuration: duration) { _, elapsedTime in
+	        let fraction = CGFloat(elapsedTime) / CGFloat(duration)
+	        let newTextColor = startTextColor.blended(withFraction: fraction, of: targetColor) ?? targetColor
+	        textLabel.fontColor = newTextColor
+	    }
+	    textLabel.run(fadeAction)
+	}
+	
+	
+	func resetTeamColour() {
+		guard let bgBox = self.bgBox, let textLabel = self.textLabel else { return }
+		bgBox.fillColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
+		self.bgColour = bgBox.fillColor
+		textLabel.fontColor = .white
 	}
 }
 

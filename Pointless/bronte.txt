@@ -1,0 +1,7 @@
+Members of the Bronte family
+Anne,51
+Branwell,17
+Charlotte,83
+Elizabeth,6
+Emily,92
+Maria,7
