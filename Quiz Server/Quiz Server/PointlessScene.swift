@@ -11,6 +11,7 @@ import Foundation
 import Cocoa
 import SpriteKit
 import Starscream
+import AVFoundation
 
 class PointlessScene : SKScene {
 	
@@ -26,6 +27,7 @@ class PointlessScene : SKScene {
 	private var scoreBars = [SKShapeNode?]()
 	private var barEmitters = [SKEmitterNode?]()
 	private var scoreLabels = [SKLabelNode]()
+	private var winEmitters = [SKEmitterNode]()
 	private var scoringTimer: Timer?
 	private var lowestScoreThisRound : Int?
 	
@@ -33,7 +35,13 @@ class PointlessScene : SKScene {
 	private var gameState : PointlessGameState = .waitForAnswers
 	
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-
+	let scoreSound = SKAction.playSoundFileNamed("counter_score", waitForCompletion: false)
+	let scorePointlessSound = SKAction.playSoundFileNamed("counter_score2", waitForCompletion: false)
+	let showAnswersSound = SKAction.playSoundFileNamed("display_sweep", waitForCompletion: false)
+	let teamDoneSound = SKAction.playSoundFileNamed("circle_illuminates", waitForCompletion: false)
+	let wrongSound = SKAction.playSoundFileNamed("counter_wrong", waitForCompletion: false)
+	private var counterPlayer: AVAudioPlayer? = nil
+	
 	static let teamBoxHeight = 60
 	static let barHeight = CGFloat(teamBoxHeight - 6)
 	static let teamBoxWidth = 450
@@ -64,7 +72,7 @@ class PointlessScene : SKScene {
 		for i in 0..<Settings.shared.numTeams {
 			let teamBox = BuzzerTeamNode(team: i, width: PointlessScene.teamBoxWidth, height: PointlessScene.teamBoxHeight, fontSize: 40)
 			teamBox.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin), y: (self.size.height - 100) - CGFloat(i * 70))
-			teamBox.zPosition = 10
+			teamBox.zPosition = 15
 			teamBoxes.append(teamBox)
 			self.addChild(teamBox)
 			teamGuesses.append(nil)
@@ -75,6 +83,15 @@ class PointlessScene : SKScene {
 		}
 		scoreBars = Array(repeating: nil, count: Settings.shared.numTeams)
 		barEmitters = Array(repeating: nil, count: Settings.shared.numTeams)
+		
+		if let url = Bundle.main.url(forResource: "counter_nosting", withExtension: "wav") {
+			do {
+				try counterPlayer = AVAudioPlayer(contentsOf: url)
+			} catch let error {
+				print(error.localizedDescription)
+			}
+		}
+		counterPlayer?.prepareToPlay()
 	}
 
 	func reset() {
@@ -94,9 +111,13 @@ class PointlessScene : SKScene {
 		barEmitters.forEach {$0?.removeFromParent()}
 		scoreLabels.forEach {$0.removeFromParent()}
 		scoreLabels.removeAll()
-
+		winEmitters.forEach {$0.removeFromParent()}
+		winEmitters.removeAll()
+		
 		scoringTimer?.invalidate()
 		scoringTimer = nil
+		
+		counterPlayer?.stop()
 	}
 	
 	func changeToQuestion(path : String) {
@@ -124,17 +145,21 @@ class PointlessScene : SKScene {
 	}
 	
 	func teamGuess(team : Int, guess : String) {
-		if gameState == .waitForAnswers {
-			self.run(blopSound)
-			webSocket?.pulseTeamColour(team: team)
-			teamGuesses[team] = guess
-			teamBoxes[team].updateText("••••••••")
-			teamBoxes[team].runEntranceFlash()
-			teamBoxes[team].runPop()
-			
-			textAnswers.stringValue = teamGuesses.enumerated().map { (index, answer) in
-				"\(index + 1): \(answer ?? "")"
-			}.joined(separator: "\n")
+		if team < teamGuesses.count {
+			if gameState == .waitForAnswers {
+				self.run(blopSound)
+				webSocket?.pulseTeamColour(team: team)
+				teamGuesses[team] = guess
+				teamBoxes[team].updateText("••••••••")
+				teamBoxes[team].runEntranceFlash()
+				teamBoxes[team].runPop()
+				
+				textAnswers.stringValue = teamGuesses.enumerated().map { (index, answer) in
+					"\(index + 1): \(answer ?? "")"
+				}.joined(separator: "\n")
+			}
+		} else {
+			print("teamGuess: Out of bounds team guess")
 		}
 	}
 	
@@ -144,6 +169,8 @@ class PointlessScene : SKScene {
 			teamBoxes[i].runShimmerEffect()
 		}
 		gameState = .answersRevealed
+		
+		run(showAnswersSound)
 	}
 	
 	func runScoring() {
@@ -152,13 +179,17 @@ class PointlessScene : SKScene {
 			return
 			
 		case .answersRevealed:
+			var atLeastOneWrong = false
+			
 			//Fade to red any teams that are wrong
 			for i in 0..<Settings.shared.numTeams {
 				if !(teamGuesses[i]?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) != nil && answers.contains(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == teamGuesses[i]!.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) })) {
 					teamBoxes[i].fadeBackgroundColor(to: NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.7), duration: 1.0)
 					teamBoxes[i].fadeTextColor(to: .red, duration: 0.7)
+					atLeastOneWrong = true
 				}
 			}
+			if atLeastOneWrong { run(wrongSound) }
 			
 			let correctScores = (0..<Settings.shared.numTeams).compactMap { teamIndex -> Int? in
 				guard let guess = teamGuesses[teamIndex]?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) else { return nil }
@@ -171,6 +202,8 @@ class PointlessScene : SKScene {
 		case .incorrectShown:
 			//Start the scoring process
 			gameState = .runPointless
+
+			counterPlayer?.play()
 			
 			// Prepare bars and emitters for correct teams
 			for i in 0..<Settings.shared.numTeams {
@@ -225,9 +258,10 @@ class PointlessScene : SKScene {
 				  let answer = answers.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == guess.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) })
 			else { continue }
 			let score = answer.1
+			
+			let newWidth = CGFloat((100 - counterValue) * 12) + PointlessScene.barBaseWidth
+			
 			if counterValue > score {
-				
-				let newWidth = CGFloat((100 - counterValue) * 12) + PointlessScene.barBaseWidth
 				let scale = newWidth / PointlessScene.barBaseWidth
 				let action = SKAction.scaleX(to: scale, duration: PointlessScene.tickTime * 0.99)
 				action.timingMode = .linear
@@ -246,7 +280,22 @@ class PointlessScene : SKScene {
 				//Was this a winning bar?
 				if let lowScore = lowestScoreThisRound, score <= lowScore {
 					// This is a winning bar (no-op or handle winner here)
+					counterPlayer?.stop()
+					self.run(score == 0 ? scorePointlessSound : scoreSound)
+					
+					//Star spray for winning bar(s)
+					let em = SKEmitterNode(fileNamed: "StarGlow")!
+					em.position = bar.position
+					em.position.x = em.position.x + newWidth / 2
+					em.zPosition = bar.zPosition - 1
+					em.particleBirthRate = 300
+					em.particleScaleSpeed = 0.5
+					em.particlePositionRange = CGVector(dx: newWidth, dy: PointlessScene.barHeight)
+					self.addChild(em)
+					winEmitters.append(em)
+					
 				} else {
+					run(teamDoneSound)
 					// Stop color oscillation before running white flash
 					bar.removeAction(forKey: "colorOscillation")
 					let flash = SKAction.sequence([
@@ -321,7 +370,7 @@ class PointlessScene : SKScene {
 		text.fontColor = NSColor.white
 		text.horizontalAlignmentMode = .center
 		text.verticalAlignmentMode = .center
-		text.zPosition = 16
+		text.zPosition = 28
 		text.position = CGPoint.zero
 		text.text = "\(teamno)"
 		
@@ -331,14 +380,14 @@ class PointlessScene : SKScene {
 		shadowText.fontColor = NSColor(white: 0, alpha: 1.0)
 		shadowText.horizontalAlignmentMode = .center
 		shadowText.verticalAlignmentMode = .center
-		shadowText.zPosition = 15
+		shadowText.zPosition = 27
 		shadowText.position = CGPoint.zero
 		shadowText.text = "\(teamno)"
 		
 		let textShadow = SKEffectNode()
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
-		textShadow.zPosition = 15
+		textShadow.zPosition = 27
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
 		filter?.setValue(40 / 5.8, forKey: "inputRadius")
@@ -363,6 +412,11 @@ class PointlessScene : SKScene {
 		teamGuess(team: 6, guess: "maria")
 		teamGuess(team: 7, guess: "luigi")
 		
+		teamGuess(team: 10, guess: "elizabeth")
+		
+		teamGuess(team: 12, guess: "anne")
+		teamGuess(team: 13, guess: "brian")
+		teamGuess(team: 14, guess: "charlotte")
 	}
 
 }
