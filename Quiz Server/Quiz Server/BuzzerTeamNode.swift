@@ -307,13 +307,3 @@ class BuzzerTeamNode: SKNode {
 }
 
 
-extension SKEmitterNode {
-	func removeWhenDone() {
-		if (self.numParticlesToEmit != 0) {
-			let ttl = TimeInterval((CGFloat(self.numParticlesToEmit) / self.particleBirthRate) + (self.particleLifetime + (self.particleLifetimeRange / 2.0)))
-			let removeAction = SKAction.sequence([SKAction.wait(forDuration: ttl), SKAction.removeFromParent()])
-			self.run(removeAction)
-		}
-	}
-}
-

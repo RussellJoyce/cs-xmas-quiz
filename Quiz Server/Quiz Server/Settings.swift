@@ -110,3 +110,51 @@ extension SKNode {
 	}
 }
 
+// Convenience to remove emitters when they are done
+extension SKEmitterNode {
+	func removeWhenDone() {
+		if (self.numParticlesToEmit != 0) {
+			let ttl = TimeInterval((CGFloat(self.numParticlesToEmit) / self.particleBirthRate) + (self.particleLifetime + (self.particleLifetimeRange / 2.0)))
+			let removeAction = SKAction.sequence([SKAction.wait(forDuration: ttl), SKAction.removeFromParent()])
+			self.run(removeAction)
+		}
+	}
+}
+
+// Lineear interpolate colour
+func lerp(a : CGFloat, b : CGFloat, fraction : CGFloat) -> CGFloat {
+	return (b-a) * fraction + a
+}
+
+struct ColorComponents {
+	var red = CGFloat(0)
+	var green = CGFloat(0)
+	var blue = CGFloat(0)
+	var alpha = CGFloat(0)
+}
+
+// NSColour extension to use the ColorComponents struct
+extension NSColor {
+	func toComponents() -> ColorComponents {
+		var components = ColorComponents()
+		getRed(&components.red, green: &components.green, blue: &components.blue, alpha: &components.alpha)
+		return components
+	}
+}
+
+// SKAction to transition colours 
+extension SKAction {
+	static func colorTransitionAction(fromColor : NSColor, toColor : NSColor, duration : Double = 0.4) -> SKAction {
+		return SKAction.customAction(withDuration: duration, actionBlock: { (node : SKNode!, elapsedTime : CGFloat) -> Void in
+			let fraction = CGFloat(elapsedTime / CGFloat(duration))
+			let startColorComponents = fromColor.toComponents()
+			let endColorComponents = toColor.toComponents()
+			let transColor = NSColor(red: lerp(a: startColorComponents.red, b: endColorComponents.red, fraction: fraction),
+									 green: lerp(a: startColorComponents.green, b: endColorComponents.green, fraction: fraction),
+									 blue: lerp(a: startColorComponents.blue, b: endColorComponents.blue, fraction: fraction),
+									 alpha: lerp(a: startColorComponents.alpha, b: endColorComponents.alpha, fraction: fraction))
+			(node as? SKShapeNode)?.fillColor = transColor
+		}
+		)
+	}
+}
