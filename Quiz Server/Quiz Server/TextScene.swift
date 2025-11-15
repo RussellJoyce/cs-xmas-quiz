@@ -230,7 +230,7 @@ class TextScene: SKScene {
 			let data = try String(contentsOfFile:file, encoding: String.Encoding.ascii)
 			uniques = data.components(separatedBy: "\n")
 			uniques = uniques!.filter { $0 != "" }
-			uniques = uniques!.map { sanitiseString($0) }
+			uniques = uniques!.map { Utils.sanitiseString($0) }
 			print("Unique correct answers are: ", uniques!)
 		} catch let err as NSError {
 			print(err)
@@ -294,20 +294,7 @@ class TextScene: SKScene {
 			return false
 		}
 	}
-	
-	func sanitiseString(_ input : String) -> String {
-		var str = input.lowercased()
-		str = str.trimmingCharacters(in: .whitespacesAndNewlines)
-		str = str.trimmingCharacters(in: .punctuationCharacters)
-		str = str.trimmingCharacters(in: .symbols)
-		str = str.replacingOccurrences(of: "\"", with: "")
-		str = str.replacingOccurrences(of: "\'", with: "")
-		str = str.replacingOccurrences(of: "-", with: " ")
-		str = str.replacingOccurrences(of: "&", with: " ")
-		str = str.replacingOccurrences(of: "(", with: "")
-		str = str.replacingOccurrences(of: ")", with: "")
-		return str
-	}
+
 	
 	func scoreUnique() {
 		if let uniques = uniques {
@@ -316,7 +303,7 @@ class TextScene: SKScene {
 			//Convert team guesses to a comparable format
 			for team in 0..<Settings.shared.numTeams {
 				if teamGuesses[team] != nil {
-					teamGuesses[team]!.guess = sanitiseString(teamGuesses[team]!.guess);
+					teamGuesses[team]!.guess = Utils.sanitiseString(teamGuesses[team]!.guess);
 				}
 			}
 			

@@ -64,16 +64,6 @@ class TimerScene: SKScene {
 		filternode.addChild(bgImage)
 		self.addChild(filternode)
 		
-		
-		
-		let pulseupaction = SKAction.customAction(withDuration: 0.15, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: "inputEV")
-		})
-		
-		let pulsednaction = SKAction.customAction(withDuration: 0.25, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue(1 + (0.25 - time)*3, forKey: "inputEV")
-		})
-		
 		let mainaction = SKAction.run({ () -> Void in
 			let lednum = Int(200.0 * Float(self.time) / 60.0)
 			   webSocket?.setCounterValue(val: lednum)
@@ -93,23 +83,7 @@ class TimerScene: SKScene {
 			   }
 		   })
 		
-		
-		pulseupaction.timingMode = .easeInEaseOut
-		pulsednaction.timingMode = .easeInEaseOut
-		
-		pulseAction = SKAction.sequence([
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = false
-			}),
-			pulseupaction,
-			tickSound,
-			mainaction,
-			pulsednaction,
-			SKAction.run({ () -> Void in
-				self.filternode.shouldRasterize = true
-			})
-		])
-		
+		pulseAction = Utils.createFilterPulse(upTime: 0.15, downTime: 0.25, filterNode: filternode, extraAction: SKAction.sequence([tickSound, mainaction]))
 		pulseActionNoTick = mainaction
 
 		mainNode.position = CGPoint(x: 750, y: self.size.height - 360)

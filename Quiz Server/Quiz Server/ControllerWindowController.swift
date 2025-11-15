@@ -96,8 +96,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		//Connect any output UI elements
 		quizView.scoresScene.output = scoresOutput
-		quizView.pointlessScene.textAnswers = pointlessTextAnswers
 		quizView.pointlessScene.textQuestion = pointlessTextQuestion
+		quizView.pointlessScene.answerTable = pointlessTable
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -794,6 +794,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var pointlessTextQuestion: NSTextField!
 	@IBOutlet weak var pointlessTextAnswers: NSTextField!
 	@IBOutlet weak var pointlessAllowAnswers: NSButton!
+	@IBOutlet var pointlessTable: NSTableView!
 	
 	@IBAction func pointlessShowAnswers(_ sender: Any) {
 		quizView.pointlessScene.showAnswers()
@@ -815,5 +816,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBAction func pointlessTest(_ sender: Any) {
 		quizView.pointlessScene.debugTest()
 	}
+	
+	@IBAction func pointlessTableChange(_ sender: Any) {
+	}
+	
 }
 

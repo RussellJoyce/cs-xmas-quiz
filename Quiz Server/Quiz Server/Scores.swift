@@ -146,29 +146,6 @@ class ScoresScene: SKScene {
 		displayIndex = 0
 	}
 	
-	func numberAsEmoji(_ n: Int) -> String {
-		func conv(_ n: Int) -> String {
-			switch n {
-			case 0: return "0️⃣"
-			case 1: return "1️⃣"
-			case 2: return "2️⃣"
-			case 3: return "3️⃣"
-			case 4: return "4️⃣"
-			case 5: return "5️⃣"
-			case 6: return "6️⃣"
-			case 7: return "7️⃣"
-			case 8: return "8️⃣"
-			case 9: return "9️⃣"
-			default: return ""
-			}
-		}
-		if n > 10 {
-			return conv(n/10) + conv(n%10)
-		} else {
-			return conv(n)
-		}
-	}
-	
 	
 	func next() {
 		
@@ -176,7 +153,7 @@ class ScoresScene: SKScene {
 			//Add a team box
 			//BuzzerTeamNode expects team number to be zero based
 			let s = scores[displayIndex]
-			let box = BuzzerTeamNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, glowType: "StarGlow", entranceShimmer: true, altText: "\(numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
+			let box = BuzzerTeamNode(team: s.1 - 1, width: 1000, height: 150, fontSize: 80, addGlow: true, glowType: "StarGlow", entranceShimmer: true, altText: "\(Utils.numberAsEmoji(s.0))  Team \(s.1): \(s.2) points")
 			box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 200)
 			box.zPosition = 1
 			teamBoxes.append(box)

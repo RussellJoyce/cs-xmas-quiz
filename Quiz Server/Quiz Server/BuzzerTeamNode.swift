@@ -216,7 +216,7 @@ class BuzzerTeamNode: SKNode {
 		glow?.particleBirthRate = 0
 	}
 	
-	func runShimmerEffect(shimmerWidth : CGFloat = 100.0) {
+	func runShimmerEffect(shimmerWidth : CGFloat = 200.0, duration : TimeInterval = 0.3) {
 	    // Parameters for the shimmer angle and size
 		let shimmerHeight = CGFloat(self.height)
 	    let texture = BuzzerTeamNode.makeAngledGradientTexture(width: shimmerWidth, height: shimmerHeight)
@@ -229,9 +229,9 @@ class BuzzerTeamNode: SKNode {
 	    self.addChild(shimmer)
 
 	    // Animate shimmer
-		let move = SKAction.moveBy(x: CGFloat(self.width)-shimmerWidth, y: 0, duration: 0.3)
+		let move = SKAction.moveBy(x: CGFloat(self.width)-shimmerWidth, y: 0, duration: duration)
 		move.timingMode = .easeOut
-	    let fade = SKAction.fadeOut(withDuration: 0.7)
+		let fade = SKAction.fadeOut(withDuration: 0.7)
 	    let group = SKAction.group([move, fade])
 	    let sequence = SKAction.sequence([group, SKAction.removeFromParent()])
 	    shimmer.run(sequence)
@@ -252,7 +252,7 @@ class BuzzerTeamNode: SKNode {
 	    let locations: [CGFloat] = [0.0, 0.2, 0.3, 1.0]
 	    let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations)!
 
-	    let start = CGPoint(x: 200, y: height/2-10)
+	    let start = CGPoint(x: 200, y: height/2-15)
 	    let end = CGPoint(x: 0, y: height/2)
 	    context.drawLinearGradient(gradient, start: start, end: end, options: [])
 	    image.unlockFocus()

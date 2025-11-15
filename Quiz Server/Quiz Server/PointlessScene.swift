@@ -13,16 +13,19 @@ import SpriteKit
 import Starscream
 import AVFoundation
 
-class PointlessScene : SKScene {
-	
+class PointlessScene : SKScene, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
+
+	//Connections from the UI and rest of the app
+	var textQuestion: NSTextField!
+	var answerTable : NSTableView!
 	private var webSocket : WebSocket?
+	
+	//Internal vars
 	private var setUp = false
 	private var teamBoxes = [BuzzerTeamNode]()
 	private var teamGuesses = [String?]()
 	private var questionTitle : String?
 	private var answers = [(String, Int)]()
-	var textQuestion: NSTextField!
-	var textAnswers: NSTextField!
 	private var counter : OutlinedLabelNode?
 	private var scoreBars = [SKShapeNode?]()
 	private var barEmitters = [SKEmitterNode?]()
@@ -30,18 +33,24 @@ class PointlessScene : SKScene {
 	private var winEmitters = [SKEmitterNode]()
 	private var scoringTimer: Timer?
 	private var lowestScoreThisRound : Int?
+	private var teamScores = [Int?]() // nil means either no answer, or an incorrect answer. Scores are 100 down to 0
+	private let filternode = SKEffectNode()
+	private var pulseAction, pulseActionSmall : SKAction!
 	
 	enum PointlessGameState {case waitForAnswers, answersRevealed, incorrectShown, runPointless, done}
 	private var gameState : PointlessGameState = .waitForAnswers
 	
+	//Media
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let scoreSound = SKAction.playSoundFileNamed("counter_score", waitForCompletion: false)
 	let scorePointlessSound = SKAction.playSoundFileNamed("counter_score2", waitForCompletion: false)
 	let showAnswersSound = SKAction.playSoundFileNamed("display_sweep", waitForCompletion: false)
 	let teamDoneSound = SKAction.playSoundFileNamed("circle_illuminates", waitForCompletion: false)
 	let wrongSound = SKAction.playSoundFileNamed("counter_wrong", waitForCompletion: false)
+	let manualEditSound = SKAction.playSoundFileNamed("quietbuzz2", waitForCompletion: false)
 	private var counterPlayer: AVAudioPlayer? = nil
 	
+	//Layout constants
 	static let teamBoxHeight = 60
 	static let barHeight = CGFloat(teamBoxHeight - 6)
 	static let teamBoxWidth = 450
@@ -61,14 +70,24 @@ class PointlessScene : SKScene {
 		self.size = size
 		self.webSocket = webSocket
 		teamGuesses = [String?]()
+		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
 		
-		let bgImage = SKSpriteNode(imageNamed: "background2")
+		let bgImage = SKSpriteNode(imageNamed: "purple-texture-blurred")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
-		self.addChild(bgImage)
 	
-		//Add 16 team nodes down the left side of the screen
+		//Add exposure filter to background image node
+		let exfilter = CIFilter(name: "CIExposureAdjust")
+		exfilter?.setDefaults()
+		exfilter?.setValue(1, forKey: "inputEV")
+		filternode.filter = exfilter
+		filternode.addChild(bgImage)
+		self.addChild(filternode)
+		pulseAction = Utils.createFilterPulse(upTime: 0.15, downTime: 1.0, filterNode: filternode)
+		pulseActionSmall = Utils.createFilterPulse(upTime: 0.10, downTime: 0.25, filterNode: filternode)
+		
+		//Add team nodes down the left side of the screen
 		for i in 0..<Settings.shared.numTeams {
 			let teamBox = BuzzerTeamNode(team: i, width: PointlessScene.teamBoxWidth, height: PointlessScene.teamBoxHeight, fontSize: 40)
 			teamBox.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin), y: (self.size.height - 100) - CGFloat(i * 70))
@@ -83,6 +102,36 @@ class PointlessScene : SKScene {
 		}
 		scoreBars = Array(repeating: nil, count: Settings.shared.numTeams)
 		barEmitters = Array(repeating: nil, count: Settings.shared.numTeams)
+		
+		// Setup the answerTable with 3 columns: Team, Guess, Score
+		if answerTable != nil {
+			// Remove all existing columns
+			for column in answerTable.tableColumns {
+				answerTable.removeTableColumn(column)
+			}
+			
+			// Team Number column
+			let teamColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("TeamColumn"))
+			teamColumn.title = "Team"
+			teamColumn.width = 40
+			answerTable.addTableColumn(teamColumn)
+			
+			// Guess column
+			let guessColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("GuessColumn"))
+			guessColumn.title = "Guess"
+			guessColumn.width = 150
+			answerTable.addTableColumn(guessColumn)
+			
+			// Score column (editable)
+			let scoreColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("ScoreColumn"))
+			scoreColumn.title = "Score"
+			scoreColumn.width = 50
+			answerTable.addTableColumn(scoreColumn)
+			
+			answerTable.delegate = self
+			answerTable.dataSource = self
+			answerTable.reloadData()
+		}
 		
 		if let url = Bundle.main.url(forResource: "counter_nosting", withExtension: "wav") {
 			do {
@@ -101,7 +150,6 @@ class PointlessScene : SKScene {
 			teamBoxes[team].updateText("Team \(team + 1)")
 			teamBoxes[team].resetTeamColour()
 		}
-		textAnswers.stringValue = ""
 		gameState = .waitForAnswers
 		
 		counter?.removeFromParent()
@@ -118,6 +166,10 @@ class PointlessScene : SKScene {
 		scoringTimer = nil
 		
 		counterPlayer?.stop()
+		counterPlayer?.currentTime = 0
+		
+		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
+		answerTable?.safeReloadData()
 	}
 	
 	func changeToQuestion(path : String) {
@@ -133,12 +185,14 @@ class PointlessScene : SKScene {
 				let parts = line.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
 				if parts.count == 2,
 				   let intValue = Int(parts[1].trimmingCharacters(in: .whitespaces)) {
-					let strValue = String(parts[0]).trimmingCharacters(in: .whitespaces)
+					let strValue = String(parts[0]).lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 					answers.append((strValue, intValue))
 				}
 			}
 			
+			teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
 			textQuestion.stringValue = questionTitle! + "\n" + answers.map({"\($0): \($1)"}).joined(separator: "\n")
+			answerTable?.safeReloadData()
 		} catch let err as NSError {
 			print(err)
 		}
@@ -153,10 +207,17 @@ class PointlessScene : SKScene {
 				teamBoxes[team].updateText("••••••••")
 				teamBoxes[team].runEntranceFlash()
 				teamBoxes[team].runPop()
+
+				//Recalculate team score
+				let guessSane = guess.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+				let cas = answers.filter({ $0.0 == guessSane })
+				if !cas.isEmpty {
+					teamScores[team] = cas.first?.1
+				} else {
+					teamScores[team] = nil
+				}
 				
-				textAnswers.stringValue = teamGuesses.enumerated().map { (index, answer) in
-					"\(index + 1): \(answer ?? "")"
-				}.joined(separator: "\n")
+				answerTable?.safeReloadData()
 			}
 		} else {
 			print("teamGuess: Out of bounds team guess")
@@ -166,7 +227,7 @@ class PointlessScene : SKScene {
 	func showAnswers() {
 		for i in 0..<Settings.shared.numTeams {
 			teamBoxes[i].updateText((teamGuesses[i] ?? ""))
-			teamBoxes[i].runShimmerEffect()
+			teamBoxes[i].runShimmerEffect(shimmerWidth: 300, duration: 0.5)
 		}
 		gameState = .answersRevealed
 		
@@ -183,7 +244,7 @@ class PointlessScene : SKScene {
 			
 			//Fade to red any teams that are wrong
 			for i in 0..<Settings.shared.numTeams {
-				if !(teamGuesses[i]?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) != nil && answers.contains(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == teamGuesses[i]!.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) })) {
+				if teamScores[i] == nil {
 					teamBoxes[i].fadeBackgroundColor(to: NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.7), duration: 1.0)
 					teamBoxes[i].fadeTextColor(to: .red, duration: 0.7)
 					atLeastOneWrong = true
@@ -191,25 +252,17 @@ class PointlessScene : SKScene {
 			}
 			if atLeastOneWrong { run(wrongSound) }
 			
-			let correctScores = (0..<Settings.shared.numTeams).compactMap { teamIndex -> Int? in
-				guard let guess = teamGuesses[teamIndex]?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) else { return nil }
-				return answers.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == guess })?.1
-			}
-			lowestScoreThisRound = correctScores.min()
-			
+			lowestScoreThisRound = teamScores.compactMap({$0}).min()
 			gameState = .incorrectShown
 			
 		case .incorrectShown:
 			//Start the scoring process
 			gameState = .runPointless
-
 			counterPlayer?.play()
 			
 			// Prepare bars and emitters for correct teams
 			for i in 0..<Settings.shared.numTeams {
-				// Find team's guess and associated score
-				if let guess = teamGuesses[i]?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines),
-				   let _ = answers.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == guess }) {
+				if let _ = teamScores[i] { //If has correct answer
 					let barNode = SKShapeNode()
 					barNode.fillColor = PointlessScene.barColour
 					barNode.strokeColor = .clear
@@ -254,12 +307,9 @@ class PointlessScene : SKScene {
 		for i in 0..<Settings.shared.numTeams {
 			guard let bar = scoreBars.indices.contains(i) ? scoreBars[i] : nil,
 				  let emitter = barEmitters.indices.contains(i) ? barEmitters[i] : nil,
-				  let guess = teamGuesses.indices.contains(i) ? teamGuesses[i] : nil,
-				  let answer = answers.first(where: { $0.0.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == guess.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) })
+				  let score = teamScores[i]
 			else { continue }
-			let score = answer.1
-			
-			let newWidth = CGFloat((100 - counterValue) * 12) + PointlessScene.barBaseWidth
+			let newWidth = CGFloat((100 - counterValue) * 11) + PointlessScene.barBaseWidth
 			
 			if counterValue > score {
 				let scale = newWidth / PointlessScene.barBaseWidth
@@ -283,6 +333,8 @@ class PointlessScene : SKScene {
 					counterPlayer?.stop()
 					self.run(score == 0 ? scorePointlessSound : scoreSound)
 					
+					filternode.run(pulseAction)
+					
 					//Star spray for winning bar(s)
 					let em = SKEmitterNode(fileNamed: "StarGlow")!
 					em.position = bar.position
@@ -296,6 +348,8 @@ class PointlessScene : SKScene {
 					
 				} else {
 					run(teamDoneSound)
+					filternode.run(pulseActionSmall)
+					
 					// Stop color oscillation before running white flash
 					bar.removeAction(forKey: "colorOscillation")
 					let flash = SKAction.sequence([
@@ -412,12 +466,162 @@ class PointlessScene : SKScene {
 		teamGuess(team: 6, guess: "maria")
 		teamGuess(team: 7, guess: "luigi")
 		
-		teamGuess(team: 10, guess: "elizabeth")
+		teamGuess(team: 10, guess: "plimplington")
 		
 		teamGuess(team: 12, guess: "anne")
 		teamGuess(team: 13, guess: "brian")
-		teamGuess(team: 14, guess: "charlotte")
 	}
 
+	// MARK: - NSTableViewDataSource
+	
+	func numberOfRows(in tableView: NSTableView) -> Int {
+		return Settings.shared.numTeams
+	}
+	
+	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+		guard row < Settings.shared.numTeams else { return nil }
+		guard let identifier = tableColumn?.identifier.rawValue else { return nil }
+		
+		switch identifier {
+		case "TeamColumn":
+			return "\(row + 1)"
+		case "GuessColumn":
+			return teamGuesses.indices.contains(row) ? (teamGuesses[row] ?? "") : ""
+		case "ScoreColumn":
+			if let score = teamScores.indices.contains(row) ? teamScores[row] : nil {
+				return "\(score)"
+			} else {
+				return ""
+			}
+		default:
+			return nil
+		}
+	}
+
+	
+	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+		guard row < Settings.shared.numTeams else { return nil }
+		guard let identifier = tableColumn?.identifier.rawValue else { return nil }
+		
+		let text: String
+		switch identifier {
+		case "TeamColumn":
+			text = "\(row + 1)"
+		case "GuessColumn":
+			text = teamGuesses.indices.contains(row) ? (teamGuesses[row] ?? "") : ""
+		case "ScoreColumn":
+			if let score = teamScores.indices.contains(row) ? teamScores[row] : nil {
+				text = "\(score)"
+			} else {
+				text = ""
+			}
+		default:
+			text = ""
+		}
+		
+		let cellIdentifier = NSUserInterfaceItemIdentifier("Cell_\(identifier)")
+		var cellView = tableView.makeView(withIdentifier: cellIdentifier, owner: self) as? NSTableCellView
+		
+		if cellView == nil {
+			cellView = NSTableCellView()
+			cellView!.identifier = cellIdentifier
+			
+			let textField = NSTextField()
+			textField.translatesAutoresizingMaskIntoConstraints = false
+			cellView!.addSubview(textField)
+			
+			NSLayoutConstraint.activate([
+				textField.leadingAnchor.constraint(equalTo: cellView!.leadingAnchor, constant: 2),
+				textField.trailingAnchor.constraint(equalTo: cellView!.trailingAnchor, constant: -2),
+				textField.topAnchor.constraint(equalTo: cellView!.topAnchor),
+				textField.bottomAnchor.constraint(equalTo: cellView!.bottomAnchor)
+			])
+			
+			// Configure textField properties, editable only for Score column
+			textField.isBordered = false
+			textField.backgroundColor = .clear
+			textField.isEditable = (identifier == "ScoreColumn")
+			textField.font = NSFont.systemFont(ofSize: 13)
+			textField.delegate = self
+			
+			if identifier == "ScoreColumn" {
+				// Set tag and action/target for editable Score column cells
+				textField.tag = row
+				textField.action = #selector(scoreTextFieldDidEndEditing(_:))
+				textField.target = self
+			} else {
+				textField.tag = 0
+				textField.action = nil
+				textField.target = nil
+			}
+			
+			cellView!.textField = textField
+		} else {
+			// Update tag and action/target for existing Score column cells (to handle cell reuse)
+			if let textField = cellView?.textField {
+				textField.isEditable = (identifier == "ScoreColumn")
+				if identifier == "ScoreColumn" {
+					textField.tag = row
+					textField.action = #selector(scoreTextFieldDidEndEditing(_:))
+					textField.target = self
+				} else {
+					textField.tag = 0
+					textField.action = nil
+					textField.target = nil
+				}
+			}
+		}
+		
+		cellView!.textField?.stringValue = text
+		
+		return cellView
+	}
+	
+	@objc private func scoreTextFieldDidEndEditing(_ sender: NSTextField) {
+		let row = sender.tag
+		guard row < Settings.shared.numTeams else { return }
+		
+		let strValue = sender.stringValue
+		if let intVal = Int(strValue.trimmingCharacters(in: .whitespaces)), intVal >= 0 {
+			teamScores[row] = intVal
+		} else if strValue.isEmpty {
+			teamScores[row] = nil
+		}
+		run(manualEditSound)
+		
+		answerTable?.safeReloadData()
+	}
+
+	
+
+	//Note: Appears unneccesary if we use scoreTextFieldDidEndEditing above
+	/*func tableView(_ tableView: NSTableView, setObjectValue object: Any?, for tableColumn: NSTableColumn?, row: Int) {
+		guard row < Settings.shared.numTeams else { return }
+		guard let identifier = tableColumn?.identifier.rawValue else { return }
+		
+		print("We are in tableView:setObjectValue:for:row:")
+		
+		if identifier == "ScoreColumn" {
+			if let strValue = object as? String,
+			   let intVal = Int(strValue.trimmingCharacters(in: .whitespaces)),
+			   intVal >= 0 {
+				// Update teamScores override
+				if teamScores.indices.contains(row) {
+					teamScores[row] = intVal
+					// Reload the table to update display
+					tableView.safeReloadData()
+				}
+			} else if object == nil || (object as? String)?.isEmpty == true {
+				// Clear override if empty string
+				if teamScores.indices.contains(row) {
+					teamScores[row] = nil
+					tableView.safeReloadData()
+				}
+			}
+		}
+	}*/
+	
 }
+
+
 
