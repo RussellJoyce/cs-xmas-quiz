@@ -43,9 +43,7 @@ class BuzzerScene: SKScene {
 
 
 	func setUpScene(size: CGSize, webSocket: WebSocket?) {
-		if setUp {
-			return
-		}
+		if setUp { return }
 		setUp = true
 		
 		self.size = size
@@ -60,52 +58,26 @@ class BuzzerScene: SKScene {
 		exfilter?.setDefaults()
 		exfilter?.setValue(0, forKey: "inputEV")
 		filternode.filter = exfilter
-		filternode.shouldRasterize = true
 		filternode.addChild(bgImage)
 		self.addChild(filternode)
 		
-		let pulseupaction = SKAction.customAction(withDuration: 0.05, actionBlock: {
-			(node, time) -> Void in (node as! SKEffectNode).filter!.setValue((time*3), forKey: "inputEV")
-			self.filternode.shouldRasterize = false
-			self.filternode.shouldRasterize = true
+		let mainAction = SKAction.run({ () -> Void in
+			self.ledcount = self.ledcount + (100/Float(self.starttime))
+			self.ledcount -= floor(self.ledcount)
+			self.time -= 1
+			if(self.time == 0) {
+				self.timer?.invalidate()
+				self.run(self.hornSound)
+				let p = SKEmitterNode(fileNamed: "SparksUp2")!
+				p.position = CGPoint(x: self.centrePoint.x, y: 0)
+				p.zPosition = 2
+				p.removeWhenDone()
+				self.addChild(p)
+			}
 		})
-		
-		let pulsednaction = SKAction.customAction(withDuration: 0.25, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue((0.25 - time)*3, forKey: "inputEV")
-			self.filternode.shouldRasterize = false
-			self.filternode.shouldRasterize = true
-		})
-		
-		let makeNotRaster = SKAction.run({() -> Void in self.filternode.shouldRasterize = false})
-		let makeRaster = SKAction.run({() -> Void in self.filternode.shouldRasterize = true})
-		
-		pulseupaction.timingMode = .easeOut
-		pulsednaction.timingMode = .easeOut
-		
-		pulseAction = SKAction.sequence([
-			makeNotRaster,
-			pulseupaction,
-			tickSound,
-			SKAction.run({ () -> Void in
-				self.ledcount = self.ledcount + (100/Float(self.starttime))
-				self.ledcount -= floor(self.ledcount)
-				self.time -= 1
-				if(self.time == 0) {
-					self.timer?.invalidate()
-					self.run(self.hornSound)
-					let p = SKEmitterNode(fileNamed: "SparksUp2")!
-					p.position = CGPoint(x: self.centrePoint.x, y: 0)
-					p.zPosition = 2
-					p.removeWhenDone()
-					self.addChild(p)
-				}
-			}),
-			pulsednaction,
-			makeRaster
-		])
-		
-		//Pulse for when a team buzzes
-		buzzPulseAction = SKAction.sequence([makeNotRaster, pulseupaction, pulsednaction, makeRaster])
+	
+		pulseAction = Utils.createFilterPulse(upTime: 0.05, downTime: 0.25, filterNode: filternode, extraAction: SKAction.sequence([tickSound, mainAction]))
+		buzzPulseAction = Utils.createFilterPulse(upTime: 0.05, downTime: 0.25, filterNode: filternode)
 		
 		//Load any alternative Buzzer sounds
 		do {
@@ -243,11 +215,4 @@ class BuzzerScene: SKScene {
 		filternode.run(pulseAction!)
 	}
 	
-}
-
-
-extension SKNode {
-	var centrePoint: CGPoint {
-		return CGPoint(x:self.frame.midX, y:self.frame.midY)
-	}
 }

@@ -31,10 +31,10 @@ final class Utils {
 		let exAc : SKAction = (extraAction == nil ? SKAction() : extraAction!)
 		
 		let pulseupaction = SKAction.customAction(withDuration: upTime, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue(1 + (time*3), forKey: filterKey)
+			(node as! SKEffectNode).filter!.setValue((time*3), forKey: filterKey)
 		})
 		let pulsednaction = SKAction.customAction(withDuration: downTime, actionBlock: {(node, time) -> Void in
-			(node as! SKEffectNode).filter!.setValue(1 + (downTime - time)*3, forKey: filterKey)
+			(node as! SKEffectNode).filter!.setValue((downTime - time)*3, forKey: filterKey)
 		})
 		pulseupaction.timingMode = .easeInEaseOut
 		pulsednaction.timingMode = .easeInEaseOut
@@ -100,5 +100,10 @@ extension NSTableView {
 	}
 }
 
-
+// Add a centrePoint convenience method
+extension SKNode {
+	var centrePoint: CGPoint {
+		return CGPoint(x:self.frame.midX, y:self.frame.midY)
+	}
+}
 

@@ -80,7 +80,7 @@ class PointlessScene : SKScene, NSTableViewDataSource, NSTableViewDelegate, NSTe
 		//Add exposure filter to background image node
 		let exfilter = CIFilter(name: "CIExposureAdjust")
 		exfilter?.setDefaults()
-		exfilter?.setValue(1, forKey: "inputEV")
+		exfilter?.setValue(0, forKey: "inputEV")
 		filternode.filter = exfilter
 		filternode.addChild(bgImage)
 		self.addChild(filternode)
