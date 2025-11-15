@@ -56,6 +56,12 @@ class MusicScene: SKScene {
         lastMusicUpdateTime = currentTime
         
         if music?.isPlaying ?? false {
+			music?.updateMeters()
+			let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
+			let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
+			let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
+			let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
+			
 			webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
         }
     }
