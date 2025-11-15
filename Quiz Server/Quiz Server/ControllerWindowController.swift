@@ -80,7 +80,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var tabitemScores: NSTabViewItem!
 	@IBOutlet var tabitemPointless: NSTabViewItem!
 	
-	//General
+	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
 	var quizScreen: NSScreen?
 	var windowedMode = true
@@ -345,7 +345,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
 	
 	//--------------------------------------------------------------------------------------------------------------------------
-	//Websockets
+	//MARK: - Websockets
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	var socket = WebSocket(request: URLRequest(url: URL(string: "ws://localhost:8091/")!))
@@ -525,10 +525,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	
 	//--------------------------------------------------------------------------------------------------------------------------
-	// Round-specific controls and actions
+	//MARK: - Round-specific controls and actions
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	//Buzzer
+	//MARK: - Buzzer
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet weak var buzzerSounds: NSButton!
@@ -550,7 +550,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
-	//Music/Video
+	//MARK: - Music/Video
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet weak var buzzcocksMode: NSButton!
@@ -605,7 +605,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
-	//Timer
+	//MARK: - Timer
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet weak var timerShowCounter: NSButton!
@@ -635,7 +635,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
-	//Text and numbers
+	//MARK: - Text and numbers
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet var textAllowAnswers: NSButton!
@@ -679,7 +679,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
-	//Scores
+	//MARK: - Scores
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet var scoresOutput: NSTextField!
@@ -702,7 +702,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 
-	//True/False
+	//MARK: - True/False
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet weak var trueButton: NSButton!
@@ -741,12 +741,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
 	}
 	
-	//Test
+	//MARK: - Test
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 
 	
-	//Geography
+	//MARK: - Geography
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet var skip1: NSButton!
@@ -788,7 +788,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
-	//Pointless
+	//MARK: - Pointless
 	//--------------------------------------------------------------------------------------------------------------------------
 	@IBOutlet weak var pointlessQuestionSelector: NSPopUpButton!
 	@IBOutlet weak var pointlessTextQuestion: NSTextField!

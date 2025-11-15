@@ -8,6 +8,8 @@
 
 import SpriteKit
 
+// MARK: - Settings
+
 final class Settings {
 	static let shared = Settings()
 	private init() {}
@@ -23,7 +25,7 @@ final class Settings {
 }
 
 
-
+// MARK: - Utils
 final class Utils {
 	
 	static func createFilterPulse(upTime : TimeInterval, downTime : TimeInterval, filterNode : SKEffectNode, extraAction : SKAction? = nil, filterKey : String = "inputEV") -> SKAction {
@@ -90,6 +92,7 @@ final class Utils {
 	
 }
 
+// MARK: - Extensions
 
 // Extension to safely reload NSTableView data on main thread
 extension NSTableView {
