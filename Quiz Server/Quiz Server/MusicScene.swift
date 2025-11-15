@@ -26,7 +26,14 @@ class MusicScene: SKScene {
 	var webSocket : WebSocket?
 	var video: SKVideoNode?
 	var videoEffect = SKEffectNode()
+	
+	private var lastMusicUpdateTime: TimeInterval = 0
+	private let musicUpdateFPS: Double = 15.0
 
+	private var avgPowerBarLeft: SKShapeNode?
+	private var avgPowerBarRight: SKShapeNode?
+	private var peakMarkerLeft: SKShapeNode?
+	private var peakMarkerRight: SKShapeNode?
 	
 	var lastAltBuzzIndex = 0
 	
@@ -34,16 +41,21 @@ class MusicScene: SKScene {
         return pow(10.0, min(power, 0.0)/20.0)
     }
     
+	func boostPower(power: Float) -> Float {
+		let new = power * 1.3
+		return new > 1.0 ? 1.0 : new
+	}
+	
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         
+        let dt = currentTime - lastMusicUpdateTime
+        if dt < (1.0 / musicUpdateFPS) {
+            return
+        }
+        lastMusicUpdateTime = currentTime
+        
         if music?.isPlaying ?? false {
-            music?.updateMeters()
-            let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
-            let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
-            let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
-            let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
-            
 			webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
         }
     }
@@ -66,15 +78,6 @@ class MusicScene: SKScene {
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		self.addChild(bgImage)
-		
-		videoEffect.name = "videoEffect"
-		videoEffect.filter = CIFilter(name: "CIGaussianBlur")
-		videoEffect.filter?.setDefaults()
-		videoEffect.filter?.setValue(0, forKey: "inputRadius")
-		videoEffect.shouldEnableEffects = true
-		videoEffect.zPosition = 1000
-		self.addChild(videoEffect)
-		
 	}
 	
 	func buzzSound() {
@@ -265,4 +268,81 @@ class MusicScene: SKScene {
 		video?.removeFromParent()
 		video = nil
 	}
+	
+	func addMonitorBars() {
+		let barWidth: CGFloat = 30
+		let barYOffset: CGFloat = size.height * 0.1
+		// Left channel avg bar
+		let avgBarLeftRect = CGRect(x: 20, y: barYOffset, width: barWidth, height: 10)
+		let avgBarLeft = SKShapeNode(rect: avgBarLeftRect, cornerRadius: 8)
+		avgBarLeft.fillColor = .green
+		avgBarLeft.strokeColor = .clear
+		avgBarLeft.zPosition = 10
+		self.avgPowerBarLeft = avgBarLeft
+		self.addChild(avgBarLeft)
+		// Left channel peak marker
+		let peakMarkerLeftRect = CGRect(x: 15, y: barYOffset, width: barWidth + 10, height: 4)
+		let peakMarkerLeft = SKShapeNode(rect: peakMarkerLeftRect, cornerRadius: 2)
+		peakMarkerLeft.fillColor = .white
+		peakMarkerLeft.strokeColor = .clear
+		peakMarkerLeft.zPosition = 11
+		self.peakMarkerLeft = peakMarkerLeft
+		self.addChild(peakMarkerLeft)
+		// Right channel avg bar
+		let avgBarRightRect = CGRect(x: 70, y: barYOffset, width: barWidth, height: 10)
+		let avgBarRight = SKShapeNode(rect: avgBarRightRect, cornerRadius: 8)
+		avgBarRight.fillColor = .green
+		avgBarRight.strokeColor = .clear
+		avgBarRight.zPosition = 10
+		self.avgPowerBarRight = avgBarRight
+		self.addChild(avgBarRight)
+		// Right channel peak marker
+		let peakMarkerRightRect = CGRect(x: 65, y: barYOffset, width: barWidth + 10, height: 4)
+		let peakMarkerRight = SKShapeNode(rect: peakMarkerRightRect, cornerRadius: 2)
+		peakMarkerRight.fillColor = .white
+		peakMarkerRight.strokeColor = .clear
+		peakMarkerRight.zPosition = 11
+		self.peakMarkerRight = peakMarkerRight
+		self.addChild(peakMarkerRight)
+	}
+	
+	
+	func updateMonitors() {
+		music?.updateMeters()
+		let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
+		let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
+		let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
+		let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
+		
+		let maxBarHeight = self.size.height * 0.8
+		let barYOffset = self.size.height * 0.1
+	
+		let peakLBoosted = boostPower(power: peakL)
+		let peakRBoosted = boostPower(power: peakR)
+		let avgLBoosted = boostPower(power: avgL)
+		let avgRBoosted = boostPower(power: avgR)
+		
+		// Left channel avg bar and marker
+		if let avgBar = avgPowerBarLeft {
+			let h = CGFloat(avgLBoosted) * maxBarHeight
+			avgBar.path = CGPath(roundedRect: CGRect(x: 20, y: barYOffset, width: 30, height: max(10, h)), cornerWidth: 8, cornerHeight: 8, transform: nil)
+			avgBar.fillColor = NSColor(calibratedRed: CGFloat(avgLBoosted), green: 1.0 - CGFloat(avgL), blue: 0.0, alpha: 1.0)
+		}
+		if let marker = peakMarkerLeft {
+			let y = barYOffset + CGFloat(peakLBoosted) * maxBarHeight
+			marker.path = CGPath(roundedRect: CGRect(x: 15, y: y, width: 40, height: 4), cornerWidth: 2, cornerHeight: 2, transform: nil)
+		}
+		// Right channel avg bar and marker
+		if let avgBar = avgPowerBarRight {
+			let h = CGFloat(avgRBoosted) * maxBarHeight
+			avgBar.path = CGPath(roundedRect: CGRect(x: 70, y: barYOffset, width: 30, height: max(10, h)), cornerWidth: 8, cornerHeight: 8, transform: nil)
+			avgBar.fillColor = NSColor(calibratedRed: CGFloat(avgRBoosted), green: 1.0 - CGFloat(avgR), blue: 0.0, alpha: 1.0)
+		}
+		if let marker = peakMarkerRight {
+			let y = barYOffset + CGFloat(peakRBoosted) * maxBarHeight
+			marker.path = CGPath(roundedRect: CGRect(x: 65, y: y, width: 40, height: 4), cornerWidth: 2, cornerHeight: 2, transform: nil)
+		}
+	}
+	
 }
+
