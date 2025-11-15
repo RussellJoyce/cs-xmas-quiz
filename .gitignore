@@ -30,5 +30,6 @@ node_modules
 Music/*
 nodeserver/static/geography/*
 Unique/*
+Pointless/*
 
 quizleds/src/credentials.h
