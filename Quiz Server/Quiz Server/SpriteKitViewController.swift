@@ -40,6 +40,11 @@ class SpriteKitViewController: NSViewController {
 	
 		skView.ignoresSiblingOrder = true
 
+		rounds = [.idle : idleScene, .test : testScene, .buzzers : buzzerScene,
+			.music : musicScene, .timer : timerScene, .trueFalse : truefalseScene,
+			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
+			.scores : scoresScene, .pointless : pointlessScene]
+		
 		rounds.forEach { $1.setUpScene(size: skView.bounds.size, webSocket:webSocket) }
 
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
@@ -57,11 +62,6 @@ class SpriteKitViewController: NSViewController {
 			t.pausesIncomingScene = false
 			t.pausesOutgoingScene = false
 		}
-		
-		rounds = [.idle : idleScene, .test : testScene, .buzzers : buzzerScene,
-			.music : musicScene, .timer : timerScene, .trueFalse : truefalseScene,
-			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
-			.scores : scoresScene, .pointless : pointlessScene]
 	}
 	
 	func setRound(round: RoundType) {
