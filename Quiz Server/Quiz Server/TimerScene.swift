@@ -13,7 +13,7 @@ import AVFoundation
 import Darwin
 import Starscream
 
-class TimerScene: SKScene {
+class TimerScene: SKScene, QuizRound {
 
 	fileprivate var setUp = false
 	fileprivate var correct: Int = 0

@@ -10,21 +10,21 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class IdleScene: SKScene {
+class IdleScene: SKScene, QuizRound {
 	
 	var snowmojis = [SKEmitterNode]()
 	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "party", "crazy"]
 	var webSocket: WebSocket?
 	
-	func setUpScene(size: CGSize, websocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.webSocket = websocket;
+		self.webSocket = webSocket;
 		
 		let date = Date()
 		let calendar = Calendar.current

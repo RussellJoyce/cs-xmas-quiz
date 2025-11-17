@@ -10,7 +10,7 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class BuzzerScene: SKScene {
+class BuzzerScene: SKScene, QuizRound {
 	fileprivate var setUp = false
 	var webSocket: WebSocket?
 	

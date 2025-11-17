@@ -134,7 +134,7 @@ class TextTeamNode: SKNode {
 
 
 
-class TextScene: SKScene {
+class TextScene: SKScene, QuizRound {
 	
 	var teamGuesses = [(roundid: Int, guess: String)?]()
 	var webSocket : WebSocket?

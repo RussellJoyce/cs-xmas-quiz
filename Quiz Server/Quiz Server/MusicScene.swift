@@ -11,7 +11,7 @@ import SpriteKit
 import AVFoundation
 import Starscream
 
-class MusicScene: SKScene {
+class MusicScene: SKScene, QuizRound {
 	
 	fileprivate var setUp = false
 

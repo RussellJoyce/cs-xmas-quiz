@@ -9,28 +9,6 @@
 import Cocoa
 import Starscream
 
-enum BuzzerType {
-	case test
-	case button
-	case websocket
-	case disabled
-}
-
-enum RoundType {
-	case none
-	case idle
-	case test
-	case buzzers
-	case music
-	case trueFalse
-	case timer
-	case geography
-	case text
-	case numbers
-	case scores
-	case pointless
-}
-
 class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
     
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
@@ -193,9 +171,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		
-		//We don't currently need the Test view
+		//We don't currently need these views
 		tabView.removeTabViewItem(tabitemTest)
+		tabView.removeTabViewItem(tabitemTimer)
 		
 		//Default to Idle on load regardless of what we left it on in Interface Builder
 		quizView.setRound(round: RoundType.idle)
@@ -231,7 +209,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		if virtualBuzzersBtn.state == .on {
             if (sender.state == NSControl.StateValue.on) {
 				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
-				quizView.buzzerReleased(team: sender.tag, type: .websocket)
 				sender.state = NSControl.StateValue.off
             }
         }
@@ -239,7 +216,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
             if (sender.state == NSControl.StateValue.on) {
                 buzzersEnabled[sender.tag] = false
 				socketWriteIfConnected("of" + String(sender.tag + 1))
-                quizView.buzzerReleased(team: sender.tag, type: .disabled)
             }
             else {
                 buzzersEnabled[sender.tag] = true
@@ -252,7 +228,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         if (sender.state == NSControl.StateValue.on) {
             buzzersDisabled = true
             for i in 0..<Settings.shared.numTeams {
-                quizView.buzzerReleased(team: i, type: .disabled)
                 buzzerButtons[i].isEnabled = false
 				buzzersEnabled[i] = false
 				socketWriteIfConnected("of" + String(i + 1))
@@ -368,9 +343,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < Settings.shared.numTeams && buzzersEnabled[team]) {
 						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
-						DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-							self.quizView.buzzerReleased(team: team, type: .websocket)
-						}
 					}
 				}
 			case "lr":

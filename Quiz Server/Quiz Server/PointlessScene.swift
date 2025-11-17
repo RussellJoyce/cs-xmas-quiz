@@ -13,7 +13,7 @@ import SpriteKit
 import Starscream
 import AVFoundation
 
-class PointlessScene : SKScene, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
+class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
 
 	//Connections from the UI and rest of the app
 	var textQuestion: NSTextField!
@@ -96,7 +96,7 @@ class PointlessScene : SKScene, NSTableViewDataSource, NSTableViewDelegate, NSTe
 			self.addChild(teamBox)
 			teamGuesses.append(nil)
 			
-			let numlabel = createTeamNumber(teamno: i+1)
+			let numlabel = ShadowedLabelNode(text: String(i+1), fontNamed: "PT Sans Caption Bold", fontSize: 40, fontColor: .black, zPosition: 27)
 			numlabel.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin) - CGFloat(PointlessScene.teamBoxWidth)/2 + 28, y: (self.size.height - 100) - CGFloat(i * 70))
 			self.addChild(numlabel)
 		}
@@ -416,44 +416,6 @@ class PointlessScene : SKScene, NSTableViewDataSource, NSTableViewDelegate, NSTe
 		addChild(counter!)
 	}
 	
-	
-	
-	func createTeamNumber(teamno : Int) -> SKNode {
-		let text = SKLabelNode(fontNamed: "PT Sans Caption Bold")
-		text.fontSize = 40
-		text.fontColor = NSColor.white
-		text.horizontalAlignmentMode = .center
-		text.verticalAlignmentMode = .center
-		text.zPosition = 28
-		text.position = CGPoint.zero
-		text.text = "\(teamno)"
-		
-		let shadowText = SKLabelNode(fontNamed: "PT Sans Caption Bold")
-		shadowText.text = text.text
-		shadowText.fontSize = 40
-		shadowText.fontColor = NSColor(white: 0, alpha: 1.0)
-		shadowText.horizontalAlignmentMode = .center
-		shadowText.verticalAlignmentMode = .center
-		shadowText.zPosition = 27
-		shadowText.position = CGPoint.zero
-		shadowText.text = "\(teamno)"
-		
-		let textShadow = SKEffectNode()
-		textShadow.shouldEnableEffects = true
-		textShadow.shouldRasterize = true
-		textShadow.zPosition = 27
-		let filter = CIFilter(name: "CIGaussianBlur")
-		filter?.setDefaults()
-		filter?.setValue(40 / 5.8, forKey: "inputRadius")
-		textShadow.filter = filter;
-		textShadow.addChild(shadowText)
-		
-		let container = SKNode()
-		container.addChild(text)
-		container.addChild(textShadow)
-		
-		return container
-	}
 	
 	
 	func debugTest() {

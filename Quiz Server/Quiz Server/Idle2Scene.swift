@@ -10,7 +10,7 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class Idle2Scene: SKScene {
+class Idle2Scene: SKScene, QuizRound {
 	
 	var snowmojis = [SKEmitterNode]()
 	fileprivate var setUp = false
@@ -27,14 +27,14 @@ class Idle2Scene: SKScene {
 	private var nextSpawnInterval: TimeInterval = 1.0
 	private var lastUpdateTime: TimeInterval = 0
 	
-	func setUpScene(size: CGSize, websocket: WebSocket?) {
+	func setUpScene(size: CGSize, webSocket: WebSocket?) {
 		if setUp {
 			return
 		}
 		setUp = true
 		
 		self.size = size
-		self.webSocket = websocket;
+		self.webSocket = webSocket;
 
 		let gradientImage = verticalGradientImage(size: self.size, colors: [NSColor.black, NSColor(calibratedRed: 0.10, green: 0, blue: 0.22, alpha: 1)])
 		let bgTexture = SKTexture(image: gradientImage)
@@ -373,12 +373,11 @@ class Idle2Scene: SKScene {
 	func buzzerPressed(team: Int, type: BuzzerType) {
 		snowmojis[team % snowmojis.count].particleBirthRate = 20
 		teamNodeTrigger(teamno: team)
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+			self.snowmojis[team % self.snowmojis.count].particleBirthRate = 0
+		}
 	}
-	
-	func buzzerReleased(team: Int, type: BuzzerType) {
-		snowmojis[team % snowmojis.count].particleBirthRate = 0
-	}
-	
 	
 
 	func addTeamNumbers() {

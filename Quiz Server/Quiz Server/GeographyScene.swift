@@ -10,7 +10,7 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class GeographyScene: SKScene {
+class GeographyScene: SKScene, QuizRound {
 	
 	fileprivate var setUp = false
 	var answering = false

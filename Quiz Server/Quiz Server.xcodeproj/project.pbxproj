@@ -12,7 +12,7 @@
 		3C0CCCC42EB794F3008862F8 /* teambuzzed.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */; };
 		3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C1FFA0F239E8E33000160B1 /* fireworks.sks */; };
 		3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */; };
-		3C3012562EAD48FF00F80B71 /* OutlinedLabelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */; };
+		3C3012562EAD48FF00F80B71 /* CustomLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012552EAD477100F80B71 /* CustomLabels.swift */; };
 		3C30125A2EAE90B400F80B71 /* Idle2Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */; };
 		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
 		3C378CFC1FBC89A900AD6168 /* TextSceneSparks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */; };
@@ -154,7 +154,7 @@
 		3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = teambuzzed.sks; sourceTree = "<group>"; };
 		3C1FFA0F239E8E33000160B1 /* fireworks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireworks.sks; sourceTree = "<group>"; };
 		3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEDWebSocket.swift; sourceTree = "<group>"; };
-		3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutlinedLabelNode.swift; sourceTree = "<group>"; };
+		3C3012552EAD477100F80B71 /* CustomLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabels.swift; sourceTree = "<group>"; };
 		3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Idle2Scene.swift; sourceTree = "<group>"; };
 		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
 		3C378CFA1FBC89A800AD6168 /* TextSceneSparks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TextSceneSparks.sks; sourceTree = "<group>"; };
@@ -362,7 +362,7 @@
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */,
-				3C3012552EAD477100F80B71 /* OutlinedLabelNode.swift */,
+				3C3012552EAD477100F80B71 /* CustomLabels.swift */,
 				3CF749202EABE57800A38676 /* Settings.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
@@ -631,7 +631,7 @@
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */,
-				3C3012562EAD48FF00F80B71 /* OutlinedLabelNode.swift in Sources */,
+				3C3012562EAD48FF00F80B71 /* CustomLabels.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
 				46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */,

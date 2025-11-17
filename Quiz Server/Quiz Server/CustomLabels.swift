@@ -9,6 +9,7 @@ import Foundation
 import Cocoa
 import SpriteKit
 
+// MARK: - OutlinedLabelNode
 class OutlinedLabelNode: SKNode {
     private let mainLabel: SKLabelNode
     private var outlineLabels: [SKLabelNode] = []
@@ -80,4 +81,77 @@ class OutlinedLabelNode: SKNode {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+
+// MARK: - ShadowedLabelNode
+class ShadowedLabelNode : SKNode {
+	
+	let mainLabel : SKLabelNode!
+	let shadowLabel : SKLabelNode!
+	let textShadow : SKEffectNode!
+	
+	init(text: String, fontNamed : String?, fontSize: CGFloat, fontColor: NSColor, zPosition : CGFloat) {
+		mainLabel = SKLabelNode(fontNamed: fontNamed)
+		mainLabel.fontSize = fontSize
+		mainLabel.fontColor = fontColor
+		mainLabel.text = text
+		mainLabel.horizontalAlignmentMode = .center
+		mainLabel.verticalAlignmentMode = .center
+		mainLabel.zPosition = zPosition
+		
+		shadowLabel = SKLabelNode(fontNamed: fontNamed)
+		shadowLabel.fontSize = fontSize
+		shadowLabel.fontColor = NSColor.black
+		shadowLabel.text = text
+		shadowLabel.horizontalAlignmentMode = .center
+		shadowLabel.verticalAlignmentMode = .center
+		shadowLabel.zPosition = zPosition - 1
+		
+		textShadow = SKEffectNode()
+		textShadow.shouldEnableEffects = true
+		textShadow.shouldRasterize = true
+		textShadow.zPosition = zPosition - 1
+		let filter = CIFilter(name: "CIGaussianBlur")
+		filter?.setDefaults()
+		filter?.setValue(40 / 5.8, forKey: "inputRadius")
+		textShadow.filter = filter;
+		textShadow.addChild(shadowLabel)
+		
+		let container = SKNode()
+		container.addChild(mainLabel)
+		container.addChild(textShadow)
+		
+		super.init()
+	}
+	
+	var text: String? {
+		get { mainLabel.text }
+		set {
+			mainLabel.text = newValue
+			shadowLabel.text = newValue
+		}
+	}
+	
+	var fontSize: CGFloat {
+		get { mainLabel.fontSize }
+		set {
+			mainLabel.fontSize = newValue
+			shadowLabel.fontSize = newValue
+		}
+	}
+	
+	var fontColor: NSColor? {
+		get { mainLabel.fontColor }
+		set { mainLabel.fontColor = newValue }
+	}
+	
+	var positionInParent: CGPoint {
+		get { self.position }
+		set { self.position = newValue }
+	}
+	
+	required init?(coder aDecoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
 }

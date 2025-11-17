@@ -12,7 +12,7 @@ import SpriteKit
 import Starscream
 import AVFoundation
 
-class TrueFalseScene: SKScene {
+class TrueFalseScene: SKScene, QuizRound {
 	
 	static let TIMEOUT = 5
 	

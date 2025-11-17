@@ -10,7 +10,7 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class TestScene: SKScene {
+class TestScene: SKScene, QuizRound {
 	
 	fileprivate var setUp = false
 	var buzzerPresses = [Int]()
@@ -114,6 +114,10 @@ class TestScene: SKScene {
 	}
 	
 	func buzzerPressed(team: Int, type: BuzzerType) {
+		
+		//TODO: This needs some tidying up if we ever use this scene again
+		// Specifically the "released" logic
+		
 		print("buzzerPressed in TestScene for team:" + String(team))
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team%10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
@@ -130,6 +134,10 @@ class TestScene: SKScene {
 		
 		if type == .websocket {
 			buzzerPresses[team] += 1
+		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+			self.buzzerReleased(team: team, type: type)
 		}
 	}
 	

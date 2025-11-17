@@ -123,7 +123,7 @@ class NumbersTeamNode: SKNode {
 
 
 
-class NumbersScene: SKScene {
+class NumbersScene: SKScene, QuizRound {
 	
 	var teamGuesses = [Int?]()
 	var webSocket: WebSocket?

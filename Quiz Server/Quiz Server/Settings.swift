@@ -7,6 +7,14 @@
 //
 
 import SpriteKit
+import Starscream
+
+
+protocol QuizRound : SKScene {
+	func setUpScene(size: CGSize, webSocket: WebSocket?)
+	func reset()
+}
+
 
 // MARK: - Settings
 
@@ -22,6 +30,29 @@ final class Settings {
 	var pointlessPath: String = ""
 	
 	var numTeams: Int = 14
+}
+
+// MARK: - Global enums
+enum BuzzerType {
+	case test
+	case button
+	case websocket
+	case disabled
+}
+
+enum RoundType {
+	case none
+	case idle
+	case test
+	case buzzers
+	case music
+	case trueFalse
+	case timer
+	case geography
+	case text
+	case numbers
+	case scores
+	case pointless
 }
 
 
@@ -121,7 +152,7 @@ extension SKEmitterNode {
 	}
 }
 
-// Lineear interpolate colour
+// Linear interpolate colour
 func lerp(a : CGFloat, b : CGFloat, fraction : CGFloat) -> CGFloat {
 	return (b-a) * fraction + a
 }
@@ -142,7 +173,7 @@ extension NSColor {
 	}
 }
 
-// SKAction to transition colours 
+// SKAction to transition colours
 extension SKAction {
 	static func colorTransitionAction(fromColor : NSColor, toColor : NSColor, duration : Double = 0.4) -> SKAction {
 		return SKAction.customAction(withDuration: duration, actionBlock: { (node : SKNode!, elapsedTime : CGFloat) -> Void in

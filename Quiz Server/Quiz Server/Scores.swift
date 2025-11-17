@@ -11,7 +11,7 @@ import Cocoa
 import SpriteKit
 import Starscream
 
-class ScoresScene: SKScene {
+class ScoresScene: SKScene, QuizRound {
 	fileprivate var setUp = false
 	var webSocket: WebSocket?
 	
