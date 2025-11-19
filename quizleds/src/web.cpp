@@ -2,6 +2,7 @@
 #include <settings.h>
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WebServer.h>
 #include "credentials.h"
 #include "esp_websocket_client.h"
 #include <animation.h>
