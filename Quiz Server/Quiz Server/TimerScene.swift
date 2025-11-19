@@ -66,7 +66,7 @@ class TimerScene: SKScene, QuizRound {
 		
 		let mainaction = SKAction.run({ () -> Void in
 			let lednum = Int(200.0 * Float(self.time) / 60.0)
-			   webSocket?.setCounterValue(val: lednum)
+			   webSocket?.setCounterValue(lednum)
 			   
 			   self.time -= 1
 			   self.updateTime()

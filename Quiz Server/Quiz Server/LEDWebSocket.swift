@@ -30,7 +30,7 @@ extension WebSocket {
 	
 	/// Trigger a random buzzer animation for team (0-based)
 	func buzz(team : Int) {
-		if team >= 0 && team < 100 {
+		if team >= 0 && team < 50 {
 			sendIfConnected("leb" + String(format: "%02d", team))
 		}
 	}
@@ -41,9 +41,15 @@ extension WebSocket {
 	}
 	
 	/// Set leds to the colour of a specified team (0-based)
-	func setTeamColour(team : Int) {
-		if team >= 0 && team < 100 {
+	func setTeamColour(_ team : Int) {
+		if team >= 0 && team < 50 {
 			sendIfConnected("let" + String(format: "%02d", team))
+		}
+	}
+	
+	func setTargetTeam(_ team : Int) {
+		if team >= 0 && team < 50 {
+			sendIfConnected("lee" + String(format: "%02d", team))
 		}
 	}
 	
@@ -60,14 +66,14 @@ extension WebSocket {
 	}
 	
 	/// Pulse leds the colour of a specified team (0-based)
-	func pulseTeamColour(team : Int) {
+	func pulseTeamColour(_ team : Int) {
 		if team >= 0 && team < 50 {
 			sendIfConnected("leq" + String(format: "%02d", team))
 		}
 	}
 	
 	/// Pulse leds the colour of a specified team (0-based) quickly
-	func pulseTeamColourQuick(team : Int) {
+	func pulseTeamColourQuick(_ team : Int) {
 		if team >= 0 && team < 50 {
 			sendIfConnected("leq" + String(format: "%02d", team+50))
 		}
@@ -83,7 +89,7 @@ extension WebSocket {
 	}
 	
 	/// Set the leds to a value from 0 to NUM_LEDS. LEDs lower than val are white, higher ones animate to fade out.
-	func setCounterValue(val : Int) {
+	func setCounterValue(_ val : Int) {
 		sendIfConnected("ler" + String(format: "%03d", val))
 	}
 	

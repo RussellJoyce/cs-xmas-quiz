@@ -202,7 +202,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 		if team < teamGuesses.count {
 			if gameState == .waitForAnswers {
 				self.run(blopSound)
-				webSocket?.pulseTeamColour(team: team)
+				webSocket?.pulseTeamColour(team)
 				teamGuesses[team] = guess
 				teamBoxes[team].updateText("••••••••")
 				teamBoxes[team].runEntranceFlash()
@@ -353,7 +353,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					run(teamDoneSound)
 					filternode.run(pulseActionSmall)
 					
-					webSocket?.pulseTeamColourQuick(team: i)
+					webSocket?.pulseTeamColourQuick(i)
 					
 					// Stop color oscillation before running white flash
 					bar.removeAction(forKey: "colorOscillation")

@@ -122,7 +122,7 @@ class TestScene: SKScene, QuizRound {
 		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team%10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
-		webSocket?.pulseTeamColour(team: team)
+		webSocket?.pulseTeamColour(team)
 		
 		for node in imageSparks[team] {
 			node.particleBirthRate = 3

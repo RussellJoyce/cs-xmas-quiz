@@ -282,7 +282,7 @@ class GeographyScene: SKScene, QuizRound {
 				teamguesses[team] = (x, y)
 			}
 			updateTextWithSkips(skips)
-			webSocket?.pulseTeamColour(team: team)
+			webSocket?.pulseTeamColour(team)
 		}
 	}
 	

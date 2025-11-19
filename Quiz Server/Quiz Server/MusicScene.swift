@@ -209,7 +209,7 @@ class MusicScene: SKScene, QuizRound {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			webSocket?.setTeamColour(team: team)
+			webSocket?.setTeamColour(team)
 			nextTeamNumber += 1
 		}
 	}

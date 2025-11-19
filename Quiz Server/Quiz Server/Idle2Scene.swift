@@ -427,6 +427,8 @@ class Idle2Scene: SKScene, QuizRound {
 		guard teamno < teamNumberNodes.count else { return }
 		let node = teamNumberNodes[teamno]
 
+		webSocket?.setTargetTeam(teamno)
+		
 		// Stop previous actions
 		node.removeAllActions()
 		for case let label as SKLabelNode in node.children {

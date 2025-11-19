@@ -183,7 +183,7 @@ class NumbersScene: SKScene, QuizRound {
 
 	func teamGuess(teamid : Int, guess : Int) {
 		self.run(blopSound)
-		webSocket?.pulseTeamColour(team: teamid)
+		webSocket?.pulseTeamColour(teamid)
 		teamGuesses[teamid] = guess
 		teamBoxes[teamid].resetTextSize()
 		teamBoxes[teamid].guessLabel.text = ""

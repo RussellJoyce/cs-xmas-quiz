@@ -209,7 +209,7 @@ class TextScene: SKScene, QuizRound {
 	
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		self.run(blopSound)
-		webSocket?.pulseTeamColour(team: teamid)
+		webSocket?.pulseTeamColour(teamid)
 		teamGuesses[teamid] = (roundid, guess)
 		teamBoxes[teamid].resetTextSize()
 		if showroundno {
