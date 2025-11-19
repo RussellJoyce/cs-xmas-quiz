@@ -10,6 +10,7 @@ static HsbColor current[NUM_LEDS];
 static int framenum = 0;
 
 Megamas megamas;
+TimerTwinkle timertwinkle;
 NoAnim noanim;
 ColourPulse colourpulse;
 TeamPulse teampulse;
@@ -37,6 +38,9 @@ void anim_set_anim(AnimID id, int param) {
             break;
         case MEGAMAS:
             current_anim = &megamas;
+            break;
+        case TIMERTWINKLE:
+            current_anim = &timertwinkle;
             break;
         case COLOURPULSE:
             current_anim = &colourpulse;
@@ -262,6 +266,32 @@ void Megamas::tick() {
 
 //-------------------------------------------------------------------------------------------------------
 
+#define TIMERTWINKLE_SPEED         4  // Speed of change
+#define TIMERTWINKLE_NUMBER       20  // Number of LEDs to change
+#define TIMERTWINKLE_TRANS_SPEED   0.02  // Transition speed
+
+void TimerTwinkle::start(int param) {
+	for(int i = 0; i < NUM_LEDS; i++) {
+		target[i] = HsbColor(0, 1.0, 1.0);
+		current[i] = HsbColor(0, 1.0, 1.0);
+	}
+    setLEDs(HslColor(0, 1.0, 0.5));
+}
+
+void TimerTwinkle::tick() {
+	if(framenum > TIMERTWINKLE_SPEED) {
+		framenum = 0;
+		for(int i = 0; i < TIMERTWINKLE_NUMBER; i++) {
+            current[random(NUM_LEDS)] = HsbColor(1.0, 1.0, 1.0);
+		}
+	}
+
+    fade_current_hue_to_target(TIMERTWINKLE_TRANS_SPEED);
+    display_current();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 void ColourPulse::start(int param) {
     clearLEDs();
     switch(param) {
@@ -300,13 +330,14 @@ void ColourPulse::tick() {
 
 void TeamPulse::start(int param) {
     clearLEDs();
-    HslColor teamcol = team_col(param);
+    //If param is >50 then we pulse very quickly, else more slowly
+    HslColor teamcol = team_col(param >= 50 ? param - 50 : param);
     this->col = HsbColor(teamcol.H, 1.0, 0.0);
+    this->frames_down = param >= 50 ? 10 : 120;
 }
 
 void TeamPulse::tick() {
     static const int frames_up = 10;
-    static const int frames_down = 120;
 
     if(framenum <= frames_up+frames_down) {
         if(framenum <= frames_up) {

@@ -146,6 +146,9 @@ void network_tick() {
 						Serial.println("Anim: Megamas");
 						anim_set_anim(MEGAMAS, 0);
 						break;
+					case 2:
+						Serial.println("Anim: Timer twinkle");
+						anim_set_anim(TIMERTWINKLE, 0);
 					default:
 						Serial.printf("Unknown animation %d\n", animnum);
 						break;
