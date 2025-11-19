@@ -24,6 +24,10 @@ extension WebSocket {
 		sendIfConnected("lea01")
 	}
 	
+	func timertwinkle() {
+		sendIfConnected("lea02")
+	}
+	
 	/// Trigger a random buzzer animation for team (0-based)
 	func buzz(team : Int) {
 		if team >= 0 && team < 100 {
@@ -57,8 +61,15 @@ extension WebSocket {
 	
 	/// Pulse leds the colour of a specified team (0-based)
 	func pulseTeamColour(team : Int) {
-		if team >= 0 && team < 100 {
+		if team >= 0 && team < 50 {
 			sendIfConnected("leq" + String(format: "%02d", team))
+		}
+	}
+	
+	/// Pulse leds the colour of a specified team (0-based) quickly
+	func pulseTeamColourQuick(team : Int) {
+		if team >= 0 && team < 50 {
+			sendIfConnected("leq" + String(format: "%02d", team+50))
 		}
 	}
 	

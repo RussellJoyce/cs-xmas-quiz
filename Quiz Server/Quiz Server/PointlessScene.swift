@@ -346,9 +346,14 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					self.addChild(em)
 					winEmitters.append(em)
 					
+					counter.removeFromParent()
+					webSocket?.pulseWhite()
+					
 				} else {
 					run(teamDoneSound)
 					filternode.run(pulseActionSmall)
+					
+					webSocket?.pulseTeamColourQuick(team: i)
 					
 					// Stop color oscillation before running white flash
 					bar.removeAction(forKey: "colorOscillation")

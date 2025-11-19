@@ -157,6 +157,7 @@ class TrueFalseScene: SKScene, QuizRound {
 			self.counting = true
 			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 			webSocket?.sendIfConnected("ha") //Also clear emphasis just in case
+			webSocket?.timertwinkle()
 			self.timeLabel.text = "GO!"
 			self.addParticles()
 			self.createFire()

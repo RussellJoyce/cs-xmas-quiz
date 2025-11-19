@@ -24,6 +24,10 @@ final class Settings {
 
 	var debug: Bool = false
 	
+	/// The very first time the websocket connects, this is set to true and left true
+	var websocketHasPreviouslyConnected = false
+	
+	/// Paths for locating questions in different places
 	var geographyImagesPath: String = ""
 	var musicPath: String = ""
 	var uniquePath: String = ""

@@ -460,6 +460,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .connected(let headers):
 			socketIsConnected = true
 			print("websocket is connected: \(headers)")
+			
+			// Very first time we connect, activate Megamas
+			if !Settings.shared.websocketHasPreviouslyConnected {
+				socket.megamas()
+				Settings.shared.websocketHasPreviouslyConnected = true
+			}
+			
 		case .disconnected(let reason, let code):
 			socketIsConnected = false
 			print("websocket is disconnected: \(reason) with code: \(code)")
