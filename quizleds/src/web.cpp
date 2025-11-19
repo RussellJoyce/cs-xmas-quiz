@@ -170,6 +170,11 @@ void network_tick() {
 				}
 				break;
 			}
+			case 'e': {
+				uint8_t teamid = bytesToInt2(&dat[1]);
+				setTargetToTeam(teamid);
+				break;
+			}
 			case 't': {
 				uint8_t teamid = bytesToInt2(&dat[1]);
 				Serial.printf("TeamCol %d\n", teamid);

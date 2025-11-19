@@ -104,6 +104,12 @@ void anim_buzz_team(int teamid, int animtoplay) {
 }
 
 
+void setTargetToTeam(int t) {
+    HslColor col = team_col(t);
+    HsbColor colb = HsbColor(col.H, 1.0, 0.0);
+    for(int i = 0; i < NUM_LEDS; i++) target[i] = colb;
+}
+
 void setLEDs(RgbColor col) {
     leds.ClearTo(col);
 	leds.Show();
