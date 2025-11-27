@@ -84,6 +84,14 @@ class MusicScene: SKScene, QuizRound {
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
 		bgImage.size = self.size
 		self.addChild(bgImage)
+		
+		videoEffect.name = "videoEffect"
+		videoEffect.filter = CIFilter(name: "CIGaussianBlur")
+		videoEffect.filter?.setDefaults()
+		videoEffect.filter?.setValue(0, forKey: "inputRadius")
+		videoEffect.shouldEnableEffects = true
+		videoEffect.zPosition = 1000
+		self.addChild(videoEffect)
 	}
 	
 	func buzzSound() {
