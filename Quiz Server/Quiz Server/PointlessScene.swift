@@ -19,6 +19,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	var textQuestion: NSTextField!
 	var answerTable : NSTableView!
 	private var webSocket : WebSocket?
+	var descending : NSButton!
 	
 	//Internal vars
 	private var setUp = false
@@ -96,8 +97,9 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 			self.addChild(teamBox)
 			teamGuesses.append(nil)
 			
-			let numlabel = ShadowedLabelNode(text: String(i+1), fontNamed: "PT Sans Caption Bold", fontSize: 40, fontColor: .black, zPosition: 27)
-			numlabel.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin) - CGFloat(PointlessScene.teamBoxWidth)/2 + 28, y: (self.size.height - 100) - CGFloat(i * 70))
+			let numlabel = ShadowedLabelNode(text: "\(i+1)", fontNamed: "PT Sans Caption Bold", fontSize: 25, fontColor: .white, zPosition: 100)
+			let xpos : CGFloat = CGFloat(PointlessScene.teamBoxMargin - PointlessScene.teamBoxWidth/2) + 20
+			numlabel.position = CGPoint(x: self.frame.minX + xpos, y: (self.size.height - 100) - CGFloat(i * 70))
 			self.addChild(numlabel)
 		}
 		scoreBars = Array(repeating: nil, count: Settings.shared.numTeams)
@@ -268,7 +270,8 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					barNode.strokeColor = .clear
 					barNode.position = CGPoint(x: teamBoxes[i].position.x + (CGFloat(PointlessScene.teamBoxWidth) / 2) + 20, y: teamBoxes[i].position.y)
 					barNode.zPosition = 15
-					barNode.path = CGPath(rect: CGRect(x: 0, y: -PointlessScene.barHeight/2, width: PointlessScene.barBaseWidth, height: PointlessScene.barHeight), transform: nil)
+					barNode.path = CGPath(rect: CGRect(x: 0, y: -PointlessScene.barHeight/2, width: (descending.state == .off ? 0 : 100*11) + PointlessScene.barBaseWidth, height: PointlessScene.barHeight), transform: nil)
+					
 					scoreBars[i]?.removeFromParent()
 					scoreBars[i] = barNode
 					addChild(barNode)
@@ -277,7 +280,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					self.startOscillatingBarColor(barNode)
 					
 					let emitter = SKEmitterNode(fileNamed: "SparksPointless")!
-					emitter.position = CGPoint(x: barNode.position.x + 5, y: barNode.position.y)
+					emitter.position = CGPoint(x: barNode.position.x + 5 + (descending.state == .off ? 0 : 100*11), y: barNode.position.y)
 					emitter.zPosition = 16
 					barEmitters[i]?.removeFromParent()
 					barEmitters[i] = emitter
@@ -309,10 +312,13 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 				  let emitter = barEmitters.indices.contains(i) ? barEmitters[i] : nil,
 				  let score = teamScores[i]
 			else { continue }
-			let newWidth = CGFloat((100 - counterValue) * 11) + PointlessScene.barBaseWidth
 			
+			let newWidth = CGFloat(
+					(descending.state == .off ? (100 - counterValue) : counterValue)
+				* 11) + PointlessScene.barBaseWidth
+
 			if counterValue > score {
-				let scale = newWidth / PointlessScene.barBaseWidth
+				let scale = newWidth / (descending.state == .off ? PointlessScene.barBaseWidth : 100*11 + PointlessScene.barBaseWidth)
 				let action = SKAction.scaleX(to: scale, duration: PointlessScene.tickTime * 0.99)
 				action.timingMode = .linear
 				bar.run(action)
@@ -338,11 +344,11 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					//Star spray for winning bar(s)
 					let em = SKEmitterNode(fileNamed: "StarGlow")!
 					em.position = bar.position
-					em.position.x = em.position.x + newWidth / 2
+					em.position.x = em.position.x + (100*11 + PointlessScene.barBaseWidth) / 2
 					em.zPosition = bar.zPosition - 1
 					em.particleBirthRate = 300
 					em.particleScaleSpeed = 0.5
-					em.particlePositionRange = CGVector(dx: newWidth, dy: PointlessScene.barHeight)
+					em.particlePositionRange = CGVector(dx: 100*11, dy: PointlessScene.barHeight)
 					self.addChild(em)
 					winEmitters.append(em)
 					

@@ -112,6 +112,9 @@ class ShadowedLabelNode : SKNode {
 		textShadow.shouldEnableEffects = true
 		textShadow.shouldRasterize = true
 		textShadow.zPosition = zPosition - 1
+		
+		super.init()
+		
 		let filter = CIFilter(name: "CIGaussianBlur")
 		filter?.setDefaults()
 		filter?.setValue(40 / 5.8, forKey: "inputRadius")
@@ -121,8 +124,7 @@ class ShadowedLabelNode : SKNode {
 		let container = SKNode()
 		container.addChild(mainLabel)
 		container.addChild(textShadow)
-		
-		super.init()
+		self.addChild(container)
 	}
 	
 	var text: String? {
