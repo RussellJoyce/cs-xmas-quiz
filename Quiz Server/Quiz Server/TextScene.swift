@@ -208,20 +208,22 @@ class TextScene: SKScene, QuizRound {
 	}
 	
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
-		self.run(blopSound)
-		webSocket?.pulseTeamColour(teamid)
-		teamGuesses[teamid] = (roundid, guess)
-		teamBoxes[teamid].resetTextSize()
-		if showroundno {
-			teamBoxes[teamid].guessLabel.text = "••••••••"
-			teamBoxes[teamid].roundLabel.text = "(at Clue \(roundid) - "  + roundPoints(roundid) + ")"
-			teamBoxes[teamid].singleLabel.text = ""
-		} else {
-			teamBoxes[teamid].guessLabel.text = ""
-			teamBoxes[teamid].roundLabel.text = ""
-			teamBoxes[teamid].singleLabel.text = "••••••••"
+		if teamid < Settings.shared.numTeams {
+			self.run(blopSound)
+			webSocket?.pulseTeamColour(teamid)
+			teamGuesses[teamid] = (roundid, guess)
+			teamBoxes[teamid].resetTextSize()
+			if showroundno {
+				teamBoxes[teamid].guessLabel.text = "••••••••"
+				teamBoxes[teamid].roundLabel.text = "(at Clue \(roundid) - "  + roundPoints(roundid) + ")"
+				teamBoxes[teamid].singleLabel.text = ""
+			} else {
+				teamBoxes[teamid].guessLabel.text = ""
+				teamBoxes[teamid].roundLabel.text = ""
+				teamBoxes[teamid].singleLabel.text = "••••••••"
+			}
+			teamBoxes[teamid].emphasise()
 		}
-		teamBoxes[teamid].emphasise()
 	}
 	
 	func initUnique(file: String) {

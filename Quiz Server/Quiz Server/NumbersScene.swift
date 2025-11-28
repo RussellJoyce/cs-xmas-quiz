@@ -182,14 +182,16 @@ class NumbersScene: SKScene, QuizRound {
 	}
 
 	func teamGuess(teamid : Int, guess : Int) {
-		self.run(blopSound)
-		webSocket?.pulseTeamColour(teamid)
-		teamGuesses[teamid] = guess
-		teamBoxes[teamid].resetTextSize()
-		teamBoxes[teamid].guessLabel.text = ""
-		teamBoxes[teamid].singleLabel.text = "••••••••"
-		
-		teamBoxes[teamid].emphasise()
+		if teamid < Settings.shared.numTeams {
+			self.run(blopSound)
+			webSocket?.pulseTeamColour(teamid)
+			teamGuesses[teamid] = guess
+			teamBoxes[teamid].resetTextSize()
+			teamBoxes[teamid].guessLabel.text = ""
+			teamBoxes[teamid].singleLabel.text = "••••••••"
+			
+			teamBoxes[teamid].emphasise()
+		}
 	}
 	
 	func showGuesses(actualAnswer : Int) {
