@@ -15,6 +15,8 @@ class MusicScene: SKScene, QuizRound {
 	
 	fileprivate var setUp = false
 
+	var useLEDs : NSButton!
+	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
 	var teamEnabled = [Bool](repeating: true, count: 15)
@@ -28,7 +30,7 @@ class MusicScene: SKScene, QuizRound {
 	var videoEffect = SKEffectNode()
 	
 	private var lastMusicUpdateTime: TimeInterval = 0
-	private let musicUpdateFPS: Double = 15.0
+	private let musicUpdateFPS: Double = 30.0
 
 	private var avgPowerBarLeft: SKShapeNode?
 	private var avgPowerBarRight: SKShapeNode?
@@ -57,12 +59,14 @@ class MusicScene: SKScene, QuizRound {
         
         if music?.isPlaying ?? false {
 			music?.updateMeters()
-			let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
-			let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
-			let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
-			let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
 			
-			webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
+			if useLEDs.state == .on {
+				let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
+				let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
+				let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
+				let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
+				webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
+			}
         }
     }
     

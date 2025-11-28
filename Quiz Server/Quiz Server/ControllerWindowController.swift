@@ -77,6 +77,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.pointlessScene.textQuestion = pointlessTextQuestion
 		quizView.pointlessScene.answerTable = pointlessTable
 		quizView.pointlessScene.descending = pointlessDescending
+		quizView.musicScene.useLEDs = musicUseLEDs
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -543,7 +544,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var blankVideo: NSButton!
 	@IBOutlet weak var musicFile: NSPopUpButton!
 	@IBOutlet weak var videoFile: NSPopUpButton!
-	
+	@IBOutlet weak var musicUseLEDs: NSButton!
 	
 	@IBAction func musicNextTeam(_ sender: AnyObject) {
 		quizView.musicScene.nextTeam()

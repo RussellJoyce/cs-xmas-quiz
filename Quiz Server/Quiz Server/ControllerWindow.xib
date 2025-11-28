@@ -35,6 +35,7 @@
                 <outlet property="geoQuestionNumber" destination="5z5-BU-AUP" id="uQw-pa-69M"/>
                 <outlet property="geoStepper" destination="PD7-GT-IDE" id="b5n-bY-4ik"/>
                 <outlet property="musicFile" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
+                <outlet property="musicUseLEDs" destination="b1t-gJ-oOC" id="9eU-V7-rtN"/>
                 <outlet property="numbersActualAnswer" destination="76B-rL-ts0" id="VJi-gM-zIT"/>
                 <outlet property="numbersAllowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
                 <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
@@ -711,6 +712,14 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b1t-gJ-oOC">
+                                            <rect key="frame" x="198" y="31" width="86" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Use LEDs" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="QBf-zg-3zA">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                        </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>
@@ -1719,5 +1728,14 @@ Answers</string>
             </connections>
             <point key="canvasLocation" x="141" y="408"/>
         </window>
+        <button verticalHuggingPriority="750" id="A5u-f4-RkI">
+            <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="30i-GK-3QU">
+                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                <font key="font" metaFont="system"/>
+            </buttonCell>
+            <point key="canvasLocation" x="-137" y="720"/>
+        </button>
     </objects>
 </document>
