@@ -88,10 +88,12 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 		pulseAction = Utils.createFilterPulse(upTime: 0.15, downTime: 1.0, filterNode: filternode)
 		pulseActionSmall = Utils.createFilterPulse(upTime: 0.10, downTime: 0.25, filterNode: filternode)
 		
+		let topstart : CGFloat = (self.size.height - 50) - (CGFloat(15 - Settings.shared.numTeams) * 35)
+		
 		//Add team nodes down the left side of the screen
 		for i in 0..<Settings.shared.numTeams {
 			let teamBox = BuzzerTeamNode(team: i, width: PointlessScene.teamBoxWidth, height: PointlessScene.teamBoxHeight, fontSize: 40)
-			teamBox.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin), y: (self.size.height - 100) - CGFloat(i * 70))
+			teamBox.position = CGPoint(x: self.frame.minX + CGFloat(PointlessScene.teamBoxMargin), y: topstart - CGFloat(i * 70))
 			teamBox.zPosition = 15
 			teamBoxes.append(teamBox)
 			self.addChild(teamBox)
@@ -99,7 +101,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 			
 			let numlabel = ShadowedLabelNode(text: "\(i+1)", fontNamed: "PT Sans Caption Bold", fontSize: 25, fontColor: .white, zPosition: 100)
 			let xpos : CGFloat = CGFloat(PointlessScene.teamBoxMargin - PointlessScene.teamBoxWidth/2) + 20
-			numlabel.position = CGPoint(x: self.frame.minX + xpos, y: (self.size.height - 100) - CGFloat(i * 70))
+			numlabel.position = CGPoint(x: self.frame.minX + xpos, y: topstart - CGFloat(i * 70))
 			self.addChild(numlabel)
 		}
 		scoreBars = Array(repeating: nil, count: Settings.shared.numTeams)
