@@ -45,18 +45,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var st14: NSBox!
 	@IBOutlet weak var st15: NSBox!
 	
-	@IBOutlet var tabView: NSTabView!
-	@IBOutlet var tabitemtruefalse: NSTabViewItem!
-	@IBOutlet var tabitemTimer: NSTabViewItem!
-	@IBOutlet var tabitemIdle: NSTabViewItem!
-	@IBOutlet var tabitemTest: NSTabViewItem!
-	@IBOutlet var tabitemBuzzers: NSTabViewItem!
-	@IBOutlet var tabitemMusic: NSTabViewItem!
-	@IBOutlet var tabitemGeography: NSTabViewItem!
-	@IBOutlet var tabitemText: NSTabViewItem!
-	@IBOutlet var tabitemNumbers: NSTabViewItem!
-	@IBOutlet var tabitemScores: NSTabViewItem!
-	@IBOutlet var tabitemPointless: NSTabViewItem!
+	@IBOutlet weak var tabView: NSTabView!
+	@IBOutlet weak var tabitemtruefalse: NSTabViewItem!
+	@IBOutlet weak var tabitemTimer: NSTabViewItem!
+	@IBOutlet weak var tabitemIdle: NSTabViewItem!
+	@IBOutlet weak var tabitemTest: NSTabViewItem!
+	@IBOutlet weak var tabitemBuzzers: NSTabViewItem!
+	@IBOutlet weak var tabitemMusic: NSTabViewItem!
+	@IBOutlet weak var tabitemGeography: NSTabViewItem!
+	@IBOutlet weak var tabitemText: NSTabViewItem!
+	@IBOutlet weak var tabitemNumbers: NSTabViewItem!
+	@IBOutlet weak var tabitemScores: NSTabViewItem!
+	@IBOutlet weak var tabitemPointless: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -229,18 +229,22 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         if (sender.state == NSControl.StateValue.on) {
             buzzersDisabled = true
             for i in 0..<Settings.shared.numTeams {
-                buzzerButtons[i].isEnabled = false
-				buzzersEnabled[i] = false
-				socketWriteIfConnected("of" + String(i + 1))
+				if i < buzzerButtons.count {
+					buzzerButtons[i].isEnabled = false
+					buzzersEnabled[i] = false
+					socketWriteIfConnected("of" + String(i + 1))
+				}
             }
         }
         else {
             buzzersDisabled = false
 			for i in 0..<Settings.shared.numTeams {
-                buzzerButtons[i].isEnabled = true
-				buzzerButtons[i].state = .off
-				buzzersEnabled[i] = true
-				socketWriteIfConnected("on" + String(i + 1))
+				if i < buzzerButtons.count {
+					buzzerButtons[i].isEnabled = true
+					buzzerButtons[i].state = .off
+					buzzersEnabled[i] = true
+					socketWriteIfConnected("on" + String(i + 1))
+				}
             }
         }
     }
@@ -353,8 +357,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				
 				let allStats = [st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13, st14, st15]
 				for i in 0..<allStats.count {
-					let box = allStats[i]!
-					box.fillColor = teamnumbers.contains(i+1) ? NSColor.green : NSColor.black
+					if let box = allStats[i] {
+						box.fillColor = teamnumbers.contains(i+1) ? NSColor.green : NSColor.black
+					}
 				}
 			case "ii":
 				//A team has answered in the Geography round
@@ -618,11 +623,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Text and numbers
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBOutlet var textAllowAnswers: NSButton!
-	@IBOutlet var textShowQuestionNumbers: NSButton!
-	@IBOutlet var textQuestionNumber: NSTextField!
-	@IBOutlet var textStepper: NSStepper!
-	@IBOutlet var textTeamGuesses: NSTextField!
+	@IBOutlet weak var textAllowAnswers: NSButton!
+	@IBOutlet weak var textShowQuestionNumbers: NSButton!
+	@IBOutlet weak var textQuestionNumber: NSTextField!
+	@IBOutlet weak var textStepper: NSStepper!
+	@IBOutlet weak var textTeamGuesses: NSTextField!
 	@IBOutlet weak var uniqueFile: NSPopUpButton!
 	
 	@IBAction func textStepperChange(_ sender: Any) {
@@ -651,7 +656,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBOutlet weak var numbersAllowAnswers: NSButton!
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
-	@IBOutlet var numbersTeamGuesses: NSTextField!
+	@IBOutlet weak var numbersTeamGuesses: NSTextField!
 	
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
@@ -662,8 +667,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Scores
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBOutlet var scoresOutput: NSTextField!
-	@IBOutlet var scoresText: NSTextView!
+	@IBOutlet weak var scoresOutput: NSTextField!
+	@IBOutlet weak var scoresText: NSTextView!
 	
 	@IBAction func scoresInitText(_ sender: Any) {
 		var s = ""
@@ -729,28 +734,28 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Geography
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBOutlet var skip1: NSButton!
-	@IBOutlet var skip2: NSButton!
-	@IBOutlet var skip3: NSButton!
-	@IBOutlet var skip4: NSButton!
-	@IBOutlet var skip5: NSButton!
-	@IBOutlet var skip6: NSButton!
-	@IBOutlet var skip7: NSButton!
-	@IBOutlet var skip8: NSButton!
-	@IBOutlet var skip9: NSButton!
-	@IBOutlet var skip10: NSButton!
-	@IBOutlet var skip11: NSButton!
-	@IBOutlet var skip12: NSButton!
-	@IBOutlet var skip13: NSButton!
-	@IBOutlet var skip14: NSButton!
-	@IBOutlet var skip15: NSButton!
-	@IBOutlet var skip16: NSButton!
+	@IBOutlet weak var skip1: NSButton!
+	@IBOutlet weak var skip2: NSButton!
+	@IBOutlet weak var skip3: NSButton!
+	@IBOutlet weak var skip4: NSButton!
+	@IBOutlet weak var skip5: NSButton!
+	@IBOutlet weak var skip6: NSButton!
+	@IBOutlet weak var skip7: NSButton!
+	@IBOutlet weak var skip8: NSButton!
+	@IBOutlet weak var skip9: NSButton!
+	@IBOutlet weak var skip10: NSButton!
+	@IBOutlet weak var skip11: NSButton!
+	@IBOutlet weak var skip12: NSButton!
+	@IBOutlet weak var skip13: NSButton!
+	@IBOutlet weak var skip14: NSButton!
+	@IBOutlet weak var skip15: NSButton!
+	@IBOutlet weak var skip16: NSButton!
 	var skipButtons = [NSButton]()
 	
-	@IBOutlet var geoAnswerX: NSTextField!
-	@IBOutlet var geoAnswerY: NSTextField!
-	@IBOutlet var geoQuestionNumber: NSTextField!
-	@IBOutlet var geoStepper: NSStepper!
+	@IBOutlet weak var geoAnswerX: NSTextField!
+	@IBOutlet weak var geoAnswerY: NSTextField!
+	@IBOutlet weak var geoQuestionNumber: NSTextField!
+	@IBOutlet weak var geoStepper: NSStepper!
 	
 	@IBAction func geoStepperChange(_ sender: Any) {
 		geoQuestionNumber.stringValue = geoStepper.stringValue
@@ -774,8 +779,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var pointlessTextQuestion: NSTextField!
 	@IBOutlet weak var pointlessTextAnswers: NSTextField!
 	@IBOutlet weak var pointlessAllowAnswers: NSButton!
-	@IBOutlet var pointlessTable: NSTableView!
-	@IBOutlet var pointlessDescending: NSButton!
+	@IBOutlet weak var pointlessTable: NSTableView!
+	@IBOutlet weak var pointlessDescending: NSButton!
 	
 	@IBAction func pointlessShowAnswers(_ sender: Any) {
 		quizView.pointlessScene.showAnswers()
