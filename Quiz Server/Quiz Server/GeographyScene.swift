@@ -15,7 +15,6 @@ class GeographyScene: SKScene, QuizRound {
 	fileprivate var setUp = false
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
-	var imagesPath : String?
 	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -79,16 +78,13 @@ class GeographyScene: SKScene, QuizRound {
 	
 	func setQuestion(question: Int) {
 		if(question > 0 && question <= 10) {
-			print("Question " + String(question))
-			if let imagesPath = imagesPath {
-				let imagePath = "\(imagesPath)/geo\(question).jpg"
-				let image = NSImage(contentsOfFile: imagePath)
-				if let image = image {
-					mainImage.texture = SKTexture(image: image)
-				}
-				else {
-					mainImage.texture = SKTexture(imageNamed: "geostart")
-				}
+			let imagePath = "\(Settings.shared.geographyImagesPath)/geo\(question).jpg"
+			let image = NSImage(contentsOfFile: imagePath)
+			if let image = image {
+				mainImage.texture = SKTexture(image: image)
+			}
+			else {
+				mainImage.texture = SKTexture(imageNamed: "geostart")
 			}
 		}
 	}
