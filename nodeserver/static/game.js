@@ -214,7 +214,7 @@ function textboxhandler(event) {
         ws.send('tt' + myid + "," + textbox.value);
     }
     textbox.style.animationName = "textboxpulse";
-    removeTextmodeHandlers();
+    //removeTextmodeHandlers();
 
     return false //Prevent submission (and therefore a page reload)
 }
