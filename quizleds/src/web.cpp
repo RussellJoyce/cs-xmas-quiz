@@ -7,13 +7,17 @@
 #include "esp_websocket_client.h"
 #include <animation.h>
 
+#define WIFI_SSID(n) WIFI_SSID_##n
+#define WIFI_PASS(n) WIFI_PASS_##n
+#define WEBSOCKET_URI(n) WEBSOCKET_URI_##n
+
 void connect_websocket();
 
 char command_to_parse[20] = {0};
 int command_length = 0;
 
 esp_websocket_client_config_t websocket_cfg = {
-	.uri = WEBSOCKET_URI
+	.uri = websocket_uris[0]
 };
 esp_websocket_client_handle_t websocket_client;
 
@@ -26,21 +30,26 @@ void connectWifi() {
 	WiFi.setHostname(HOSTNAME);
 	Serial.println("Begin wifi...");
 
-	String wifi_ssid = WIFI_SSID;
-	String wifi_pass = WIFI_PASS;
+	for (int i = 0; i < NUM_CREDS; i++) {	
 
-	//Try to connect with stored credentials, fire up an access point if they don't work.
-	WiFi.begin(wifi_ssid, wifi_pass);
-	int connect_timeout = 28; //7 seconds
-	while (WiFi.status() != WL_CONNECTED && connect_timeout > 0) {
-		delay(250);
-		Serial.print(".");
-		connect_timeout--;
-	}
-	
-	if (WiFi.status() == WL_CONNECTED) {
-		print_wifi_details();
-		Serial.println("Wifi started");
+		String wifi_ssid = wifi_ssids[i];
+		String wifi_pass = wifi_passes[i];
+
+		Serial.printf("Attempting SSID: %s\n", wifi_ssid);
+		WiFi.begin(wifi_ssid, wifi_pass);
+		unsigned long start = millis();
+
+		while (WiFi.status() != WL_CONNECTED && millis() - start < 8000) {
+            delay(200);
+			Serial.print(".");
+        }
+
+		if (WiFi.status() == WL_CONNECTED) {
+			print_wifi_details();
+			websocket_cfg.uri = websocket_uris[i];
+			Serial.println("Wifi started");
+			break;
+		}
 	}
 
 	connect_websocket();
