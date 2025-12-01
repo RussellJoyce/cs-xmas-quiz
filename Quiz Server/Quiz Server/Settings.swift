@@ -118,7 +118,7 @@ final class Utils {
 			default: return ""
 			}
 		}
-		if n > 10 {
+		if n >= 10 {
 			return conv(n/10) + conv(n%10)
 		} else {
 			return conv(n)
