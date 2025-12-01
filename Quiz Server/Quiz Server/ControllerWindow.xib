@@ -41,9 +41,9 @@
                 <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
                 <outlet property="pointlessAllowAnswers" destination="ZpB-EM-4sg" id="37e-bF-O6d"/>
                 <outlet property="pointlessDescending" destination="gDB-6T-enb" id="ejE-Yx-ENo"/>
+                <outlet property="pointlessQuestion" destination="sMk-64-d4W" id="rVK-Qz-mMN"/>
                 <outlet property="pointlessQuestionSelector" destination="1cA-yK-ozS" id="lZ5-8i-WfC"/>
                 <outlet property="pointlessTable" destination="hRn-Hf-fKA" id="8rI-Um-eI8"/>
-                <outlet property="pointlessTextQuestion" destination="6lU-ZU-rTD" id="2jN-hJ-VdF"/>
                 <outlet property="quieterBuzzes" destination="EOs-rc-2CU" id="OZm-0m-IfW"/>
                 <outlet property="scoresOutput" destination="mxH-b9-Xel" id="EPU-wf-phZ"/>
                 <outlet property="scoresText" destination="nUs-YF-jmA" id="MjU-mf-Kk6"/>
@@ -1288,15 +1288,6 @@ Answers</string>
                                     <rect key="frame" x="10" y="33" width="896" height="258"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6lU-ZU-rTD">
-                                            <rect key="frame" x="203" y="10" width="300" height="243"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" allowsUndo="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="yxW-K8-246">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NTf-dw-kJs">
                                             <rect key="frame" x="17" y="137" width="166" height="38"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1456,6 +1447,32 @@ Answers</string>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                         </button>
+                                        <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sMk-64-d4W">
+                                            <rect key="frame" x="191" y="10" width="312" height="245"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="XjU-Im-ltz">
+                                                <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="D1j-fk-BWg">
+                                                        <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="minSize" width="295" height="245"/>
+                                                        <size key="maxSize" width="312" height="10000000"/>
+                                                    </textView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="GvK-S3-x3O">
+                                                <rect key="frame" x="-100" y="-100" width="223" height="17"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Clf-43-z0u">
+                                                <rect key="frame" x="295" y="0.0" width="17" height="245"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
                                     </subviews>
                                 </view>
                             </tabViewItem>

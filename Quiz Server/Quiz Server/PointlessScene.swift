@@ -6,7 +6,6 @@
 //  Copyright © 2025 Russell Joyce & Ian Gray. All rights reserved.
 //
 
-
 import Foundation
 import Cocoa
 import SpriteKit
@@ -16,7 +15,7 @@ import AVFoundation
 class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
 
 	//Connections from the UI and rest of the app
-	var textQuestion: NSTextField!
+	var textQuestion: NSTextView!
 	var answerTable : NSTableView!
 	private var webSocket : WebSocket?
 	var descending : NSButton!
@@ -195,7 +194,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 			}
 			
 			teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
-			textQuestion.stringValue = questionTitle! + "\n" + answers.map({"\($0): \($1)"}).joined(separator: "\n")
+			textQuestion.string = questionTitle! + "\n" + answers.map({"\($0): \($1)"}).joined(separator: "\n")
 			answerTable?.safeReloadData()
 		} catch let err as NSError {
 			print(err)
@@ -597,6 +596,4 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	}*/
 	
 }
-
-
 

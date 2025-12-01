@@ -71,10 +71,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
     override func windowDidLoad() {
         super.windowDidLoad()
-		
+
 		//Connect any output UI elements
 		quizView.scoresScene.output = scoresOutput
-		quizView.pointlessScene.textQuestion = pointlessTextQuestion
+
+		if let scrollView = pointlessQuestion, let textView = scrollView.documentView as? NSTextView {
+			quizView.pointlessScene.textQuestion = textView
+		} else {
+			print("Warning: Could not set PointlessScene's textQuestion (not found or not NSTextView)")
+		}
+		
 		quizView.pointlessScene.answerTable = pointlessTable
 		quizView.pointlessScene.descending = pointlessDescending
 		quizView.musicScene.useLEDs = musicUseLEDs
@@ -782,6 +788,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var pointlessAllowAnswers: NSButton!
 	@IBOutlet weak var pointlessTable: NSTableView!
 	@IBOutlet weak var pointlessDescending: NSButton!
+	@IBOutlet weak var pointlessQuestion: NSScrollView!
 	
 	@IBAction func pointlessShowAnswers(_ sender: Any) {
 		quizView.pointlessScene.showAnswers()
