@@ -30,8 +30,23 @@ void connectWifi() {
 	WiFi.setHostname(HOSTNAME);
 	Serial.println("Begin wifi...");
 
-	for (int i = 0; i < NUM_CREDS; i++) {	
+	/*String wifi_ssid = "quiz";
+	String wifi_pass = "";
+	WiFi.begin(wifi_ssid, wifi_pass);
+	int connect_timeout = 28; //7 seconds
+	while (WiFi.status() != WL_CONNECTED && connect_timeout > 0) {
+		delay(250);
+		Serial.print(".");
+		connect_timeout--;
+	}
+	
+	if (WiFi.status() == WL_CONNECTED) {
+		print_wifi_details();
+		Serial.println("Wifi started");
+	}*/
 
+	int i = 0;
+	while(1) {
 		String wifi_ssid = wifi_ssids[i];
 		String wifi_pass = wifi_passes[i];
 
@@ -50,6 +65,9 @@ void connectWifi() {
 			Serial.println("Wifi started");
 			break;
 		}
+
+		i++; 
+		if(i >= NUM_CREDS) i = 0;
 	}
 
 	connect_websocket();

@@ -16,6 +16,12 @@ void setup() {
 	anim_init();
 }
 
+void single_led(int num) {
+	Serial.println(num);
+	setLEDsNoAnim(RgbColor(0,0,0));
+	setSingleLed(num, RgbColor(255,255,255));
+}
+
 void loop() {
 	static volatile unsigned long next_frame_time = 0;
 
@@ -49,6 +55,15 @@ void loop() {
 				case 'C': anim_set_anim(COUNTER, random(NUM_LEDS)); break;
 				case 'p': anim_set_anim(COLOURPULSE, 0); break;
 				case 'P': anim_set_anim(COLOURPULSE, 2); break;
+				case '=':
+					singleled++;
+					if (singleled >= NUM_LEDS) singleled = NUM_LEDS - 1;
+					single_led(singleled);
+					break;
+				case '-':
+					if(singleled > 0) singleled--;
+					single_led(singleled);
+					break;
 				default:
 					Serial.print('#');
 					break;
@@ -58,3 +73,4 @@ void loop() {
 
 	network_tick();
 }
+

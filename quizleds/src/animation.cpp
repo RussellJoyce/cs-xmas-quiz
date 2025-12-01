@@ -103,6 +103,10 @@ void anim_buzz_team(int teamid, int animtoplay) {
     anim_set_anim(buzz_anims[animtoplay], teamid);
 }
 
+void setSingleLed(int num, RgbColor col) {
+    leds.SetPixelColor(ledlookup[num], col);
+    leds.Show();
+}
 
 void setTargetToTeam(int t) {
     HslColor col = team_col(t);
