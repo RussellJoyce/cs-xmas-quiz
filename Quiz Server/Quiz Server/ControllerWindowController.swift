@@ -420,14 +420,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							//Now route the logic according to the current round
 							switch tabView.selectedTabViewItem {
 							case tabitemText:
-								// Update the guesses in the controller window
-								textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-									if let tg = quizView.textScene.teamGuesses[team] {
-										return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
-									}
-									return nil
-								}.joined(separator: "\n")
-								
 								quizView.textScene.teamGuess(
 									teamid: team - 1, //make zero indexed
 									guess: guessText,
@@ -435,6 +427,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 									showroundno: (textShowQuestionNumbers.state == .on) ? true : false
 								)
 								
+								// Update the guesses in the controller window
+								textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+									if let tg = quizView.textScene.teamGuesses[team] {
+										return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
+									}
+									return nil
+								}.joined(separator: "\n")
 							case tabitemNumbers:
 								let guess = Int(guessText)
 								if guess != nil {
