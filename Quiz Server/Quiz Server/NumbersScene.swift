@@ -9,7 +9,6 @@
 import Foundation
 import Cocoa
 import SpriteKit
-import Starscream
 
 class NumbersTeamNode: SKNode {
 	
@@ -126,7 +125,6 @@ class NumbersTeamNode: SKNode {
 class NumbersScene: SKScene, QuizRound {
 	
 	var teamGuesses = [Int?]()
-	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	var teamBoxes = [NumbersTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
@@ -134,14 +132,13 @@ class NumbersScene: SKScene, QuizRound {
 	var revealed = false
 	var emitters = [SKEmitterNode]()
 
-	func setUpScene(size: CGSize, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket
 		self.revealed = false
 		
 		let bgImage = SKSpriteNode(imageNamed: "blue-snow")
@@ -184,7 +181,7 @@ class NumbersScene: SKScene, QuizRound {
 	func teamGuess(teamid : Int, guess : Int) {
 		if teamid < Settings.shared.numTeams {
 			self.run(blopSound)
-			webSocket?.pulseTeamColour(teamid)
+			QuizWebSocket.shared?.pulseTeamColour(teamid)
 			teamGuesses[teamid] = guess
 			teamBoxes[teamid].resetTextSize()
 			teamBoxes[teamid].guessLabel.text = ""
@@ -198,7 +195,7 @@ class NumbersScene: SKScene, QuizRound {
 		//First press just plays a big honk and shows everything
 		if(!revealed) {
 			self.run(hornSound)
-			webSocket?.pulseWhite()
+			QuizWebSocket.shared?.pulseWhite()
 			
 			let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 			
@@ -313,7 +310,7 @@ class NumbersScene: SKScene, QuizRound {
 	
 
 	func reset() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		self.revealed = false
 		
 		for team in 0..<Settings.shared.numTeams {

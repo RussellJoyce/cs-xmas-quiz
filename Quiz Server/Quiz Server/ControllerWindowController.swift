@@ -7,9 +7,8 @@
 //
 
 import Cocoa
-import Starscream
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, WebSocketDelegate {
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, QuizWebSocketDelegate {
     
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
 	
@@ -87,8 +86,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		//Connect to Node server
 		print("Connect to Node server...")
+		window?.title = "Quiz Control - NOT CONNECTED"
+		QuizWebSocket.shared = socket
 		socket.delegate = self
 		socket.connect()
+
 		
 		// Trim number of buttons down to match number of teams
 		// We only handle 15 test buzzers up here
@@ -108,8 +110,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		quizView.webSocket = socket
-
 		if quizWindow == nil {
 			quizWindow = NSWindow(contentViewController: quizView)
 			quizWindow?.title = "Quiz Main Display"
@@ -335,13 +335,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Websockets
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	var socket = WebSocket(request: URLRequest(url: URL(string: "ws://localhost:8091/")!))
-	var socketIsConnected = false
-						   
+	var socket = QuizWebSocket(url: URL(string: "ws://localhost:8091/")!)
+
 	func socketWriteIfConnected(_ s : String) {
-		if socketIsConnected {
-			socket.write(string: s)
-		}
+		socket.send(s)
 	}
 	
 	public func websocketDidReceiveMessage(text: String) {
@@ -467,50 +464,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 	}
 	
-	func didReceive(event: Starscream.WebSocketEvent, client: Starscream.WebSocketClient) {
-		switch event {
-		case .connected(let headers):
-			socketIsConnected = true
-			print("websocket is connected: \(headers)")
-			
-			// Very first time we connect, activate Megamas
-			if !Settings.shared.websocketHasPreviouslyConnected {
-				socket.megamas()
-				Settings.shared.websocketHasPreviouslyConnected = true
-			}
-			
-		case .disconnected(let reason, let code):
-			socketIsConnected = false
-			print("websocket is disconnected: \(reason) with code: \(code)")
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-				self.socket.connect()
-			}
-		case .text(let string):
-			websocketDidReceiveMessage(text: string)
-		case .binary(let data):
-			print("Received binary data: \(data.count)")
-		case .ping(_):
-			break
-		case .pong(_):
-			break
-		case .viabilityChanged(_):
-			break
-		case .reconnectSuggested(_):
-			break
-		case .cancelled:
-			socketIsConnected = false
-		case .error(let error):
-			socketIsConnected = false
-			if let e = error as? WSError {
-				print("websocket encountered an error: \(e.message)")
-			} else if let e = error {
-				print("websocket encountered an error: \(e.localizedDescription)")
-			} else {
-				print("websocket encountered an error")
-			}
-		case .peerClosed:
-			break
+	func webSocketDidConnect() {
+		window?.title = "Quiz Control - connected"
+		// Very first time we connect, activate Megamas
+		if !Settings.shared.websocketHasPreviouslyConnected {
+			socket.megamas()
+			Settings.shared.websocketHasPreviouslyConnected = true
 		}
+	}
+
+	func webSocketDidDisconnect() {
+		window?.title = "Quiz Control - NOT CONNECTED"
+	}
+
+	func webSocketDidReceiveMessage(_ text: String) {
+		websocketDidReceiveMessage(text: text)
 	}
 	
 	

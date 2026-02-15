@@ -7,11 +7,10 @@
 //
 
 import SpriteKit
-import Starscream
 
 
 protocol QuizRound : SKScene {
-	func setUpScene(size: CGSize, webSocket: WebSocket?)
+	func setUpScene(size: CGSize)
 	func reset()
 }
 

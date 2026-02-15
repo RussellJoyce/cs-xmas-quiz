@@ -8,14 +8,12 @@
 
 import Cocoa
 import SpriteKit
-import Starscream
 
 class GeographyScene: SKScene, QuizRound {
 	
 	fileprivate var setUp = false
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
-	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let mainImage = SKSpriteNode(imageNamed: "geostart")
@@ -23,16 +21,15 @@ class GeographyScene: SKScene, QuizRound {
 	
 	var geogReveal = -1
 	
-	func setUpScene(size: CGSize, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		reset()
-		
+
 		self.size = size
-		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
 		bgImage.zPosition = 0.0
@@ -278,7 +275,7 @@ class GeographyScene: SKScene, QuizRound {
 				teamguesses[team] = (x, y)
 			}
 			updateTextWithSkips(skips)
-			webSocket?.pulseTeamColour(team)
+			QuizWebSocket.shared?.pulseTeamColour(team)
 		}
 	}
 	
@@ -306,7 +303,7 @@ class GeographyScene: SKScene, QuizRound {
 	}
 	
 	func reset() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		answering = false
 		teamguesses = []
 		for _ in 0 ..< Settings.shared.numTeams {

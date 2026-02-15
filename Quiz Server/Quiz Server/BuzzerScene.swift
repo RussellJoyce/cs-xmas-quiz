@@ -8,11 +8,9 @@
 
 import Cocoa
 import SpriteKit
-import Starscream
 
 class BuzzerScene: SKScene, QuizRound {
 	fileprivate var setUp = false
-	var webSocket: WebSocket?
 	
 	let useAlternateBuzzers = false
 	
@@ -42,12 +40,11 @@ class BuzzerScene: SKScene, QuizRound {
 	fileprivate var ledcount : Float = 0;
 
 
-	func setUpScene(size: CGSize, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp { return }
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket;
 		
 		let bgImage = SKSpriteNode(imageNamed: "red2")
 		bgImage.zPosition = 0
@@ -134,7 +131,7 @@ class BuzzerScene: SKScene, QuizRound {
 	
 	func reset() {
 		if !(timer != nil && timer!.isValid) {
-			webSocket?.ledsOff();
+			QuizWebSocket.shared?.ledsOff();
 		}
 		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
 		buzzNumber = 0
@@ -161,10 +158,10 @@ class BuzzerScene: SKScene, QuizRound {
 					}
 					if let t = timer {
 						if !t.isValid {
-							webSocket?.buzz(team: team)
+							QuizWebSocket.shared?.buzz(team: team)
 						}
 					} else {
-						webSocket?.buzz(team: team)
+						QuizWebSocket.shared?.buzz(team: team)
 					}
 					nextTeamNumber = 1
 					
@@ -193,7 +190,7 @@ class BuzzerScene: SKScene, QuizRound {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			webSocket?.setTeamColour(team)
+			QuizWebSocket.shared?.setTeamColour(team)
 			nextTeamNumber += 1
 		}
 	}
@@ -207,7 +204,7 @@ class BuzzerScene: SKScene, QuizRound {
 	}
 	
 	func stopTimer() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		timer?.invalidate()
 	}
 	

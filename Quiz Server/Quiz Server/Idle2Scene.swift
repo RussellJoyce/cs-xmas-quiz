@@ -8,13 +8,11 @@
 
 import Cocoa
 import SpriteKit
-import Starscream
 
 class Idle2Scene: SKScene, QuizRound {
 	
 	var snowmojis = [SKEmitterNode]()
 	fileprivate var setUp = false
-	var webSocket: WebSocket?
 	private var characterQueue: [Int] = []
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman",
 				 "present", "floppydisk", "snowflake", "party", "crazy",
@@ -27,14 +25,13 @@ class Idle2Scene: SKScene, QuizRound {
 	private var nextSpawnInterval: TimeInterval = 1.0
 	private var lastUpdateTime: TimeInterval = 0
 	
-	func setUpScene(size: CGSize, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket;
 
 		let gradientImage = verticalGradientImage(size: self.size, colors: [NSColor.black, NSColor(calibratedRed: 0.10, green: 0, blue: 0.22, alpha: 1)])
 		let bgTexture = SKTexture(image: gradientImage)
@@ -347,7 +344,7 @@ class Idle2Scene: SKScene, QuizRound {
 	}
 	
 	func reset() {
-		webSocket?.megamas()
+		QuizWebSocket.shared?.megamas()
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}
@@ -427,7 +424,7 @@ class Idle2Scene: SKScene, QuizRound {
 		guard teamno < teamNumberNodes.count else { return }
 		let node = teamNumberNodes[teamno]
 
-		webSocket?.setTargetTeam(teamno)
+		QuizWebSocket.shared?.setTargetTeam(teamno)
 		
 		// Stop previous actions
 		node.removeAllActions()

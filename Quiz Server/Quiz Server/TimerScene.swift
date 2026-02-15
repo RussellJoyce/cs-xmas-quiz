@@ -11,7 +11,6 @@ import Cocoa
 import SpriteKit
 import AVFoundation
 import Darwin
-import Starscream
 
 class TimerScene: SKScene, QuizRound {
 
@@ -23,8 +22,6 @@ class TimerScene: SKScene, QuizRound {
 	fileprivate var pulseActionNoTick: SKAction?
 	fileprivate let filternode = SKEffectNode()
 	fileprivate var tickWhileCounting : Bool = true
-	
-	var webSocket: WebSocket?
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let shadowText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -40,14 +37,13 @@ class TimerScene: SKScene, QuizRound {
 	let timerSound = SKAction.playSoundFileNamed("minutetimer", waitForCompletion: false)
 	let audioNode = SKAudioNode(url: Bundle.main.url(forResource: "minutetimer", withExtension: "mp3")!)
 	
-	func setUpScene(size: CGSize, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket;
 		correct = 0
 		time = 60
 		
@@ -66,14 +62,14 @@ class TimerScene: SKScene, QuizRound {
 		
 		let mainaction = SKAction.run({ () -> Void in
 			let lednum = Int(200.0 * Float(self.time) / 60.0)
-			   webSocket?.setCounterValue(lednum)
-			   
+			   QuizWebSocket.shared?.setCounterValue(lednum)
+
 			   self.time -= 1
 			   self.updateTime()
 			   if(self.time == 0) {
 				   self.timer?.invalidate()
 				   self.run(self.hornSound)
-				   webSocket?.pulseWhite()
+				   QuizWebSocket.shared?.pulseWhite()
 				   self.audioNode.run(SKAction.stop())
 				   let p = SKEmitterNode(fileNamed: "SparksUp2")!
 				   p.position = CGPoint(x: self.centrePoint.x, y: 0)

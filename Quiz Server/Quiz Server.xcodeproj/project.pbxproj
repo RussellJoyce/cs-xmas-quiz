@@ -11,7 +11,7 @@
 		3C0CCCC22EB00F4C008862F8 /* lemming.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC12EB00F4C008862F8 /* lemming.sks */; };
 		3C0CCCC42EB794F3008862F8 /* teambuzzed.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */; };
 		3C1FFA10239E8E33000160B1 /* fireworks.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C1FFA0F239E8E33000160B1 /* fireworks.sks */; };
-		3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */; };
+		3C2543262B123E7D008A3FDB /* QuizWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */; };
 		3C3012562EAD48FF00F80B71 /* CustomLabels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012552EAD477100F80B71 /* CustomLabels.swift */; };
 		3C30125A2EAE90B400F80B71 /* Idle2Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */; };
 		3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */; };
@@ -43,7 +43,6 @@
 		3C7730112CD928EB00F2E6FC /* score2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C772FFD2CD928EB00F2E6FC /* score2.wav */; };
 		3C77C8A31DEF69E10088B36A /* location.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A11DEF69E10088B36A /* location.sks */; };
 		3C77C8A41DEF69E10088B36A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3C77C8A21DEF69E10088B36A /* Assets.xcassets */; };
-		3C78068A2B2D1F83007D58AE /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 3C7806892B2D1F83007D58AE /* Starscream */; };
 		3C78068D2B2D2D18007D58AE /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 3C78068C2B2D2D18007D58AE /* SwiftyJSON */; };
 		3C7F5E591DF454AA008075B8 /* locationstar.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C7F5E581DF454AA008075B8 /* locationstar.sks */; };
 		3C8517E42B2243A000BBCABA /* quietbuzz1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C8517E12B22439F00BBCABA /* quietbuzz1.mp3 */; };
@@ -153,7 +152,7 @@
 		3C0CCCC12EB00F4C008862F8 /* lemming.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = lemming.sks; sourceTree = "<group>"; };
 		3C0CCCC32EB794F3008862F8 /* teambuzzed.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = teambuzzed.sks; sourceTree = "<group>"; };
 		3C1FFA0F239E8E33000160B1 /* fireworks.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = fireworks.sks; sourceTree = "<group>"; };
-		3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEDWebSocket.swift; sourceTree = "<group>"; };
+		3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizWebSocket.swift; sourceTree = "<group>"; };
 		3C3012552EAD477100F80B71 /* CustomLabels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLabels.swift; sourceTree = "<group>"; };
 		3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Idle2Scene.swift; sourceTree = "<group>"; };
 		3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextScene.swift; sourceTree = "<group>"; };
@@ -276,7 +275,6 @@
 				3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */,
 				46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */,
 				3C78068D2B2D2D18007D58AE /* SwiftyJSON in Frameworks */,
-				3C78068A2B2D1F83007D58AE /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,7 +359,7 @@
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
-				3C2543232B123E7D008A3FDB /* LEDWebSocket.swift */,
+				3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */,
 				3C3012552EAD477100F80B71 /* CustomLabels.swift */,
 				3CF749202EABE57800A38676 /* Settings.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
@@ -479,7 +477,6 @@
 			);
 			name = "Quiz Server";
 			packageProductDependencies = (
-				3C7806892B2D1F83007D58AE /* Starscream */,
 				3C78068C2B2D2D18007D58AE /* SwiftyJSON */,
 				3C772FF02CD7C28900F2E6FC /* ConfettiSwiftUI */,
 			);
@@ -515,7 +512,6 @@
 			);
 			mainGroup = 46056EAB1A19624E00C37628;
 			packageReferences = (
-				3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */,
 				3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				3C772FEF2CD7C28900F2E6FC /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
@@ -630,7 +626,7 @@
 			files = (
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
-				3C2543242B123E7D008A3FDB /* LEDWebSocket.swift in Sources */,
+				3C2543262B123E7D008A3FDB /* QuizWebSocket.swift in Sources */,
 				3C3012562EAD48FF00F80B71 /* CustomLabels.swift in Sources */,
 				46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */,
 				3C366CBC1FB9F0A2006BA9B1 /* TextScene.swift in Sources */,
@@ -866,14 +862,6 @@
 				minimumVersion = 1.1.0;
 			};
 		};
-		3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.6;
-			};
-		};
 		3C78068B2B2D2D18007D58AE /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
@@ -889,11 +877,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3C772FEF2CD7C28900F2E6FC /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
 			productName = ConfettiSwiftUI;
-		};
-		3C7806892B2D1F83007D58AE /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3C7806882B2D1F83007D58AE /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
 		};
 		3C78068C2B2D2D18007D58AE /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;

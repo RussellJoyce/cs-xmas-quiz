@@ -9,7 +9,6 @@
 import Foundation
 import Cocoa
 import SpriteKit
-import Starscream
 
 class TextTeamNode: SKNode {
 	
@@ -137,7 +136,6 @@ class TextTeamNode: SKNode {
 class TextScene: SKScene, QuizRound {
 	
 	var teamGuesses = [(roundid: Int, guess: String)?]()
-	var webSocket : WebSocket?
 	fileprivate var setUp = false
 	var teamBoxes = [TextTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
@@ -146,15 +144,14 @@ class TextScene: SKScene, QuizRound {
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	
-	func setUpScene(size: CGSize, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket
-		
+
 		teamGuesses = [(roundid: Int, guess: String)?]()
 		
 		let bgImage = SKSpriteNode(imageNamed: "background2")
@@ -210,7 +207,7 @@ class TextScene: SKScene, QuizRound {
 	func teamGuess(teamid : Int, guess : String, roundid : Int, showroundno : Bool) {
 		if teamid < Settings.shared.numTeams {
 			self.run(blopSound)
-			webSocket?.pulseTeamColour(teamid)
+			QuizWebSocket.shared?.pulseTeamColour(teamid)
 			teamGuesses[teamid] = (roundid, guess)
 			teamBoxes[teamid].resetTextSize()
 			if showroundno {
@@ -241,7 +238,7 @@ class TextScene: SKScene, QuizRound {
 	
 	func showGuesses(showroundno : Bool) {
 		self.run(hornSound)
-		webSocket?.pulseWhite()
+		QuizWebSocket.shared?.pulseWhite()
 		
 		let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 		
@@ -339,7 +336,7 @@ class TextScene: SKScene, QuizRound {
 	}
 	
 	func reset() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""

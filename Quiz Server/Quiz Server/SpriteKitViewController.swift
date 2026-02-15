@@ -8,7 +8,6 @@
 
 import Cocoa
 import SpriteKit
-import Starscream
 
 class SpriteKitViewController: NSViewController {
 	
@@ -31,21 +30,19 @@ class SpriteKitViewController: NSViewController {
 	
 	private let transitionDuration = 1.0
 	private var transitions = [SKTransition]()
-	
-	var webSocket: WebSocket?
-	
-	
+
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
-	
+
 		skView.ignoresSiblingOrder = true
 
 		rounds = [.idle : idleScene, .test : testScene, .buzzers : buzzerScene,
 			.music : musicScene, .timer : timerScene, .trueFalse : truefalseScene,
 			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
 			.scores : scoresScene, .pointless : pointlessScene]
-		
-		rounds.forEach { $1.setUpScene(size: skView.bounds.size, webSocket:webSocket) }
+
+		rounds.forEach { $1.setUpScene(size: skView.bounds.size) }
 
 		transitions.append(SKTransition.doorsCloseVertical(withDuration: transitionDuration))
 		transitions.append(SKTransition.doorsOpenVertical(withDuration: transitionDuration))

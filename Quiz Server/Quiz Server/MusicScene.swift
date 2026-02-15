@@ -9,7 +9,6 @@
 import Cocoa
 import SpriteKit
 import AVFoundation
-import Starscream
 
 class MusicScene: SKScene, QuizRound {
 	
@@ -25,7 +24,6 @@ class MusicScene: SKScene, QuizRound {
 	var buzzNoises = [SKAction]()
 	var teamBoxes = [BuzzerTeamNode]()
     var music: AVAudioPlayer?
-	var webSocket : WebSocket?
 	var video: SKVideoNode?
 	var videoEffect = SKEffectNode()
 	
@@ -65,19 +63,18 @@ class MusicScene: SKScene, QuizRound {
 				let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
 				let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
 				let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
-				webSocket?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
+				QuizWebSocket.shared?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
 			}
         }
     }
     
-	func setUpScene(size: CGSize, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket
 
         buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
@@ -106,7 +103,7 @@ class MusicScene: SKScene, QuizRound {
     }
 	
 	func reset() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
         pauseMusic()
 		teamEnabled = [Bool](repeating: false, count: Settings.shared.numTeams)
 		buzzNumber = 0
@@ -139,7 +136,7 @@ class MusicScene: SKScene, QuizRound {
 						firstBuzzTime = Date()
 						buzzSound()
 						pauseMusic()
-						webSocket?.buzz(team: team)
+						QuizWebSocket.shared?.buzz(team: team)
 						box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, entranceShimmer: true)
 						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
 					} else {
@@ -194,7 +191,7 @@ class MusicScene: SKScene, QuizRound {
 					nextTeamNumber = 1
 					buzzSound()
 					video?.pause()
-					webSocket?.buzz(team: team)
+					QuizWebSocket.shared?.buzz(team: team)
 				}
 
 				if blankVideo {
@@ -221,7 +218,7 @@ class MusicScene: SKScene, QuizRound {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
-			webSocket?.setTeamColour(team)
+			QuizWebSocket.shared?.setTeamColour(team)
 			nextTeamNumber += 1
 		}
 	}
@@ -274,14 +271,14 @@ class MusicScene: SKScene, QuizRound {
     
     func pauseMusic() {
         music?.pause()
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
     }
     
     func stopMusic() {
         music?.stop()
         music?.currentTime = 0
         music?.prepareToPlay()
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		video?.pause()
 		video?.removeFromParent()
 		video = nil

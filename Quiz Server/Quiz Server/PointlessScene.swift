@@ -9,7 +9,6 @@
 import Foundation
 import Cocoa
 import SpriteKit
-import Starscream
 import AVFoundation
 
 class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
@@ -17,7 +16,6 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	//Connections from the UI and rest of the app
 	var textQuestion: NSTextView!
 	var answerTable : NSTableView!
-	private var webSocket : WebSocket?
 	var descending : NSButton!
 	
 	//Internal vars
@@ -61,14 +59,13 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	static let barAnimColour = NSColor(red: 1.0, green: 0.8, blue: 0.2, alpha: 1.0)
 	static let barDisabledColour = NSColor(red: 0.8, green: 0.8, blue: 0.0, alpha: 0.8)
 	
-	func setUpScene(size: CGSize, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
 		gameState = .waitForAnswers
 		self.size = size
-		self.webSocket = webSocket
 		teamGuesses = [String?]()
 		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
 		
@@ -147,7 +144,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	}
 
 	func reset() {
-		webSocket?.ledsOff()
+		QuizWebSocket.shared?.ledsOff()
 		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].updateText("Team \(team + 1)")
@@ -205,7 +202,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 		if team < teamGuesses.count {
 			if gameState == .waitForAnswers {
 				self.run(blopSound)
-				webSocket?.pulseTeamColour(team)
+				QuizWebSocket.shared?.pulseTeamColour(team)
 				teamGuesses[team] = guess
 				teamBoxes[team].updateText("••••••••")
 				teamBoxes[team].runEntranceFlash()
@@ -354,13 +351,13 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 					winEmitters.append(em)
 					
 					counter.removeFromParent()
-					webSocket?.pulseWhite()
+					QuizWebSocket.shared?.pulseWhite()
 					
 				} else {
 					run(teamDoneSound)
 					filternode.run(pulseActionSmall)
 					
-					webSocket?.pulseTeamColourQuick(i)
+					QuizWebSocket.shared?.pulseTeamColourQuick(i)
 					
 					// Stop color oscillation before running white flash
 					bar.removeAction(forKey: "colorOscillation")

@@ -9,11 +9,9 @@
 
 import Cocoa
 import SpriteKit
-import Starscream
 
 class ScoresScene: SKScene, QuizRound {
 	fileprivate var setUp = false
-	var webSocket: WebSocket?
 	
 	var scores : [(Int, Int, Int)] = []
 	var teamBoxes = [BuzzerTeamNode]()
@@ -28,14 +26,13 @@ class ScoresScene: SKScene, QuizRound {
 	
 	var output : NSTextField!
 	
-	func setUpScene(size: CGSize, webSocket: WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
 		bgImage.zPosition = 0
@@ -68,7 +65,7 @@ class ScoresScene: SKScene, QuizRound {
 	}
 	
 	func reset() {
-		webSocket?.ledsOff();
+		QuizWebSocket.shared?.ledsOff();
 		scores = []
 		for teamBox in teamBoxes {
 			teamBox.removeFromParent()
@@ -169,7 +166,7 @@ class ScoresScene: SKScene, QuizRound {
 			}
 			
 			//LEDs expect zero based team ids
-			webSocket?.buzz(team: scores[displayIndex].1 - 1)
+			QuizWebSocket.shared?.buzz(team: scores[displayIndex].1 - 1)
 			
 			//Shuffle down any existing boxes
 			if displayIndex > 0 {

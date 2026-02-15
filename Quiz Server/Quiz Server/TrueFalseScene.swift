@@ -9,7 +9,6 @@
 import Foundation
 import Cocoa
 import SpriteKit
-import Starscream
 import AVFoundation
 
 class TrueFalseScene: SKScene, QuizRound {
@@ -20,7 +19,6 @@ class TrueFalseScene: SKScene, QuizRound {
 	var teamEnabled = [Bool]()
 	var teamGuesses = [Bool?]()
 	var fireEmitter = SKEmitterNode(fileNamed: "SparksUp2")!
-	var webSocket: WebSocket?
 	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
 	fileprivate var timer: Timer?
@@ -35,14 +33,13 @@ class TrueFalseScene: SKScene, QuizRound {
 	
 	var timeLabel: OutlinedLabelNode!
 		
-	func setUpScene(size: CGSize, webSocket : WebSocket?) {
+	func setUpScene(size: CGSize) {
 		if setUp {
 			return
 		}
 		setUp = true
-		
+
 		self.size = size
-		self.webSocket = webSocket
 		
 		let bgImage = SKSpriteNode(imageNamed: "blackflakes")
 		bgImage.zPosition = 0
@@ -117,7 +114,7 @@ class TrueFalseScene: SKScene, QuizRound {
 		self.time = TrueFalseScene.TIMEOUT
 		self.counting = false
 		self.stopFire();
-		self.webSocket?.sendIfConnected(mode ? "h2" : "h1")
+		QuizWebSocket.shared?.send(mode ? "h2" : "h1")
 	}
 	
 	func addParticles() {
@@ -144,7 +141,7 @@ class TrueFalseScene: SKScene, QuizRound {
 		self.timeLabel.text = String(TrueFalseScene.TIMEOUT)
 		addParticles()
 		counting = true;
-		self.webSocket?.setCounterValue(200)
+		QuizWebSocket.shared?.setCounterValue(200)
 		
 		if sounds {
 			self.run(self.tickSound)
@@ -156,8 +153,8 @@ class TrueFalseScene: SKScene, QuizRound {
 			//Starting
 			self.counting = true
 			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
-			webSocket?.sendIfConnected("ha") //Also clear emphasis just in case
-			webSocket?.timertwinkle()
+			QuizWebSocket.shared?.send("ha") //Also clear emphasis just in case
+			QuizWebSocket.shared?.timertwinkle()
 			self.timeLabel.text = "GO!"
 			self.addParticles()
 			self.createFire()
@@ -177,7 +174,7 @@ class TrueFalseScene: SKScene, QuizRound {
 		} else {
 			//Stopping
 			self.counting = false
-			self.webSocket?.pulseWhite()
+			QuizWebSocket.shared?.pulseWhite()
 			self.timeLabel.text = ""
 			self.revealTeamGuesses()
 			self.stopFire()
@@ -201,7 +198,7 @@ class TrueFalseScene: SKScene, QuizRound {
 		self.run(SKAction.run({ () -> Void in
 			self.time -= 1
 			let lednum = Int(200.0 * Float(self.time) / Float(TrueFalseScene.TIMEOUT))
-			self.webSocket?.setCounterValue(lednum)
+			QuizWebSocket.shared?.setCounterValue(lednum)
 			if(self.time > 0) {
 				self.timeLabel.text = String(self.time)
 				self.addParticles()
@@ -214,7 +211,7 @@ class TrueFalseScene: SKScene, QuizRound {
 				if self.tickSounds {
 					self.run(self.tickEnd)
 				}
-				self.webSocket?.pulseWhite()
+				QuizWebSocket.shared?.pulseWhite()
 				self.timeLabel.text = ""
 				self.revealTeamGuesses()
 			}
