@@ -12,8 +12,13 @@ void setup() {
 		Serial.println("Booting...");
 	}
 
-	connectWifi();
 	anim_init();
+
+	if(!OFFLINE_MODE) {
+		connectWifi();
+	} else {
+		anim_set_anim(MEGAMAS, 0);
+	}
 }
 
 void single_led(int num) {
@@ -71,6 +76,8 @@ void loop() {
 		}
 	}
 
-	network_tick();
+	if(!OFFLINE_MODE) {
+		network_tick();
+	}
 }
 
