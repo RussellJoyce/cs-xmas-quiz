@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quiz Multi-Client Test</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; padding: 10px; }
+
+/* Toolbar */
+#toolbar { background: #16213e; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+#toolbar label { font-size: 13px; color: #aaa; }
+#toolbar input[type="text"], #toolbar input[type="number"], #toolbar select {
+    background: #0f3460; border: 1px solid #444; color: #eee; padding: 5px 8px; border-radius: 4px; font-size: 13px;
+}
+#toolbar input[type="text"] { width: 140px; }
+#toolbar input[type="number"] { width: 70px; }
+#toolbar select { width: 60px; }
+#toolbar button {
+    padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600;
+}
+.btn-connect { background: #27ae60; color: #fff; }
+.btn-connect:hover { background: #2ecc71; }
+.btn-disconnect { background: #c0392b; color: #fff; }
+.btn-disconnect:hover { background: #e74c3c; }
+#toolbar .check-label { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #ccc; cursor: pointer; }
+
+/* Grid */
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-bottom: 12px; }
+
+/* Client cell */
+.cell { background: #16213e; border-radius: 8px; padding: 10px; border: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
+.cell-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-red { background: #e74c3c; }
+.dot-yellow { background: #f39c12; }
+.dot-green { background: #2ecc71; }
+.cell-status { font-size: 11px; color: #888; line-height: 1.4; }
+.cell-buttons { display: flex; flex-wrap: wrap; gap: 4px; }
+.cell-buttons button {
+    padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600;
+}
+.cell-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-sm-green { background: #27ae60; color: #fff; }
+.btn-sm-red { background: #c0392b; color: #fff; }
+.btn-sm-blue { background: #2980b9; color: #fff; }
+.btn-sm-orange { background: #e67e22; color: #fff; }
+.btn-sm-purple { background: #8e44ad; color: #fff; }
+.btn-sm-gray { background: #555; color: #fff; }
+.btn-sm-teal { background: #16a085; color: #fff; }
+
+/* Team picker */
+.team-row { display: flex; flex-wrap: wrap; gap: 2px; }
+.team-row button { padding: 3px 6px; font-size: 10px; background: #0f3460; color: #aaa; border: 1px solid #444; border-radius: 3px; cursor: pointer; }
+.team-row button:hover { background: #1a5276; color: #fff; }
+
+/* Input row */
+.input-row { display: flex; gap: 4px; }
+.input-row input {
+    flex: 1; background: #0f3460; border: 1px solid #444; color: #eee; padding: 4px 6px; border-radius: 3px; font-size: 11px;
+}
+.input-row button { flex-shrink: 0; }
+
+/* Message log */
+.msg-log { height: 100px; overflow-y: auto; background: #0a0a1a; border-radius: 4px; padding: 4px 6px; font-family: monospace; font-size: 10px; line-height: 1.4; }
+.msg-sent { color: #888; }
+.msg-recv { color: #2ecc71; }
+.msg-err { color: #e74c3c; }
+.msg-info { color: #f39c12; }
+
+/* Global log */
+#global-log { background: #0a0a1a; border-radius: 8px; padding: 10px; height: 180px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.5; }
+#global-log-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+    <label>Host: <input type="text" id="cfg-host"></label>
+    <label>Port: <input type="number" id="cfg-port" value="8093"></label>
+    <label>Protocol:
+        <select id="cfg-proto">
+            <option value="ws://">ws://</option>
+            <option value="wss://">wss://</option>
+        </select>
+    </label>
+    <label>Clients:
+        <select id="cfg-count"></select>
+    </label>
+    <button class="btn-connect" onclick="connectAll()">Connect All</button>
+    <button class="btn-disconnect" onclick="disconnectAll()">Disconnect All</button>
+    <label class="check-label"><input type="checkbox" id="cfg-autopick" checked> Auto-pick teams</label>
+</div>
+
+<div id="grid"></div>
+
+<div id="global-log-title">Global Log</div>
+<div id="global-log"></div>
+
+<script>
+// Init config
+document.getElementById('cfg-host').value = location.hostname || 'localhost';
+// Default to ws:// — use wss:// only when hostname matches the server cert
+document.getElementById('cfg-proto').value = 'ws://';
+var countSel = document.getElementById('cfg-count');
+for (var i = 1; i <= 16; i++) {
+    var opt = document.createElement('option');
+    opt.value = i; opt.textContent = i;
+    if (i === 4) opt.selected = true;
+    countSel.appendChild(opt);
+}
+
+var clients = [null]; // 1-indexed: clients[N] = VirtualClient with index N
+var globalLogEl = document.getElementById('global-log');
+
+function globalLog(idx, cls, text) {
+    var d = document.createElement('div');
+    d.className = cls;
+    d.textContent = '[Client ' + idx + '] ' + text;
+    globalLogEl.appendChild(d);
+    if (globalLogEl.children.length > 200) globalLogEl.removeChild(globalLogEl.firstChild);
+    globalLogEl.scrollTop = globalLogEl.scrollHeight;
+}
+
+// VirtualClient class
+function VirtualClient(index) {
+    this.index = index;
+    this.ws = null;
+    this.team = null;
+    this.view = 'pickteam';
+    this.buzzerOn = false;
+    this.hlLabels = 'truefalse'; // 'truefalse' or 'higherlower'
+    this.pingInterval = null;
+
+    // Create DOM
+    var cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.id = 'cell-' + index;
+
+    cell.innerHTML =
+        '<div class="cell-header"><span>Client ' + index + '</span><span class="dot dot-red" id="dot-' + index + '"></span></div>' +
+        '<div class="cell-status" id="status-' + index + '">Disconnected</div>' +
+        '<div class="cell-buttons">' +
+            '<button class="btn-sm-green" id="conn-' + index + '" onclick="clients[' + index + '].toggleConnect()">Connect</button>' +
+            '<button class="btn-sm-orange" id="buzz-' + index + '" onclick="clients[' + index + '].buzz()" disabled>Buzz</button>' +
+            '<button class="btn-sm-blue" id="btn-a-' + index + '" onclick="clients[' + index + '].sendHL(\'hi\')" disabled>TRUE</button>' +
+            '<button class="btn-sm-blue" id="btn-b-' + index + '" onclick="clients[' + index + '].sendHL(\'lo\')" disabled>FALSE</button>' +
+        '</div>' +
+        '<div class="team-row" id="teams-' + index + '"></div>' +
+        '<div class="input-row">' +
+            '<input type="text" id="txt-' + index + '" placeholder="Text answer...">' +
+            '<button class="btn-sm-purple" onclick="clients[' + index + '].sendText()" disabled id="txtsend-' + index + '">Send</button>' +
+        '</div>' +
+        '<div class="input-row">' +
+            '<input type="text" id="geo-' + index + '" placeholder="x,y (0-100)">' +
+            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendGeo()" disabled id="geosend-' + index + '">Send</button>' +
+            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomGeo()" disabled id="georand-' + index + '">Rnd</button>' +
+        '</div>' +
+        '<div class="msg-log" id="log-' + index + '"></div>';
+
+    document.getElementById('grid').appendChild(cell);
+
+    // Build team buttons
+    var teamRow = document.getElementById('teams-' + index);
+    for (var t = 1; t <= 14; t++) {
+        var btn = document.createElement('button');
+        btn.textContent = t;
+        btn.setAttribute('data-team', t);
+        btn.setAttribute('data-idx', index);
+        btn.onclick = function() { clients[parseInt(this.getAttribute('data-idx'))].pickTeam(this.getAttribute('data-team')); };
+        teamRow.appendChild(btn);
+    }
+}
+
+VirtualClient.prototype.log = function(cls, text) {
+    var el = document.getElementById('log-' + this.index);
+    var d = document.createElement('div');
+    d.className = cls;
+    d.textContent = text;
+    el.appendChild(d);
+    if (el.children.length > 20) el.removeChild(el.firstChild);
+    el.scrollTop = el.scrollHeight;
+    globalLog(this.index, cls, text);
+};
+
+VirtualClient.prototype.updateStatus = function() {
+    var state = this.ws ? (this.ws.readyState === WebSocket.OPEN ? 'Connected' : 'Connecting...') : 'Disconnected';
+    var parts = [state];
+    if (this.team) parts.push('Team ' + this.team);
+    parts.push('View: ' + this.view);
+    parts.push('Buzzer: ' + (this.buzzerOn ? 'ON' : 'OFF'));
+    document.getElementById('status-' + this.index).textContent = parts.join(' | ');
+
+    // Dot color
+    var dot = document.getElementById('dot-' + this.index);
+    if (!this.ws || this.ws.readyState === WebSocket.CLOSED) {
+        dot.className = 'dot dot-red';
+    } else if (this.ws.readyState === WebSocket.CONNECTING) {
+        dot.className = 'dot dot-yellow';
+    } else {
+        dot.className = 'dot dot-green';
+    }
+
+    // Enable/disable buttons
+    var connected = this.ws && this.ws.readyState === WebSocket.OPEN;
+    var hasTeam = this.team != null;
+    document.getElementById('buzz-' + this.index).disabled = !(connected && hasTeam && this.buzzerOn);
+    document.getElementById('btn-a-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('btn-b-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('txtsend-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('geosend-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('georand-' + this.index).disabled = !(connected && hasTeam);
+
+    // Team row visibility
+    document.getElementById('teams-' + this.index).style.display = (connected && !hasTeam) ? 'flex' : 'none';
+
+    // Connect button label
+    var connBtn = document.getElementById('conn-' + this.index);
+    if (connected || (this.ws && this.ws.readyState === WebSocket.CONNECTING)) {
+        connBtn.textContent = 'Disconnect';
+        connBtn.className = 'btn-sm-red';
+    } else {
+        connBtn.textContent = 'Connect';
+        connBtn.className = 'btn-sm-green';
+    }
+};
+
+VirtualClient.prototype.toggleConnect = function() {
+    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
+        this.disconnect();
+    } else {
+        this.connect();
+    }
+};
+
+VirtualClient.prototype.connect = function() {
+    if (this.ws) return;
+    var proto = document.getElementById('cfg-proto').value;
+    var host = document.getElementById('cfg-host').value;
+    var port = document.getElementById('cfg-port').value;
+    var url = proto + host + ':' + port + '/?vcid=test' + this.index;
+
+    this.log('msg-info', 'Connecting to ' + url);
+    this.updateStatus();
+
+    var self = this;
+    try {
+        this.ws = new WebSocket(url);
+    } catch(e) {
+        this.log('msg-err', 'Error: ' + e.message);
+        this.ws = null;
+        this.updateStatus();
+        return;
+    }
+
+    this.ws.onopen = function() {
+        self.log('msg-info', 'Connected');
+        self.updateStatus();
+
+        // Start ping
+        self.pingInterval = setInterval(function() {
+            if (self.ws && self.ws.readyState === WebSocket.OPEN) {
+                self.ws.send('pi');
+            }
+        }, 5000);
+
+        // Auto-pick team if enabled
+        if (document.getElementById('cfg-autopick').checked) {
+            // Use index as team number (1-based), capped at 14
+            var teamNum = self.index;
+            if (teamNum >= 1 && teamNum <= 14) {
+                setTimeout(function() { self.pickTeam(teamNum); }, 100);
+            }
+        }
+    };
+
+    this.ws.onmessage = function(event) {
+        var msg = event.data;
+        self.log('msg-recv', '< ' + msg);
+        self.handleMessage(msg);
+    };
+
+    this.ws.onclose = function() {
+        self.log('msg-info', 'Disconnected');
+        clearInterval(self.pingInterval);
+        self.pingInterval = null;
+        self.ws = null;
+        self.team = null;
+        self.view = 'pickteam';
+        self.buzzerOn = false;
+        self.updateStatus();
+    };
+
+    this.ws.onerror = function() {
+        self.log('msg-err', 'WebSocket error');
+    };
+};
+
+VirtualClient.prototype.disconnect = function() {
+    if (this.ws) {
+        this.ws.close();
+    }
+};
+
+VirtualClient.prototype.send = function(msg) {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(msg);
+        this.log('msg-sent', '> ' + msg);
+    }
+};
+
+VirtualClient.prototype.handleMessage = function(msg) {
+    if (msg.length < 2) return;
+    var cmd = msg.slice(0, 2);
+    var payload = msg.slice(2);
+
+    switch (cmd) {
+        case 'ok':
+            this.team = payload;
+            this.buzzerOn = true;
+            this.updateStatus();
+            break;
+        case 'px':
+            this.log('msg-err', 'Team already taken');
+            this.updateStatus();
+            break;
+        case 'on':
+            this.buzzerOn = true;
+            this.updateStatus();
+            break;
+        case 'of':
+            this.buzzerOn = false;
+            this.updateStatus();
+            break;
+        case 'vi':
+            this.view = payload;
+            if (payload === 'pickteam') {
+                this.team = null;
+                this.buzzerOn = false;
+            }
+            this.updateStatus();
+            break;
+        case 'im':
+            // Geo image update - just log it
+            break;
+        case 'hh':
+            document.getElementById('btn-a-' + this.index).style.outline = '2px solid #2ecc71';
+            document.getElementById('btn-b-' + this.index).style.outline = 'none';
+            break;
+        case 'hl':
+            document.getElementById('btn-b-' + this.index).style.outline = '2px solid #2ecc71';
+            document.getElementById('btn-a-' + this.index).style.outline = 'none';
+            break;
+        case 'hn':
+            document.getElementById('btn-a-' + this.index).style.outline = 'none';
+            document.getElementById('btn-b-' + this.index).style.outline = 'none';
+            break;
+        case 'h1':
+            this.hlLabels = 'higherlower';
+            document.getElementById('btn-a-' + this.index).textContent = 'HIGHER';
+            document.getElementById('btn-b-' + this.index).textContent = 'LOWER';
+            break;
+        case 'h2':
+            this.hlLabels = 'truefalse';
+            document.getElementById('btn-a-' + this.index).textContent = 'TRUE';
+            document.getElementById('btn-b-' + this.index).textContent = 'FALSE';
+            break;
+        case 'pb':
+            // Pong - no action needed
+            break;
+    }
+};
+
+VirtualClient.prototype.pickTeam = function(teamNum) {
+    this.send('pt' + teamNum);
+};
+
+VirtualClient.prototype.buzz = function() {
+    if (this.team) {
+        this.send('zz' + this.team);
+    }
+};
+
+VirtualClient.prototype.sendHL = function(type) {
+    if (this.team) {
+        this.send(type + this.team);
+    }
+};
+
+VirtualClient.prototype.sendText = function() {
+    if (this.team) {
+        var val = document.getElementById('txt-' + this.index).value;
+        if (val) {
+            this.send('tt' + this.team + ',' + val);
+            document.getElementById('txt-' + this.index).value = '';
+        }
+    }
+};
+
+VirtualClient.prototype.sendGeo = function() {
+    if (this.team) {
+        var val = document.getElementById('geo-' + this.index).value;
+        var parts = val.split(',');
+        if (parts.length === 2) {
+            var x = Math.max(0, Math.min(100, parseInt(parts[0].trim())));
+            var y = Math.max(0, Math.min(100, parseInt(parts[1].trim())));
+            this.send('ii' + this.team + ',' + x + ',' + y);
+        }
+    }
+};
+
+VirtualClient.prototype.sendRandomGeo = function() {
+    if (this.team) {
+        var x = Math.floor(Math.random() * 100);
+        var y = Math.floor(Math.random() * 100);
+        document.getElementById('geo-' + this.index).value = x + ',' + y;
+        this.send('ii' + this.team + ',' + x + ',' + y);
+    }
+};
+
+// Global controls
+// clients is 1-indexed: clients[1] = VirtualClient with index 1, clients[0] unused
+function buildGrid() {
+    var count = parseInt(document.getElementById('cfg-count').value);
+    // Disconnect and remove existing clients
+    for (var i = 1; i < clients.length; i++) {
+        if (clients[i]) clients[i].disconnect();
+    }
+    document.getElementById('grid').innerHTML = '';
+    clients = [null]; // placeholder at index 0
+
+    for (var i = 1; i <= count; i++) {
+        var vc = new VirtualClient(i);
+        clients[i] = vc;
+        vc.updateStatus();
+    }
+}
+
+function connectAll() {
+    buildGrid();
+    for (var i = 1; i < clients.length; i++) {
+        (function(idx) {
+            setTimeout(function() { clients[idx].connect(); }, (idx - 1) * 100);
+        })(i);
+    }
+}
+
+function disconnectAll() {
+    for (var i = 1; i < clients.length; i++) {
+        if (clients[i]) clients[i].disconnect();
+    }
+}
+
+// Rebuild grid when count changes
+document.getElementById('cfg-count').addEventListener('change', buildGrid);
+
+// Initial grid
+buildGrid();
+</script>
+</body>
+</html>

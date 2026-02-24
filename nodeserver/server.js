@@ -24,6 +24,7 @@ const wclientHttpsServer = https.createServer({
 wclient = new WebSocketServer({ server: wclientHttpsServer });
 wclientHttpsServer.listen(8090, "0.0.0.0");
 
+wclientWs = new WebSocketServer({ port: 8093 }); // Plain WS for local/test clients
 wserver = new WebSocketServer({ port: 8091 });
 wleds = new WebSocketServer({ port: 8092 });
 
@@ -48,6 +49,9 @@ function getClientByID(id) {
 
 function sendMessageToAllClients(message) {
     wclient.clients.forEach(function each(c) {
+        c.send(message);
+    });
+    wclientWs.clients.forEach(function each(c) {
         c.send(message);
     });
 }
@@ -131,9 +135,11 @@ wleds.on('connection', function(ws) {
 })
 
 
-wclient.on('connection', function connection(ws, req) {
+function handleClientConnection(ws, req) {
     //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
-    var client = req.connection.remoteAddress;
+    var ip = req.connection.remoteAddress;
+    var vcid = new URL(req.url, 'http://localhost').searchParams.get('vcid');
+    var client = vcid ? ip + '_' + vcid : ip;
 
     if(clients.hasOwnProperty(client) && clients[client].id != null) {
         //Client already connected before, so has an ID, but this is a different socket.
@@ -196,7 +202,9 @@ wclient.on('connection', function connection(ws, req) {
             console.log("ERROR: " + err.message + " handling message from client");
         }
     });
-});
+}
+wclient.on('connection', handleClientConnection);
+wclientWs.on('connection', handleClientConnection);
 
 // Server to redirect HTTP requests to HTTPS
 const http = express();
