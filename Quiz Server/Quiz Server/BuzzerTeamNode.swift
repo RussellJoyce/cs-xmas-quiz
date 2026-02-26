@@ -130,42 +130,20 @@ class BuzzerTeamNode: SKNode {
 		}
 		
 		if entranceParticles {
-			let particles1 = makeEmitter(
-				position: CGPoint(x: (width/2)-10, y: 0),
-				color: particleColour,
-				emissionAngle: 0.0, // right
-				positionRange: CGVector(dx: 0, dy: height),
-				numParticles: 250
-			)
-			
-			let particles2 = makeEmitter(
-				position: CGPoint(x: -((width/2)-10), y: 0),
-				color: particleColour,
-				emissionAngle: .pi, // left
-				positionRange: CGVector(dx: 0, dy: height),
-				numParticles: 250
-			)
-			
-			let particles3 = makeEmitter(
-				position: CGPoint(x: 0, y: -((height/2)-10)),
-				color: particleColour,
-				emissionAngle: 3.0 * .pi / 2.0, // down
-				positionRange: CGVector(dx: width, dy: 0),
-				numParticles: 900
-			)
-			
-			let particles4 = makeEmitter(
-				position: CGPoint(x: 0, y: (height/2)-10),
-				color: particleColour,
-				emissionAngle: .pi / 2.0, // up
-				positionRange: CGVector(dx: width, dy: 0),
-				numParticles: 900
-			)
-			
-			self.addChild(particles1)
-			self.addChild(particles2)
-			self.addChild(particles3)
-			self.addChild(particles4)
+			//Pick a buzzer effect
+			switch(Int.random(in: 0..<4)) {
+			case 0:
+				BuzzerEffects.edgeBurst(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
+			case 1:
+				BuzzerEffects.confettiShower(at: CGPoint(x: 0, y: CGFloat(height) / 2.0), color: particleColour, parent: self)
+			case 2:
+				BuzzerEffects.shockwaveRing(at: .zero, color: particleColour, parent: self)
+			case 3:
+				BuzzerEffects.lightningCrackle(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
+			default:
+				//Default but should not execute
+				BuzzerEffects.risingEmbers(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
+			}
 		}
 		
 		if(glow != nil) {
@@ -192,20 +170,6 @@ class BuzzerTeamNode: SKNode {
 	}
 	
 	
-	private func makeEmitter(position: CGPoint, color: NSColor, emissionAngle: CGFloat, positionRange: CGVector, numParticles: Int, zPosition: CGFloat = 2) -> SKEmitterNode {
-		let emitter = SKEmitterNode(fileNamed: "BuzzParticles")!
-		emitter.position = position
-		emitter.zPosition = zPosition
-		emitter.particleColor = color
-		emitter.particleColorSequence = nil
-		emitter.emissionAngle = emissionAngle
-		emitter.emissionAngleRange = .pi / 2
-		emitter.particlePositionRange = positionRange
-		emitter.numParticlesToEmit = numParticles
-		emitter.removeWhenDone()
-		return emitter
-	}
-
 	func startGlow() {
 		if let g = glow {
 			g.particleBirthRate = g.particlePositionRange.dx / 10.0
