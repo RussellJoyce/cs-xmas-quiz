@@ -27,9 +27,7 @@ Temporary Items
 node_modules
 
 # Ignore question files 
-Music/*
+Questions/*
 nodeserver/static/geography/*
-Unique/*
-Pointless/*
 
 quizleds/src/credentials.h
