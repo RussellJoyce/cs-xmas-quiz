@@ -47,9 +47,9 @@ class StartupView: NSViewController {
         }
 
 		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
-        musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Music"
-		uniquePath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Unique"
-		pointlessPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Pointless"
+        musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Music"
+		uniquePath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Unique"
+		pointlessPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Pointless"
 		
         startButton.isEnabled = true
     }
