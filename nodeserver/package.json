@@ -2,6 +2,10 @@
   "name": "quiz-server",
   "version": "0.0.1",
   "description": "Quiz server",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
   "dependencies": {
     "connect": "^3.6.6",
     "express": "^4.16.4",

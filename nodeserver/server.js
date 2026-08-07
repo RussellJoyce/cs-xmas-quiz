@@ -1,277 +1,197 @@
 'use strict';
 
-const WebSocket = require('ws');
-const WebSocketServer = WebSocket.Server;
+//Wiring only. The protocol itself lives in protocol.js so that it can be tested without binding ports or reading certificates.
+
+const WebSocketServer = require('ws').Server;
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
-
-var clients = {};
-
-var lastView = "buzzer";
-var lastGeoImage = "start.jpg";
+const { QuizState, safeSend, clientKey, asText } = require('./protocol');
 
 //DNS record
-const dnshostname = 'christmasquiz.win';
-const hostaddress = '192.168.1.2';
+const DNS_HOSTNAME = 'christmasquiz.win';
+const HOST_ADDRESS = '192.168.1.2';
 
-//Certificates for SSL
-const certkey = 'certs/live/' + dnshostname + '/privkey.pem';
-const certchain = 'certs/live/' + dnshostname + '/fullchain.pem';
+function defaultConfig(overrides) {
+    const cfg = Object.assign({
+        dnsHostname: DNS_HOSTNAME,
+        hostAddress: HOST_ADDRESS,
+        clientWssPort: 8090,    //Buzzer clients over TLS (what the phones use)
+        clientWsPort: 8093,     //Buzzer clients over plain ws (local/test clients)
+        serverPort: 8091,       //The quiz software
+        ledsPort: 8092,         //The LED controllers
+        httpPort: 80,
+        httpsPort: 443,
+        dnsPort: 53,
+        staticDir: __dirname + '/static',
 
-const wclientHttpsServer = https.createServer({
-    key: fs.readFileSync(certkey, 'utf8'),
-    cert: fs.readFileSync(certchain, 'utf8')
-});
-const wclient = new WebSocketServer({ server: wclientHttpsServer });
-wclientHttpsServer.listen(8090, "0.0.0.0");
+        //Two bind addresses
+        //the https listeners are explicitly IPv4, while the bare WebSocket servers are left
+        //unbound so they get a dual-stack IPv6 socket and accept IPv6 clients too.
+        bindAddress: "0.0.0.0",
+        wsBindAddress: undefined
+    }, overrides);
 
-const wclientWs = new WebSocketServer({ port: 8093 }); // Plain WS for local/test clients
-const wserver = new WebSocketServer({ port: 8091 });
-const wleds = new WebSocketServer({ port: 8092 });
-
-function getClientByID(id) {
-    for(var c in clients) {
-        if(clients[c].hasOwnProperty("id")) {
-            if(clients[c].id == id) {
-                return clients[c];
-            }
-        }
+    //Certificates for SSL. Pass certs: null to run without TLS (the ws-only test setup).
+    if(!cfg.hasOwnProperty('certs')) {
+        cfg.certs = {
+            key: 'certs/live/' + cfg.dnsHostname + '/privkey.pem',
+            cert: 'certs/live/' + cfg.dnsHostname + '/fullchain.pem'
+        };
     }
-    return null;
+    return cfg;
 }
 
-/*function getUnusedClientID() {
-    var id = 1;
-    while(getClientByID(id)) {
-        id++;
-    }
-    return id;
-}*/
-
-//Send to one socket, tolerating sockets that are closing or already dead.
-//A throw here must not abort a broadcast part-way and silently skip the rest.
-function safeSend(sock, message) {
-    if(!sock || sock.readyState != WebSocket.OPEN) {
-        return;
-    }
-    try {
-        sock.send(message);
-    } catch(err) {
-        console.log("ERROR: " + err.message + " sending '" + message + "' to a client");
-    }
+function readCerts(certs) {
+    return {
+        key: fs.readFileSync(certs.key, 'utf8'),
+        cert: fs.readFileSync(certs.cert, 'utf8')
+    };
 }
 
-function sendMessageToAllClients(message) {
-    wclient.clients.forEach(function each(c) {
-        safeSend(c, message);
-    });
-    wclientWs.clients.forEach(function each(c) {
-        safeSend(c, message);
-    });
-}
+//The four WebSocket servers plus the protocol state they share.
+function startWebsocketServers(overrides) {
+    const cfg = defaultConfig(overrides);
 
+    //Buzzer clients arrive on two servers: wss for real phones, plain ws for test clients.
+    let wclientHttpsServer = null;
+    let wclient = null;
+    if(cfg.certs) {
+        wclientHttpsServer = https.createServer(readCerts(cfg.certs));
+        wclient = new WebSocketServer({ server: wclientHttpsServer });
+        wclientHttpsServer.listen(cfg.clientWssPort, cfg.bindAddress);
+    }
 
-wserver.on('connection', function(ws) {
-    console.log("Quiz software connected")
-    ws.send('connected');
+    const wclientWs = new WebSocketServer({ port: cfg.clientWsPort, host: cfg.wsBindAddress });
+    const wserver = new WebSocketServer({ port: cfg.serverPort, host: cfg.wsBindAddress });
+    const wleds = new WebSocketServer({ port: cfg.ledsPort, host: cfg.wsBindAddress });
 
-    ws.on('message', function incoming(message) {
-        //Messages from the quiz software to the clients
-        try {
-            if(message.length >= 2) { //All valid messages are 2 or more characters long
-                switch(message.slice(0,2)) {
-                    case "on": //Activate buzzer
-                    case "of": //Deactivate buzzer
-                    case "hh": //Emphasise higher
-                    case "hl": //Emphasise lower
-                    case "hn": { //Deemphasise higher and lower
-                        const id = parseInt(message.slice(2)); //Teams are 1-based, so 0/NaN are both invalid
-                        if(id) {
-                            const c = getClientByID(id);
-                            if(c) {
-                              console.log("Sending message to client " + id + ": " + message.slice(0,2));
-                              safeSend(c.sock, message.slice(0,2));
-                            } //else client not connected
-                        }
-                        break;
-                    }
-                    case "le": //Set LED function
-                        console.log("To LEDs: " + message);
-                        wleds.clients.forEach(function each(c) {
-                            safeSend(c, message.slice(2));
-                        });
-                        break;
-                    case "di": { //Disconnect client
-                        const team = parseInt(message.slice(2));
-                        console.log("Disconnect request from quiz software for team " + team);
-                        const c = getClientByID(team);
-                        if(c) {
-                            safeSend(c.sock, "vipickteam");
-                            c.id = null;
-                        } //else client not connected
-                        break;
-                    }
-                    case "vi": //Set view
-                        lastView = message.slice(2);
-                        console.log("View change to view: " + lastView);
-                        sendMessageToAllClients(message);
-                        break;
-                    case "im": //Set geography image
-                        lastGeoImage = message.slice(2);
-                        console.log("Geography image: " + lastGeoImage);
-                        sendMessageToAllClients(message);
-                        break;
-                    case "ls": { //List clients
-                        //Only recently-active clients that have actually claimed a team.
-                        //Without the id check, clients sat on the team picker emit nulls into the list.
-                        const idList = Object.values(clients)
-                          .filter(c => c.id != null && c.timestamp > (Date.now() - 10000))
-                          .map(c => c.id).join(",");
-                        wserver.clients.forEach(client => {
-                            safeSend(client, "lr" + idList);
-                        });
-                        break;
-                    }
-                    case "ha": //Reset all higher/lowers
-                        sendMessageToAllClients("hn");
-                        break;
-                    default:
-                        //Else just forward it on to all clients
-                        console.log("To all: " + message);
-                        sendMessageToAllClients(message);
-                        break;
-                }
-            }
-        } catch(err) {
-            console.log("ERROR: " + err.message + " handling message from quiz software to client");
+    const clientServers = wclient ? [wclient, wclientWs] : [wclientWs];
+
+    const state = new QuizState({
+        toClients: function(message) {
+            clientServers.forEach(s => s.clients.forEach(c => safeSend(c, message)));
+        },
+        toServers: function(message) {
+            wserver.clients.forEach(c => safeSend(c, message));
+        },
+        toLeds: function(message) {
+            wleds.clients.forEach(c => safeSend(c, message));
         }
     });
-});
 
-wleds.on('connection', function(ws) {
-    console.log("LEDs connected")
-    ws.send('a01'); //New leds are set to Megamas
-    ws.on('message', function incoming(message) {
-        ws.send(message);
-    })
-})
+    wserver.on('connection', function(ws) {
+        console.log("Quiz software connected");
+        safeSend(ws, 'connected');
+        ws.on('message', message => state.handleServerMessage(message));
+    });
 
+    wleds.on('connection', function(ws) {
+        console.log("LEDs connected");
+        safeSend(ws, 'a01'); //New leds are set to Megamas
+        //asText keeps this a text frame: echoing a Buffer straight back would send a
+        //binary frame, which the ESP firmware does not expect.
+        ws.on('message', message => safeSend(ws, asText(message)));
+    });
 
-//NOTE: there is deliberately no 'close' handler. Entries in `clients` outlive their socket
-//so that a team's identity survives a phone sleeping, wifi dropping, or the browser being
-//backgrounded: when the same client reconnects it is recognised below and put straight back
-//into its team and the current view. The cost is that `clients` only grows during an
-//evening, and a team stays claimed until the quiz software releases it with 'di'.
-function handleClientConnection(ws, req) {
-    //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
-    var ip = req.connection.remoteAddress;
-    var vcid = new URL(req.url, 'http://localhost').searchParams.get('vcid');
-    var client = vcid ? ip + '_' + vcid : ip;
+    function handleClientConnection(ws, req) {
+        const ip = req.connection.remoteAddress;
+        const vcid = new URL(req.url, 'http://localhost').searchParams.get('vcid');
+        const key = clientKey(ip, vcid);
 
-    if(clients.hasOwnProperty(client) && clients[client].id != null) {
-        //Client already connected before, so has an ID, but this is a different socket.
-        console.log("Client reconnected: " + client);
-        clients[client].sock = ws;
-        ws.send('vi' + lastView); //Forward them to the current view
-        ws.send('im' + lastGeoImage); //Set the geography image
-    } else {
-        //New client
-        console.log("New client connected: " + client);
-        clients[client] = {id: null, sock: ws};
-        //The unrecognised client is forwarded to the "select team" view for them to pick who they are
-        ws.send('vipickteam');
+        state.addClient(key, ws);
+        ws.on('message', message => state.handleClientMessage(key, ws, message));
+    }
+    clientServers.forEach(s => s.on('connection', handleClientConnection));
+
+    //listen() is asynchronous, so address() is null until the server is up. Tests that ask
+    //for port 0 need to await ready() before they can find out what they actually got.
+    function listening(s) {
+        return new Promise(function(resolve) {
+            if(s.address()) resolve(); else s.once('listening', resolve);
+        });
     }
 
-    ws.on('message', function incoming(message) {
-        //Messages from the clients to the quiz software
-        try {
-            if(message.length >= 2) {
-                //Maintain client timestamp to track activity
-                clients[client].timestamp = Date.now();
-
-                //If the client has not yet picked a valid team, we only listen for the 'pt' message
-                if(clients[client].id == null) {
-                    if(message.slice(0,2) == "pt") {
-                        const teampick = message.slice(2);
-                        console.log("Client picking team " + message.slice(2));
-                        if(getClientByID(teampick) == null) {
-                            console.log("Team " + teampick + " assigned to client " + client)
-                            clients[client].id = teampick;
-                            ws.send("ok" + teampick);
-                            ws.send('vi' + lastView);
-                            ws.send('im' + lastGeoImage);
-                        } else {
-                            console.log("Team " + teampick + " is already taken by client " + client);
-                            //The team is already taken so ignore it
-                            ws.send("px");
-                        }
-                    }
-                } else {
-                    switch(message.slice(0,2)) {
-                        case "re":
-                            //Client wants an ID
-                            ws.send('ok' + clients[client].id);
-                            break;
-                        case "pi": //ping from client
-                            ws.send("pb");
-                            break;
-                        default:
-                            //Else just forward it on
-                            console.log("Client: " + message);
-                            wserver.clients.forEach(function each(c) {
-                                safeSend(c, message);
-                            });
-                            break;
-                    }
-                }
-            }
-        } catch(err) {
-            console.log("ERROR: " + err.message + " handling message from client");
+    return {
+        state: state,
+        servers: { wclient, wclientWs, wserver, wleds },
+        ready: function() {
+            const waiting = [wclientWs, wserver, wleds].map(listening);
+            if(wclientHttpsServer) waiting.push(listening(wclientHttpsServer));
+            return Promise.all(waiting);
+        },
+        ports: function() {
+            return {
+                clientWss: wclientHttpsServer ? wclientHttpsServer.address().port : null,
+                clientWs: wclientWs.address().port,
+                server: wserver.address().port,
+                leds: wleds.address().port
+            };
+        },
+        close: function(cb) {
+            const closeables = [wclientWs, wserver, wleds];
+            if(wclient) closeables.push(wclient);
+            let remaining = closeables.length + (wclientHttpsServer ? 1 : 0);
+            const done = () => { if(--remaining <= 0 && cb) cb(); };
+            closeables.forEach(s => s.close(done));
+            if(wclientHttpsServer) wclientHttpsServer.close(done);
         }
-    });
+    };
 }
-wclient.on('connection', handleClientConnection);
-wclientWs.on('connection', handleClientConnection);
 
-// Server to redirect HTTP requests to HTTPS
-const http = express();
-http.get('*', function(req, res) {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-http.listen(80, "0.0.0.0", function(){
-    console.log('HTTPS redirect server running on port 80...');
-});
+//HTTP redirect to HTTPS, and the HTTPS server that serves the client web app.
+function startWebServers(overrides) {
+    const cfg = defaultConfig(overrides);
 
-// Actual HTTPS server
-const app = express();
-app.use(express.static(__dirname+'/static'));
-const options = {
-    key: fs.readFileSync(certkey, 'utf8'),
-    cert: fs.readFileSync(certchain, 'utf8')
-};
-const server = https.createServer(options, app);
-server.listen(443, "0.0.0.0", function(){
-    console.log('Quiz Server running super securely on port 443...');
-});
+    const http = express();
+    http.get('*', function(req, res) {
+        res.redirect('https://' + req.headers.host + req.url);
+    });
+    http.listen(cfg.httpPort, cfg.bindAddress, function() {
+        console.log('HTTPS redirect server running on port ' + cfg.httpPort + '...');
+    });
+
+    const app = express();
+    app.use(express.static(cfg.staticDir));
+    const server = https.createServer(readCerts(cfg.certs), app);
+    server.listen(cfg.httpsPort, cfg.bindAddress, function() {
+        console.log('Quiz Server running super securely on port ' + cfg.httpsPort + '...');
+    });
+
+    return { http, server };
+}
 
 // DNS server because hey why not?
-var dnsserver = dns.createServer();
-dnsserver.on('request', function (request, response) {
-    //console.log("DNS request for " + request.question[0].name)
-    response.answer.push(
-        dns.A({
-            //name: request.question[0].name,
-            name: dnshostname,
-            address: hostaddress,
-            ttl: 10}));
-    response.send();
-});
-dnsserver.on('error', function (err, buff, req, res) {
-    console.log(err.stack);
-});
-dnsserver.on('listening', function () {
-    console.log("DNS server running on port 53...");
-});
-dnsserver.serve(53);
+function startDnsServer(overrides) {
+    const cfg = defaultConfig(overrides);
+
+    const dnsserver = dns.createServer();
+    dnsserver.on('request', function (request, response) {
+        //console.log("DNS request for " + request.question[0].name)
+        response.answer.push(
+            dns.A({
+                //name: request.question[0].name,
+                name: cfg.dnsHostname,
+                address: cfg.hostAddress,
+                ttl: 10}));
+        response.send();
+    });
+    dnsserver.on('error', function (err, buff, req, res) {
+        console.log(err.stack);
+    });
+    dnsserver.on('listening', function () {
+        console.log("DNS server running on port " + cfg.dnsPort + "...");
+    });
+    dnsserver.serve(cfg.dnsPort);
+    return dnsserver;
+}
+
+module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig };
+
+//Only start listening when run directly, so that tests can require this file.
+if(require.main === module) {
+    startWebsocketServers();
+    startWebServers();
+    startDnsServer();
+}
