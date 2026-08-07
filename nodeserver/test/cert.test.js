@@ -15,7 +15,7 @@ const { muteLogs } = require('./helpers');
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 function statusInDays(days) {
-    return { subject: 'CN=christmasquiz.win',
+    return { subject: 'CN=' + defaultConfig().dnsHostname,
              validTo: new Date(Date.now() + days * DAY_MS),
              days: days };
 }
@@ -25,8 +25,7 @@ describe('certificate messages', () => {
         const lines = certMessages(statusInDays(-71));
         assert.match(lines[0], /CERTIFICATE EXPIRED 71 days ago/);
         assert.ok(lines.some(l => l.includes('./renew-cert.sh')), 'tells you the command');
-        assert.ok(lines.some(l => /network fault|refuse to connect/.test(l)),
-            'explains how it will present, since it does not look like a cert problem');
+        assert.ok(lines.every(l => l.startsWith('***')), 'every line is marked as a problem');
     });
 
     test('an expiry today is treated as expiring, not as still valid', () => {
@@ -64,9 +63,10 @@ describe('certificate messages', () => {
     });
 
     test('an unreadable certificate is reported with the reason', () => {
+        //The reason matters: "no such file" and "bad format" need different fixes.
         const lines = certMessages({ error: 'ENOENT: no such file' });
         assert.match(lines[0], /could not be read \(ENOENT/);
-        assert.ok(lines.some(l => l.includes('wss')), 'says what it breaks');
+        assert.ok(lines[0].startsWith('***'));
     });
 });
 
@@ -122,8 +122,10 @@ describe('the real certificate', { skip: fs.existsSync(realCert()) ? false : 'no
 
     test('the leaf is taken from the fullchain, not the CA', () => {
         //A fullchain holds the leaf first, then the issuers, which expire much later.
-        //Reporting an issuer's expiry would be reassuring and wrong.
+        //Reporting an issuer's expiry would be reassuring and wrong. The subject should be
+        //the configured domain, not Let's Encrypt.
         const status = certStatus({ cert: realCert() });
-        assert.match(status.subject, /christmasquiz\.win/);
+        assert.ok(status.subject.includes(defaultConfig().dnsHostname),
+            'subject was ' + JSON.stringify(status.subject));
     });
 });

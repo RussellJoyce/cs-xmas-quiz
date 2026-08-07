@@ -30,4 +30,7 @@ node_modules
 Questions/*
 nodeserver/static/geography/*
 
+# Credentials
 quizleds/src/credentials.h
+nodeserver/cloudflare.ini
+

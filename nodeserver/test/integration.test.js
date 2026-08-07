@@ -359,7 +359,9 @@ describe('over TLS', { skip: certsPresent() ? false : 'no certificates in certs/
     });
 
     test('a client can join over wss and claim a team', async () => {
-        //The certificate is for christmasquiz.win, not 127.0.0.1, so skip the name check.
+        //The certificate is for the configured domain, not 127.0.0.1, so skip the name
+        //check. Note this also skips the expiry check, so this test passing says nothing
+        //about whether the certificate is still valid -- that is cert.test.js's job.
         const ws = new WebSocket('wss://127.0.0.1:' + ports.clientWss + '/?vcid=tls',
                                  { rejectUnauthorized: false });
         const got = [];

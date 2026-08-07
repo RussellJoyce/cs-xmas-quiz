@@ -10,14 +10,28 @@ const express = require('express');
 const dns = require('native-dns');
 const { QuizState, safeSend, clientKey, asText, DEFAULT_NUM_TEAMS } = require('./protocol');
 
-//DNS record
-const DNS_HOSTNAME = 'christmasquiz.win';
-const HOST_ADDRESS = '192.168.1.2';
+//Deployment settings live in config.json
+const CONFIG_FILE = __dirname + '/config.json';
+
+function loadDeploymentConfig() {
+    let file;
+    try {
+        file = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+    } catch(err) {
+        throw new Error("Cannot read " + CONFIG_FILE + ": " + err.message);
+    }
+    const domain = process.env.QUIZ_DOMAIN || file.domain;
+    const hostAddress = process.env.QUIZ_HOST_ADDRESS || file.hostAddress;
+    if(!domain) throw new Error(CONFIG_FILE + ' has no "domain"');
+    if(!hostAddress) throw new Error(CONFIG_FILE + ' has no "hostAddress"');
+    return { domain: domain, hostAddress: hostAddress };
+}
 
 function defaultConfig(overrides) {
+    const deployment = loadDeploymentConfig();
     const cfg = Object.assign({
-        dnsHostname: DNS_HOSTNAME,
-        hostAddress: HOST_ADDRESS,
+        dnsHostname: deployment.domain,
+        hostAddress: deployment.hostAddress,
         clientWssPort: 8090,    //Buzzer clients over TLS (what the phones use)
         clientWsPort: 8093,     //Buzzer clients over plain ws (local/test clients)
         serverPort: 8091,       //The quiz software
@@ -263,11 +277,13 @@ function startDnsServer(overrides) {
 }
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
-                   certStatus, certMessages, logCertStatus, CERT_WARN_DAYS };
+                   loadDeploymentConfig, certStatus, certMessages, logCertStatus,
+                   CERT_WARN_DAYS, CONFIG_FILE };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
     const cfg = defaultConfig();
+    console.log("Serving " + cfg.dnsHostname + ", resolving to " + cfg.hostAddress);
     startWebsocketServers();
     startWebServers();
     startDnsServer();
