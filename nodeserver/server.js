@@ -1,4 +1,7 @@
-const WebSocketServer = require('ws').Server;
+'use strict';
+
+const WebSocket = require('ws');
+const WebSocketServer = WebSocket.Server;
 const fs = require('fs');
 const https = require('https');
 const express = require('express');
@@ -21,12 +24,12 @@ const wclientHttpsServer = https.createServer({
     key: fs.readFileSync(certkey, 'utf8'),
     cert: fs.readFileSync(certchain, 'utf8')
 });
-wclient = new WebSocketServer({ server: wclientHttpsServer });
+const wclient = new WebSocketServer({ server: wclientHttpsServer });
 wclientHttpsServer.listen(8090, "0.0.0.0");
 
-wclientWs = new WebSocketServer({ port: 8093 }); // Plain WS for local/test clients
-wserver = new WebSocketServer({ port: 8091 });
-wleds = new WebSocketServer({ port: 8092 });
+const wclientWs = new WebSocketServer({ port: 8093 }); // Plain WS for local/test clients
+const wserver = new WebSocketServer({ port: 8091 });
+const wleds = new WebSocketServer({ port: 8092 });
 
 function getClientByID(id) {
     for(var c in clients) {
@@ -47,12 +50,25 @@ function getClientByID(id) {
     return id;
 }*/
 
+//Send to one socket, tolerating sockets that are closing or already dead.
+//A throw here must not abort a broadcast part-way and silently skip the rest.
+function safeSend(sock, message) {
+    if(!sock || sock.readyState != WebSocket.OPEN) {
+        return;
+    }
+    try {
+        sock.send(message);
+    } catch(err) {
+        console.log("ERROR: " + err.message + " sending '" + message + "' to a client");
+    }
+}
+
 function sendMessageToAllClients(message) {
     wclient.clients.forEach(function each(c) {
-        c.send(message);
+        safeSend(c, message);
     });
     wclientWs.clients.forEach(function each(c) {
-        c.send(message);
+        safeSend(c, message);
     });
 }
 
@@ -70,28 +86,33 @@ wserver.on('connection', function(ws) {
                     case "of": //Deactivate buzzer
                     case "hh": //Emphasise higher
                     case "hl": //Emphasise lower
-                    case "hn": //Deemphasise higher and lower
-                        if(id = parseInt(message.slice(2))) {
-                            if(c = getClientByID(id)) {
+                    case "hn": { //Deemphasise higher and lower
+                        const id = parseInt(message.slice(2)); //Teams are 1-based, so 0/NaN are both invalid
+                        if(id) {
+                            const c = getClientByID(id);
+                            if(c) {
                               console.log("Sending message to client " + id + ": " + message.slice(0,2));
-                              c.sock.send(message.slice(0,2));
+                              safeSend(c.sock, message.slice(0,2));
                             } //else client not connected
                         }
                         break;
+                    }
                     case "le": //Set LED function
                         console.log("To LEDs: " + message);
                         wleds.clients.forEach(function each(c) {
-                            c.send(message.slice(2));
+                            safeSend(c, message.slice(2));
                         });
                         break;
-                    case "di": //Disconnect client
+                    case "di": { //Disconnect client
                         const team = parseInt(message.slice(2));
                         console.log("Disconnect request from quiz software for team " + team);
-                        if(c = getClientByID(team)) {
-                            c.sock.send("vipickteam");
+                        const c = getClientByID(team);
+                        if(c) {
+                            safeSend(c.sock, "vipickteam");
                             c.id = null;
                         } //else client not connected
                         break;
+                    }
                     case "vi": //Set view
                         lastView = message.slice(2);
                         console.log("View change to view: " + lastView);
@@ -102,14 +123,17 @@ wserver.on('connection', function(ws) {
                         console.log("Geography image: " + lastGeoImage);
                         sendMessageToAllClients(message);
                         break;
-                    case "ls": //List clients
+                    case "ls": { //List clients
+                        //Only recently-active clients that have actually claimed a team.
+                        //Without the id check, clients sat on the team picker emit nulls into the list.
                         const idList = Object.values(clients)
-                          .filter(c => c.timestamp > (Date.now() - 10000))
+                          .filter(c => c.id != null && c.timestamp > (Date.now() - 10000))
                           .map(c => c.id).join(",");
                         wserver.clients.forEach(client => {
-                            client.send("lr" + idList);
+                            safeSend(client, "lr" + idList);
                         });
                         break;
+                    }
                     case "ha": //Reset all higher/lowers
                         sendMessageToAllClients("hn");
                         break;
@@ -135,6 +159,11 @@ wleds.on('connection', function(ws) {
 })
 
 
+//NOTE: there is deliberately no 'close' handler. Entries in `clients` outlive their socket
+//so that a team's identity survives a phone sleeping, wifi dropping, or the browser being
+//backgrounded: when the same client reconnects it is recognised below and put straight back
+//into its team and the current view. The cost is that `clients` only grows during an
+//evening, and a team stays claimed until the quiz software releases it with 'di'.
 function handleClientConnection(ws, req) {
     //Clients are identified by their IP address (meaning multiple browsers on the same device are the same "button")
     var ip = req.connection.remoteAddress;
@@ -165,7 +194,7 @@ function handleClientConnection(ws, req) {
                 //If the client has not yet picked a valid team, we only listen for the 'pt' message
                 if(clients[client].id == null) {
                     if(message.slice(0,2) == "pt") {
-                        teampick = message.slice(2);
+                        const teampick = message.slice(2);
                         console.log("Client picking team " + message.slice(2));
                         if(getClientByID(teampick) == null) {
                             console.log("Team " + teampick + " assigned to client " + client)
@@ -192,7 +221,7 @@ function handleClientConnection(ws, req) {
                             //Else just forward it on
                             console.log("Client: " + message);
                             wserver.clients.forEach(function each(c) {
-                                c.send(message);
+                                safeSend(c, message);
                             });
                             break;
                     }
