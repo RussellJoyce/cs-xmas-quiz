@@ -516,3 +516,82 @@ describe('team validation', () => {
         assert.deepStrictEqual(s.sent, ['px']);
     });
 });
+
+
+describe('re-picking a team you already hold', () => {
+    //The case behind the test harness bug: a client that reconnects and sends 'pt<n>'
+    //without asking 're' first. The server recognises it on the socket, so the message
+    //misses the team gate entirely and used to fall through to 'forward to the quiz
+    //software', leaving the client with no reply and no idea it already had a team.
+    test('is confirmed with ok, not silence', () => {
+        const { state, transport, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt1');
+        assert.deepStrictEqual(socks[0].sent, ['ok1']);
+        assert.deepStrictEqual(transport.servers, [],
+            'a team pick is not an answer and must not reach the quiz software');
+    });
+
+    test('survives the exact reconnect sequence that broke test.html', () => {
+        const { state, transport, socks } = setupTeams(2);
+
+        //Disconnect: the socket goes, the client entry deliberately stays.
+        socks[1].close();
+
+        //Reconnect on a new socket, then pick the same team again.
+        const fresh = new FakeSocket('c2-again');
+        state.addClient('10.0.0.9_test2', fresh);
+        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg'],
+            'reconnect replays the view but does not confirm the team');
+        fresh.drain();
+
+        state.handleClientMessage('10.0.0.9_test2', fresh, 'pt2');
+        assert.deepStrictEqual(fresh.sent, ['ok2'], 'client is told which team it is');
+        assert.deepStrictEqual(transport.servers, []);
+    });
+
+    test('normalised spellings of the same team still confirm', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt01');
+        assert.deepStrictEqual(socks[0].sent, ['ok1']);
+    });
+
+    test('moving to a different team is refused', () => {
+        //Releasing a team is the quiz software's job, via 'di'.
+        const { state, transport, socks } = setupTeams(2);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt5');
+        assert.deepStrictEqual(socks[0].sent, ['px']);
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1', 'still team 1');
+        assert.deepStrictEqual(transport.servers, []);
+    });
+
+    test('a free team cannot be grabbed as a second team', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt9');
+        assert.deepStrictEqual(socks[0].sent, ['px']);
+        assert.strictEqual(state.getClientByID('9'), null, 'team 9 left free');
+    });
+
+    test('an invalid team from a client that has one is refused, not forwarded', () => {
+        const { state, transport, socks } = setupTeams(1);
+        ['pt', 'pt0', 'pt99', 'ptx'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(socks[0].sent, ['px', 'px', 'px', 'px']);
+        assert.deepStrictEqual(transport.servers, []);
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1');
+    });
+
+    test('re still works, and still agrees with pt', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 're');
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt1');
+        assert.deepStrictEqual(socks[0].sent, ['ok1', 'ok1']);
+    });
+
+    test('a genuine answer is still forwarded', () => {
+        //Guard against the new case swallowing anything that merely starts with p.
+        const { state, transport, socks } = setupTeams(1);
+        ['zz1', 'tt1,ptarmigan', 'pq1'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, ['zz1', 'tt1,ptarmigan', 'pq1']);
+    });
+});

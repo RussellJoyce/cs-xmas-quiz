@@ -209,6 +209,18 @@ class QuizState {
                         case "pi": //ping from client
                             safeSend(sock, "pb");
                             break;
+                        case "pt": {
+                            //A client picking a team it already holds.
+                            const teampick = validTeam(message.slice(2), this.numTeams);
+                            if(teampick !== null && teampick === this.clients[key].id) {
+                                safeSend(sock, "ok" + this.clients[key].id);
+                            } else {
+                                //Asking for a different team while already holding one.
+                                console.log("Client " + key + " holds team " + this.clients[key].id + " and cannot move to '" + message.slice(2) + "'");
+                                safeSend(sock, "px");
+                            }
+                            break;
+                        }
                         default:
                             //Else just forward it on
                             console.log("Client: " + message);

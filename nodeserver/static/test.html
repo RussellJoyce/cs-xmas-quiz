@@ -244,6 +244,10 @@ VirtualClient.prototype.connect = function() {
     this.log('msg-info', 'Connecting to ' + url);
     this.updateStatus();
 
+    // Auto-pick is decided per connection and consumed by the first 'vipickteam' we get
+    // back. Set it before the socket exists so it cannot be missed by an early message.
+    this.autopickPending = document.getElementById('cfg-autopick').checked;
+
     var self = this;
     try {
         this.ws = new WebSocket(url);
@@ -265,14 +269,12 @@ VirtualClient.prototype.connect = function() {
             }
         }, 5000);
 
-        // Auto-pick team if enabled
-        if (document.getElementById('cfg-autopick').checked) {
-            // Use index as team number (1-based), capped at 14
-            var teamNum = self.index;
-            if (teamNum >= 1 && teamNum <= 14) {
-                setTimeout(function() { self.pickTeam(teamNum); }, 100);
-            }
-        }
+        // Ask the server which team we are, exactly as game.js does. On a reconnect the
+        // server already knows us and replies 'ok<n>'; if it does not know us it has
+        // already sent 'vipickteam', and the handler for that does the auto-pick.
+        // Sending 'pt' here instead would be answered with silence on a reconnect,
+        // leaving this cell showing the team picker while the server thinks otherwise.
+        self.send('re');
     };
 
     this.ws.onmessage = function(event) {
@@ -338,6 +340,18 @@ VirtualClient.prototype.handleMessage = function(msg) {
             if (payload === 'pickteam') {
                 this.team = null;
                 this.buzzerOn = false;
+                // The server does not recognise us, so claim a team. Only the first
+                // 'vipickteam' of a connection does this: a later one means the quiz
+                // software sent 'di', and immediately re-claiming would make that
+                // look like it had not worked.
+                if (this.autopickPending) {
+                    this.autopickPending = false;
+                    var self = this;
+                    var teamNum = this.index;
+                    if (teamNum >= 1 && teamNum <= 14) {
+                        setTimeout(function() { self.pickTeam(teamNum); }, 100);
+                    }
+                }
             }
             this.updateStatus();
             break;
