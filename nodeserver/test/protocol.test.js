@@ -3,7 +3,7 @@
 const { test, describe, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert');
 
-const { QuizState, safeSend, clientKey, asText, ACTIVE_WINDOW_MS,
+const { QuizState, safeSend, clientKey, asText, validTeam, DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
         DEFAULT_VIEW, DEFAULT_GEO_IMAGE } = require('../protocol');
 const { FakeSocket, recordingTransport, muteLogs } = require('./helpers');
 
@@ -310,11 +310,12 @@ describe('bad input', () => {
         assert.deepStrictEqual(socks[0].sent, []);
     });
 
-    test('a team claim is not validated as a number', () => {
-        //Documenting current behaviour rather than endorsing it: pt takes any string.
+    test('a team claim that is not a number is refused', () => {
         const { state, socks } = setup(1);
+        socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt<script>');
-        assert.strictEqual(state.clients['10.0.0.9_test1'].id, '<script>');
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, null);
+        assert.deepStrictEqual(socks[0].sent, ['px']);
     });
 });
 
@@ -421,5 +422,97 @@ describe('message framing', () => {
         state.handleServerMessage(undefined);
         assert.deepStrictEqual(transport.servers, []);
         assert.deepStrictEqual(socks[0].sent, []);
+    });
+});
+
+
+describe('team validation', () => {
+    test('accepts every real team', () => {
+        for(let n = 1; n <= DEFAULT_NUM_TEAMS; n++) {
+            assert.strictEqual(validTeam(String(n), DEFAULT_NUM_TEAMS), String(n));
+        }
+    });
+
+    test('rejects everything that is not a real team', () => {
+        ['', '0', '-1', '15', '99', ' 1', '1 ', '1e0', '1.0', 'x', '<script>',
+         '1,2', 'null', '\u0661'].forEach(bad => {
+            assert.strictEqual(validTeam(bad, DEFAULT_NUM_TEAMS), null,
+                JSON.stringify(bad) + ' must not be a team');
+        });
+    });
+
+    test('normalises so a team cannot be held twice under different spellings', () => {
+        assert.strictEqual(validTeam('01', DEFAULT_NUM_TEAMS), '1');
+        assert.strictEqual(validTeam('007', DEFAULT_NUM_TEAMS), '7');
+    });
+
+    test('honours a different team count', () => {
+        assert.strictEqual(validTeam('6', 4), null);
+        assert.strictEqual(validTeam('4', 4), '4');
+    });
+
+    test('a bare "pt" cannot slip past the team gate', () => {
+        //Regression: "" != null, so an empty team id used to count as "has a team" and let
+        //the client forward anything it liked to the quiz software.
+        const { state, transport, socks } = setup(1);
+        socks[0].drain();
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt');
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, null);
+        assert.deepStrictEqual(socks[0].sent, ['px']);
+
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'zz-anything');
+        assert.deepStrictEqual(transport.servers, [], 'still gated');
+    });
+
+    test('team 0 is refused rather than becoming an unreachable buzzer', () => {
+        //Regression: pt0 used to be accepted, but the routing check treats parseInt("0")
+        //as falsy, so the quiz software could never address that client again.
+        const { state, socks } = setup(1);
+        socks[0].drain();
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt0');
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, null);
+        assert.deepStrictEqual(socks[0].sent, ['px']);
+    });
+
+    test('a team above the count is refused', () => {
+        const { state, socks } = setup(1);
+        socks[0].drain();
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt15');
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, null);
+        assert.deepStrictEqual(socks[0].sent, ['px']);
+    });
+
+    test('a rejected claim leaves the team free for somebody else', () => {
+        const { state, socks } = setup(2);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt99');
+        socks[1].drain();
+        state.handleClientMessage('10.0.0.9_test2', socks[1], 'pt9');
+        assert.ok(socks[1].sent.includes('ok9'));
+    });
+
+    test('"01" and "1" are the same team, not two', () => {
+        const { state, socks } = setup(2);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt01');
+        assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1');
+        socks[1].drain();
+        state.handleClientMessage('10.0.0.9_test2', socks[1], 'pt1');
+        assert.deepStrictEqual(socks[1].sent, ['px'], 'already taken');
+    });
+
+    test('the ls listing can no longer contain an empty entry', () => {
+        const { state, transport, socks } = setup(2);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt');    //used to claim ""
+        state.handleClientMessage('10.0.0.9_test2', socks[1], 'pt1');
+        state.handleServerMessage('ls');
+        assert.deepStrictEqual(transport.servers, ['lr1']);
+    });
+
+    test('the team count is configurable through the constructor', () => {
+        const transport = recordingTransport();
+        const state = new QuizState(transport, { numTeams: 2 });
+        const s = new FakeSocket('c');
+        state.addClient('ip', s); s.drain();
+        state.handleClientMessage('ip', s, 'pt3');
+        assert.deepStrictEqual(s.sent, ['px']);
     });
 });

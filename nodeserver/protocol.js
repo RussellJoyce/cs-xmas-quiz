@@ -14,6 +14,10 @@ const WebSocket = require('ws');
 const DEFAULT_VIEW = "buzzer";
 const DEFAULT_GEO_IMAGE = "start.jpg";
 
+//Teams are 1-based and there are this many of them (matching numTeams in the quiz
+//software's Settings.swift). Overridable via the QuizState constructor.
+const DEFAULT_NUM_TEAMS = 14;
+
 //A client is "active" for the 'ls' listing if it has been heard from this recently.
 //Clients ping every 5s, so this tolerates one missed ping.
 const ACTIVE_WINDOW_MS = 10000;
@@ -45,9 +49,20 @@ function clientKey(ip, vcid) {
     return vcid ? ip + '_' + vcid : ip;
 }
 
+//Returns the canonical team id for a 'pt' payload, or null if it is not a real team.
+//Digits only, so "1e0" and " 1" are rejected
+//the result is normalised so that "01" and "1" cannot be held as two separate teams.
+function validTeam(payload, numTeams) {
+    if(!/^[0-9]+$/.test(payload)) return null;
+    const n = parseInt(payload, 10);
+    if(n < 1 || n > numTeams) return null;
+    return String(n);
+}
+
 class QuizState {
-    constructor(transport) {
+    constructor(transport, options) {
         this.transport = transport;
+        this.numTeams = (options && options.numTeams) || DEFAULT_NUM_TEAMS;
         this.clients = {};
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
@@ -165,9 +180,15 @@ class QuizState {
                 //If the client has not yet picked a valid team, we only listen for the 'pt' message
                 if(this.clients[key].id == null) {
                     if(message.slice(0,2) == "pt") {
-                        const teampick = message.slice(2);
-                        console.log("Client picking team " + teampick);
-                        if(this.getClientByID(teampick) == null) {
+                        const teampick = validTeam(message.slice(2), this.numTeams);
+                        console.log("Client picking team " + message.slice(2));
+                        if(teampick == null) {
+                            //Not a team that exists. Answer with 'px' rather than staying
+                            //silent so a client cannot sit waiting for a reply that will
+                            //never come; the real UI only offers 1..numTeams anyway.
+                            console.log("Rejected invalid team '" + message.slice(2) + "' from client " + key);
+                            safeSend(sock, "px");
+                        } else if(this.getClientByID(teampick) == null) {
                             console.log("Team " + teampick + " assigned to client " + key)
                             this.clients[key].id = teampick;
                             safeSend(sock, "ok" + teampick);
@@ -207,6 +228,8 @@ module.exports = {
     safeSend,
     clientKey,
     asText,
+    validTeam,
+    DEFAULT_NUM_TEAMS,
     DEFAULT_VIEW,
     DEFAULT_GEO_IMAGE,
     ACTIVE_WINDOW_MS

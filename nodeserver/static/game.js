@@ -108,7 +108,7 @@ function connect() {
                 document.getElementById("lower").innerHTML = "<span>FALSE</span>";
                 break;
             case "pb":
-                console.log("Ping back");
+                //Pong from the server
                 break;
         }
     }
@@ -290,8 +290,9 @@ document.addEventListener('touchend', function (event) {
 //Set up a periodic timer to keep the connection to the client alive
 //client -> "pi" -> server. server -> "pb" -> client
 setInterval(function() {
-    console.log("ping...");
-    ws.send("pi");
+    if(ws && ws.readyState === WebSocket.OPEN) {
+        ws.send("pi");
+    }
 }, 5000) //five seconds
 
 

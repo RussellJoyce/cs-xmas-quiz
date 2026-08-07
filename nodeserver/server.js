@@ -4,10 +4,11 @@
 
 const WebSocketServer = require('ws').Server;
 const fs = require('fs');
+const crypto = require('crypto');
 const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
-const { QuizState, safeSend, clientKey, asText } = require('./protocol');
+const { QuizState, safeSend, clientKey, asText, DEFAULT_NUM_TEAMS } = require('./protocol');
 
 //DNS record
 const DNS_HOSTNAME = 'christmasquiz.win';
@@ -25,6 +26,7 @@ function defaultConfig(overrides) {
         httpsPort: 443,
         dnsPort: 53,
         staticDir: __dirname + '/static',
+        numTeams: DEFAULT_NUM_TEAMS,  //must match numTeams in the quiz software's Settings.swift
 
         //Two bind addresses
         //the https listeners are explicitly IPv4, while the bare WebSocket servers are left
@@ -48,6 +50,56 @@ function readCerts(certs) {
         key: fs.readFileSync(certs.key, 'utf8'),
         cert: fs.readFileSync(certs.cert, 'utf8')
     };
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+//Warn this far ahead so there is time to run ./renew-cert.sh before anything breaks.
+const CERT_WARN_DAYS = 30;
+
+//Reads the certificate and reports how long it has left. Returns null if it cannot be read
+//or parsed, rather than throwing: this is a diagnostic, and it must never be the reason the
+//server fails to start.
+function certStatus(certs) {
+    if(!certs) return null;
+    try {
+        //X509Certificate takes the leaf from a fullchain, which is the one that expires first.
+        const cert = new crypto.X509Certificate(fs.readFileSync(certs.cert));
+        const validTo = new Date(cert.validTo);
+        if(isNaN(validTo.getTime())) return null;
+        return {
+            subject: cert.subject,
+            validTo: validTo,
+            //Positive means days left, negative means days since it expired.
+            days: Math.floor((validTo.getTime() - Date.now()) / DAY_MS)
+        };
+    } catch(err) {
+        return { error: err.message };
+    }
+}
+
+
+function certMessages(status) {
+    if(!status) return ["Certificate: not configured, so TLS is off"];
+    if(status.error) {
+        return ["*** Certificate: could not be read (" + status.error + ")"];
+    }
+
+    const when = status.validTo.toISOString().slice(0, 10);
+    if(status.days < 0) {
+        return ["*** CERTIFICATE EXPIRED " + (-status.days) + " days ago, on " + when,
+                "*** Fix with:  ./renew-cert.sh"];
+    }
+    if(status.days <= CERT_WARN_DAYS) {
+        return ["*** Certificate expires in " + status.days + " days, on " + when,
+                "*** Run ./renew-cert.sh before the next quiz."];
+    }
+    return ["Certificate valid for another " + status.days + " days (until " + when + ")"];
+}
+
+function logCertStatus(certs) {
+    const status = certStatus(certs);
+    certMessages(status).forEach(line => console.log(line));
+    return status;
 }
 
 //The four WebSocket servers plus the protocol state they share.
@@ -79,19 +131,26 @@ function startWebsocketServers(overrides) {
         toLeds: function(message) {
             wleds.clients.forEach(c => safeSend(c, message));
         }
-    });
+    }, { numTeams: cfg.numTeams });
+
+    //Every socket needs an 'error' listener.
+    function guard(ws, what) {
+        ws.on('error', function(err) {
+            console.log("ERROR: " + what + " socket: " + err.message + (err.code ? " (" + err.code + ")" : ""));
+        });
+    }
 
     wserver.on('connection', function(ws) {
         console.log("Quiz software connected");
+        guard(ws, "quiz software");
         safeSend(ws, 'connected');
         ws.on('message', message => state.handleServerMessage(message));
     });
 
     wleds.on('connection', function(ws) {
         console.log("LEDs connected");
+        guard(ws, "LED");
         safeSend(ws, 'a01'); //New leds are set to Megamas
-        //asText keeps this a text frame: echoing a Buffer straight back would send a
-        //binary frame, which the ESP firmware does not expect.
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 
@@ -100,10 +159,26 @@ function startWebsocketServers(overrides) {
         const vcid = new URL(req.url, 'http://localhost').searchParams.get('vcid');
         const key = clientKey(ip, vcid);
 
+        guard(ws, "client " + key);
         state.addClient(key, ws);
         ws.on('message', message => state.handleClientMessage(key, ws, message));
     }
     clientServers.forEach(s => s.on('connection', handleClientConnection));
+
+    function guardServer(s, what) {
+        s.on('error', function(err) {
+            if(err.code == 'EADDRINUSE' || err.code == 'EACCES') {
+                console.log("FATAL: cannot listen for " + what + ": " + err.message);
+                process.exit(1);
+            }
+            console.log("ERROR: " + what + " server: " + err.message);
+        });
+    }
+    guardServer(wclientWs, "plain ws clients");
+    guardServer(wserver, "the quiz software");
+    guardServer(wleds, "the LEDs");
+    if(wclient) guardServer(wclient, "wss clients");
+    if(wclientHttpsServer) guardServer(wclientHttpsServer, "the wss listener");
 
     //listen() is asynchronous, so address() is null until the server is up. Tests that ask
     //for port 0 need to await ready() before they can find out what they actually got.
@@ -187,11 +262,14 @@ function startDnsServer(overrides) {
     return dnsserver;
 }
 
-module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig };
+module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
+                   certStatus, certMessages, logCertStatus, CERT_WARN_DAYS };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
+    const cfg = defaultConfig();
     startWebsocketServers();
     startWebServers();
     startDnsServer();
+    logCertStatus(cfg.certs);
 }

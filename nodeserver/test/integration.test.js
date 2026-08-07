@@ -7,6 +7,8 @@
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert');
 const WebSocket = require('ws');
+const net = require('net');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -48,6 +50,36 @@ function expectSilence(ws, ms) {
             m => { throw new Error('unexpected message: ' + m); },
             () => {}));
 }
+
+
+//Speaks the WebSocket handshake by hand so that we can then send a frame the ws library
+//would never produce. Resolves once the bad frame has gone out.
+function sendMalformedFrame(port, frame) {
+    return new Promise(function(resolve, reject) {
+        const sock = net.connect(port, '127.0.0.1', function() {
+            sock.write('GET /?vcid=malformed HTTP/1.1\r\n' +
+                       'Host: 127.0.0.1\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n' +
+                       'Sec-WebSocket-Key: ' + crypto.randomBytes(16).toString('base64') + '\r\n' +
+                       'Sec-WebSocket-Version: 13\r\n\r\n');
+        });
+        let done = false;
+        sock.on('data', function(d) {
+            if(!done && d.toString().includes(' 101 ')) {
+                done = true;
+                sock.write(frame);
+                setTimeout(function() { sock.destroy(); resolve(); }, 150);
+            }
+        });
+        sock.on('error', function(err) { if(!done) reject(err); });
+        setTimeout(() => reject(new Error('no handshake from port ' + port)), 2000);
+    });
+}
+
+//FIN + text opcode, payload length 3, MASK bit clear. RFC 6455 requires client frames to
+//be masked, so ws rejects this with WS_ERR_EXPECTED_MASK and emits 'error' on the socket.
+const UNMASKED_FRAME = Buffer.from([0x81, 0x03, 0x61, 0x62, 0x63]);
+//Opcode 0x0b is reserved and must be rejected too.
+const RESERVED_OPCODE_FRAME = Buffer.from([0x8b, 0x80, 0x00, 0x00, 0x00, 0x00]);
 
 describe('over real sockets', () => {
     let handle, ports, unmute;
@@ -243,6 +275,57 @@ describe('over real sockets', () => {
         assert.strictEqual(await after.next(), 'vipickteam');
 
         quiz.close(); c.close(); after.close();
+    });
+
+    //These are the reason every socket needs an 'error' listener: Node throws on an
+    //unhandled 'error' event, so before the guards a single bad frame from one phone
+    //killed the process and every buzzer in the room. The server runs inside this test
+    //process, so if the guard is missing these do not fail politely -- they take the
+    //whole test run down, which is the point.
+    test('a malformed frame from a client does not kill the server', async () => {
+        await sendMalformedFrame(ports.clientWs, UNMASKED_FRAME);
+
+        const after = connect(ports.clientWs, '/?vcid=survivor');
+        assert.strictEqual(await after.next(), 'vipickteam', 'server still serving clients');
+        after.close();
+    });
+
+    test('a reserved opcode from a client does not kill the server', async () => {
+        await sendMalformedFrame(ports.clientWs, RESERVED_OPCODE_FRAME);
+
+        const after = connect(ports.clientWs, '/?vcid=survivor2');
+        assert.strictEqual(await after.next(), 'vipickteam');
+        after.close();
+    });
+
+    test('a malformed frame on the quiz software port does not kill the server', async () => {
+        await sendMalformedFrame(ports.server, UNMASKED_FRAME);
+
+        const quiz = connect(ports.server);
+        assert.strictEqual(await quiz.next(), 'connected');
+        quiz.close();
+    });
+
+    test('a malformed frame on the LED port does not kill the server', async () => {
+        await sendMalformedFrame(ports.leds, UNMASKED_FRAME);
+
+        const leds = connect(ports.leds);
+        assert.strictEqual(await leds.next(), 'a01');
+        leds.close();
+    });
+
+    test('a client that survives a neighbour\'s bad frame keeps its team', async () => {
+        //The blast radius question: one phone misbehaving must not disturb anyone else.
+        const c = connect(ports.clientWs, '/?vcid=bystander');
+        await c.next();
+        c.send('pt13');
+        await c.nextN(3);
+
+        await sendMalformedFrame(ports.clientWs, UNMASKED_FRAME);
+
+        c.send('re');
+        assert.strictEqual(await c.next(), 'ok13');
+        c.close();
     });
 });
 
