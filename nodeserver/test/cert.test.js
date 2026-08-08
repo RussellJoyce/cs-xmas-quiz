@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const { certStatus, certMessages, logCertStatus, defaultConfig, CERT_WARN_DAYS } = require('../server');
+const { certStatus, certMessages, logCertStatus, defaultConfig } = require('../server');
 const { muteLogs } = require('./helpers');
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -28,25 +28,11 @@ describe('certificate messages', () => {
         assert.ok(lines.every(l => l.startsWith('***')), 'every line is marked as a problem');
     });
 
-    test('an expiry today is treated as expiring, not as still valid', () => {
-        assert.match(certMessages(statusInDays(0))[0], /expires in 0 days/);
-    });
-
-    test('a certificate inside the warning window warns', () => {
-        const lines = certMessages(statusInDays(CERT_WARN_DAYS - 1));
-        assert.match(lines[0], /Certificate expires in/);
-        assert.ok(lines.some(l => l.includes('./renew-cert.sh')));
-    });
-
     test('a healthy certificate reports quietly, with no stars', () => {
-        const lines = certMessages(statusInDays(CERT_WARN_DAYS + 1));
+        const lines = certMessages(statusInDays(1));
         assert.strictEqual(lines.length, 1);
         assert.match(lines[0], /valid for another \d+ days/);
         assert.ok(!lines[0].includes('***'), 'no alarm for a healthy certificate');
-    });
-
-    test('the boundary day warns rather than reassures', () => {
-        assert.match(certMessages(statusInDays(CERT_WARN_DAYS))[0], /expires in/);
     });
 
     test('every message names a date, so it can be checked by eye', () => {

@@ -308,7 +308,7 @@ function startDnsServer(overrides) {
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
                    loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
-                   certStatus, certMessages, logCertStatus, CERT_WARN_DAYS, CONFIG_FILE };
+                   certStatus, certMessages, logCertStatus, CONFIG_FILE };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
