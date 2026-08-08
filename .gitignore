@@ -26,6 +26,9 @@ Temporary Items
 
 node_modules
 
+# Swift things
+*.swift.swp
+
 # Ignore question files 
 Questions/*
 nodeserver/static/geography/*
