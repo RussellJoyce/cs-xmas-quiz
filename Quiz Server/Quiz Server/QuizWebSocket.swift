@@ -31,9 +31,11 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	private var state: ConnectionState = .disconnected
 	private var reconnectScheduled = false
 	private var pingTimer: Timer?
+	private var connectWatchdog: Timer? //Add a watchdog so that connecting can be aborted and retried
 	private var intentionalDisconnect = false
+	private let connectTimeout: TimeInterval = 10.0
 
-	var isConnected: Bool { state == .connected }
+	var isConnected: Bool { state == .connected && task != nil }
 
 	init(url: URL) {
 		self.url = url
@@ -41,17 +43,26 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		self.session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
 	}
 
+	/// True only for the task we are currently using.
+	/// Deals with callbacks from old connections
+	private func isCurrent(_ candidate: URLSessionTask?) -> Bool {
+		guard let candidate = candidate, let current = task else { return false }
+		return candidate === current
+	}
+
 	func connect() {
 		guard state == .disconnected else { return }
 		state = .connecting
 		intentionalDisconnect = false
 		task = session.webSocketTask(with: url)
+		startConnectWatchdog()
 		task?.resume()
 	}
 
 	func disconnect() {
 		intentionalDisconnect = true
 		stopPing()
+		stopConnectWatchdog()
 		task?.cancel(with: .goingAway, reason: nil)
 		task = nil
 		state = .disconnected
@@ -59,10 +70,11 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 
 	/// Send a text message, silently dropping it if not connected.
 	func send(_ text: String) {
-		guard state == .connected else { return }
-		task?.send(.string(text)) { [weak self] error in
+		guard state == .connected, let current = task else { return }
+		current.send(.string(text)) { [weak self] error in
 			guard let self = self, let error = error else { return }
 			print("WebSocket send error: \(error.localizedDescription)")
+			guard self.isCurrent(current) else { return }
 			self.handleConnectionLost()
 		}
 	}
@@ -70,8 +82,14 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	// MARK: - URLSessionWebSocketDelegate
 
 	func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+		guard isCurrent(webSocketTask) else {
+			print("websocket ignoring open from a stale task")
+			webSocketTask.cancel(with: .abnormalClosure, reason: nil)
+			return
+		}
 		state = .connected
 		reconnectScheduled = false
+		stopConnectWatchdog()
 		print("websocket is connected")
 		delegate?.webSocketDidConnect()
 		listenForMessages()
@@ -81,14 +99,17 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
 		let reasonStr = reason.flatMap { String(data: $0, encoding: .utf8) } ?? "unknown"
 		print("websocket is disconnected: \(reasonStr) with code: \(closeCode.rawValue)")
+		guard isCurrent(webSocketTask) else { return }
 		handleConnectionLost()
 	}
 
 	func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
+		// `task` here is the parameter, not the property.
 		if let error = error {
 			print("websocket encountered an error: \(error.localizedDescription)")
-			handleConnectionLost()
 		}
+		guard isCurrent(task) else { return }
+		handleConnectionLost()
 	}
 
 	// MARK: - Private
@@ -96,6 +117,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	private func handleConnectionLost() {
 		guard state != .disconnected else { return }
 		stopPing()
+		stopConnectWatchdog()
 		state = .disconnected
 		task = nil
 		delegate?.webSocketDidDisconnect()
@@ -104,9 +126,28 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		}
 	}
 
+	/// Unconditional return to a known state
+	private func forceReset(_ why: String) {
+		print("WebSocket forcing a reset: \(why)")
+		stopPing()
+		stopConnectWatchdog()
+		task?.cancel(with: .abnormalClosure, reason: nil)
+		task = nil
+		let wasConnected = (state == .connected)
+		state = .disconnected
+		if wasConnected {
+			delegate?.webSocketDidDisconnect()
+		}
+		if !intentionalDisconnect {
+			scheduleReconnect()
+		}
+	}
+
 	private func listenForMessages() {
-		task?.receive { [weak self] result in
-			guard let self = self else { return }
+		guard let current = task else { return }
+		current.receive { [weak self] result in
+			// Once this task is no longer ours, stop reading from it and stop reporting it
+			guard let self = self, self.isCurrent(current) else { return }
 			switch result {
 			case .success(.string(let text)):
 				self.delegate?.webSocketDidReceiveMessage(text)
@@ -135,13 +176,35 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	private func startPing() {
 		stopPing()
 		pingTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
-			guard let self = self, self.state == .connected else { return }
-			self.task?.sendPing { [weak self] error in
+			guard let self = self else { return }
+
+			if self.state == .connected && self.task == nil {
+				self.forceReset("connected with no task")
+				return
+			}
+
+			guard self.state == .connected, let current = self.task else { return }
+			current.sendPing { [weak self] error in
 				guard let self = self, let error = error else { return }
 				print("WebSocket ping failed: \(error.localizedDescription)")
+				guard self.isCurrent(current) else { return }
 				self.handleConnectionLost()
 			}
 		}
+	}
+
+	/// Gives up on a connection attempt that never finished
+	private func startConnectWatchdog() {
+		stopConnectWatchdog()
+		connectWatchdog = Timer.scheduledTimer(withTimeInterval: connectTimeout, repeats: false) { [weak self] _ in
+			guard let self = self, self.state == .connecting else { return }
+			self.forceReset("connect timed out after \(self.connectTimeout)s")
+		}
+	}
+
+	private func stopConnectWatchdog() {
+		connectWatchdog?.invalidate()
+		connectWatchdog = nil
 	}
 
 	private func stopPing() {
