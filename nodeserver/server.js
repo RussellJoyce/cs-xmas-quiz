@@ -8,10 +8,52 @@ const crypto = require('crypto');
 const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
-const { QuizState, safeSend, clientKey, asText, DEFAULT_NUM_TEAMS } = require('./protocol');
+const { QuizState, safeSend, clientKey, asText } = require('./protocol');
 
 //Deployment settings live in config.json
 const CONFIG_FILE = __dirname + '/config.json';
+
+//Every port the server listens on. Named here so a missing one is a startup error naming
+//the key, rather than a server that quietly never listens for something.
+const REQUIRED_PORTS = ['clientWss', 'clientWs', 'server', 'leds', 'http', 'https', 'dns'];
+
+//Checks a parsed config and returns it normalised. Separate from reading the file so the
+//rules can be tested against made-up configs without writing over the real one.
+function validateDeploymentConfig(file, where) {
+    const from = where || 'config';
+
+    if(!file.domain) throw new Error(from + ' has no "domain"');
+    if(!file.hostAddress) throw new Error(from + ' has no "hostAddress"');
+    if(!file.ports) throw new Error(from + ' has no "ports"');
+
+    const ports = {};
+    REQUIRED_PORTS.forEach(function(name) {
+        const value = file.ports[name];
+        //0 means "let the OS choose", which the tests use. Anything else must be a real port.
+        if(!Number.isInteger(value) || value < 0 || value > 65535) {
+            throw new Error(from + ' needs an integer 0-65535 for ports.' + name + ', got ' + JSON.stringify(value));
+        }
+        ports[name] = value;
+    });
+
+    //Two servers on one port would surface as EADDRINUSE
+    const takenBy = {};
+    REQUIRED_PORTS.forEach(function(name) {
+        const value = ports[name];
+        if(value === 0) return;
+        if(takenBy[value]) {
+            throw new Error(from + ' uses port ' + value + ' for both "' + takenBy[value] + '" and "' + name + '"');
+        }
+        takenBy[value] = name;
+    });
+
+    //Must match numTeams in the quiz software's Settings.swift.
+    if(!Number.isInteger(file.numTeams) || file.numTeams < 1) {
+        throw new Error(from + ' needs an integer "numTeams" of at least 1, got ' + JSON.stringify(file.numTeams));
+    }
+
+    return { domain: file.domain, hostAddress: file.hostAddress, ports: ports, numTeams: file.numTeams };
+}
 
 function loadDeploymentConfig() {
     let file;
@@ -20,11 +62,10 @@ function loadDeploymentConfig() {
     } catch(err) {
         throw new Error("Cannot read " + CONFIG_FILE + ": " + err.message);
     }
-    const domain = process.env.QUIZ_DOMAIN || file.domain;
-    const hostAddress = process.env.QUIZ_HOST_ADDRESS || file.hostAddress;
-    if(!domain) throw new Error(CONFIG_FILE + ' has no "domain"');
-    if(!hostAddress) throw new Error(CONFIG_FILE + ' has no "hostAddress"');
-    return { domain: domain, hostAddress: hostAddress };
+    //Applied before validation so an override is checked like anything else.
+    if(process.env.QUIZ_DOMAIN) file.domain = process.env.QUIZ_DOMAIN;
+    if(process.env.QUIZ_HOST_ADDRESS) file.hostAddress = process.env.QUIZ_HOST_ADDRESS;
+    return validateDeploymentConfig(file, CONFIG_FILE);
 }
 
 function defaultConfig(overrides) {
@@ -32,15 +73,15 @@ function defaultConfig(overrides) {
     const cfg = Object.assign({
         dnsHostname: deployment.domain,
         hostAddress: deployment.hostAddress,
-        clientWssPort: 8090,    //Buzzer clients over TLS (what the phones use)
-        clientWsPort: 8093,     //Buzzer clients over plain ws (local/test clients)
-        serverPort: 8091,       //The quiz software
-        ledsPort: 8092,         //The LED controllers
-        httpPort: 80,
-        httpsPort: 443,
-        dnsPort: 53,
+        clientWssPort: deployment.ports.clientWss,  //Buzzer clients over TLS (what the phones use)
+        clientWsPort: deployment.ports.clientWs,    //Buzzer clients over plain ws (local/test clients)
+        serverPort: deployment.ports.server,        //The quiz software
+        ledsPort: deployment.ports.leds,            //The LED controllers
+        httpPort: deployment.ports.http,            //Probably 80
+        httpsPort: deployment.ports.https,          //Probably 443
+        dnsPort: deployment.ports.dns,              //Probably 53
         staticDir: __dirname + '/static',
-        numTeams: DEFAULT_NUM_TEAMS,  //must match numTeams in the quiz software's Settings.swift
+        numTeams: deployment.numTeams,
 
         //Two bind addresses
         //the https listeners are explicitly IPv4, while the bare WebSocket servers are left
@@ -66,13 +107,10 @@ function readCerts(certs) {
     };
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-//Warn this far ahead so there is time to run ./renew-cert.sh before anything breaks.
-const CERT_WARN_DAYS = 30;
 
-//Reads the certificate and reports how long it has left. Returns null if it cannot be read
-//or parsed, rather than throwing: this is a diagnostic, and it must never be the reason the
-//server fails to start.
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+//Reads the certificate and reports how long it has left
 function certStatus(certs) {
     if(!certs) return null;
     try {
@@ -91,21 +129,13 @@ function certStatus(certs) {
     }
 }
 
-
 function certMessages(status) {
     if(!status) return ["Certificate: not configured, so TLS is off"];
-    if(status.error) {
-        return ["*** Certificate: could not be read (" + status.error + ")"];
-    }
+    if(status.error) return ["*** Certificate: could not be read (" + status.error + ")"];
 
     const when = status.validTo.toISOString().slice(0, 10);
     if(status.days < 0) {
-        return ["*** CERTIFICATE EXPIRED " + (-status.days) + " days ago, on " + when,
-                "*** Fix with:  ./renew-cert.sh"];
-    }
-    if(status.days <= CERT_WARN_DAYS) {
-        return ["*** Certificate expires in " + status.days + " days, on " + when,
-                "*** Run ./renew-cert.sh before the next quiz."];
+        return ["*** CERTIFICATE EXPIRED " + (-status.days) + " days ago, on " + when, "*** Fix with:  ./renew-cert.sh"];
     }
     return ["Certificate valid for another " + status.days + " days (until " + when + ")"];
 }
@@ -277,8 +307,8 @@ function startDnsServer(overrides) {
 }
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
-                   loadDeploymentConfig, certStatus, certMessages, logCertStatus,
-                   CERT_WARN_DAYS, CONFIG_FILE };
+                   loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
+                   certStatus, certMessages, logCertStatus, CERT_WARN_DAYS, CONFIG_FILE };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
