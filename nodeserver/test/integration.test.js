@@ -375,19 +375,29 @@ describe('over TLS', { skip: certsPresent() ? false : 'no certificates in certs/
     });
 
     test('wss and plain ws clients share one set of teams', async () => {
-        const secure = new WebSocket('wss://127.0.0.1:' + ports.clientWss + '/?vcid=tls2',
-                                     { rejectUnauthorized: false });
-        await new Promise((resolve, reject) => { secure.on('open', resolve); secure.on('error', reject); });
-        secure.send('pt4');
-        await new Promise(resolve => setTimeout(resolve, 250));
-
+        //Continues from the test above, which left team 1 held over wss: the server is
+        //shared across this block, and a team stays claimed until 'di' releases it.
         //A plain-ws test client must not be able to take a team already held over wss.
         const plain = connect(ports.clientWs, '/?vcid=tls3');
         await plain.next();
-        plain.send('pt4');
+        plain.send('pt1');
         assert.strictEqual(await plain.next(), 'px');
-
-        secure.close();
         plain.close();
+    });
+
+    test('vcid is ignored over wss, so one address is one client', async () => {
+        //Asking for a name the wss port has never heard of still lands on the key the
+        //earlier test used, because over wss the address alone decides. The proof is that
+        //the server welcomes us back to the current view instead of offering the team
+        //picker: a client that had genuinely been keyed on 'someoneelse' would be new.
+        const impostor = new WebSocket('wss://127.0.0.1:' + ports.clientWss + '/?vcid=someoneelse',
+                                       { rejectUnauthorized: false });
+        const got = [];
+        impostor.on('message', d => got.push(d.toString()));
+        await new Promise((resolve, reject) => { impostor.on('open', resolve); impostor.on('error', reject); });
+        await new Promise(resolve => setTimeout(resolve, 250));
+
+        assert.deepStrictEqual(got, ['vibuzzer', 'imstart.jpg']);
+        impostor.close();
     });
 });

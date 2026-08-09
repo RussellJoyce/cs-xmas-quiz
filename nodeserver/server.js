@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
-const { QuizState, safeSend, clientKey, asText } = require('./protocol');
+const { QuizState, safeSend, clientKeyForConnection, asText } = require('./protocol');
 
 //Deployment settings live in config.json
 const CONFIG_FILE = __dirname + '/config.json';
@@ -198,16 +198,18 @@ function startWebsocketServers(overrides) {
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 
-    function handleClientConnection(ws, req) {
+    function handleClientConnection(ws, req, allowVcid) {
         const ip = req.connection.remoteAddress;
-        const vcid = new URL(req.url, 'http://localhost').searchParams.get('vcid');
-        const key = clientKey(ip, vcid);
+        const key = clientKeyForConnection(ip, req.url, allowVcid);
 
         guard(ws, "client " + key);
         state.addClient(key, ws);
         ws.on('message', message => state.handleClientMessage(key, ws, message));
     }
-    clientServers.forEach(s => s.on('connection', handleClientConnection));
+    //Only the plain ws port lets a client name itself; see clientKeyForConnection.
+    clientServers.forEach(function(s) {
+        s.on('connection', (ws, req) => handleClientConnection(ws, req, s === wclientWs));
+    });
 
     function guardServer(s, what) {
         s.on('error', function(err) {

@@ -3,7 +3,8 @@
 const { test, describe, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert');
 
-const { QuizState, safeSend, clientKey, asText, validTeam, DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
+const { QuizState, safeSend, clientKey, clientKeyForConnection, asText, validTeam,
+        DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
         DEFAULT_VIEW, DEFAULT_GEO_IMAGE } = require('../protocol');
 const { FakeSocket, recordingTransport, muteLogs } = require('./helpers');
 
@@ -43,6 +44,43 @@ describe('client identity', () => {
     test('vcid distinguishes clients sharing an IP', () => {
         //This is the whole reason the test harness can run 16 clients from one browser.
         assert.notStrictEqual(clientKey('10.0.0.9', 'test1'), clientKey('10.0.0.9', 'test2'));
+    });
+
+    describe('a client naming itself', () => {
+        //The plain ws port is the test port, and is the only one that will listen to a
+        //client about who it is. Everything the wss port is told about a vcid is ignored,
+        //so a phone cannot ask for the key another phone on its address is already using.
+        test('is honoured on the plain ws port', () => {
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', '/?vcid=phone1', true),
+                               '10.0.0.9_phone1');
+        });
+
+        test('is ignored on the wss port', () => {
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', '/?vcid=phone1', false),
+                               '10.0.0.9');
+        });
+
+        test('cannot take over another client on the same address over wss', () => {
+            const victim = clientKeyForConnection('10.0.0.9', '/', false);
+            const thief = clientKeyForConnection('10.0.0.9', '/?vcid=phone1', false);
+            //Both are just the address, so the thief gains nothing it did not already have.
+            assert.strictEqual(thief, victim);
+        });
+
+        test('is the bare address when no vcid is asked for', () => {
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', '/', true), '10.0.0.9');
+        });
+
+        test('survives a url that will not parse', () => {
+            //A connection is still worth keying even when its url is nonsense.
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', undefined, true), '10.0.0.9');
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', '%%%', true), '10.0.0.9');
+        });
+
+        test('other query parameters do not become part of the key', () => {
+            assert.strictEqual(clientKeyForConnection('10.0.0.9', '/?port=8093&proto=ws%3A%2F%2F', true),
+                               '10.0.0.9');
+        });
     });
 
     test('a new client is sent to the team picker', () => {

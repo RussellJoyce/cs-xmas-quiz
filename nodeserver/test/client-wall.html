@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quiz Client Wall</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000400; color: #eee; padding: 10px; }
+
+/* Toolbar */
+#toolbar { background: #2d322f; padding: 12px; border-radius: 8px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+#toolbar label { font-size: 13px; color: #9db3a4; display: flex; align-items: center; gap: 5px; }
+#toolbar input[type="text"], #toolbar input[type="number"], #toolbar select {
+    background: #252f2a; border: 1px solid #5a605c; color: #eee; padding: 5px 8px; border-radius: 4px; font-size: 13px;
+}
+#toolbar input[type="text"] { width: 130px; }
+#toolbar input[type="number"] { width: 80px; }
+#toolbar button { padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; background: #2d4638; color: #fff; }
+#toolbar button:hover { background: #2ecc71; }
+/* Killing a client stays red: that is what it means, not what colour the page is. */
+#toolbar .danger { background: #c0392b; }
+#toolbar .danger:hover { background: #e74c3c; }
+
+#note { font-size: 12px; color: #85998c; line-height: 1.6; margin: 10px 2px; }
+#note code { color: #f39c12; font-family: monospace; }
+#warning:not(:empty) { margin-top: 8px; padding: 8px 10px; border-radius: 4px; background: #3a2416; border: 1px solid #7a4a20; color: #e8c9a0; }
+
+/* The wall. --s is the display scale: each client is rendered at real phone size and
+   scaled down, because the client's type is fixed pixels and would not survive being
+   laid out in a small box. */
+:root { --s: 0.3; --pw: 800px; --ph: 400px; }
+#wall { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+
+/* The minimum is what the chrome bar needs: below about a 0.32 scale the phone is
+   narrower than its own label and buttons. */
+.slot { background: #16301f; border: 1px solid #4f4f4f; border-radius: 6px; padding: 4px; width: calc(var(--pw) * var(--s)); min-width: 128px; }
+.slot.big { --s: 1; border-color: #27ae60; }
+.slot.off { opacity: 0.55; }
+
+.chrome { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 1px 2px 4px 2px; }
+.chrome .name { font-size: 11px; font-weight: 600; color: #8fc8a4; white-space: nowrap; }
+.chrome .acts { display: flex; gap: 2px; flex-shrink: 0; }
+.chrome button { border: none; border-radius: 3px; background: #0d3a22; color: #bbb; cursor: pointer; font-size: 11px; line-height: 1; padding: 3px 5px; }
+.chrome button:hover { background: #1a6b3a; color: #fff; }
+
+/* The iframe is full phone size; this window crops it to the scaled footprint. */
+.screen { width: calc(var(--pw) * var(--s)); height: calc(var(--ph) * var(--s)); overflow: hidden; background: #060f09; border-radius: 3px; }
+.phone { width: var(--pw); height: var(--ph); border: 0; display: block; transform: scale(var(--s)); transform-origin: top left; }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+    <label>Clients: <select id="cfg-count"></select></label>
+    <label>Scale: <input type="range" id="cfg-scale" min="0.15" max="1" step="0.05" value="0.3"><span id="scale-readout">0.30</span></label>
+    <label>Host: <input type="text" id="cfg-host"></label>
+    <label>Protocol:
+        <select id="cfg-proto">
+            <option value="ws://">ws://</option>
+            <option value="wss://">wss://</option>
+        </select>
+    </label>
+    <label>Port: <input type="number" id="cfg-port" value="8093"></label>
+    <button onclick="rebuild()">Rebuild</button>
+    <button onclick="reloadAll()">Reload all</button>
+    <button class="danger" onclick="powerAll(false)">Kill all</button>
+    <button onclick="powerAll(true)">Restore all</button>
+</div>
+
+<div id="note">
+    Each cell is the real client (<code>index.html</code>) in an iframe, told to identify itself
+    with <code>?vcid=phoneN</code>.<br>
+    <b>&#8635;</b> is the team reloading their page, <b>&#9211;</b> is their phone going away and
+    coming back, and both should return them to their team. <b>&#10530;</b> blows one client up to
+    full size for typing.
+    <div id="warning"></div>
+</div>
+
+<div id="wall"></div>
+
+<script>
+//Clients are 1-indexed to line up with team numbers, which are 1-based everywhere else.
+var MAX_CLIENTS = 14; //Matches numTeams in config.json
+
+var wall = document.getElementById('wall');
+var countSel = document.getElementById('cfg-count');
+var hostInput = document.getElementById('cfg-host');
+var protoSel = document.getElementById('cfg-proto');
+var portInput = document.getElementById('cfg-port');
+var scaleInput = document.getElementById('cfg-scale');
+
+//Opened straight off the disk there is no hostname to inherit, so guess at the machine we
+//are sitting in front of. Served over http this is whatever served us, as you would expect.
+hostInput.value = location.hostname || 'localhost';
+
+for(var i = 1; i <= MAX_CLIENTS; i++) {
+    var opt = document.createElement('option');
+    opt.value = i; opt.textContent = i;
+    if(i === 4) opt.selected = true;
+    countSel.appendChild(opt);
+}
+
+//The server only lets a client name itself on the plain ws port, because a client that picks
+//its own key can take over another one on the same address. That makes this wall an http-only
+//tool: over https the clients can open nothing but wss://, where every cell is keyed on this
+//machine's address and the whole wall is therefore one client. Say so rather than quietly
+//presenting fourteen views of team 1.
+if(location.protocol === 'https:') {
+    protoSel.value = 'wss://';
+    portInput.value = '8090';
+    document.getElementById('warning').innerHTML =
+        '<b>Served over https:</b> the clients can only open <code>wss://</code>, where the ' +
+        'server ignores <code>vcid</code> and keys every cell on this machine\'s address — ' +
+        'so the wall behaves as a single client. Serve this page over plain http to use it.';
+}
+
+function clientURL(index) {
+    return 'index.html?vcid=phone' + index +
+           '&host=' + encodeURIComponent(hostInput.value) +
+           '&proto=' + encodeURIComponent(protoSel.value) +
+           '&port=' + encodeURIComponent(portInput.value);
+}
+
+function makeSlot(index) {
+    var url = clientURL(index);
+
+    var slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.setAttribute('data-url', url);
+
+    var chrome = document.createElement('div');
+    chrome.className = 'chrome';
+
+    var name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = 'phone' + index;
+
+    var acts = document.createElement('span');
+    acts.className = 'acts';
+
+    function action(label, title, handler) {
+        var b = document.createElement('button');
+        b.innerHTML = label;
+        b.title = title;
+        b.onclick = handler;
+        acts.appendChild(b);
+        return b;
+    }
+
+    action('&#10530;', 'Enlarge / shrink', function() { slot.classList.toggle('big'); });
+    action('&#8635;', 'Reload this client', function() { reload(slot); });
+    var powerBtn = action('&#9211;', 'Switch this client off', function() {
+        power(slot, slot.classList.contains('off'));
+    });
+    slot.powerBtn = powerBtn;
+
+    var screen = document.createElement('div');
+    screen.className = 'screen';
+
+    var frame = document.createElement('iframe');
+    frame.className = 'phone';
+    frame.src = url;
+    slot.frame = frame;
+
+    screen.appendChild(frame);
+    chrome.appendChild(name);
+    chrome.appendChild(acts);
+    slot.appendChild(chrome);
+    slot.appendChild(screen);
+    return slot;
+}
+
+//A reload is the team pressing refresh: the socket goes and comes back with the same vcid,
+//so the server should hand them their team straight back.
+function reload(slot) {
+    if(slot.classList.contains('off')) {
+        power(slot, true);
+    } else {
+        //Assigning src rather than calling contentWindow.location.reload() so this keeps
+        //working if the harness is ever served from a different origin to the client.
+        slot.frame.src = slot.getAttribute('data-url');
+    }
+}
+
+//Powering off takes the page away entirely, which is the only way to stop the client: it
+//retries its connection every second for as long as it exists.
+function power(slot, on) {
+    if(on) {
+        slot.classList.remove('off');
+        slot.frame.src = slot.getAttribute('data-url');
+        slot.powerBtn.title = 'Switch this client off';
+    } else {
+        slot.classList.add('off');
+        slot.frame.src = 'about:blank';
+        slot.powerBtn.title = 'Switch this client on';
+    }
+}
+
+function eachSlot(fn) {
+    var slots = wall.children;
+    for(var i = 0; i < slots.length; i++) fn(slots[i]);
+}
+
+function reloadAll() { eachSlot(reload); }
+function powerAll(on) { eachSlot(function(s) { power(s, on); }); }
+
+//Rebuilding replaces every client, but the vcids are positional so each one reconnects as
+//the same client it was before.
+function rebuild() {
+    wall.innerHTML = '';
+    var count = parseInt(countSel.value, 10);
+    for(var i = 1; i <= count; i++) {
+        wall.appendChild(makeSlot(i));
+    }
+}
+
+function applyScale() {
+    document.documentElement.style.setProperty('--s', scaleInput.value);
+    document.getElementById('scale-readout').textContent = parseFloat(scaleInput.value).toFixed(2);
+}
+
+//Scale is only presentation, so it never needs the clients to be torn down. The others
+//change the URL the clients connect to, so they do.
+scaleInput.addEventListener('input', applyScale);
+countSel.addEventListener('change', rebuild);
+hostInput.addEventListener('change', rebuild);
+protoSel.addEventListener('change', rebuild);
+portInput.addEventListener('change', rebuild);
+
+applyScale();
+rebuild();
+</script>
+</body>
+</html>

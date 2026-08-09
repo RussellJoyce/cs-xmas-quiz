@@ -49,9 +49,20 @@ function clientKey(ip, vcid) {
     return vcid ? ip + '_' + vcid : ip;
 }
 
+//The key for a client that has just connected.
+//Normally IP, but if the test harness is connecting it can supply a `vcid` query parameter to distinguish
+function clientKeyForConnection(ip, url, allowVcid) {
+    if(!allowVcid) return clientKey(ip, null);
+    let vcid = null;
+    try {
+        vcid = new URL(url || '/', 'http://localhost').searchParams.get('vcid');
+    } catch(err) {
+        vcid = null;
+    }
+    return clientKey(ip, vcid);
+}
+
 //Returns the canonical team id for a 'pt' payload, or null if it is not a real team.
-//Digits only, so "1e0" and " 1" are rejected
-//the result is normalised so that "01" and "1" cannot be held as two separate teams.
 function validTeam(payload, numTeams) {
     if(!/^[0-9]+$/.test(payload)) return null;
     const n = parseInt(payload, 10);
@@ -239,6 +250,7 @@ module.exports = {
     QuizState,
     safeSend,
     clientKey,
+    clientKeyForConnection,
     asText,
     validTeam,
     DEFAULT_NUM_TEAMS,
