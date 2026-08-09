@@ -116,7 +116,7 @@ if(location.protocol === 'https:') {
 }
 
 function clientURL(index) {
-    return 'index.html?vcid=phone' + index +
+    return '../static/index.html?vcid=phone' + index +
            '&host=' + encodeURIComponent(hostInput.value) +
            '&proto=' + encodeURIComponent(protoSel.value) +
            '&port=' + encodeURIComponent(portInput.value);
