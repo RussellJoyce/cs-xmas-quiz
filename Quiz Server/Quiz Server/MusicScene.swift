@@ -199,6 +199,14 @@ class MusicScene: QuizScene {
 		}
 	}
 	
+	override func teardown() {
+		//Pause rather than stop: this silences the round on the way out but keeps the
+		//loaded track and video in place, so returning to the round does not need them
+		//re-selecting in the controller.
+		pauseMusic()
+		video?.pause()
+	}
+
 	func nextTeam() {
 		if nextTeamNumber < buzzes.count {
 			teamBoxes[nextTeamNumber-1].run(SKAction.fadeAlpha(to: 0.3, duration: 0.5))

@@ -155,6 +155,12 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		answerTable?.safeReloadData()
 	}
 	
+	override func teardown() {
+		scoringTimer?.invalidate()
+		scoringTimer = nil
+		counterPlayer?.stop()
+	}
+
 	func changeToQuestion(path : String) {
 		do {
 			let data = try String(contentsOfFile: path, encoding: .ascii)

@@ -183,5 +183,10 @@ class BuzzerScene: QuizScene {
 	@objc func tick() {
 		backgroundEffect?.run(pulseAction!)
 	}
+
+	override func teardown() {
+		//The countdown is not cleared by reset(), so it must be stopped on the way out
+		timer?.invalidate()
+	}
 	
 }

@@ -170,6 +170,11 @@ class TrueFalseScene: QuizScene {
 		}
 	}
 	
+	override func teardown() {
+		timer?.invalidate()
+		music?.stop()
+	}
+
 	func createFire() {
 		fireEmitter.particleBirthRate = 3000
 	}

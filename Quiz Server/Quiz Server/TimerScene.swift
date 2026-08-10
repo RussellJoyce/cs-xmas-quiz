@@ -156,6 +156,10 @@ class TimerScene: QuizScene {
 		timer?.invalidate()
 		audioNode.run(SKAction.stop())
 	}
+
+	override func teardown() {
+		stopTimer()
+	}
 	
 	func timerIncrement() {
 		correct += 1

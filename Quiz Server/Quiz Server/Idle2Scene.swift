@@ -23,6 +23,7 @@ class Idle2Scene: QuizScene {
 	private var timeSinceLastSpawn: TimeInterval = 0.0
 	private var nextSpawnInterval: TimeInterval = 1.0
 	private var lastUpdateTime: TimeInterval = 0
+	private var fireworksTimer: Timer?
 	
 	override func buildScene() {
 		let gradientImage = verticalGradientImage(size: self.size, colors: [NSColor.black, NSColor(calibratedRed: 0.10, green: 0, blue: 0.22, alpha: 1)])
@@ -41,7 +42,6 @@ class Idle2Scene: QuizScene {
 		let year = Calendar.current.component(.year, from: Date())
 		addText(year: String(year))
 		addLights()
-		addFireworks()
 		addTeamNumbers()
 	}
 	
@@ -61,6 +61,10 @@ class Idle2Scene: QuizScene {
 			$0.particleScale = 0.4
 			$0.particleRotationSpeed = 1.0
 		}
+
+		//Fireworks re-arm themselves, so start them on entry and stop them in teardown
+		fireworksTimer?.invalidate()
+		addFireworks()
 	}
 	
 	override func update(_ currentTime: TimeInterval) {
@@ -312,7 +316,7 @@ class Idle2Scene: QuizScene {
 				keyframeValues: [SKColor(calibratedHue: CGFloat(Double.random(in: 0 ..< 1.0)), saturation: 1.0, brightness: 1.0, alpha: 1.0)], times: [0]
 			)
 		}
-		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.addFireworks()}
+		fireworksTimer = Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.addFireworks()}
 	}
 	
 	override func reset() {
@@ -320,6 +324,14 @@ class Idle2Scene: QuizScene {
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}
+	}
+
+	override func teardown() {
+		fireworksTimer?.invalidate()
+		fireworksTimer = nil
+		//Force the next update() to re-baseline, rather than seeing one huge delta
+		//and immediately spawning a character on re-entry
+		lastUpdateTime = 0
 	}
 	
 	func verticalGradientImage(size: CGSize, colors: [NSColor]) -> NSImage {
