@@ -146,13 +146,8 @@ class TextScene: QuizScene {
 	override func buildScene() {
 		teamGuesses = [(roundid: Int, guess: String)?]()
 		
-		let bgImage = SKSpriteNode(imageNamed: "background2")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		self.addChild(bgImage)
-			
+		addBackground(imageNamed: "background2")
+
 		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		
 		var boxheight : Int = 150

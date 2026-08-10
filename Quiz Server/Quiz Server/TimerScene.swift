@@ -19,7 +19,6 @@ class TimerScene: QuizScene {
 	fileprivate var timer: Timer?
 	fileprivate var pulseAction: SKAction?
 	fileprivate var pulseActionNoTick: SKAction?
-	fileprivate let filternode = SKEffectNode()
 	fileprivate var tickWhileCounting : Bool = true
 	
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -40,19 +39,8 @@ class TimerScene: QuizScene {
 		correct = 0
 		time = 60
 		
-		let bgImage = SKSpriteNode(imageNamed: "3")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		let exfilter = CIFilter(name: "CIExposureAdjust")
-		exfilter?.setDefaults()
-		exfilter?.setValue(1, forKey: "inputEV")
-		filternode.filter = exfilter
-		filternode.shouldRasterize = true
-		filternode.addChild(bgImage)
-		self.addChild(filternode)
-		
+		let filternode = addPulsableBackground(imageNamed: "3", initialEV: 1, shouldRasterize: true)
+
 		let mainaction = SKAction.run({ () -> Void in
 			let lednum = Int(200.0 * Float(self.time) / 60.0)
 			   QuizWebSocket.shared?.setCounterValue(lednum)
@@ -158,9 +146,9 @@ class TimerScene: QuizScene {
 	
 	@objc func tick() {
 		if(tickWhileCounting) {
-			filternode.run(pulseAction!)
+			backgroundEffect?.run(pulseAction!)
 		} else {
-			filternode.run(pulseActionNoTick!)
+			backgroundEffect?.run(pulseActionNoTick!)
 		}
 	}
 	

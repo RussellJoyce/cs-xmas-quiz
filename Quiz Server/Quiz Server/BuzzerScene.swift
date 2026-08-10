@@ -35,23 +35,12 @@ class BuzzerScene: QuizScene {
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	fileprivate var pulseAction: SKAction?
 	fileprivate var buzzPulseAction: SKAction?
-	fileprivate let filternode = SKEffectNode()
 	fileprivate var ledcount : Float = 0;
 
 
 	override func buildScene() {
-		let bgImage = SKSpriteNode(imageNamed: "red2")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		let exfilter = CIFilter(name: "CIExposureAdjust")
-		exfilter?.setDefaults()
-		exfilter?.setValue(0, forKey: "inputEV")
-		filternode.filter = exfilter
-		filternode.addChild(bgImage)
-		self.addChild(filternode)
-		
+		let filternode = addPulsableBackground(imageNamed: "red2")
+
 		let mainAction = SKAction.run({ () -> Void in
 			self.ledcount = self.ledcount + (100/Float(self.starttime))
 			self.ledcount -= floor(self.ledcount)
@@ -83,7 +72,6 @@ class BuzzerScene: QuizScene {
 			print(error)
 		}
 		
-		//self.addChild(bgImage)
 	}
 	
 	override func didMove(to view: SKView) {
@@ -173,7 +161,7 @@ class BuzzerScene: QuizScene {
 				}
 				
 				buzzNumber += 1
-				filternode.run(buzzPulseAction!)
+				backgroundEffect?.run(buzzPulseAction!)
 			}
 		}
 	}
@@ -203,7 +191,7 @@ class BuzzerScene: QuizScene {
 	}
 	
 	@objc func tick() {
-		filternode.run(pulseAction!)
+		backgroundEffect?.run(pulseAction!)
 	}
 	
 }

@@ -31,7 +31,6 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	private var scoringTimer: Timer?
 	private var lowestScoreThisRound : Int?
 	private var teamScores = [Int?]() // nil means either no answer, or an incorrect answer. Scores are 100 down to 0
-	private let filternode = SKEffectNode()
 	private var pulseAction, pulseActionSmall : SKAction!
 	
 	enum PointlessGameState {case waitForAnswers, answersRevealed, incorrectShown, runPointless, done}
@@ -63,18 +62,8 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		teamGuesses = [String?]()
 		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
 		
-		let bgImage = SKSpriteNode(imageNamed: "purple-texture-blurred")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-	
-		//Add exposure filter to background image node
-		let exfilter = CIFilter(name: "CIExposureAdjust")
-		exfilter?.setDefaults()
-		exfilter?.setValue(0, forKey: "inputEV")
-		filternode.filter = exfilter
-		filternode.addChild(bgImage)
-		self.addChild(filternode)
+		//Background carries an exposure filter so it can be flashed during scoring
+		let filternode = addPulsableBackground(imageNamed: "purple-texture-blurred")
 		pulseAction = Utils.createFilterPulse(upTime: 0.15, downTime: 1.0, filterNode: filternode)
 		pulseActionSmall = Utils.createFilterPulse(upTime: 0.10, downTime: 0.25, filterNode: filternode)
 		
@@ -331,7 +320,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					counterPlayer?.stop()
 					self.run(score == 0 ? scorePointlessSound : scoreSound)
 					
-					filternode.run(pulseAction)
+					backgroundEffect?.run(pulseAction)
 					
 					//Star spray for winning bar(s)
 					let em = SKEmitterNode(fileNamed: "StarGlow")!
@@ -349,7 +338,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					
 				} else {
 					run(teamDoneSound)
-					filternode.run(pulseActionSmall)
+					backgroundEffect?.run(pulseActionSmall)
 					
 					QuizWebSocket.shared?.pulseTeamColourQuick(i)
 					

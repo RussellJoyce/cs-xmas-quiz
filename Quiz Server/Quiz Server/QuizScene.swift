@@ -21,9 +21,6 @@ class QuizScene: SKScene {
 	/// the view controller builds every scene up front and reuses them.
 	private(set) var isSetUp = false
 
-	/// The full-screen background sprite, if one was added.
-	private(set) var backgroundImage: SKSpriteNode?
-
 	/// The effect node wrapping the background, if `addPulsableBackground` was used.
 	/// Pass this to `Utils.createFilterPulse(...)` to build a flash action.
 	private(set) var backgroundEffect: SKEffectNode?
@@ -56,14 +53,23 @@ class QuizScene: SKScene {
 	/// - Returns: the sprite, so scenes that parent content to it can keep a reference.
 	@discardableResult
 	func addBackground(imageNamed name: String, zPosition: CGFloat = 0) -> SKSpriteNode {
-		let bgImage = SKSpriteNode(imageNamed: name)
-		bgImage.zPosition = zPosition
-		bgImage.position = self.centrePoint
-		bgImage.size = self.size
-		self.addChild(bgImage)
+		return addBackground(SKSpriteNode(imageNamed: name), zPosition: zPosition)
+	}
 
-		backgroundImage = bgImage
-		return bgImage
+	/// As `addBackground(imageNamed:)`, but for a background drawn rather than loaded
+	/// (Idle2Scene renders a gradient).
+	@discardableResult
+	func addBackground(texture: SKTexture, zPosition: CGFloat = 0) -> SKSpriteNode {
+		return addBackground(SKSpriteNode(texture: texture), zPosition: zPosition)
+	}
+
+	@discardableResult
+	private func addBackground(_ sprite: SKSpriteNode, zPosition: CGFloat) -> SKSpriteNode {
+		sprite.zPosition = zPosition
+		sprite.position = self.centrePoint
+		sprite.size = self.size
+		self.addChild(sprite)
+		return sprite
 	}
 
 
@@ -95,7 +101,6 @@ class QuizScene: SKScene {
 		effect.addChild(bgImage)
 		self.addChild(effect)
 
-		backgroundImage = bgImage
 		backgroundEffect = effect
 		return effect
 	}

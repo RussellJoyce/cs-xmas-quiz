@@ -134,13 +134,8 @@ class NumbersScene: QuizScene {
 	override func buildScene() {
 		self.revealed = false
 		
-		let bgImage = SKSpriteNode(imageNamed: "blue-snow")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		self.addChild(bgImage)
-		
+		addBackground(imageNamed: "blue-snow")
+
 		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
 		
 		var boxheight : Int = 150

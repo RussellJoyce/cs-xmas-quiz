@@ -19,23 +19,11 @@ class IdleScene: QuizScene {
 		let calendar = Calendar.current
 		let year = calendar.component(.year, from: date)
 		
-		let bgImageLayer1 = SKSpriteNode(imageNamed: "snowman-background-1")
-		bgImageLayer1.position = self.centrePoint
-		bgImageLayer1.size = self.size
-		bgImageLayer1.zPosition = 0
-		let bgImageLayer2 = SKSpriteNode(imageNamed: "snowman-background-2")
-		bgImageLayer2.position = self.centrePoint
-		bgImageLayer2.size = self.size
-		bgImageLayer2.zPosition = 12
-		let bgImageLayer3 = SKSpriteNode(imageNamed: "snowman-background-3")
-		bgImageLayer3.position = self.centrePoint
-		bgImageLayer3.size = self.size
-		bgImageLayer3.zPosition = 21
-		let bgImageLayer4 = SKSpriteNode(imageNamed: "snowman-background-4")
-		bgImageLayer4.position = self.centrePoint
-		bgImageLayer4.size = self.size
-		bgImageLayer4.zPosition = 23
-		
+		addBackground(imageNamed: "snowman-background-1", zPosition: 0)
+		addBackground(imageNamed: "snowman-background-2", zPosition: 12)
+		addBackground(imageNamed: "snowman-background-3", zPosition: 21)
+		addBackground(imageNamed: "snowman-background-4", zPosition: 23)
+
 		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
 		snow1.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
 		snow1.zPosition = 1
@@ -191,10 +179,6 @@ class IdleScene: QuizScene {
 		for node in snowmojis {
 			self.addChild(node)
 		}
-		self.addChild(bgImageLayer1)
-		self.addChild(bgImageLayer2)
-		self.addChild(bgImageLayer3)
-		self.addChild(bgImageLayer4)
 		self.addChild(snow1)
 		self.addChild(snow2)
 		self.addChild(snow3)

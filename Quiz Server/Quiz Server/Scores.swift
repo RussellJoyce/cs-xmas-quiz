@@ -26,13 +26,8 @@ class ScoresScene: QuizScene {
 	var output : NSTextField!
 	
 	override func buildScene() {
-		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		self.addChild(bgImage)
-		
+		addBackground(imageNamed: "abstract-dark")
+
 		//Load team sounds
 		for i in 1...14 {
 			scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))

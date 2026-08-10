@@ -33,12 +33,7 @@ class TrueFalseScene: QuizScene {
 	var timeLabel: OutlinedLabelNode!
 		
 	override func buildScene() {
-		let bgImage = SKSpriteNode(imageNamed: "blackflakes")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		self.addChild(bgImage)
-		
+		addBackground(imageNamed: "blackflakes")
 		
 		timeLabel = OutlinedLabelNode(
 			text: "5",

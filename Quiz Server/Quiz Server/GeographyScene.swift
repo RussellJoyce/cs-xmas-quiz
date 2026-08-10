@@ -23,13 +23,8 @@ class GeographyScene: QuizScene {
 	override func buildScene() {
 		reset()
 
-		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
-		bgImage.zPosition = 0.0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		
-		self.addChild(bgImage)
-		
+		let bgImage = addBackground(imageNamed: "snowflakes-background")
+
 		mainImage.position = CGPoint(x: 150, y: 50.0)
 		mainImage.size.width = 1300.0
 		mainImage.size.height = 867.0

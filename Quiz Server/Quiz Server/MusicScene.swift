@@ -71,12 +71,8 @@ class MusicScene: QuizScene {
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
 		
-		let bgImage = SKSpriteNode(imageNamed: "music2")
-		bgImage.zPosition = 0
-		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
-		bgImage.size = self.size
-		self.addChild(bgImage)
-		
+		addBackground(imageNamed: "music2")
+
 		videoEffect.name = "videoEffect"
 		videoEffect.filter = CIFilter(name: "CIGaussianBlur")
 		videoEffect.filter?.setDefaults()

@@ -26,13 +26,8 @@ class Idle2Scene: QuizScene {
 	
 	override func buildScene() {
 		let gradientImage = verticalGradientImage(size: self.size, colors: [NSColor.black, NSColor(calibratedRed: 0.10, green: 0, blue: 0.22, alpha: 1)])
-		let bgTexture = SKTexture(image: gradientImage)
-		let bgImageLayer1 = SKSpriteNode(texture: bgTexture)
-		bgImageLayer1.position = self.centrePoint
-		bgImageLayer1.size = self.size
-		bgImageLayer1.zPosition = 0
-		self.addChild(bgImageLayer1)
-		
+		addBackground(texture: SKTexture(image: gradientImage))
+
 		for emojiname in emoji {
 			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
 			snowmoji.particleTexture = SKTexture(imageNamed: emojiname)
