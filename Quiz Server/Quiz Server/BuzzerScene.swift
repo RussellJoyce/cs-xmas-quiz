@@ -35,15 +35,11 @@ class BuzzerScene: QuizScene {
 	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
 	fileprivate var pulseAction: SKAction?
 	fileprivate var buzzPulseAction: SKAction?
-	fileprivate var ledcount : Float = 0;
-
 
 	override func buildScene() {
 		let filternode = addPulsableBackground(imageNamed: "red2")
 
 		let mainAction = SKAction.run({ () -> Void in
-			self.ledcount = self.ledcount + (100/Float(self.starttime))
-			self.ledcount -= floor(self.ledcount)
 			self.time -= 1
 			if(self.time == 0) {
 				self.timer?.invalidate()
