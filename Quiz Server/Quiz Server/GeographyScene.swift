@@ -82,32 +82,25 @@ class GeographyScene: QuizScene {
 	
 	
 	func addSplash(point : CGPoint, col : NSColor) {
-		let psplash = SKEmitterNode(fileNamed: "location")!
-		psplash.position = point
-		psplash.zPosition = 10.0
-		psplash.particleColor = col
-		psplash.particleColorSequence = nil
-		psplash.particleSpeed = 150
-		psplash.particleBirthRate = 4000
-		psplash.numParticlesToEmit = 2000
-		psplash.removeWhenDone()
-		mainImage.addChild(psplash)
+		mainImage.addEmitter(named: "location", at: point, zPosition: 10.0) {
+			$0.particleColor = col
+			$0.particleColorSequence = nil
+			$0.particleSpeed = 150
+			$0.particleBirthRate = 4000
+			$0.numParticlesToEmit = 2000
+		}
 	}
 	
 	func addPositionMarker(point: CGPoint, col: NSColor, team: Int) {
-		let p = SKEmitterNode(fileNamed: "location")!
-		p.position = point
-		p.zPosition = 10.0
-		p.particleColor = col
-		p.particleColorSequence = nil
-		mainImage.addChild(p)
-		
+		mainImage.addEmitter(named: "location", at: point, zPosition: 10.0, autoRemove: false) {
+			$0.particleColor = col
+			$0.particleColorSequence = nil
+		}
+
 		if team > 0 && team <= 19 {
-			let numbers = SKEmitterNode(fileNamed: "locationnumber")!
-			numbers.position = point
-			numbers.zPosition = 9.0
-			numbers.particleTexture = SKTexture(imageNamed: "number\(team)")
-			mainImage.addChild(numbers)
+			mainImage.addEmitter(named: "locationnumber", at: point, zPosition: 9.0, autoRemove: false) {
+				$0.particleTexture = SKTexture(imageNamed: "number\(team)")
+			}
 		}
 	}
 	
@@ -158,10 +151,7 @@ class GeographyScene: QuizScene {
 			
 			
 			let homecoords = percentToCoords(coord: (x: answerx, y: answery))
-			let pstar = SKEmitterNode(fileNamed: "locationstar")!
-			pstar.position = homecoords
-			pstar.zPosition = 5.0
-			mainImage.addChild(pstar)
+			mainImage.addEmitter(named: "locationstar", at: homecoords, zPosition: 5.0, autoRemove: false)
 			
 			addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.0, alpha: 1.0), team: 0)
 			addPositionMarker(point: homecoords, col: NSColor(calibratedHue: 0.0, saturation: 0.0, brightness: 1.0, alpha: 1.0), team: 0)

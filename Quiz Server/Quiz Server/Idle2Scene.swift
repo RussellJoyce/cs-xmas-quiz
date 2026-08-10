@@ -29,12 +29,13 @@ class Idle2Scene: QuizScene {
 		addBackground(texture: SKTexture(image: gradientImage))
 
 		for emojiname in emoji {
-			let snowmoji = SKEmitterNode(fileNamed: "Snowmoji")!
-			snowmoji.particleTexture = SKTexture(imageNamed: emojiname)
-			snowmoji.position = CGPoint(x: self.size.width / 2, y: self.size.height + 80)
-			snowmoji.zPosition = 2
+			let snowmoji = addEmitter(named: "Snowmoji",
+									  at: CGPoint(x: self.size.width / 2, y: self.size.height + 80),
+									  zPosition: 2,
+									  autoRemove: false) {
+				$0.particleTexture = SKTexture(imageNamed: emojiname)
+			}
 			snowmojis.append(snowmoji)
-			self.addChild(snowmoji)
 		}
 		
 		let year = Calendar.current.component(.year, from: Date())
@@ -45,9 +46,21 @@ class Idle2Scene: QuizScene {
 	}
 	
 	override func didMove(to view: SKView) {
-		snow1 = addSnow(existingSnowNode: snow1, emittername: "SnowBackground", birthRate: 10, particleScale: 0.2, zPosition: 1)
-		snow2 = addSnow(existingSnowNode: snow2, emittername: "Snow", birthRate: 7, particleScale: 0.3, zPosition: 20)
-		snow3 = addSnow(existingSnowNode: snow3, emittername: "Snow", birthRate: 7, particleScale: 0.4, zPosition: 24)
+		snow1 = addSnow(replacing: snow1, emitterNamed: "SnowBackground", zPosition: 1) {
+			$0.particleBirthRate = 10
+			$0.particleScale = 0.2
+			$0.particleRotationSpeed = 1.0
+		}
+		snow2 = addSnow(replacing: snow2, emitterNamed: "Snow", zPosition: 20) {
+			$0.particleBirthRate = 7
+			$0.particleScale = 0.3
+			$0.particleRotationSpeed = 1.0
+		}
+		snow3 = addSnow(replacing: snow3, emitterNamed: "Snow", zPosition: 24) {
+			$0.particleBirthRate = 7
+			$0.particleScale = 0.4
+			$0.particleRotationSpeed = 1.0
+		}
 	}
 	
 	override func update(_ currentTime: TimeInterval) {
@@ -68,27 +81,6 @@ class Idle2Scene: QuizScene {
 	}
 	
 	
-	func addSnow(existingSnowNode: SKEmitterNode?, emittername: String, birthRate: CGFloat, particleScale: CGFloat, zPosition: CGFloat, particleTexture: String? = nil) -> SKEmitterNode? {
-		if let sn = existingSnowNode {
-			sn.removeFromParent()
-		}
-	
-		if let p = SKEmitterNode(fileNamed: emittername) {
-			p.position = CGPoint(x: self.size.width / 2, y: self.size.height + 16)
-			p.particleBirthRate = birthRate
-			p.particleScale = particleScale
-			p.zPosition = zPosition
-			p.particleRotationSpeed = 1.0
-			if let pt = particleTexture {
-				p.particleTexture = SKTexture(imageNamed: pt)
-			}
-			p.advanceSimulationTime(8)
-			self.addChild(p)
-			return p
-		}
-		return nil
-	}
-
 	func addText(year : String) {
 		func makeLabel(text : String, fontSize : CGFloat, x : CGFloat, y : CGFloat) -> (SKLabelNode, SKLabelNode) {
 			let lb = SKLabelNode(fontNamed: "Neutra Display Titling")
@@ -271,12 +263,7 @@ class Idle2Scene: QuizScene {
 	}
 	
 	func addLemmingExplosion(at position: CGPoint) {
-		if let emitter = SKEmitterNode(fileNamed: "lemming") {
-			emitter.position = position
-			emitter.zPosition = 30
-			self.addChild(emitter)
-			emitter.removeWhenDone()
-		}
+		addEmitter(named: "lemming", at: position, zPosition: 30)
 	}
 	
 	func addLemming(y: CGFloat, reverse: Bool) {
@@ -318,15 +305,13 @@ class Idle2Scene: QuizScene {
 	}
 	
 	func addFireworks() {
-		let parts = SKEmitterNode(fileNamed: "fireworks")!
-		parts.position = CGPoint(x: 20 + Int.random(in: 0..<1880), y: 700 + Int.random(in: 0..<360))
-		parts.zPosition = 1
-		parts.numParticlesToEmit = 300
-		parts.particleColorSequence = SKKeyframeSequence(
-			keyframeValues: [SKColor(calibratedHue: CGFloat(Double.random(in: 0 ..< 1.0)), saturation: 1.0, brightness: 1.0, alpha: 1.0)], times: [0]
-		)
-		parts.removeWhenDone()
-		self.addChild(parts)
+		let point = CGPoint(x: 20 + Int.random(in: 0..<1880), y: 700 + Int.random(in: 0..<360))
+		addEmitter(named: "fireworks", at: point, zPosition: 1) {
+			$0.numParticlesToEmit = 300
+			$0.particleColorSequence = SKKeyframeSequence(
+				keyframeValues: [SKColor(calibratedHue: CGFloat(Double.random(in: 0 ..< 1.0)), saturation: 1.0, brightness: 1.0, alpha: 1.0)], times: [0]
+			)
+		}
 		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.addFireworks()}
 	}
 	
@@ -430,16 +415,12 @@ class Idle2Scene: QuizScene {
 		let circleRadius: CGFloat = 50
 		let emitterCount = 40
 		for _ in 0..<emitterCount {
-			if let part = SKEmitterNode(fileNamed: "teambuzzed") {
-				// Place this emitter at a random point on a ring
-				let angle = CGFloat.random(in: 0..<2 * .pi)
-				let x = node.position.x + cos(angle) * circleRadius
-				let y = node.position.y + 90 + sin(angle) * circleRadius
-				part.emissionAngle = angle
-				part.position = CGPoint(x: x, y: y)
-				part.zPosition = node.zPosition - 1
-				part.removeWhenDone()
-				self.addChild(part)
+			// Place this emitter at a random point on a ring
+			let angle = CGFloat.random(in: 0..<2 * .pi)
+			let x = node.position.x + cos(angle) * circleRadius
+			let y = node.position.y + 90 + sin(angle) * circleRadius
+			addEmitter(named: "teambuzzed", at: CGPoint(x: x, y: y), zPosition: node.zPosition - 1) {
+				$0.emissionAngle = angle
 			}
 		}
 		

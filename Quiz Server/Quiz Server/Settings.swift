@@ -136,6 +136,30 @@ extension SKNode {
 	var centrePoint: CGPoint {
 		return CGPoint(x:self.frame.midX, y:self.frame.midY)
 	}
+
+	/// Loads an emitter from the named .sks file, positions it, and attaches it as a child.
+	/// - Parameters:
+	///   - configure: applied before the node is attached, for textures, colours,
+	///     `numParticlesToEmit` and so on.
+	///   - autoRemove: call `removeWhenDone()` once configured, so that finite bursts
+	///     tidy themselves up. Pass false for continuous emitters whose lifetime the
+	///     caller manages (by holding a reference and setting `particleBirthRate`).
+	@discardableResult
+	func addEmitter(named name: String,
+					at position: CGPoint,
+					zPosition: CGFloat,
+					autoRemove: Bool = true,
+					configure: ((SKEmitterNode) -> Void)? = nil) -> SKEmitterNode {
+		let emitter = SKEmitterNode(fileNamed: name)!
+		emitter.position = position
+		emitter.zPosition = zPosition
+		configure?(emitter)
+		if autoRemove {
+			emitter.removeWhenDone()
+		}
+		self.addChild(emitter)
+		return emitter
+	}
 }
 
 // Convenience to remove emitters when they are done

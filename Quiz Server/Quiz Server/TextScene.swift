@@ -100,23 +100,18 @@ class TextTeamNode: SKNode {
 			teamHue -= 1.0
 		}
 		
-		let parts = SKEmitterNode(fileNamed: "TextSceneSparks")!
-		parts.position = CGPoint(x: -((self.width/2) - 40), y: 0)
-		parts.zPosition = 7
-		
-		parts.particleColorSequence = SKKeyframeSequence(
-			keyframeValues: [
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-			], times: [0.0, 0.1, 0.1, 0.3, 0.7]
-		)
-		
-		parts.removeWhenDone()
-		self.addChild(parts)
-		
+		self.addEmitter(named: "TextSceneSparks", at: CGPoint(x: -((self.width/2) - 40), y: 0), zPosition: 7) {
+			$0.particleColorSequence = SKKeyframeSequence(
+				keyframeValues: [
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+				], times: [0.0, 0.1, 0.1, 0.3, 0.7]
+			)
+		}
+
 		let grow = SKAction.scale(to: 1.2, duration: 0.05)
 		grow.timingMode = .easeOut
 		let shrink = SKAction.scale(to: 1, duration: 0.2)
@@ -230,12 +225,11 @@ class TextScene: QuizScene {
 		let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 		
 		for i in 0..<100 {
-			let p = SKEmitterNode(fileNamed: "Shower")!
-			p.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
-			p.position = CGPoint(x: self.centrePoint.x, y: self.centrePoint.y+100)
-			p.zPosition = CGFloat(100 + i)
-			p.removeWhenDone()
-			self.addChild(p)
+			self.addEmitter(named: "Shower",
+							at: CGPoint(x: self.centrePoint.x, y: self.centrePoint.y+100),
+							zPosition: CGFloat(100 + i)) {
+				$0.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
+			}
 		}
 		
 		for team in 0..<Settings.shared.numTeams {
@@ -303,13 +297,9 @@ class TextScene: QuizScene {
 						teamBoxes[team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
 						
 						if isTeamAnswerUnique(team) {
-							let pstar = SKEmitterNode(fileNamed: "locationstar")!
 							var starpoint : CGPoint = teamBoxes[team].bgBox.centrePoint
 							starpoint.x -= 310
-							pstar.position = starpoint
-							pstar.zPosition = 5.0
-							teamBoxes[team].addChild(pstar)
-							emitters.append(pstar)
+							emitters.append(teamBoxes[team].addEmitter(named: "locationstar", at: starpoint, zPosition: 5.0, autoRemove: false))
 						}
 					} else {
 						//team is wrong

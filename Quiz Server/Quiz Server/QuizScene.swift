@@ -104,4 +104,35 @@ class QuizScene: SKScene {
 		backgroundEffect = effect
 		return effect
 	}
+
+
+	/// Adds a wide emitter along the top edge of the scene, pre-simulated so that it is
+	/// already falling across the screen the moment the round appears.
+	///
+	/// Scenes re-create these on every `didMove(to:)`, so pass the previous emitter as
+	/// `replacing` and assign the result back to the same property — otherwise a new
+	/// emitter is added on each visit and the old ones are never torn down:
+	///
+	///     snow = addSnow(replacing: snow, emitterNamed: "Snow", zPosition: 20)
+	///
+	/// - Returns: the new emitter, or nil if the .sks file could not be loaded.
+	@discardableResult
+	func addSnow(replacing existing: SKEmitterNode?,
+				 emitterNamed name: String,
+				 zPosition: CGFloat,
+				 xOffset: CGFloat = 0,
+				 preSimulate: TimeInterval = 8,
+				 configure: ((SKEmitterNode) -> Void)? = nil) -> SKEmitterNode? {
+		existing?.removeFromParent()
+
+		guard let snow = SKEmitterNode(fileNamed: name) else {
+			return nil
+		}
+		snow.position = CGPoint(x: (self.size.width / 2) + xOffset, y: self.size.height + 16)
+		snow.zPosition = zPosition
+		configure?(snow)
+		snow.advanceSimulationTime(preSimulate)
+		self.addChild(snow)
+		return snow
+	}
 }

@@ -48,11 +48,7 @@ class BuzzerScene: QuizScene {
 			if(self.time == 0) {
 				self.timer?.invalidate()
 				self.run(self.hornSound)
-				let p = SKEmitterNode(fileNamed: "SparksUp2")!
-				p.position = CGPoint(x: self.centrePoint.x, y: 0)
-				p.zPosition = 2
-				p.removeWhenDone()
-				self.addChild(p)
+				self.addEmitter(named: "SparksUp2", at: CGPoint(x: self.centrePoint.x, y: 0), zPosition: 2)
 			}
 		})
 	
@@ -76,15 +72,9 @@ class BuzzerScene: QuizScene {
 	
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
-		if let sn = snow1 {
-			sn.removeFromParent()
+		snow1 = addSnow(replacing: snow1, emitterNamed: "SnowBackground", zPosition: 1, xOffset: -300) {
+			$0.particlePositionRange.dx = 2500
 		}
-		let snow1 = SKEmitterNode(fileNamed: "SnowBackground")!
-		snow1.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
-		snow1.zPosition = 1
-		snow1.particlePositionRange.dx = 2500
-		snow1.advanceSimulationTime(8) //Calculate to immediately fill screen
-		self.addChild(snow1)
 	}
 	
 	

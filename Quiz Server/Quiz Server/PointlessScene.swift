@@ -260,12 +260,9 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					// Start oscillating bar color with random durations
 					self.startOscillatingBarColor(barNode)
 					
-					let emitter = SKEmitterNode(fileNamed: "SparksPointless")!
-					emitter.position = CGPoint(x: barNode.position.x + 5 + (descending.state == .off ? 0 : 100*11), y: barNode.position.y)
-					emitter.zPosition = 16
+					let emitterPoint = CGPoint(x: barNode.position.x + 5 + (descending.state == .off ? 0 : 100*11), y: barNode.position.y)
 					barEmitters[i]?.removeFromParent()
-					barEmitters[i] = emitter
-					addChild(emitter)
+					barEmitters[i] = addEmitter(named: "SparksPointless", at: emitterPoint, zPosition: 16, autoRemove: false)
 				}
 			}
 			// Start scoring animation timer
@@ -323,14 +320,12 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					backgroundEffect?.run(pulseAction)
 					
 					//Star spray for winning bar(s)
-					let em = SKEmitterNode(fileNamed: "StarGlow")!
-					em.position = bar.position
-					em.position.x = em.position.x + (100*11 + PointlessScene.barBaseWidth) / 2
-					em.zPosition = bar.zPosition - 1
-					em.particleBirthRate = 300
-					em.particleScaleSpeed = 0.5
-					em.particlePositionRange = CGVector(dx: 100*11, dy: PointlessScene.barHeight)
-					self.addChild(em)
+					let starPoint = CGPoint(x: bar.position.x + (100*11 + PointlessScene.barBaseWidth) / 2, y: bar.position.y)
+					let em = addEmitter(named: "StarGlow", at: starPoint, zPosition: bar.zPosition - 1, autoRemove: false) {
+						$0.particleBirthRate = 300
+						$0.particleScaleSpeed = 0.5
+						$0.particlePositionRange = CGVector(dx: 100*11, dy: PointlessScene.barHeight)
+					}
 					winEmitters.append(em)
 					
 					counter.removeFromParent()

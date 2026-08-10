@@ -90,23 +90,18 @@ class NumbersTeamNode: SKNode {
 			teamHue -= 1.0
 		}
 		
-		let parts = SKEmitterNode(fileNamed: "TextSceneSparks")!
-		parts.position = CGPoint(x: -((self.width/2) - 40), y: 0)
-		parts.zPosition = 7
-		
-		parts.particleColorSequence = SKKeyframeSequence(
-			keyframeValues: [
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-				SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-			], times: [0.0, 0.1, 0.1, 0.3, 0.7]
-		)
-		
-		parts.removeWhenDone()
-		self.addChild(parts)
-		
+		self.addEmitter(named: "TextSceneSparks", at: CGPoint(x: -((self.width/2) - 40), y: 0), zPosition: 7) {
+			$0.particleColorSequence = SKKeyframeSequence(
+				keyframeValues: [
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
+					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
+				], times: [0.0, 0.1, 0.1, 0.3, 0.7]
+			)
+		}
+
 		let grow = SKAction.scale(to: 1.2, duration: 0.05)
 		grow.timingMode = .easeOut
 		let shrink = SKAction.scale(to: 1, duration: 0.2)
@@ -188,12 +183,10 @@ class NumbersScene: QuizScene {
 			let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake"]
 			
 			for i in 0..<80 {
-				let p = SKEmitterNode(fileNamed: "emojsplosion")!
-				p.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
-				p.position = CGPoint(x: Int(arc4random_uniform(UInt32(self.size.width))), y: Int(arc4random_uniform(UInt32(self.size.height))))
-				p.zPosition = CGFloat(100 + i)
-				p.removeWhenDone()
-				self.addChild(p)
+				let point = CGPoint(x: Int(arc4random_uniform(UInt32(self.size.width))), y: Int(arc4random_uniform(UInt32(self.size.height))))
+				self.addEmitter(named: "emojsplosion", at: point, zPosition: CGFloat(100 + i)) {
+					$0.particleTexture = SKTexture(imageNamed: emoji[Int(arc4random_uniform(UInt32(emoji.count)))])
+				}
 			}
 			
 			for team in 0..<Settings.shared.numTeams {
@@ -263,14 +256,10 @@ class NumbersScene: QuizScene {
 				//Give winners some stars
 				if win == 0 {
 					for _ in 0...5 {
-						let pstar = SKEmitterNode(fileNamed: "locationstar")!
 						var starpoint : CGPoint = teamBoxes[teamDistances[teNo].team].bgBox.centrePoint
 						//starpoint.y += CGFloat(Int.random(in: -70...70))
 						starpoint.x -= 310
-						pstar.position = starpoint
-						pstar.zPosition = 5.0
-						teamBoxes[teamDistances[teNo].team].addChild(pstar)
-						emitters.append(pstar)
+						emitters.append(teamBoxes[teamDistances[teNo].team].addEmitter(named: "locationstar", at: starpoint, zPosition: 5.0, autoRemove: false))
 					}
 				}
 				
@@ -284,15 +273,16 @@ class NumbersScene: QuizScene {
 	}
 	
 	func addGlowParticles(team : Int) {
-		let pstar = SKEmitterNode(fileNamed: "BuzzGlow")!
-		pstar.particlePositionRange = CGVector(dx: 750, dy: 130)
-		pstar.particleSpeed = 10
-		pstar.particleBirthRate = 70
-		pstar.particleAlpha = 0.4
-		pstar.particleScale = 0.8
-		pstar.position = teamBoxes[team].bgBox.centrePoint
-		pstar.zPosition = 5.0
-		teamBoxes[team].addChild(pstar)
+		let pstar = teamBoxes[team].addEmitter(named: "BuzzGlow",
+											   at: teamBoxes[team].bgBox.centrePoint,
+											   zPosition: 5.0,
+											   autoRemove: false) {
+			$0.particlePositionRange = CGVector(dx: 750, dy: 130)
+			$0.particleSpeed = 10
+			$0.particleBirthRate = 70
+			$0.particleAlpha = 0.4
+			$0.particleScale = 0.8
+		}
 		emitters.append(pstar)
 	}
 	

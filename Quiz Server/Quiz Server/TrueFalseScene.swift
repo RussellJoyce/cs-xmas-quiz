@@ -105,16 +105,13 @@ class TrueFalseScene: QuizScene {
 	}
 	
 	func addParticles() {
-		let timeParticles = SKEmitterNode(fileNamed: "BuzzGlow")!
-		timeParticles.particleColorSequence = nil
-		timeParticles.particleColor = NSColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
-		timeParticles.position = timeLabel.position
-		timeParticles.zPosition = 2
-		timeParticles.particlePositionRange.dx = 200
-		timeParticles.particlePositionRange.dy = 200
-		timeParticles.numParticlesToEmit = 120
-		timeParticles.removeWhenDone()
-		self.addChild(timeParticles)
+		self.addEmitter(named: "BuzzGlow", at: timeLabel.position, zPosition: 2) {
+			$0.particleColorSequence = nil
+			$0.particleColor = NSColor(red: 1.0, green: 0.84, blue: 0.0, alpha: 1.0)
+			$0.particlePositionRange.dx = 200
+			$0.particlePositionRange.dy = 200
+			$0.numParticlesToEmit = 120
+		}
 	}
 	
 	func start(sounds: Bool) {

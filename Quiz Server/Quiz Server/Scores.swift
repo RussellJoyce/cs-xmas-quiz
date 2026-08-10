@@ -36,19 +36,9 @@ class ScoresScene: QuizScene {
 
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
-		// Remove existing snow emitter if present
-		if let sn = snow1 {
-			sn.removeFromParent()
+		snow1 = addSnow(replacing: snow1, emitterNamed: "ScoresBackground", zPosition: 1, xOffset: -300) {
+			$0.particlePositionRange.dx = 2500
 		}
-		
-		// Create a new snow emitter
-		let newSnow = SKEmitterNode(fileNamed: "ScoresBackground")!
-		newSnow.position = CGPoint(x: self.size.width / 2 - 300, y: self.size.height + 16)
-		newSnow.zPosition = 1
-		newSnow.particlePositionRange.dx = 2500
-		newSnow.advanceSimulationTime(8)
-		snow1 = newSnow
-		self.addChild(snow1!)
 	}
 	
 	override func reset() {

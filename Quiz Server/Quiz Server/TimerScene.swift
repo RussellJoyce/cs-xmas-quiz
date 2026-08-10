@@ -52,11 +52,7 @@ class TimerScene: QuizScene {
 				   self.run(self.hornSound)
 				   QuizWebSocket.shared?.pulseWhite()
 				   self.audioNode.run(SKAction.stop())
-				   let p = SKEmitterNode(fileNamed: "SparksUp2")!
-				   p.position = CGPoint(x: self.centrePoint.x, y: 0)
-				   p.zPosition = 2
-				   p.removeWhenDone()
-				   self.addChild(p)
+				   self.addEmitter(named: "SparksUp2", at: CGPoint(x: self.centrePoint.x, y: 0), zPosition: 2)
 			   }
 		   })
 		

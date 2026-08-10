@@ -44,34 +44,22 @@ class TestScene: QuizScene {
 			numbers.append(numberNode)
 			self.addChild(numberNode)
 		
-			let sparksUpNode = SKEmitterNode(fileNamed: "SparksUp")!
-			sparksUpNode.position = CGPoint(x: xPos, y: Double(yPos+100))
-			sparksUpNode.zPosition = 2
-			sparksUp.append(sparksUpNode)
-			self.addChild(sparksUpNode)
+			let upPoint = CGPoint(x: xPos, y: Double(yPos+100))
+			let downPoint = CGPoint(x: xPos, y: Double(yPos-100))
 
-			let sparksDownNode = SKEmitterNode(fileNamed: "SparksDown")!
-			sparksDownNode.position = CGPoint(x: xPos, y: Double(yPos-100))
-			sparksDownNode.zPosition = 2
-			sparksDown.append(sparksDownNode)
-			self.addChild(sparksDownNode)
-			
+			sparksUp.append(addEmitter(named: "SparksUp", at: upPoint, zPosition: 2, autoRemove: false))
+			sparksDown.append(addEmitter(named: "SparksDown", at: downPoint, zPosition: 2, autoRemove: false))
+
 			var imageSparksNodes = [SKEmitterNode]()
-			
+
 			for j in 0...2 {
-				let imageSparksUpNode = SKEmitterNode(fileNamed: "SparksUpImage")!
-				imageSparksUpNode.position = CGPoint(x: xPos, y: Double(yPos+100))
-				imageSparksUpNode.zPosition = 1
-				imageSparksUpNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
-				imageSparksNodes.append(imageSparksUpNode)
-				self.addChild(imageSparksUpNode)
-				
-				let imageSparksDownNode = SKEmitterNode(fileNamed: "SparksDownImage")!
-				imageSparksDownNode.position = CGPoint(x: xPos, y: Double(yPos-100))
-				imageSparksDownNode.zPosition = 1
-				imageSparksDownNode.particleTexture = SKTexture(imageNamed: christmasSparks[j])
-				imageSparksNodes.append(imageSparksDownNode)
-				self.addChild(imageSparksDownNode)
+				let texture = SKTexture(imageNamed: christmasSparks[j])
+				imageSparksNodes.append(addEmitter(named: "SparksUpImage", at: upPoint, zPosition: 1, autoRemove: false) {
+					$0.particleTexture = texture
+				})
+				imageSparksNodes.append(addEmitter(named: "SparksDownImage", at: downPoint, zPosition: 1, autoRemove: false) {
+					$0.particleTexture = texture
+				})
 			}
 			
 			imageSparks.append(imageSparksNodes)
