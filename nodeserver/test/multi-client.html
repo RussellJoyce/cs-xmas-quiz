@@ -26,6 +26,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .btn-disconnect:hover { background: #e74c3c; }
 #toolbar .check-label { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #ccc; cursor: pointer; }
 
+/* Pattern bar */
+#pattern-bar { background: #16213e; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+#pattern-bar label { font-size: 13px; color: #aaa; }
+#pattern-bar select { background: #0f3460; border: 1px solid #444; color: #eee; padding: 5px 8px; border-radius: 4px; font-size: 13px; min-width: 280px; }
+#pattern-bar button { padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+#pattern-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-fire { background: #8e44ad; color: #fff; }
+.btn-fire:hover:not(:disabled) { background: #9b59b6; }
+.btn-stop { background: #c0392b; color: #fff; }
+.btn-stop:hover:not(:disabled) { background: #e74c3c; }
+#pattern-status { font-size: 12px; color: #888; font-family: monospace; }
+#pattern-status.warn { color: #f39c12; }
+#pattern-hint { font-size: 12px; color: #666; margin-left: auto; }
+#pattern-hint code { color: #8e7cc3; font-family: monospace; }
+
+.msg-pattern { color: #bb8fce; }
+
 /* Grid */
 #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-bottom: 12px; }
 
@@ -93,11 +110,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <label class="check-label"><input type="checkbox" id="cfg-autopick" checked> Auto-pick teams</label>
 </div>
 
+<div id="pattern-bar">
+    <label>Test pattern:
+        <select id="cfg-pattern"></select>
+    </label>
+    <button class="btn-fire" id="btn-fire" onclick="firePattern()">Fire</button>
+    <button class="btn-stop" id="btn-stop" onclick="stopPattern()" disabled>Stop</button>
+    <span id="pattern-status"></span>
+    <span id="pattern-hint">edit <code>test-patterns.js</code> to add your own, then reload</span>
+</div>
+
 <div id="grid"></div>
 
 <div id="global-log-title">Global Log</div>
 <div id="global-log"></div>
 
+<script src="test-patterns.js"></script>
 <script>
 // Init config
 document.getElementById('cfg-host').value = location.hostname || 'localhost';
@@ -114,13 +142,21 @@ for (var i = 1; i <= 16; i++) {
 var clients = [null]; // 1-indexed: clients[N] = VirtualClient with index N
 var globalLogEl = document.getElementById('global-log');
 
-function globalLog(idx, cls, text) {
+function logLine(prefix, cls, text) {
     var d = document.createElement('div');
     d.className = cls;
-    d.textContent = '[Client ' + idx + '] ' + text;
+    d.textContent = prefix + ' ' + text;
     globalLogEl.appendChild(d);
     if (globalLogEl.children.length > 200) globalLogEl.removeChild(globalLogEl.firstChild);
     globalLogEl.scrollTop = globalLogEl.scrollHeight;
+}
+
+function globalLog(idx, cls, text) {
+    logLine('[Client ' + idx + ']', cls, text);
+}
+
+function patternLog(cls, text) {
+    logLine('[pattern]', cls, text);
 }
 
 // VirtualClient class
@@ -402,35 +438,95 @@ VirtualClient.prototype.sendHL = function(type) {
     }
 };
 
+VirtualClient.prototype.sendTextValue = function(val) {
+    if (this.team && val) {
+        this.send('tt' + this.team + ',' + val);
+    }
+};
+
 VirtualClient.prototype.sendText = function() {
+    var box = document.getElementById('txt-' + this.index);
+    if (this.team && box.value) {
+        this.sendTextValue(box.value);
+        box.value = '';
+    }
+};
+
+VirtualClient.prototype.sendGeoAt = function(x, y) {
     if (this.team) {
-        var val = document.getElementById('txt-' + this.index).value;
-        if (val) {
-            this.send('tt' + this.team + ',' + val);
-            document.getElementById('txt-' + this.index).value = '';
-        }
+        x = Math.max(0, Math.min(100, x));
+        y = Math.max(0, Math.min(100, y));
+        document.getElementById('geo-' + this.index).value = x + ',' + y;
+        this.send('ii' + this.team + ',' + x + ',' + y);
     }
 };
 
 VirtualClient.prototype.sendGeo = function() {
     if (this.team) {
-        var val = document.getElementById('geo-' + this.index).value;
-        var parts = val.split(',');
+        var parts = document.getElementById('geo-' + this.index).value.split(',');
         if (parts.length === 2) {
-            var x = Math.max(0, Math.min(100, parseInt(parts[0].trim())));
-            var y = Math.max(0, Math.min(100, parseInt(parts[1].trim())));
-            this.send('ii' + this.team + ',' + x + ',' + y);
+            this.sendGeoAt(parseInt(parts[0].trim()), parseInt(parts[1].trim()));
         }
     }
 };
 
 VirtualClient.prototype.sendRandomGeo = function() {
-    if (this.team) {
-        var x = Math.floor(Math.random() * 100);
-        var y = Math.floor(Math.random() * 100);
-        document.getElementById('geo-' + this.index).value = x + ',' + y;
-        this.send('ii' + this.team + ',' + x + ',' + y);
+    this.sendGeoAt(Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
+};
+
+// One step of a test pattern. Returns a description for the log, or null if the client was
+// in no state to do it (no team yet, or the socket is shut), which the runner reports.
+VirtualClient.prototype.runAction = function(verb, args) {
+    var connected = this.ws && this.ws.readyState === WebSocket.OPEN;
+
+    // 'connect' and 'disconnect' are about the socket, so they are the only ones that are
+    // allowed to run without one.
+    if (verb === 'connect') {
+        if (connected) return 'already connected';
+        this.connect();
+        return 'connecting';
     }
+    if (verb === 'disconnect') {
+        if (!this.ws) return 'already disconnected';
+        this.disconnect();
+        return 'disconnecting';
+    }
+    if (!connected) return null;
+
+    switch (verb) {
+        case 'buzz':
+            if (!this.team) return null;
+            this.buzz();
+            return 'buzz';
+        case 'hi':
+        case 'lo':
+            if (!this.team) return null;
+            this.sendHL(verb);
+            return verb;
+        case 'text':
+            if (!this.team) return null;
+            this.sendTextValue(args.join(','));
+            return 'text';
+        case 'geo':
+            if (!this.team) return null;
+            if (args[0] === 'random') {
+                this.sendRandomGeo();
+            } else {
+                this.sendGeoAt(parseInt(args[0], 10), parseInt(args[1], 10));
+            }
+            return 'geo';
+        case 'pick':
+            this.pickTeam(args.length ? args[0] : this.index);
+            return 'pick';
+        case 'ping':
+            this.send('pi');
+            return 'ping';
+        case 'raw':
+            // Deliberately unvalidated: the point is to send the server rubbish.
+            this.send(args.join(','));
+            return 'raw';
+    }
+    return null;
 };
 
 // Global controls
@@ -471,6 +567,250 @@ document.getElementById('cfg-count').addEventListener('change', buildGrid);
 
 // Initial grid
 buildGrid();
+
+
+// ---------------------------------------------------------------- test patterns
+// The patterns themselves live in test-patterns.js; see the comment at the top of it for
+// the format. Everything below is only the reading and firing of them.
+
+// How many arguments each action takes, and whether the trailing ones are joined back up
+// (a text answer or a raw message may contain commas, a coordinate may not).
+var ACTIONS = {
+    buzz:       { min: 0, max: 0 },
+    hi:         { min: 0, max: 0 },
+    lo:         { min: 0, max: 0 },
+    ping:       { min: 0, max: 0 },
+    connect:    { min: 0, max: 0 },
+    disconnect: { min: 0, max: 0 },
+    pick:       { min: 0, max: 1 },
+    text:       { min: 1, max: Infinity },
+    raw:        { min: 1, max: Infinity },
+    geo:        { min: 1, max: 2 }
+};
+
+// Names that read better in a pattern than the two-letter protocol codes do.
+var ACTION_ALIASES = { higher: 'hi', lower: 'lo', 'true': 'hi', 'false': 'lo', answer: 'text' };
+
+var patterns = [];
+var patternRun = null; // { pattern, step, timer } while one is firing
+
+// Turns the pattern text into a list of {name, steps, maxClient}. Anything it cannot make
+// sense of is reported rather than silently dropped, since a typo in a pattern otherwise
+// looks exactly like a bug in the server.
+function parsePatterns(text) {
+    var result = [], errors = [], current = null;
+    var lines = text.split('\n');
+
+    // Errors quote the offending line rather than numbering it: the pattern text is a
+    // string inside test-patterns.js, so any line number counted here would be off by
+    // however long that file's header comment happens to be.
+    function bad(line, why) {
+        errors.push((current ? '"' + current.name + '", ' : '') + '"' + line + '": ' + why);
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line === '' || line.charAt(0) === '#') continue;
+
+        if (line.charAt(0) === ':') {
+            current = { name: line.slice(1).trim() || ('Pattern ' + (result.length + 1)), steps: [], maxClient: 0 };
+            result.push(current);
+            continue;
+        }
+        if (!current) {
+            bad(line, 'comes before any :pattern name');
+            continue;
+        }
+
+        var wait = /^wait\s+([0-9]+)\s*(ms)?$/i.exec(line);
+        if (wait) {
+            current.steps.push({ text: line, wait: parseInt(wait[1], 10) });
+            continue;
+        }
+
+        if (/^wait\b/i.test(line)) {
+            bad(line, 'should be "wait <milliseconds>"');
+            continue;
+        }
+
+        var fields = line.split(',');
+        if (fields.length < 2) {
+            bad(line, 'is not <who>,<action>');
+            continue;
+        }
+        var who = fields[0].trim();
+        var verb = fields[1].trim().toLowerCase();
+        var args = fields.slice(2);
+
+        verb = ACTION_ALIASES[verb] || verb;
+        var spec = ACTIONS[verb];
+        if (!spec) {
+            bad(line, 'unknown action "' + verb + '"');
+            continue;
+        }
+        if (args.length < spec.min || args.length > spec.max) {
+            var wanted = spec.max === Infinity ? 'at least ' + spec.min :
+                         spec.min === spec.max ? String(spec.min) : spec.min + '-' + spec.max;
+            bad(line, '"' + verb + '" takes ' + wanted + ' arguments, got ' + args.length);
+            continue;
+        }
+        if (spec.max === Infinity) {
+            // A text answer or a raw message is put back together with its commas, so only
+            // the space after the separating comma is ours to remove: "hello, world" stays
+            // "hello, world".
+            args[0] = args[0].replace(/^\s+/, '');
+        } else {
+            args = args.map(function(a) { return a.trim(); });
+        }
+        if (verb === 'geo' && args[0] !== 'random' &&
+            (args.length !== 2 || !/^[0-9]+$/.test(args[0]) || !/^[0-9]+$/.test(args[1]))) {
+            bad(line, 'geo takes "random" or two numbers 0-100');
+            continue;
+        }
+
+        var target = parseTarget(who);
+        if (!target) {
+            bad(line, '"' + who + '" is not a client number, range or *');
+            continue;
+        }
+        if (target.to > current.maxClient) current.maxClient = target.to;
+        current.steps.push({ text: line, target: target, verb: verb, args: args });
+    }
+
+    return { patterns: result, errors: errors };
+}
+
+// '*' / 'all', a single client, or an inclusive range.
+function parseTarget(who) {
+    if (who === '*' || who.toLowerCase() === 'all') return { all: true, to: 0 };
+    var range = /^([0-9]+)\s*-\s*([0-9]+)$/.exec(who);
+    if (range) {
+        var from = parseInt(range[1], 10), to = parseInt(range[2], 10);
+        if (from < 1 || to < from) return null;
+        return { from: from, to: to };
+    }
+    if (/^[0-9]+$/.test(who)) {
+        var n = parseInt(who, 10);
+        if (n < 1) return null;
+        return { from: n, to: n };
+    }
+    return null;
+}
+
+// The clients a step applies to. Out-of-range numbers are dropped here and reported by the
+// runner: a pattern written for eight clients should still do something useful with four.
+function targetClients(target) {
+    var out = [], i;
+    if (target.all) {
+        for (i = 1; i < clients.length; i++) if (clients[i]) out.push(clients[i]);
+        return out;
+    }
+    for (i = target.from; i <= target.to; i++) if (clients[i]) out.push(clients[i]);
+    return out;
+}
+
+function initPatterns() {
+    var sel = document.getElementById('cfg-pattern');
+    var status = document.getElementById('pattern-status');
+
+    if (typeof window.TEST_PATTERNS !== 'string') {
+        sel.innerHTML = '<option>(test-patterns.js not loaded)</option>';
+        sel.disabled = true;
+        document.getElementById('btn-fire').disabled = true;
+        status.className = 'warn';
+        status.textContent = 'test-patterns.js did not load — it must sit next to this page.';
+        return;
+    }
+
+    var parsed = parsePatterns(window.TEST_PATTERNS);
+    patterns = parsed.patterns;
+
+    sel.innerHTML = '';
+    for (var i = 0; i < patterns.length; i++) {
+        var p = patterns[i];
+        var opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = p.name + '  (' + p.steps.length + ' steps' +
+                          (p.maxClient > 1 ? ', needs ' + p.maxClient + ' clients' : '') + ')';
+        sel.appendChild(opt);
+    }
+
+    if (parsed.errors.length) {
+        status.className = 'warn';
+        status.textContent = parsed.errors.length + ' bad line(s) in test-patterns.js — see the log';
+        for (var e = 0; e < parsed.errors.length; e++) patternLog('msg-err', parsed.errors[e]);
+    }
+    if (!patterns.length) {
+        sel.innerHTML = '<option>(no patterns defined)</option>';
+        sel.disabled = true;
+        document.getElementById('btn-fire').disabled = true;
+    }
+}
+
+function setPatternRunning(running) {
+    document.getElementById('btn-fire').disabled = running;
+    document.getElementById('btn-stop').disabled = !running;
+    document.getElementById('cfg-pattern').disabled = running;
+}
+
+function firePattern() {
+    if (patternRun) return;
+    var p = patterns[parseInt(document.getElementById('cfg-pattern').value, 10)];
+    if (!p) return;
+
+    var status = document.getElementById('pattern-status');
+    status.className = '';
+    status.textContent = 'running "' + p.name + '"...';
+    patternLog('msg-pattern', 'fire "' + p.name + '" (' + p.steps.length + ' steps)');
+
+    patternRun = { pattern: p, step: 0, timer: null };
+    stepPattern();
+}
+
+function stopPattern() {
+    if (!patternRun) return;
+    if (patternRun.timer) clearTimeout(patternRun.timer);
+    patternLog('msg-pattern', 'stopped "' + patternRun.pattern.name + '" at step ' + (patternRun.step + 1));
+    document.getElementById('pattern-status').textContent = 'stopped';
+    patternRun = null;
+    setPatternRunning(false);
+}
+
+// Runs steps until it hits a wait, so that consecutive lines really do go out together.
+function stepPattern() {
+    setPatternRunning(true);
+    var run = patternRun;
+
+    while (run.step < run.pattern.steps.length) {
+        var step = run.pattern.steps[run.step++];
+
+        if (step.wait != null) {
+            run.timer = setTimeout(function() {
+                if (patternRun === run) { run.timer = null; stepPattern(); }
+            }, step.wait);
+            return;
+        }
+
+        var targets = targetClients(step.target);
+        if (!targets.length) {
+            patternLog('msg-err', '"' + step.text + '": no such client on the grid');
+            continue;
+        }
+        for (var i = 0; i < targets.length; i++) {
+            if (targets[i].runAction(step.verb, step.args) === null) {
+                patternLog('msg-err', '"' + step.text + '": client ' + targets[i].index +
+                                      ' cannot do that — not connected, or has no team yet');
+            }
+        }
+    }
+
+    patternLog('msg-pattern', 'finished "' + run.pattern.name + '"');
+    document.getElementById('pattern-status').textContent = 'finished "' + run.pattern.name + '"';
+    patternRun = null;
+    setPatternRunning(false);
+}
+
+initPatterns();
 </script>
 </body>
 </html>
