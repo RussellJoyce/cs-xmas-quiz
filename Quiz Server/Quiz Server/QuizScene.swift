@@ -9,6 +9,17 @@
 import Cocoa
 import SpriteKit
 
+/// Geometry for the two-column grid of team boxes used by the guessing rounds.
+struct TeamGridLayout {
+	/// Height of each box, reduced when there are enough teams to need it.
+	let boxHeight: Int
+	/// Matching label size. TextTeamNode derives its own sizes from `boxHeight` instead.
+	let fontSize: CGFloat
+	/// One position per team, indexed by zero-based team number.
+	let positions: [CGPoint]
+}
+
+
 /// Common base class for the quiz round scenes.
 /// Every round is a `QuizScene`, held by a `SpriteKitViewController`
 class QuizScene: SKScene {
@@ -107,6 +118,31 @@ class QuizScene: SKScene {
 
 		backgroundEffect = effect
 		return effect
+	}
+
+
+	/// Works out where the team boxes go for the rounds that show every team at once:
+	/// two columns either side of the centre line, filling the left column from the top
+	/// down and then the right. Boxes shrink once there are more than ten teams.
+	/// - Parameter xOffset: distance of each column from the centre line.
+	func teamGridLayout(xOffset: CGFloat = 500) -> TeamGridLayout {
+		let numTeams = Settings.shared.numTeams
+		let halfway = Int((Double(numTeams) / 2).rounded(.up))
+		let boxHeight = numTeams > 10 ? 100 : 150
+		let spacing = Int(Double(boxHeight) * 1.3)
+
+		var positions = [CGPoint]()
+		for team in 0..<numTeams {
+			//Row down from the top of whichever column this team sits in
+			let row = (team < halfway) ? team : (team - halfway)
+			let yOffset = ((halfway - 1) - row) * spacing
+			positions.append(CGPoint(
+				x: (team < halfway) ? self.centrePoint.x - xOffset : self.centrePoint.x + xOffset,
+				y: CGFloat(boxHeight + 10 + yOffset)
+			))
+		}
+
+		return TeamGridLayout(boxHeight: boxHeight, fontSize: numTeams >= 10 ? 60 : 40, positions: positions)
 	}
 
 

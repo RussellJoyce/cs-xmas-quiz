@@ -131,32 +131,12 @@ class NumbersScene: QuizScene {
 		
 		addBackground(imageNamed: "blue-snow")
 
-		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
-		
-		var boxheight : Int = 150
-		if(Settings.shared.numTeams > 10) {
-			boxheight = 100
-		}
-		
+		let layout = teamGridLayout()
 		for team in 0..<Settings.shared.numTeams {
-			var yOffset : Int
-			if team >= halfway {
-				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
-			} else {
-				yOffset = ((halfway-1) - team) * Int(Double(boxheight)*1.3)
-			}
-			
-			//let yOffset = (team >= 5) ? ((4 - (team - 5)) * 200) : ((4 - team) * 200)
-			let position = CGPoint(
-				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
-				y: CGFloat(boxheight + 10 + yOffset)
-			)
-			let box = NumbersTeamNode(team: team, width: 700, height: boxheight, position: position, fontsize: Settings.shared.numTeams >= 10 ? 60 : 40)
-			
+			let box = NumbersTeamNode(team: team, width: 700, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)
-			
 			teamGuesses.append(nil)
 		}
 	}
@@ -304,39 +284,6 @@ class NumbersScene: QuizScene {
 			e.removeFromParent()
 		}
 		emitters.removeAll()
-		
-		//Quick dirty test code
-		/*teamGuess(teamid : 0, guess : 0)
-		teamGuess(teamid : 1, guess : 10)
-		teamGuess(teamid : 2, guess : 20)
-		teamGuess(teamid : 3, guess : 30)
-		teamGuess(teamid : 4, guess : 40)
-		teamGuess(teamid : 5, guess : 50)
-		teamGuess(teamid : 6, guess : 50)
-		teamGuess(teamid : 7, guess : 55)
-		teamGuess(teamid : 8, guess : 60)
-		teamGuess(teamid : 9, guess : 70)
-		teamGuess(teamid : 10, guess : 70)
-		teamGuess(teamid : 11, guess : 70)
-		teamGuess(teamid : 12, guess : 70)
-		teamGuess(teamid : 13, guess : 80)*/
-		
-		
-		/*teamGuess(teamid : 0, guess : 0)
-		teamGuess(teamid : 1, guess : 1)
-		teamGuess(teamid : 2, guess : 2)
-		teamGuess(teamid : 3, guess : 3)
-		teamGuess(teamid : 4, guess : 4)
-		teamGuess(teamid : 5, guess : 5)
-		teamGuess(teamid : 6, guess : 6)
-		teamGuess(teamid : 7, guess : 7)
-		teamGuess(teamid : 8, guess : 8)
-		teamGuess(teamid : 9, guess : 9)
-		teamGuess(teamid : 10, guess : 10)
-		teamGuess(teamid : 11, guess : 11)
-		teamGuess(teamid : 12, guess : 12)
-		teamGuess(teamid : 13, guess : 13)*/
-		
 	}
 
 }

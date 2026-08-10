@@ -47,25 +47,9 @@ class TrueFalseScene: QuizScene {
 		timeLabel.zPosition = 6
 		self.addChild(timeLabel)
 		
-		let halfway = Int((Double(Settings.shared.numTeams) / 2).rounded(.up))
-		var boxheight : Int = 150
-		if(Settings.shared.numTeams > 10) {
-			boxheight = 100
-		}
-		
+		let layout = teamGridLayout()
 		for team in 0..<Settings.shared.numTeams {
-			var yOffset : Int
-			if team >= halfway {
-				yOffset = ((halfway-1) - (team - halfway)) * Int(Double(boxheight)*1.3)
-			} else {
-				yOffset = ((halfway-1) - team) * Int(Double(boxheight)*1.3)
-			}
-			let position = CGPoint(
-				x: (team < halfway) ? self.centrePoint.x - 500 : self.centrePoint.x + 500,
-				y: CGFloat(boxheight + 10 + yOffset)
-			)
-			let box = TrueFalseTeamNode(team: team, width: 600, height: boxheight, position: position, fontsize: Settings.shared.numTeams >= 10 ? 60 : 40)
-			
+			let box = TrueFalseTeamNode(team: team, width: 600, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)
