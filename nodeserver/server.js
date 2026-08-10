@@ -9,6 +9,7 @@ const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
 const { QuizState, safeSend, clientKeyForConnection, asText } = require('./protocol');
+const log = require('./log');
 
 //Deployment settings live in config.json
 const CONFIG_FILE = __dirname + '/config.json';
@@ -140,9 +141,16 @@ function certMessages(status) {
     return ["Certificate valid for another " + status.days + " days (until " + when + ")"];
 }
 
+//Every listener announces itself in the same shape when it actually binds
+function listenLine(name, port, what) {
+    const column = (s, width) => (s.length >= width ? s + ' ' : s + ' '.repeat(width - s.length));
+    return 'listen  ' + column(name, 6) + column(String(port), 6) + what;
+}
+
 function logCertStatus(certs) {
     const status = certStatus(certs);
-    certMessages(status).forEach(line => console.log(line));
+    const bad = Boolean(status && (status.error || status.days < 0));
+    certMessages(status).forEach(line => (bad ? log.bootError(line) : log.boot(line)));
     return status;
 }
 
@@ -177,23 +185,26 @@ function startWebsocketServers(overrides) {
         }
     }, { numTeams: cfg.numTeams });
 
-    //Every socket needs an 'error' listener.
-    function guard(ws, what) {
+    //Every socket needs an 'error' listener. `who` may be a function, so that a client is
+    //named by whatever it is called at the time of the error: it may have claimed a team
+    //since it connected, and the log should follow it.
+    function guard(ws, who) {
         ws.on('error', function(err) {
-            console.log("ERROR: " + what + " socket: " + err.message + (err.code ? " (" + err.code + ")" : ""));
+            log.error(typeof who === 'function' ? who() : who, null, null,
+                      'socket error: ' + err.message + (err.code ? ' (' + err.code + ')' : ''));
         });
     }
 
     wserver.on('connection', function(ws) {
-        console.log("Quiz software connected");
-        guard(ws, "quiz software");
+        log.info('quiz', null, null, 'quiz software connected');
+        guard(ws, 'quiz');
         safeSend(ws, 'connected');
         ws.on('message', message => state.handleServerMessage(message));
     });
 
     wleds.on('connection', function(ws) {
-        console.log("LEDs connected");
-        guard(ws, "LED");
+        log.info('leds', null, null, 'LED controller connected, set to Megamas (a01)');
+        guard(ws, 'leds');
         safeSend(ws, 'a01'); //New leds are set to Megamas
         ws.on('message', message => safeSend(ws, asText(message)));
     });
@@ -202,7 +213,7 @@ function startWebsocketServers(overrides) {
         const ip = req.connection.remoteAddress;
         const key = clientKeyForConnection(ip, req.url, allowVcid);
 
-        guard(ws, "client " + key);
+        guard(ws, () => state.label(key));
         state.addClient(key, ws);
         ws.on('message', message => state.handleClientMessage(key, ws, message));
     }
@@ -214,12 +225,25 @@ function startWebsocketServers(overrides) {
     function guardServer(s, what) {
         s.on('error', function(err) {
             if(err.code == 'EADDRINUSE' || err.code == 'EACCES') {
-                console.log("FATAL: cannot listen for " + what + ": " + err.message);
+                log.bootError('FATAL: cannot listen for ' + what + ': ' + err.message);
                 process.exit(1);
             }
-            console.log("ERROR: " + what + " server: " + err.message);
+            log.error('srv', null, null, what + ' listener: ' + err.message);
         });
     }
+    //Announced from the 'listening' event rather than from the config, so the line is proof
+    //that the socket bound, and so that a test asking for port 0 reports what it actually got.
+    function announce(s, name, what) {
+        s.on('listening', function() {
+            const addr = s.address();
+            log.boot(listenLine(name, addr ? addr.port : '?', what));
+        });
+    }
+    if(wclientHttpsServer) announce(wclientHttpsServer, 'wss', 'clients over TLS');
+    announce(wclientWs, 'ws', 'clients');
+    announce(wserver, 'quiz', 'quiz software');
+    announce(wleds, 'leds', 'LED controllers');
+
     guardServer(wclientWs, "plain ws clients");
     guardServer(wserver, "the quiz software");
     guardServer(wleds, "the LEDs");
@@ -270,14 +294,14 @@ function startWebServers(overrides) {
         res.redirect('https://' + req.headers.host + req.url);
     });
     http.listen(cfg.httpPort, cfg.bindAddress, function() {
-        console.log('HTTPS redirect server running on port ' + cfg.httpPort + '...');
+        log.boot(listenLine('http', cfg.httpPort, 'redirects everything to https'));
     });
 
     const app = express();
     app.use(express.static(cfg.staticDir));
     const server = https.createServer(readCerts(cfg.certs), app);
     server.listen(cfg.httpsPort, cfg.bindAddress, function() {
-        console.log('Quiz Server running super securely on port ' + cfg.httpsPort + '...');
+        log.boot(listenLine('https', cfg.httpsPort, 'the buzzer web app'));
     });
 
     return { http, server };
@@ -289,7 +313,10 @@ function startDnsServer(overrides) {
 
     const dnsserver = dns.createServer();
     dnsserver.on('request', function (request, response) {
-        //console.log("DNS request for " + request.question[0].name)
+        //Every phone joining the wifi asks, so this only appears at QUIZ_LOG=debug, where
+        //it answers "is the phone even reaching us?".
+        const asked = request.question && request.question[0];
+        log.debug('dns', null, null, 'request for ' + (asked ? asked.name : 'nothing'));
         response.answer.push(
             dns.A({
                 //name: request.question[0].name,
@@ -299,10 +326,10 @@ function startDnsServer(overrides) {
         response.send();
     });
     dnsserver.on('error', function (err, buff, req, res) {
-        console.log(err.stack);
+        log.error('srv', null, null, 'dns: ' + (err.stack || err.message));
     });
     dnsserver.on('listening', function () {
-        console.log("DNS server running on port " + cfg.dnsPort + "...");
+        log.boot(listenLine('dns', cfg.dnsPort, cfg.dnsHostname + ' → ' + cfg.hostAddress));
     });
     dnsserver.serve(cfg.dnsPort);
     return dnsserver;
@@ -315,7 +342,9 @@ module.exports = { startWebsocketServers, startWebServers, startDnsServer, defau
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
     const cfg = defaultConfig();
-    console.log("Serving " + cfg.dnsHostname + ", resolving to " + cfg.hostAddress);
+    log.boot('quiz server starting...');
+    log.boot('serving ' + cfg.dnsHostname + ' → ' + cfg.hostAddress + ' for ' + cfg.numTeams + ' teams');
+    if(!cfg.certs) log.boot('no certificates configured, so wss is off');
     startWebsocketServers();
     startWebServers();
     startDnsServer();
