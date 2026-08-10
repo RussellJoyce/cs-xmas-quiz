@@ -10,117 +10,10 @@ import Foundation
 import Cocoa
 import SpriteKit
 
-class NumbersTeamNode: SKNode {
-	
-	var guessLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-	var singleLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-	var width : Int = 0
-	var height : Int = 0
-	var bgBox : SKShapeNode
-	var teamNoLabel : SKLabelNode
-	var teamNo : Int
-	var fontsize : CGFloat
-	
-	static let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
-	
-	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat) {
-				
-		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
-		bgBox.zPosition = 5
-		bgBox.position = CGPoint.zero
-		bgBox.fillColor = NumbersTeamNode.bgColour
-		bgBox.lineWidth = 2.0
-		
-		guessLabel.text = "abcedfghijklmnopqrstuv"
-		guessLabel.fontSize = fontsize
-		guessLabel.fontColor = NSColor.black
-		guessLabel.horizontalAlignmentMode = .left
-		guessLabel.verticalAlignmentMode = .center
-		guessLabel.zPosition = 6
-		guessLabel.position = CGPoint(x: -((width/2) - 120), y: 30)
-		
-		singleLabel.text = "this is an answer answ"
-		singleLabel.fontSize = fontsize
-		singleLabel.fontColor = NSColor.black
-		singleLabel.horizontalAlignmentMode = .left
-		singleLabel.verticalAlignmentMode = .center
-		singleLabel.zPosition = 6
-		singleLabel.position = CGPoint(x: -((width/2) - 120), y: 0)
-		
-		teamNoLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-		teamNoLabel.text = "\(team + 1)."
-		teamNoLabel.fontSize = fontsize
-		teamNoLabel.fontColor = NSColor.black
-		teamNoLabel.horizontalAlignmentMode = .left
-		teamNoLabel.verticalAlignmentMode = .center
-		teamNoLabel.zPosition = 6
-		teamNoLabel.position = CGPoint(x: -((width/2) - 20), y: 0)
-		
-		self.width = width
-		self.height = height
-		self.teamNo = team
-		self.fontsize = fontsize
-		
-		super.init()
-		
-		self.position = position
-		self.addChild(teamNoLabel)
-		self.addChild(bgBox)
-		self.addChild(guessLabel)
-		self.addChild(singleLabel)
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-	
-	func setTextSize(size : CGFloat) {
-		guessLabel.fontSize = size
-		singleLabel.fontSize = size
-	}
-	
-	func resetTextSize() {
-		guessLabel.fontSize = fontsize
-		singleLabel.fontSize = fontsize
-	}
-	
-	func emphasise() {
-		var teamHue = CGFloat(teamNo) / 10.0
-		if teamHue > 1.0 {
-			teamHue -= 1.0
-		}
-		
-		self.addEmitter(named: "TextSceneSparks", at: CGPoint(x: -((self.width/2) - 40), y: 0), zPosition: 7) {
-			$0.particleColorSequence = SKKeyframeSequence(
-				keyframeValues: [
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				], times: [0.0, 0.1, 0.1, 0.3, 0.7]
-			)
-		}
-
-		let grow = SKAction.scale(to: 1.2, duration: 0.05)
-		grow.timingMode = .easeOut
-		let shrink = SKAction.scale(to: 1, duration: 0.2)
-		shrink.timingMode = .easeIn
-		let anim = SKAction.sequence([grow, shrink])
-		teamNoLabel.run(anim)
-		bgBox.run(anim)
-		guessLabel.run(anim)
-		singleLabel.run(anim)
-	}
-	
-}
-
-
-
 class NumbersScene: QuizScene {
 	
 	var teamGuesses = [Int?]()
-	var teamBoxes = [NumbersTeamNode]()
+	var teamBoxes = [TeamAnswerNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
 	var revealed = false
@@ -133,7 +26,7 @@ class NumbersScene: QuizScene {
 
 		let layout = teamGridLayout()
 		for team in 0..<Settings.shared.numTeams {
-			let box = NumbersTeamNode(team: team, width: 700, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
+			let box = TeamAnswerNode(team: team, width: 700, height: layout.boxHeight, position: layout.positions[team], fontSize: layout.fontSize)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)
@@ -171,7 +64,7 @@ class NumbersScene: QuizScene {
 			
 			for team in 0..<Settings.shared.numTeams {
 				if let tg = teamGuesses[team] {
-					teamBoxes[team].setTextSize(size: Settings.shared.numTeams >= 10 ? 60 : 40)
+					teamBoxes[team].resetTextSize()
 					teamBoxes[team].singleLabel.text = "\(tg)"
 					teamBoxes[team].guessLabel.text = ""
 				} else {
@@ -230,7 +123,7 @@ class NumbersScene: QuizScene {
 				}
 				
 				//Animate the team box to the target colour to indicate "win level"
-				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: NumbersTeamNode.bgColour, toColor: winColours[win]))
+				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: TeamAnswerNode.bgColour, toColor: winColours[win]))
 				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
 				
 				//Give winners some stars
@@ -276,7 +169,7 @@ class NumbersScene: QuizScene {
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].singleLabel.text = ""
 			teamBoxes[team].resetTextSize()
-			teamBoxes[team].bgBox.fillColor = NumbersTeamNode.bgColour
+			teamBoxes[team].bgBox.fillColor = TeamAnswerNode.bgColour
 			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		

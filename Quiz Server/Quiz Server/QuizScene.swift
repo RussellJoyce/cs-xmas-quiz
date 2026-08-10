@@ -13,7 +13,7 @@ import SpriteKit
 struct TeamGridLayout {
 	/// Height of each box, reduced when there are enough teams to need it.
 	let boxHeight: Int
-	/// Matching label size. TextTeamNode derives its own sizes from `boxHeight` instead.
+	/// Matching label size: text shrinks along with the boxes rather than against them.
 	let fontSize: CGFloat
 	/// One position per team, indexed by zero-based team number.
 	let positions: [CGPoint]
@@ -142,7 +142,7 @@ class QuizScene: SKScene {
 			))
 		}
 
-		return TeamGridLayout(boxHeight: boxHeight, fontSize: numTeams >= 10 ? 60 : 40, positions: positions)
+		return TeamGridLayout(boxHeight: boxHeight, fontSize: boxHeight >= 150 ? 60 : 40, positions: positions)
 	}
 
 
