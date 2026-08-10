@@ -133,10 +133,9 @@ class TextTeamNode: SKNode {
 
 
 
-class TextScene: SKScene, QuizRound {
+class TextScene: QuizScene {
 	
 	var teamGuesses = [(roundid: Int, guess: String)?]()
-	fileprivate var setUp = false
 	var teamBoxes = [TextTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	//let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
@@ -144,14 +143,7 @@ class TextScene: SKScene, QuizRound {
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-
+	override func buildScene() {
 		teamGuesses = [(roundid: Int, guess: String)?]()
 		
 		let bgImage = SKSpriteNode(imageNamed: "background2")
@@ -335,7 +327,7 @@ class TextScene: SKScene, QuizRound {
 		}
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil

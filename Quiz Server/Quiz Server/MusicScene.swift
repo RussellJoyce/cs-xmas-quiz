@@ -10,10 +10,8 @@ import Cocoa
 import SpriteKit
 import AVFoundation
 
-class MusicScene: SKScene, QuizRound {
+class MusicScene: QuizScene {
 	
-	fileprivate var setUp = false
-
 	var useLEDs : NSButton!
 	
 	var buzzNumber = 0
@@ -68,14 +66,7 @@ class MusicScene: SKScene, QuizRound {
         }
     }
     
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-
+	override func buildScene() {
         buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
         buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
@@ -102,7 +93,7 @@ class MusicScene: SKScene, QuizRound {
         }
     }
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
         pauseMusic()
 		teamEnabled = [Bool](repeating: false, count: Settings.shared.numTeams)

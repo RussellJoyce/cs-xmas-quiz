@@ -121,6 +121,7 @@
 		46EBD4AA1C0B67DE0004A110 /* SparksUpImage.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EBD4A91C0B67DE0004A110 /* SparksUpImage.sks */; };
 		46EE3977239EA694006298D1 /* SparksLeft.sks in Resources */ = {isa = PBXBuildFile; fileRef = 46EE3976239EA694006298D1 /* SparksLeft.sks */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
+		3CA10D022EE9000100A38676 /* QuizScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D012EE9000100A38676 /* QuizScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -265,6 +266,7 @@
 		46EE3976239EA694006298D1 /* SparksLeft.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = SparksLeft.sks; path = Playgrounds/Anniversary.playground/Resources/SparksLeft.sks; sourceTree = SOURCE_ROOT; };
 		46EE3979239EA6D8006298D1 /* Anniversary.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Anniversary.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
+		3CA10D012EE9000100A38676 /* QuizScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -320,6 +322,7 @@
 		3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				3CA10D012EE9000100A38676 /* QuizScene.swift */,
 				3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */,
 				3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */,
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
@@ -648,6 +651,7 @@
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
 				3C63A1402EC4E2300044C951 /* PointlessScene.swift in Sources */,
 				3CF749212EABE57F00A38676 /* Settings.swift in Sources */,
+				3CA10D022EE9000100A38676 /* QuizScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

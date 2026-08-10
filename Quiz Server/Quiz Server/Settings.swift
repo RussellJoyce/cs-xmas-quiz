@@ -9,12 +9,6 @@
 import SpriteKit
 
 
-protocol QuizRound : SKScene {
-	func setUpScene(size: CGSize)
-	func reset()
-}
-
-
 // MARK: - Settings
 
 final class Settings {

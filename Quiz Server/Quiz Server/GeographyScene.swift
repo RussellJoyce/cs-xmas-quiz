@@ -9,9 +9,8 @@
 import Cocoa
 import SpriteKit
 
-class GeographyScene: SKScene, QuizRound {
+class GeographyScene: QuizScene {
 	
-	fileprivate var setUp = false
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
 	
@@ -21,16 +20,9 @@ class GeographyScene: SKScene, QuizRound {
 	
 	var geogReveal = -1
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
+	override func buildScene() {
 		reset()
 
-		self.size = size
-		
 		let bgImage = SKSpriteNode(imageNamed: "snowflakes-background")
 		bgImage.zPosition = 0.0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
@@ -302,7 +294,7 @@ class GeographyScene: SKScene, QuizRound {
 		}
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		answering = false
 		teamguesses = []

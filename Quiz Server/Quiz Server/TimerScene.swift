@@ -12,9 +12,8 @@ import SpriteKit
 import AVFoundation
 import Darwin
 
-class TimerScene: SKScene, QuizRound {
+class TimerScene: QuizScene {
 
-	fileprivate var setUp = false
 	fileprivate var correct: Int = 0
 	fileprivate var time: Int = 60
 	fileprivate var timer: Timer?
@@ -37,13 +36,7 @@ class TimerScene: SKScene, QuizRound {
 	let timerSound = SKAction.playSoundFileNamed("minutetimer", waitForCompletion: false)
 	let audioNode = SKAudioNode(url: Bundle.main.url(forResource: "minutetimer", withExtension: "mp3")!)
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
+	override func buildScene() {
 		correct = 0
 		time = 60
 		
@@ -138,7 +131,7 @@ class TimerScene: SKScene, QuizRound {
 	}
 	
 
-	func reset() {
+	override func reset() {
 		correct = 0
 		time = 60
 		timer?.invalidate()

@@ -9,9 +9,8 @@
 import Cocoa
 import SpriteKit
 
-class TestScene: SKScene, QuizRound {
+class TestScene: QuizScene {
 	
-	fileprivate var setUp = false
 	var buzzerPresses = [Int]()
 	let eightSound = SKAction.playSoundFileNamed("eight", waitForCompletion: false)
 	
@@ -21,14 +20,7 @@ class TestScene: SKScene, QuizRound {
 	var imageSparks = [[SKEmitterNode]]()
 	let christmasSparks = ["snowflake", "floppydisk", "star"]
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-		
+	override func buildScene() {
 		self.backgroundColor = NSColor.black
 		
 		for i in 0..<Settings.shared.numTeams {
@@ -88,7 +80,7 @@ class TestScene: SKScene, QuizRound {
 		}
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		for team in numbers {
 			team.fontColor = NSColor.white

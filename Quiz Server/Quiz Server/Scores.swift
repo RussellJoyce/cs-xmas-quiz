@@ -10,9 +10,8 @@
 import Cocoa
 import SpriteKit
 
-class ScoresScene: SKScene, QuizRound {
-	fileprivate var setUp = false
-	
+class ScoresScene: QuizScene {
+
 	var scores : [(Int, Int, Int)] = []
 	var teamBoxes = [BuzzerTeamNode]()
 	var displayIndex = 0
@@ -26,14 +25,7 @@ class ScoresScene: SKScene, QuizRound {
 	
 	var output : NSTextField!
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-		
+	override func buildScene() {
 		let bgImage = SKSpriteNode(imageNamed: "abstract-dark")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
@@ -64,7 +56,7 @@ class ScoresScene: SKScene, QuizRound {
 		self.addChild(snow1!)
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff();
 		scores = []
 		for teamBox in teamBoxes {

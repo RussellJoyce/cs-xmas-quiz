@@ -9,10 +9,9 @@
 import Cocoa
 import SpriteKit
 
-class Idle2Scene: SKScene, QuizRound {
+class Idle2Scene: QuizScene {
 	
 	var snowmojis = [SKEmitterNode]()
-	fileprivate var setUp = false
 	private var characterQueue: [Int] = []
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman",
 				 "present", "floppydisk", "snowflake", "party", "crazy",
@@ -25,14 +24,7 @@ class Idle2Scene: SKScene, QuizRound {
 	private var nextSpawnInterval: TimeInterval = 1.0
 	private var lastUpdateTime: TimeInterval = 0
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-
+	override func buildScene() {
 		let gradientImage = verticalGradientImage(size: self.size, colors: [NSColor.black, NSColor(calibratedRed: 0.10, green: 0, blue: 0.22, alpha: 1)])
 		let bgTexture = SKTexture(image: gradientImage)
 		let bgImageLayer1 = SKSpriteNode(texture: bgTexture)
@@ -343,7 +335,7 @@ class Idle2Scene: SKScene, QuizRound {
 		Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 2.0), repeats: false) {_ in self.addFireworks()}
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.megamas()
 		for node in snowmojis {
 			node.particleBirthRate = 0

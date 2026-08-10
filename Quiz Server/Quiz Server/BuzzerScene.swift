@@ -9,9 +9,8 @@
 import Cocoa
 import SpriteKit
 
-class BuzzerScene: SKScene, QuizRound {
-	fileprivate var setUp = false
-	
+class BuzzerScene: QuizScene {
+
 	let useAlternateBuzzers = false
 	
 	var buzzNumber = 0
@@ -40,12 +39,7 @@ class BuzzerScene: SKScene, QuizRound {
 	fileprivate var ledcount : Float = 0;
 
 
-	func setUpScene(size: CGSize) {
-		if setUp { return }
-		setUp = true
-
-		self.size = size
-		
+	override func buildScene() {
 		let bgImage = SKSpriteNode(imageNamed: "red2")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
@@ -129,7 +123,7 @@ class BuzzerScene: SKScene, QuizRound {
 		}
 	}
 	
-	func reset() {
+	override func reset() {
 		if !(timer != nil && timer!.isValid) {
 			QuizWebSocket.shared?.ledsOff();
 		}

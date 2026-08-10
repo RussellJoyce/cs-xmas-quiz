@@ -122,23 +122,16 @@ class NumbersTeamNode: SKNode {
 
 
 
-class NumbersScene: SKScene, QuizRound {
+class NumbersScene: QuizScene {
 	
 	var teamGuesses = [Int?]()
-	fileprivate var setUp = false
 	var teamBoxes = [NumbersTeamNode]()
 	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
 	let hornSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
 	var revealed = false
 	var emitters = [SKEmitterNode]()
 
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
+	override func buildScene() {
 		self.revealed = false
 		
 		let bgImage = SKSpriteNode(imageNamed: "blue-snow")
@@ -309,7 +302,7 @@ class NumbersScene: SKScene, QuizRound {
 	}
 	
 
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		self.revealed = false
 		

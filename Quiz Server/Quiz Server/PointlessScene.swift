@@ -11,7 +11,7 @@ import Cocoa
 import SpriteKit
 import AVFoundation
 
-class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
+class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
 
 	//Connections from the UI and rest of the app
 	var textQuestion: NSTextView!
@@ -19,7 +19,6 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	var descending : NSButton!
 	
 	//Internal vars
-	private var setUp = false
 	private var teamBoxes = [BuzzerTeamNode]()
 	private var teamGuesses = [String?]()
 	private var questionTitle : String?
@@ -59,13 +58,8 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 	static let barAnimColour = NSColor(red: 1.0, green: 0.8, blue: 0.2, alpha: 1.0)
 	static let barDisabledColour = NSColor(red: 0.8, green: 0.8, blue: 0.0, alpha: 0.8)
 	
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
+	override func buildScene() {
 		gameState = .waitForAnswers
-		self.size = size
 		teamGuesses = [String?]()
 		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
 		
@@ -143,7 +137,7 @@ class PointlessScene : SKScene, QuizRound, NSTableViewDataSource, NSTableViewDel
 		counterPlayer?.prepareToPlay()
 	}
 
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil

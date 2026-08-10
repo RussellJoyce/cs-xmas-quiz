@@ -9,19 +9,12 @@
 import Cocoa
 import SpriteKit
 
-class IdleScene: SKScene, QuizRound {
+class IdleScene: QuizScene {
 	
 	var snowmojis = [SKEmitterNode]()
-	fileprivate var setUp = false
 	let emoji = ["tree", "santa", "spaceinvader", "robot", "snowman", "present", "floppydisk", "snowflake", "party", "crazy"]
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
 
-		self.size = size
-		
+	override func buildScene() {
 		let date = Date()
 		let calendar = Calendar.current
 		let year = calendar.component(.year, from: date)
@@ -234,7 +227,7 @@ class IdleScene: SKScene, QuizRound {
         Timer.scheduledTimer(withTimeInterval: Double.random(in: 0.1 ... 5.0), repeats: false) {_ in self.firework()}
 	}
 	
-	func reset() {
+	override func reset() {
 		QuizWebSocket.shared?.megamas()
 		for node in snowmojis {
 			node.particleBirthRate = 0

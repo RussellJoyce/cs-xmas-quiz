@@ -25,7 +25,7 @@ class SpriteKitViewController: NSViewController {
 	let scoresScene = ScoresScene()
 	let pointlessScene = PointlessScene()
 
-	var rounds : [RoundType : QuizRound] = [:]
+	var rounds : [RoundType : QuizScene] = [:]
 	var currentRound = RoundType.none
 	
 	private let transitionDuration = 1.0

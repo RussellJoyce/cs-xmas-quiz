@@ -11,7 +11,7 @@ import Cocoa
 import SpriteKit
 import AVFoundation
 
-class TrueFalseScene: SKScene, QuizRound {
+class TrueFalseScene: QuizScene {
 	
 	static let TIMEOUT = 5
 	
@@ -19,7 +19,6 @@ class TrueFalseScene: SKScene, QuizRound {
 	var teamEnabled = [Bool]()
 	var teamGuesses = [Bool?]()
 	var fireEmitter = SKEmitterNode(fileNamed: "SparksUp2")!
-	fileprivate var setUp = false
 	fileprivate var time: Int = TIMEOUT
 	fileprivate var timer: Timer?
 	fileprivate var mode: Bool = true
@@ -33,14 +32,7 @@ class TrueFalseScene: SKScene, QuizRound {
 	
 	var timeLabel: OutlinedLabelNode!
 		
-	func setUpScene(size: CGSize) {
-		if setUp {
-			return
-		}
-		setUp = true
-
-		self.size = size
-		
+	override func buildScene() {
 		let bgImage = SKSpriteNode(imageNamed: "blackflakes")
 		bgImage.zPosition = 0
 		bgImage.position = CGPoint(x:self.frame.midX, y:self.frame.midY)
@@ -100,7 +92,7 @@ class TrueFalseScene: SKScene, QuizRound {
 		mode = tfmode
 	}
 	
-	func reset() {
+	override func reset() {
 		self.timer?.invalidate()
 		self.timeLabel.text = ""
 		
