@@ -105,8 +105,8 @@ class MusicScene: QuizScene {
 		videoEffect.filter?.setValue(0, forKey: "inputRadius")
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool, blankVideo : Bool) {
-		if teamEnabled[team] && (buzzes.count < 5 || buzzcocksMode == true) {
+	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+		if teamEnabled[team] && (buzzes.count < 5 || options.buzzcocksMode == true) {
 			teamEnabled[team] = false
 			
 			buzzes.append(team)
@@ -119,7 +119,7 @@ class MusicScene: QuizScene {
 				if buzzNumber == 0 {
 					nextTeamNumber = 1
 					var box : BuzzerTeamNode;
-					if buzzcocksMode == false {
+					if options.buzzcocksMode == false {
 						firstBuzzTime = Date()
 						buzzSound()
 						pauseMusic()
@@ -145,7 +145,7 @@ class MusicScene: QuizScene {
 					
 				} else {
 					var box : BuzzerTeamNode;
-					if buzzcocksMode == false {
+					if options.buzzcocksMode == false {
 						box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, entranceShimmer: true)
 						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
 					} else {
@@ -181,7 +181,7 @@ class MusicScene: QuizScene {
 					QuizWebSocket.shared?.buzz(team: team)
 				}
 
-				if blankVideo {
+				if options.blankVideo {
 					videoEffect.filter?.setValue(40, forKey: "inputRadius")
 				}
 				

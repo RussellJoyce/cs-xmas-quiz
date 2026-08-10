@@ -81,19 +81,8 @@ class SpriteKitViewController: NSViewController {
 		rounds[currentRound]?.reset()
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzcocksMode: Bool, buzzerQueueMode: Bool, quietMode : Bool, buzzerSounds : Bool, blankVideo: Bool) {
-		switch (currentRound) {
-		case .idle:
-			idleScene.buzzerPressed(team: team, type: type)
-		case .test:
-			testScene.buzzerPressed(team: team, type: type)
-		case .buzzers:
-			buzzerScene.buzzerPressed(team: team, type: type, buzzerQueueMode: buzzerQueueMode, quietMode: quietMode, buzzerSounds: buzzerSounds)
-        case .music:
-			musicScene.buzzerPressed(team: team, type: type, buzzcocksMode: buzzcocksMode, blankVideo: blankVideo)
-		default:
-			break
-		}
+	func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+		rounds[currentRound]?.buzzerPressed(team: team, type: type, options: options)
 	}
 	
 }

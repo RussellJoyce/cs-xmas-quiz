@@ -216,7 +216,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
 		if virtualBuzzersBtn.state == .on {
             if (sender.state == NSControl.StateValue.on) {
-				quizView.buzzerPressed(team: sender.tag, type: .test, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
+				quizView.buzzerPressed(team: sender.tag, type: .test, options: buzzerOptions)
 				sender.state = NSControl.StateValue.off
             }
         }
@@ -351,7 +351,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if (!buzzersDisabled && team < Settings.shared.numTeams && buzzersEnabled[team]) {
-						quizView.buzzerPressed(team: team, type: .websocket, buzzcocksMode: buzzcocksMode.state == .on, buzzerQueueMode: buzzerQueueMode.state == .on, quietMode: quieterBuzzes.state == .on, buzzerSounds: buzzerSounds.state == .on, blankVideo: blankVideo.state == .on)
+						quizView.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
 					}
 				}
 			case "lr":
@@ -515,6 +515,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
 	@IBOutlet weak var blankVideo: NSButton!
+
+	/// The current state of the buzzer toggles, gathered for whichever round is live.
+	private var buzzerOptions: BuzzerOptions {
+		BuzzerOptions(buzzcocksMode: buzzcocksMode.state == .on,
+					  buzzerQueueMode: buzzerQueueMode.state == .on,
+					  quietMode: quieterBuzzes.state == .on,
+					  buzzerSounds: buzzerSounds.state == .on,
+					  blankVideo: blankVideo.state == .on)
+	}
 	@IBOutlet weak var musicFile: NSPopUpButton!
 	@IBOutlet weak var videoFile: NSPopUpButton!
 	@IBOutlet weak var musicUseLEDs: NSButton!

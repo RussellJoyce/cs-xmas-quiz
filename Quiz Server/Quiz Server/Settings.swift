@@ -37,6 +37,15 @@ enum BuzzerType {
 	case disabled
 }
 
+/// The controller's buzzer-related toggles, gathered up so that every round shares one `buzzerPressed` signature.
+struct BuzzerOptions {
+	var buzzcocksMode = false
+	var buzzerQueueMode = false
+	var quietMode = false
+	var buzzerSounds = false
+	var blankVideo = false
+}
+
 enum RoundType {
 	case none
 	case idle

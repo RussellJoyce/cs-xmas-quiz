@@ -89,8 +89,8 @@ class TestScene: QuizScene {
 		buzzerPresses = [Int](repeating: 0, count: Settings.shared.numTeams)
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType) {
-		
+	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+
 		//TODO: This needs some tidying up if we ever use this scene again
 		// Specifically the "released" logic
 		

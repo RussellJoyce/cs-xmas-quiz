@@ -351,7 +351,7 @@ class Idle2Scene: QuizScene {
 		return image
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType) {
+	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
 		snowmojis[team % snowmojis.count].particleBirthRate = 20
 		teamNodeTrigger(teamno: team)
 		

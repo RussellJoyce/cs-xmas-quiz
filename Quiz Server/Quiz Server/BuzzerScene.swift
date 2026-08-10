@@ -112,8 +112,8 @@ class BuzzerScene: QuizScene {
 		teamBoxes.removeAll()
 	}
 	
-	func buzzerPressed(team: Int, type: BuzzerType, buzzerQueueMode: Bool, quietMode: Bool, buzzerSounds : Bool) {
-		if buzzes.count == 0 || (buzzes.count > 0 && buzzerQueueMode) {
+	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+		if buzzes.count == 0 || (buzzes.count > 0 && options.buzzerQueueMode) {
 			if teamEnabled[team] && buzzes.count < 5 {
 				teamEnabled[team] = false
 				
@@ -121,8 +121,8 @@ class BuzzerScene: QuizScene {
 				
 				if buzzNumber == 0 {
 					firstBuzzTime = Date()
-					if buzzerSounds {
-						buzzSound(quietMode)
+					if options.buzzerSounds {
+						buzzSound(options.quietMode)
 					}
 					if let t = timer {
 						if !t.isValid {

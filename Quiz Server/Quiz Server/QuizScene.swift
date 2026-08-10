@@ -43,6 +43,10 @@ class QuizScene: SKScene {
 	func teardown() {
 	}
 
+	/// A team has buzzed while this round is live.
+	func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+	}
+
 	override func willMove(from view: SKView) {
 		super.willMove(from: view)
 		teardown()
