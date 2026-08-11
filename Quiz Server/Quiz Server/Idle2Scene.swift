@@ -442,7 +442,7 @@ class Idle2Scene: QuizScene {
 		node.run(shrink)
 		
 		// Animate both labels to team color over 0.4 seconds
-		let teamColor = NSColor(calibratedHue: CGFloat(teamno % 10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+		let teamColor = Utils.teamColour(teamno)
 		let colorAction = SKAction.customAction(withDuration: 0.4) { n, t in
 			for case let label as SKLabelNode in n.children {
 				let frac = CGFloat(t) / 0.4

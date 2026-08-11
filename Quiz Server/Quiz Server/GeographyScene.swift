@@ -116,24 +116,6 @@ class GeographyScene: QuizScene {
 			answering = true;
 			mainImage.removeAllChildren()
 			
-			// Quick dirty test code
-			if(Settings.shared.debug) {
-				teamguesses[0] = (10, 10)
-				teamguesses[1] = (15, 15)
-				teamguesses[2] = (20, 20)
-				teamguesses[3] = (25, 25)
-				teamguesses[4] = (30, 30)
-				teamguesses[5] = (35, 35)
-				teamguesses[6] = (40, 40)
-				teamguesses[7] = (45, 45)
-				teamguesses[8] = (50, 50)
-				teamguesses[9] = (55, 55)
-				teamguesses[10] = (60, 60)
-				teamguesses[11] = (65, 65)
-				teamguesses[12] = (70, 70)
-				teamguesses[13] = (75, 75)
-			}
-			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
 				if let g = teamguesses[i] {
@@ -167,61 +149,20 @@ class GeographyScene: QuizScene {
 		}
 	}
 	
-	func prefix(_ num : Int) -> String {
-		switch(num) {
-		case 1:
-			return String(num) + "st"
-		case 2:
-			return String(num) + "nd"
-		case 3:
-			return String(num) + "rd"
-		default:
-			return String(num) + "th"
-		}
-	}
-	
-	func emojiNum(_ num : Int) -> String {
-		switch(num) {
-		case 1:
-			return "1️⃣"
-		case 2:
-			return "2️⃣"
-		case 3:
-			return "3️⃣"
-		case 4:
-			return "4️⃣"
-		case 5:
-			return "5️⃣"
-		case 6:
-			return "6️⃣"
-		case 7:
-			return "7️⃣"
-		case 8:
-			return "8️⃣"
-		case 9:
-			return "9️⃣"
-		case 10:
-			return "🔟"
-		default:
-			return "🆖"
-		}
-	}
-	
-	
 	func teamAnswer(id : Int, order : Int) {
 
 		if(order == sorted.count) {
 			text.text = ""
-			answersText.text = emojiNum(order) + ": Team " + String(id + 1) + "\n"
+			answersText.text = Utils.numberAsEmoji(order) + ": Team " + String(id + 1) + "\n"
 		} else {
 			if(order == 1) {
-				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " ⭐️\n"
+				answersText.text! += Utils.numberAsEmoji(order) + ": Team " + String(id + 1) + " ⭐️\n"
 			} else if(order <= 3) {
-				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " 🎉\n"
+				answersText.text! += Utils.numberAsEmoji(order) + ": Team " + String(id + 1) + " 🎉\n"
 			} else if(order <= sorted.count / 2) {
-				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + " 👍\n"
+				answersText.text! += Utils.numberAsEmoji(order) + ": Team " + String(id + 1) + " 👍\n"
 			} else {
-				answersText.text! += emojiNum(order) + ": Team " + String(id + 1) + "\n"
+				answersText.text! += Utils.numberAsEmoji(order) + ": Team " + String(id + 1) + "\n"
 			}
 		}
 		
@@ -230,11 +171,7 @@ class GeographyScene: QuizScene {
 				x: (teamguesses[id]?.x)!,
 				y: (teamguesses[id]?.y)!
 			))
-			var teamHue = CGFloat(id) / 10.0
-			if teamHue > 1.0 {
-				teamHue -= 1.0
-			}
-			let pcol = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+			let pcol = Utils.teamColour(id)
 			
 			addPositionMarker(point: teampos, col: pcol, team: id+1)
 			addSplash(point: teampos, col: pcol)

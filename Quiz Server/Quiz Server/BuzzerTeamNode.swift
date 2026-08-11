@@ -19,7 +19,7 @@ class BuzzerTeamNode: SKNode {
 	
 	var bgBox : SKShapeNode?
 	var bgColour : NSColor?
-	var teamHue = CGFloat(0.0)
+	private var teamNo = 0
 	
 	var textLabel: SKLabelNode?
 	var shadowLabel: SKLabelNode?
@@ -36,13 +36,10 @@ class BuzzerTeamNode: SKNode {
 		self.width = width
 		self.height = height
 		
-		teamHue = CGFloat(team) / 10.0
-		if teamHue > 1.0 {
-			teamHue -= 1.0
-		}
-		let particleColour = NSColor(calibratedHue: teamHue, saturation: 0.6, brightness: 1.0, alpha: 1.0)
-		let glowColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0)
-		bgColour = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
+		teamNo = team
+		let particleColour = Utils.teamColour(team, saturation: 0.6)
+		let glowColour = Utils.teamColour(team)
+		bgColour = Utils.teamColour(team, brightness: 0.8)
 		
 		let scale = SKAction.scale(to: 1, duration: 0.2)
 		scale.timingMode = .easeOut
@@ -264,7 +261,7 @@ class BuzzerTeamNode: SKNode {
 	
 	func resetTeamColour() {
 		guard let bgBox = self.bgBox, let textLabel = self.textLabel else { return }
-		bgBox.fillColor = NSColor(calibratedHue: teamHue, saturation: 1.0, brightness: 0.8, alpha: 1.0)
+		bgBox.fillColor = Utils.teamColour(teamNo, brightness: 0.8)
 		self.bgColour = bgBox.fillColor
 		textLabel.fontColor = .white
 	}

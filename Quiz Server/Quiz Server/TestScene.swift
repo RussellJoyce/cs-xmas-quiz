@@ -95,7 +95,7 @@ class TestScene: QuizScene {
 		// Specifically the "released" logic
 		
 		print("buzzerPressed in TestScene for team:" + String(team))
-		numbers[team].fontColor = NSColor(calibratedHue: CGFloat(team%10) / 10.0, saturation: 1.0, brightness: 1.0, alpha: 1.0)
+		numbers[team].fontColor = Utils.teamColour(team)
 		sparksUp[team].particleBirthRate = 600
 		sparksDown[team].particleBirthRate = 600
 		QuizWebSocket.shared?.pulseTeamColour(team)

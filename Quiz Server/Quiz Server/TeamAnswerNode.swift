@@ -120,20 +120,14 @@ class TeamAnswerNode: SKNode {
 	/// Sparks up the left edge of the box in the team's colour and pops it briefly,
 	/// to draw the eye to whichever team has just answered.
 	func emphasise() {
-		var teamHue = CGFloat(teamNo) / 10.0
-		if teamHue > 1.0 {
-			teamHue -= 1.0
-		}
+		//Sparks fade up into the team's colour and back out again
+		let clear = Utils.teamColour(teamNo, alpha: 0.0)
+		let opaque = Utils.teamColour(teamNo)
 
 		self.addEmitter(named: "TextSceneSparks", at: CGPoint(x: -((self.width/2) - 40), y: 0), zPosition: 7) {
 			$0.particleColorSequence = SKKeyframeSequence(
-				keyframeValues: [
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 1.0),
-					SKColor(calibratedHue: teamHue, saturation: 1.0, brightness: 1.0, alpha: 0.0),
-				], times: [0.0, 0.1, 0.1, 0.3, 0.7]
+				keyframeValues: [clear, clear, opaque, opaque, clear],
+				times: [0.0, 0.1, 0.1, 0.3, 0.7]
 			)
 		}
 

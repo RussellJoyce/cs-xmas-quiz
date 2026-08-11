@@ -89,6 +89,17 @@ final class Utils {
 	}
 	
 
+	/// Hue identifying a team
+	static func teamHue(_ team: Int) -> CGFloat {
+		return CGFloat(team % 10) / 10.0
+	}
+
+	/// A team's identifying colour. Saturation and brightness vary with the use
+	static func teamColour(_ team: Int, saturation: CGFloat = 1.0, brightness: CGFloat = 1.0, alpha: CGFloat = 1.0) -> NSColor {
+		return NSColor(calibratedHue: teamHue(team), saturation: saturation, brightness: brightness, alpha: alpha)
+	}
+
+
 	static func sanitiseString(_ input : String) -> String {
 		var str = input.lowercased()
 		str = str.trimmingCharacters(in: .whitespacesAndNewlines)
