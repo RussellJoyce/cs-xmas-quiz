@@ -105,104 +105,110 @@ class MusicScene: QuizScene {
 		videoEffect.filter?.setValue(0, forKey: "inputRadius")
 	}
 	
-	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
-		if teamEnabled[team] && (buzzes.count < 5 || options.buzzcocksMode == true) {
-			teamEnabled[team] = false
-			
-			buzzes.append(team)
-			
-			//Create a BuzzerTeamNode and put it somewhere in the scene
-			//The layout varies based on audio or video, and whether we are pausing or not
-			
-			if video == nil {
-				//We are playing music
-				if buzzNumber == 0 {
-					nextTeamNumber = 1
-					var box : BuzzerTeamNode;
-					if options.buzzcocksMode == false {
-						firstBuzzTime = Date()
-						buzzSound()
-						pauseMusic()
-						QuizWebSocket.shared?.buzz(team: team)
-						box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, entranceShimmer: true)
-						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
-					} else {
-						var timeString : String;
-						if let stTime = firstBuzzTime {
-							let timeDifference = Date().timeIntervalSince(stTime)
-							let wholeSeconds = Int(timeDifference)
-							let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
-							timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
-						} else {
-							timeString = "()"
-						}
-						box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
-						box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 100)
-					}
-					box.zPosition = 1
-					teamBoxes.append(box)
-					self.addChild(box)
-					
-				} else {
-					var box : BuzzerTeamNode;
-					if options.buzzcocksMode == false {
-						box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, entranceShimmer: true)
-						box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
-					} else {
-						var timeString : String;
-						if let stTime = firstBuzzTime {
-							let timeDifference = Date().timeIntervalSince(stTime)
-							let wholeSeconds = Int(timeDifference)
-							let tenthsOfSecond = Int((timeDifference - Double(wholeSeconds)) * 10)
-							timeString = "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
-						} else {
-							timeString = "()"
-						}
-						//We have a few layouts for larger team numbers
-						if Settings.shared.numTeams <= 10 {
-							box = BuzzerTeamNode(team: team, width: 1000, height: 90, fontSize: 80, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
-							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 100) - CGFloat(buzzNumber * 100))
-						} else { //This will work up to about 15
-							box = BuzzerTeamNode(team: team, width: 1000, height: 60, fontSize: 50, entranceShimmer: true, altText: "Team \(team + 1) \(timeString)")
-							box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 120) - CGFloat(buzzNumber * 65))
-						}
-					}
-					box.zPosition = 1
-					teamBoxes.append(box)
-					self.addChild(box)
-				}
-			} else {
-				//We are playing a video
-				var box : BuzzerTeamNode;
-				if buzzNumber == 0 {
-					nextTeamNumber = 1
-					buzzSound()
-					video?.pause()
-					QuizWebSocket.shared?.buzz(team: team)
-				}
+	/// Where a team's box goes and how it looks
+	private struct BuzzerBoxLayout {
+		var width : Int
+		var height : Int
+		var fontSize : CGFloat
+		var position : CGPoint
+		var addGlow = false
+		var altText : String? = nil
+	}
 
-				if options.blankVideo {
-					videoEffect.filter?.setValue(40, forKey: "inputRadius")
-				}
-				
-				box = BuzzerTeamNode(team: team, width: 350, height: 90, fontSize: 50, addGlow: buzzNumber == 0, entranceShimmer: true)
-				box.position = CGPoint(x: 250, y: (self.size.height - 230) - CGFloat(buzzNumber * 120))
-				box.zPosition = 1
-				teamBoxes.append(box)
-				self.addChild(box)
+	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
+		guard teamEnabled[team], buzzes.count < 5 || options.buzzcocksMode else { return }
+		teamEnabled[team] = false
+		buzzes.append(team)
+
+		let isFirstBuzz = buzzNumber == 0
+		if isFirstBuzz {
+			nextTeamNumber = 1
+		}
+
+		if video != nil {
+			//We are playing a video
+			if isFirstBuzz {
+				buzzSound()
+				video?.pause()
+				QuizWebSocket.shared?.buzz(team: team)
 			}
-			
-			buzzNumber += 1
+			if options.blankVideo {
+				videoEffect.filter?.setValue(40, forKey: "inputRadius")
+			}
+		} else if isFirstBuzz && !options.buzzcocksMode {
+			//We are playing music, and stop dead on the first buzz rather than
+			//letting every team queue up behind it
+			firstBuzzTime = Date()
+			buzzSound()
+			pauseMusic()
+			QuizWebSocket.shared?.buzz(team: team)
 		}
-		
-		if buzzes.count == 5 {
+
+		let layout = buzzerBoxLayout(team: team, isFirstBuzz: isFirstBuzz, options: options)
+		let box = BuzzerTeamNode(team: team,
+								 width: layout.width,
+								 height: layout.height,
+								 fontSize: layout.fontSize,
+								 addGlow: layout.addGlow,
+								 entranceShimmer: true,
+								 altText: layout.altText)
+		box.position = layout.position
+		box.zPosition = 1
+		teamBoxes.append(box)
+		self.addChild(box)
+
+		buzzNumber += 1
+	}
+
+	/// The layout varies with the medium, whether this is the first buzz, and whether
+	/// buzzcocks mode is queueing every team with their time rather than showing one.
+	private func buzzerBoxLayout(team: Int, isFirstBuzz: Bool, options: BuzzerOptions) -> BuzzerBoxLayout {
+		let centreX = self.centrePoint.x
+		let top = self.size.height
+
+		if video != nil {
+			return BuzzerBoxLayout(width: 350, height: 90, fontSize: 50,
+								   position: CGPoint(x: 250, y: (top - 230) - CGFloat(buzzNumber * 120)), addGlow: isFirstBuzz)
 		}
+
+		if !options.buzzcocksMode {
+			return isFirstBuzz
+				? BuzzerBoxLayout(width: 1000, height: 200, fontSize: 150,
+								  position: CGPoint(x: centreX, y: top - 160),
+								  addGlow: true)
+				: BuzzerBoxLayout(width: 800, height: 130, fontSize: 100,
+								  position: CGPoint(x: centreX, y: (top - 230) - CGFloat(buzzNumber * 175)))
+		}
+
+		//Buzzcocks mode: every team gets a row showing how long they took
+		let altText = "Team \(team + 1) \(timeSinceFirstBuzz())"
+		if isFirstBuzz {
+			return BuzzerBoxLayout(width: 1000, height: 90, fontSize: 80,
+								   position: CGPoint(x: centreX, y: top - 100),
+								   altText: altText)
+		}
+		//We have a few layouts for larger team numbers
+		if Settings.shared.numTeams <= 10 {
+			return BuzzerBoxLayout(width: 1000, height: 90, fontSize: 80,
+								   position: CGPoint(x: centreX, y: (top - 100) - CGFloat(buzzNumber * 100)),
+								   altText: altText)
+		}
+		return BuzzerBoxLayout(width: 1000, height: 60, fontSize: 50, //This will work up to about 15
+							   position: CGPoint(x: centreX, y: (top - 120) - CGFloat(buzzNumber * 65)),
+							   altText: altText)
+	}
+
+	/// Time since the first team buzzed, as "(1.4 sec)".
+	private func timeSinceFirstBuzz() -> String {
+		guard let startTime = firstBuzzTime else { return "()" }
+		let elapsed = Date().timeIntervalSince(startTime)
+		let wholeSeconds = Int(elapsed)
+		let tenthsOfSecond = Int((elapsed - Double(wholeSeconds)) * 10)
+		return "(\(String(format: "%d.%d", wholeSeconds, tenthsOfSecond)) sec)"
 	}
 	
 	override func teardown() {
-		//Pause rather than stop: this silences the round on the way out but keeps the
-		//loaded track and video in place, so returning to the round does not need them
-		//re-selecting in the controller.
+		//This will allow play from where we left off. Reselect the track to reset it.
 		pauseMusic()
 		video?.pause()
 	}
