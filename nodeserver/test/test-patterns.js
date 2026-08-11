@@ -36,28 +36,28 @@ window.TEST_PATTERNS = String.raw`
 
 # ---------------------------------------------------------------- buzzers
 
-:3 Buzzes
+:Buzz - 3 Buzzes
 1,buzz
 2,buzz
 3,buzz
 
-:Buzzer race (everyone at once)
+:Buzz - Everyone at once
 *,buzz
 
-:Buzzer race with a clear winner
+:Buzz - Race with a clear winner (T2)
 2,buzz
 wait 300
 1,buzz
 3,buzz
 
-:Buzz storm (three rounds)
+:Buzz - Three buzz storms
 *,buzz
 wait 1000
 *,buzz
 wait 1000
 *,buzz
 
-:Repeat buzzing from one client
+:Buzz - Repeat buzzing from one client
 1,buzz
 1,buzz
 1,buzz
@@ -66,38 +66,52 @@ wait 1000
 
 # ---------------------------------------------------------------- written answers
 
-:Text guesses
+:Text - Guesses
 1,text,hello
+2,text,hello
+3,text,something
+4,text,somethingelse
 5,text,anotheranswer
+6,text,a bit of a longer one
 
-:Everyone answers
+:Text - Everyone answers
 *,text,the answer is definitely this one
 
-:Awkward text answers
+:Text - Awkward text answers
 1,text,comma, separated, answer
 2,text,<script>alert(1)</script>
 3,text,   spaces before the answer
 4,text,a very long answer that goes on and on and on and should still arrive at the quiz software in one piece
 
-:Answer then change your mind
+:Text - Answer then change your mind
 1,text,first thought
 wait 800
 1,text,second thought
 wait 800
 1,text,final answer
 
+
+:Number - Guesses
+1,text,1
+2,text,2
+3,text,3
+4,text,4
+5,text,50
+6,text,50
+7,text,50
+
 # ---------------------------------------------------------------- higher/lower and true/false
 
-:Split vote
+:HiLo - Split vote
 1,hi
 2,lo
 3,hi
 4,lo
 
-:Everyone says higher
+:HiLo - Everyone says higher
 *,hi
 
-:Flip-flopping
+:HiLo - T1 change mind
 1,hi
 wait 400
 1,lo
@@ -108,16 +122,16 @@ wait 400
 
 # ---------------------------------------------------------------- geography
 
-:Geography scatter
+:Geo - Scatter
 *,geo,random
 
-:Geography corners
+:Geo - 4 Corners
 1,geo,0,0
 2,geo,100,0
 3,geo,0,100
 4,geo,100,100
 
-:Geography drag (one client moving its pin)
+:Geo - One client moving its pin
 1,geo,10,10
 wait 200
 1,geo,30,25
