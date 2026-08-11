@@ -27,6 +27,11 @@ final class Settings {
 	var pointlessPath: String = ""
 	
 	var numTeams: Int = 14
+
+	/// The screen the quiz display is shown on, and whether it runs windowed rather than
+	/// taking that screen exclusively fullscreen
+	var quizScreen: NSScreen?
+	var windowedMode = true
 }
 
 // MARK: - Global enums

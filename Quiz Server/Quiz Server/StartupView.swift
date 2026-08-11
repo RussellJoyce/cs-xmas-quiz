@@ -63,18 +63,22 @@ class StartupView: NSViewController {
 	}
     
     @IBAction func startQuiz(_ sender: AnyObject) {
-		let screen = (allScreens != nil && (allScreens?.count)! > 0) ? allScreens?[screenSelector.indexOfSelectedItem] : nil
-        let windowed = windowedMode.state == NSControl.StateValue.on;
-        let delegate = NSApplication.shared.delegate as! AppDelegate
-
 		Settings.shared.geographyImagesPath = geographyImagesPath.stringValue
 		Settings.shared.musicPath = musicPath.stringValue
 		Settings.shared.uniquePath = uniquePath.stringValue
 		Settings.shared.pointlessPath = pointlessPath.stringValue
 		Settings.shared.numTeams = Int(numTeamsInput.intValue)
 		Settings.shared.debug = debugMode.state == NSControl.StateValue.on
-		
-		delegate.startQuiz(screen: screen, windowedMode: windowed)
+
+		if let screens = allScreens, !screens.isEmpty {
+			Settings.shared.quizScreen = screens[screenSelector.indexOfSelectedItem]
+		} else {
+			Settings.shared.quizScreen = nil
+		}
+		Settings.shared.windowedMode = windowedMode.state == NSControl.StateValue.on
+
+		view.window?.close()
+		ControllerWindowController.shared.showWindow(self)
     }
 
 	@IBAction func geographyPathBrowse(_ sender: Any) {

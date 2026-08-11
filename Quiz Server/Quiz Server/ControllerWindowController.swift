@@ -59,8 +59,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
-	var quizScreen: NSScreen?
-	var windowedMode = true
+	/// The single controller window, shown by `StartupView` once the settings are chosen.
+	/// Loading its nib reads the launch configuration out of `Settings.shared`.
+	static let shared = ControllerWindowController(windowNibName: "ControllerWindow")
+
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
@@ -117,17 +119,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			quizWindow?.makeKeyAndOrderFront(self)
 		}
 		
-        if (!windowedMode) {
+		if !Settings.shared.windowedMode, let quizScreen = Settings.shared.quizScreen {
 			//Old exclusive fullscreen method
 			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.width,
 								   relatedBy: NSLayoutConstraint.Relation.equal,toItem: nil,
 								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-								   multiplier: 1, constant: quizScreen!.frame.width))
+								   multiplier: 1, constant: quizScreen.frame.width))
 			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.height,
 								   relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
 								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-								   multiplier: 1, constant: quizScreen!.frame.height))
-			quizView.view.enterFullScreenMode(quizScreen!, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
+								   multiplier: 1, constant: quizScreen.frame.height))
+			quizView.view.enterFullScreenMode(quizScreen, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
         }
 		
 		socketWriteIfConnected("vibuzzer")

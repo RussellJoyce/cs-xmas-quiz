@@ -8,30 +8,9 @@
 
 import Cocoa
 
+/// Exists only to hold `@NSApplicationMain`. The startup window drives
+/// launch itself (see `StartupView`), and app-lifetime state lives in `Settings.shared`
+/// and `ControllerWindowController.shared`.
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    @IBOutlet weak var window: NSWindow!
-    
-    let controllerWindow = ControllerWindowController(windowNibName: "ControllerWindow")
-	
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
-    }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
-    
-    func applicationDidChangeScreenParameters(_ notification: Notification) {
-        // Screens changed - figure out how the changes affect us
-        print("Screens changed!")
-    }
-	
-	func startQuiz(screen: NSScreen?, windowedMode: Bool) {
-        window.close()
-        controllerWindow.windowedMode = windowedMode
-        controllerWindow.quizScreen = screen
-        controllerWindow.showWindow(self)
-    }
 }
