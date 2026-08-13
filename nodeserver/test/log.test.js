@@ -15,9 +15,11 @@ let lines;
 beforeEach(() => { lines = captureLogs('debug'); });
 afterEach(() => lines.stop());
 
-//The line without its timestamp, which is the part worth asserting on.
+//The line without its timestamp, which is the part worth asserting on. The milliseconds are
+//optional because log.js can be switched to print them, and only the test below that pins
+//the shape of a line should care which it is doing.
 function body(entry) {
-    return entry.line.replace(/^\d\d:\d\d:\d\d\.\d\d\d /, '');
+    return entry.line.replace(/^\d\d:\d\d:\d\d(\.\d\d\d)? /, '');
 }
 function bodies() {
     return lines.map(body);
@@ -26,7 +28,7 @@ function bodies() {
 describe('the shape of a line', () => {
     test('reads as time, level, route, code, meaning', () => {
         log.info('T7', 'quiz', 'zz', 'buzz');
-        assert.match(lines[0].line, /^\d\d:\d\d:\d\d\.\d\d\d INFO  T7     → quiz  zz  buzz$/);
+        assert.match(lines[0].line, /^\d\d:\d\d:\d\d INFO  T7     → quiz  zz  buzz$/);
     });
 
     test('columns line up whatever the endpoints are called', () => {
@@ -111,7 +113,7 @@ describe('decoding the protocol', () => {
     test('every code the protocol acts on has a translation', () => {
         //If a code is added to protocol.js and not here, the log silently degrades to
         //"unrecognised", which looks like a fault rather than an omission.
-        ['on', 'of', 'hh', 'hl', 'hn', 'ha', 'vi', 'im', 'di', 'le', 'ls', 'lr',
+        ['on', 'of', 'hh', 'hl', 'hn', 'ha', 'h1', 'h2', 'vi', 'im', 'di', 'le', 'ls', 'lr',
          'pt', 're', 'pi', 'pb', 'ok', 'px', 'zz', 'hi', 'lo', 'tt', 'ii'].forEach(code => {
             assert.ok(log.CODES[code], 'no translation for ' + code);
         });

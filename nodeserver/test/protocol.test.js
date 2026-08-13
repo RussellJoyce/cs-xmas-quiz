@@ -219,10 +219,19 @@ describe('routing from the quiz software', () => {
         assert.deepStrictEqual(transport.clients, [], 'LED traffic does not reach clients');
     });
 
-    test('an unrecognised message is broadcast to all clients unchanged', () => {
-        const { state, transport } = setup(0);
+    ['h1', 'h2'].forEach(cmd => {
+        test(cmd + ' relabels the buttons on every client', () => {
+            const { state, transport } = setup(0);
+            state.handleServerMessage(cmd);
+            assert.deepStrictEqual(transport.clients, [cmd]);
+        });
+    });
+
+    test('an unrecognised message is dropped, not broadcast', () => {
+        const { state, transport, socks } = setupTeams(1);
         state.handleServerMessage('sc1,42');
-        assert.deepStrictEqual(transport.clients, ['sc1,42']);
+        assert.deepStrictEqual(transport.clients, [], 'clients are not a broadcast channel');
+        assert.deepStrictEqual(socks[0].sent, []);
     });
 
     test('di returns a team to the picker and frees the number', () => {
@@ -311,6 +320,48 @@ describe('messages from clients', () => {
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'tt1,a wild guess');
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'ii1,42,17');
         assert.deepStrictEqual(transport.servers, ['tt1,a wild guess', 'ii1,42,17']);
+    });
+
+    test('higher and lower are forwarded', () => {
+        const { state, transport, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'hi1');
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'lo1');
+        assert.deepStrictEqual(transport.servers, ['hi1', 'lo1']);
+    });
+
+    test('an answer for somebody else is dropped', () => {
+        //The team number is the client's own claim, so it is checked against the team this
+        //server granted rather than taken at face value.
+        const { state, transport, socks } = setupTeams(2);
+        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, []);
+        assert.deepStrictEqual(socks[1].sent, [], 'the team spoken for hears nothing of it');
+    });
+
+    test('an answer with no team, or a team that does not exist, is dropped', () => {
+        const { state, transport, socks } = setupTeams(1);
+        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, []);
+    });
+
+    test('a team spelled differently still answers for itself', () => {
+        //validTeam normalises, so "01" is team 1 here exactly as it is when claiming a team.
+        const { state, transport, socks } = setupTeams(1);
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'zz01');
+        assert.deepStrictEqual(transport.servers, ['zz01']);
+    });
+
+    test('anything the buzzer app does not send is dropped, not forwarded', () => {
+        //The team list in particular: the quiz software acts on 'lr', so a client that could
+        //forge one would be able to rewrite the connected-team indicators.
+        const { state, transport, socks } = setupTeams(1);
+        ['lr1,2,3', 'ls', 'vipickteam', 'le a01', 'qq42'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, []);
+        assert.deepStrictEqual(transport.clients, [], 'nor does it reach the other clients');
+        assert.deepStrictEqual(socks[0].sent, []);
     });
 
     test('activity is timestamped', () => {
@@ -626,10 +677,10 @@ describe('re-picking a team you already hold', () => {
     });
 
     test('a genuine answer is still forwarded', () => {
-        //Guard against the new case swallowing anything that merely starts with p.
+        //Guard against the pt case swallowing an answer that merely starts with p.
         const { state, transport, socks } = setupTeams(1);
-        ['zz1', 'tt1,ptarmigan', 'pq1'].forEach(m =>
+        ['zz1', 'tt1,ptarmigan', 'ii1,42,17'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
-        assert.deepStrictEqual(transport.servers, ['zz1', 'tt1,ptarmigan', 'pq1']);
+        assert.deepStrictEqual(transport.servers, ['zz1', 'tt1,ptarmigan', 'ii1,42,17']);
     });
 });

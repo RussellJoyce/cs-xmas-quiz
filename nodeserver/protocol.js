@@ -187,14 +187,19 @@ class QuizState {
                         this.transport.toServers("lr" + idList);
                         break;
                     }
+                    case "h1": //Label higher/lower
+                    case "h2": //Label true/false
+                        log.info('quiz', 'all', message.slice(0,2), log.describe(message.slice(0,2)));
+                        this.transport.toClients(message.slice(0,2));
+                        break;
                     case "ha": //Reset all higher/lowers
                         log.info('quiz', 'all', 'ha', log.describe('ha'));
                         this.transport.toClients("hn");
                         break;
                     default:
-                        //Else just forward it on to all clients
-                        log.info('quiz', 'all', message.slice(0,2), log.describe(message));
-                        this.transport.toClients(message);
+                        //Every message the quiz software sends has a case above, so anything
+                        //here is a typo or a version mismatch.
+                        log.warn('quiz', 'all', message.slice(0,2), 'dropped, ' + log.describe(message));
                         break;
                 }
             }
@@ -238,17 +243,15 @@ class QuizState {
                 } else {
                     const who = this.label(key);
                     switch(message.slice(0,2)) {
-                        case "re":
-                            //Client wants an ID
+                        case "re": //Client wants an ID
                             log.debug(who, 'srv', 're', 'resume, told team ' + this.clients[key].id);
                             safeSend(sock, 'ok' + this.clients[key].id);
                             break;
-                        case "pi": //ping from client
+                        case "pi": //Ping from client
                             log.debug(who, 'srv', 'pi', 'ping');
                             safeSend(sock, "pb");
                             break;
-                        case "pt": {
-                            //A client picking a team it already holds.
+                        case "pt": { //A client picking a team it already holds.
                             const teampick = validTeam(message.slice(2), this.numTeams);
                             if(teampick !== null && teampick === this.clients[key].id) {
                                 log.debug(who, 'srv', 'pt', 'confirms team ' + teampick);
@@ -262,10 +265,25 @@ class QuizState {
                             }
                             break;
                         }
+                        case "zz": //Buzz
+                        case "hi": //Higher, or true
+                        case "lo": //Lower, or false
+                        case "tt": //Text answer
+                        case "ii": { //Map guess
+                            //Check that the claimed team is actually the one that the client holds
+                            const code = message.slice(0,2);
+                            const named = message.slice(2).split(",")[0];
+                            if(validTeam(named, this.numTeams) === this.clients[key].id) {
+                                log.info(who, 'quiz', code, log.describe(message));
+                                this.transport.toServers(message);
+                            } else {
+                                log.warn(who, 'srv', code, "dropped, answered as team '" + named + "'");
+                            }
+                            break;
+                        }
                         default:
-                            //Else just forward it on
-                            log.info(who, 'quiz', message.slice(0,2), log.describe(message));
-                            this.transport.toServers(message);
+                            //Unrecognised message from a client. Dropped.
+                            log.warn(who, 'srv', message.slice(0,2), 'dropped, ' + log.describe(message));
                             break;
                     }
                 }

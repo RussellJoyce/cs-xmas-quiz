@@ -4,7 +4,7 @@
   "description": "Quiz server",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test"
+    "test": "node --test \"test/*.test.js\""
   },
   "dependencies": {
     "connect": "^3.6.6",
