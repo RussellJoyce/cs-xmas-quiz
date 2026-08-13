@@ -7,6 +7,9 @@ var textform = document.getElementById("textform");
 var higherlower = document.getElementById("higherlower");
 var higher = document.getElementById("higher");
 var lower = document.getElementById("lower");
+var wavetrack = document.getElementById("wavetrack");
+var wavehandle = document.getElementById("wavehandle");
+var wavevalue = document.getElementById("wavevalue");
 
 
 var ws;
@@ -97,6 +100,9 @@ function connect() {
                     textbox.focus();
                     removeTextmodeHandlers();
                     textbox.value = "";
+                } else if(event.data.slice(2) == "wavelength") {
+                    setView("wavelength");
+                    setWavelength(50, false);
                 } else {
                     setView(event.data.slice(2));
                 }
@@ -284,6 +290,103 @@ geoimg.addEventListener(eventtouse, function(event) {
 
     ws.send('ii' + myid + "," + Math.round(x) + "," + Math.round(y));
 });
+
+
+/*
+Wavelength: a bar running from 1 at the left end to 99 at the right.
+*/
+var WAVE_MIN = 1;
+var WAVE_MAX = 99;
+var WAVE_SEND_INTERVAL = 100; //Smallest gap between two 'wv' messages, in ms
+
+var waveValue = 50;
+var waveDragging = false;
+var waveLastSent = 0;
+var waveFlushTimer = null;
+
+function setWavelength(value, send) {
+    waveValue = Math.round(Math.min(WAVE_MAX, Math.max(WAVE_MIN, value)));
+    wavehandle.style.left = ((waveValue - WAVE_MIN) / (WAVE_MAX - WAVE_MIN) * 100) + "%";
+    wavevalue.innerHTML = waveValue;
+
+    if(send) {
+        sendWavelength(false);
+    }
+}
+
+/*
+A drag across the bar produces far more values than are worth sending, so they are throttled.
+Whatever is swallowed is caught by a trailing timer, and `force` (the end of a drag) ignores
+the throttle outright, so the value the finger comes to rest on is always the one the quiz
+software ends up with.
+*/
+function sendWavelength(force) {
+    if(!(myid > 0 && myid <= 99) || !ws || ws.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    var now = Date.now();
+    var wait = WAVE_SEND_INTERVAL - (now - waveLastSent);
+
+    if(force || wait <= 0) {
+        if(waveFlushTimer) {
+            clearTimeout(waveFlushTimer);
+            waveFlushTimer = null;
+        }
+        waveLastSent = now;
+        ws.send('wv' + myid + "," + waveValue);
+    } else if(!waveFlushTimer) {
+        waveFlushTimer = setTimeout(function() {
+            waveFlushTimer = null;
+            sendWavelength(true);
+        }, wait);
+    }
+}
+
+function waveValueFromX(clientX) {
+    var rect = wavetrack.getBoundingClientRect();
+    return WAVE_MIN + ((clientX - rect.left) / rect.width) * (WAVE_MAX - WAVE_MIN);
+}
+
+function wavePointerX(event) {
+    if(event.touches && event.touches.length > 0) {
+        return event.touches[0].clientX;
+    }
+    if(event.changedTouches && event.changedTouches.length > 0) {
+        return event.changedTouches[0].clientX;
+    }
+    return event.clientX;
+}
+
+function waveStart(event) {
+    waveDragging = true;
+    setWavelength(waveValueFromX(wavePointerX(event)), true);
+    event.preventDefault();
+}
+
+function waveMove(event) {
+    if(!waveDragging) {
+        return;
+    }
+    setWavelength(waveValueFromX(wavePointerX(event)), true);
+    event.preventDefault();
+}
+
+function waveEnd(event) {
+    if(!waveDragging) {
+        return;
+    }
+    waveDragging = false;
+    sendWavelength(true);
+}
+
+wavetrack.addEventListener('touchstart', waveStart);
+wavetrack.addEventListener('touchmove', waveMove);
+wavetrack.addEventListener('touchend', waveEnd);
+wavetrack.addEventListener('touchcancel', waveEnd);
+wavetrack.addEventListener('mousedown', waveStart);
+document.addEventListener('mousemove', waveMove);
+document.addEventListener('mouseup', waveEnd);
 
 
 //Attach a hander to each team pick handler

@@ -23,6 +23,8 @@
 //  text,<answer>       a written answer (commas are kept)      tt<team>,<answer>
 //  geo,<x>,<y>         a map pin, 0-100 each                    ii<team>,<x>,<y>
 //  geo,random          a map pin somewhere random               ii<team>,<x>,<y>
+//  wave,<n>            a wavelength guess, 1-99                 wv<team>,<n>
+//  wave,random         a wavelength guess somewhere random      wv<team>,<n>
 //  pick[,<team>]       claim a team, defaulting to the client   pt<team>
 //  ping                the 5s keepalive, sent early            pi
 //  connect             open the socket
@@ -139,6 +141,57 @@ wait 200
 1,geo,55,40
 wait 200
 1,geo,70,65
+
+# ---------------------------------------------------------------- wavelength
+
+:Wave - Scatter
+*,wave,random
+
+:Wave - Spread across the bar
+1,wave,1
+2,wave,15
+3,wave,30
+4,wave,45
+5,wave,60
+6,wave,75
+7,wave,99
+
+:Wave - Everyone clustered on one number
+*,wave,50
+
+:Wave - Neighbours, for marker stacking
+1,wave,48
+2,wave,49
+3,wave,50
+4,wave,51
+5,wave,52
+
+:Wave - One client dragging its handle
+1,wave,10
+wait 120
+1,wave,25
+wait 120
+1,wave,44
+wait 120
+1,wave,63
+wait 120
+1,wave,80
+
+:Wave - Everyone fidgeting
+*,wave,random
+wait 500
+*,wave,random
+wait 500
+*,wave,random
+wait 500
+*,wave,random
+
+:Wave - Out of range guesses
+1,raw,wv1,0
+2,raw,wv2,100
+3,raw,wv3,-5
+4,raw,wv4,banana
+5,raw,wv5
 
 # ---------------------------------------------------------------- connection handling
 

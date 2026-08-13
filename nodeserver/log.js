@@ -33,7 +33,8 @@ const CODES = {
     //A client to this server or the quiz software
     pt: 'pick team',      re: 'resume',        pi: 'ping',
     zz: 'buzz',           hi: 'higher',        lo: 'lower',
-    tt: 'text answer',    ii: 'map guess'
+    tt: 'text answer',    ii: 'map guess',
+    wv: 'wavelength guess'
 };
 
 //How wide each column is. Names longer than this push the line out rather than being

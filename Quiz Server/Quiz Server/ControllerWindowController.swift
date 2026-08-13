@@ -56,6 +56,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemNumbers: NSTabViewItem!
 	@IBOutlet weak var tabitemScores: NSTabViewItem!
 	@IBOutlet weak var tabitemPointless: NSTabViewItem!
+	@IBOutlet weak var tabitemWavelength: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -194,6 +195,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	func windowWillClose(_ notification: Notification) {
 		clientListTimer?.invalidate()
+		wavelengthRollTimer?.invalidate()
 		socket.ledsOff()
 	}
 	
@@ -305,6 +307,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case tabitemPointless:
 			socketWriteIfConnected("vitext")
 			quizView.setRound(round: RoundType.pointless)
+		case tabitemWavelength:
+			socketWriteIfConnected("viwavelength")
+			quizView.setRound(round: RoundType.wavelength)
+			resetWavelengthControls()
 		default:
 			break
 		}
@@ -330,6 +336,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			numbersTeamGuesses.stringValue = ""
 		} else if (tabView.selectedTabViewItem == tabitemtruefalse) {
 			socketWriteIfConnected("ha")
+		} else if (tabView.selectedTabViewItem == tabitemWavelength) {
+			socketWriteIfConnected("viwavelength")
+			resetWavelengthControls()
 		}
     }
 	
@@ -377,6 +386,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					}
 				} else {
 					print("Invalid Geography guess")
+				}
+			case "wv":
+				//A team has moved their slider in the Wavelength round
+				let details = text.suffix(text.count - 2)
+				let vals = details.components(separatedBy: ",")
+				if vals.count >= 2, let team = Int(vals[0]), let value = Int(vals[1]) {
+					quizView.wavelengthScene.teamGuess(team: team - 1, value: value) //make zero indexed
+					updateWavelengthGuesses()
+				} else {
+					print("Invalid Wavelength guess")
 				}
 			case "hi":
 				//A team has voted "true or higher"
@@ -758,6 +777,72 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	
+	//MARK: - Wavelength
+	//--------------------------------------------------------------------------------------------------------------------------
+
+	@IBOutlet weak var wavelengthNumber: NSTextField!
+	@IBOutlet weak var wavelengthRollButton: NSButton!
+	@IBOutlet weak var wavelengthTeamGuesses: NSTextField!
+
+	/// The number the host has rolled, or nil if the wheel has not been stopped yet
+	private var wavelengthTarget: Int?
+	private var wavelengthRollTimer: Timer?
+
+	private var wavelengthRandomValue: Int {
+		Int.random(in: WavelengthScene.minValue...WavelengthScene.maxValue)
+	}
+
+	/// The roll button starts the numbers spinning and the next press stops them
+	@IBAction func wavelengthRoll(_ sender: NSButton) {
+		if wavelengthRollTimer != nil {
+			wavelengthRollTimer?.invalidate()
+			wavelengthRollTimer = nil
+			wavelengthTarget = wavelengthRandomValue
+			wavelengthNumber.stringValue = String(wavelengthTarget!)
+			wavelengthRollButton.title = "Roll -> 🎲"
+		} else {
+			wavelengthTarget = nil
+			wavelengthRollButton.title = "Stop"
+			wavelengthRollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+				guard let self = self else { return }
+				self.wavelengthNumber.stringValue = String(self.wavelengthRandomValue)
+			}
+		}
+	}
+
+	@IBAction func wavelengthReveal(_ sender: Any) {
+		quizView.wavelengthScene.reveal()
+		updateWavelengthGuesses()
+	}
+
+	@IBAction func wavelengthScore(_ sender: Any) {
+		guard let target = wavelengthTarget else {
+			print("Wavelength: nothing to score against, the number has not been rolled yet")
+			return
+		}
+		quizView.wavelengthScene.score(target: target)
+	}
+
+	private func resetWavelengthControls() {
+		wavelengthRollTimer?.invalidate()
+		wavelengthRollTimer = nil
+		wavelengthTarget = nil
+		wavelengthNumber?.stringValue = "--"
+		wavelengthRollButton?.title = "Roll -> 🎲"
+		wavelengthTeamGuesses?.stringValue = ""
+	}
+
+	private func updateWavelengthGuesses() {
+		let guesses = quizView.wavelengthScene.teamGuesses
+		wavelengthTeamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if guesses.indices.contains(team), let guess = guesses[team] {
+				return "Team \(team + 1): \(guess)"
+			}
+			return nil
+		}.joined(separator: "\n")
+	}
+
+
 	//MARK: - Pointless
 	//--------------------------------------------------------------------------------------------------------------------------
 	@IBOutlet weak var pointlessQuestionSelector: NSPopUpButton!

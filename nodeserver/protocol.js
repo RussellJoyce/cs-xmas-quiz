@@ -269,6 +269,7 @@ class QuizState {
                         case "hi": //Higher, or true
                         case "lo": //Lower, or false
                         case "tt": //Text answer
+                        case "wv": //Wavelength slider guess
                         case "ii": { //Map guess
                             //Check that the claimed team is actually the one that the client holds
                             const code = message.slice(0,2);

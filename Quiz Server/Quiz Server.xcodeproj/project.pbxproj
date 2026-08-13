@@ -75,6 +75,7 @@
 		3CB99FA22CFCB57B00B704E2 /* orch5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8C2CFCB57B00B704E2 /* orch5.wav */; };
 		3CB99FA32CFCB57B00B704E2 /* orch12.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F932CFCB57B00B704E2 /* orch12.wav */; };
 		3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */; };
+		3CA10D0A2EE9100200A38676 /* WavelengthScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */; };
 		3CC862842B138BDC0060A7E0 /* drums.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CC862822B138BDC0060A7E0 /* drums.wav */; };
 		3CD1DF581A306820003DEA9F /* counter_wrong.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF541A306820003DEA9F /* counter_wrong.wav */; };
 		3CD1DF591A306820003DEA9F /* counter_score.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1DF551A306820003DEA9F /* counter_score.wav */; };
@@ -217,6 +218,7 @@
 		3CB99F942CFCB57B00B704E2 /* orch13.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch13.wav; sourceTree = "<group>"; };
 		3CB99F952CFCB57B00B704E2 /* orch14.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch14.wav; sourceTree = "<group>"; };
 		3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrueFalseScene.swift; sourceTree = "<group>"; };
+		3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavelengthScene.swift; sourceTree = "<group>"; };
 		3CC862822B138BDC0060A7E0 /* drums.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drums.wav; sourceTree = "<group>"; };
 		3CD1DF541A306820003DEA9F /* counter_wrong.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_wrong.wav; sourceTree = "<group>"; };
 		3CD1DF551A306820003DEA9F /* counter_score.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = counter_score.wav; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				3C366CBB1FB9F0A2006BA9B1 /* TextScene.swift */,
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 				3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */,
+				3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */,
 			);
 			name = "SpriteKit Scenes";
 			sourceTree = "<group>";
@@ -648,6 +651,7 @@
 				3C772FEC2CD79AA300F2E6FC /* Scores.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
+				3CA10D0A2EE9100200A38676 /* WavelengthScene.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,

@@ -193,6 +193,11 @@ function VirtualClient(index) {
             '<button class="btn-sm-teal" onclick="clients[' + index + '].sendGeo()" disabled id="geosend-' + index + '">Send</button>' +
             '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomGeo()" disabled id="georand-' + index + '">Rnd</button>' +
         '</div>' +
+        '<div class="input-row">' +
+            '<input type="text" id="wave-' + index + '" placeholder="wavelength (1-99)">' +
+            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendWave()" disabled id="wavesend-' + index + '">Send</button>' +
+            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomWave()" disabled id="waverand-' + index + '">Rnd</button>' +
+        '</div>' +
         '<div class="msg-log" id="log-' + index + '"></div>';
 
     document.getElementById('grid').appendChild(cell);
@@ -247,6 +252,8 @@ VirtualClient.prototype.updateStatus = function() {
     document.getElementById('txtsend-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('geosend-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('georand-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('wavesend-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('waverand-' + this.index).disabled = !(connected && hasTeam);
 
     // Team row visibility
     document.getElementById('teams-' + this.index).style.display = (connected && !hasTeam) ? 'flex' : 'none';
@@ -474,6 +481,27 @@ VirtualClient.prototype.sendRandomGeo = function() {
     this.sendGeoAt(Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
 };
 
+VirtualClient.prototype.sendWaveAt = function(value) {
+    if (this.team) {
+        value = Math.max(1, Math.min(99, value));
+        document.getElementById('wave-' + this.index).value = value;
+        this.send('wv' + this.team + ',' + value);
+    }
+};
+
+VirtualClient.prototype.sendWave = function() {
+    if (this.team) {
+        var value = parseInt(document.getElementById('wave-' + this.index).value.trim(), 10);
+        if (!isNaN(value)) {
+            this.sendWaveAt(value);
+        }
+    }
+};
+
+VirtualClient.prototype.sendRandomWave = function() {
+    this.sendWaveAt(1 + Math.floor(Math.random() * 99));
+};
+
 // One step of a test pattern. Returns a description for the log, or null if the client was
 // in no state to do it (no team yet, or the socket is shut), which the runner reports.
 VirtualClient.prototype.runAction = function(verb, args) {
@@ -515,6 +543,14 @@ VirtualClient.prototype.runAction = function(verb, args) {
                 this.sendGeoAt(parseInt(args[0], 10), parseInt(args[1], 10));
             }
             return 'geo';
+        case 'wave':
+            if (!this.team) return null;
+            if (args[0] === 'random') {
+                this.sendRandomWave();
+            } else {
+                this.sendWaveAt(parseInt(args[0], 10));
+            }
+            return 'wave';
         case 'pick':
             this.pickTeam(args.length ? args[0] : this.index);
             return 'pick';
@@ -585,7 +621,8 @@ var ACTIONS = {
     pick:       { min: 0, max: 1 },
     text:       { min: 1, max: Infinity },
     raw:        { min: 1, max: Infinity },
-    geo:        { min: 1, max: 2 }
+    geo:        { min: 1, max: 2 },
+    wave:       { min: 1, max: 1 }
 };
 
 // Names that read better in a pattern than the two-letter protocol codes do.
@@ -665,6 +702,10 @@ function parsePatterns(text) {
         if (verb === 'geo' && args[0] !== 'random' &&
             (args.length !== 2 || !/^[0-9]+$/.test(args[0]) || !/^[0-9]+$/.test(args[1]))) {
             bad(line, 'geo takes "random" or two numbers 0-100');
+            continue;
+        }
+        if (verb === 'wave' && args[0] !== 'random' && !/^[0-9]+$/.test(args[0])) {
+            bad(line, 'wave takes "random" or one number 1-99');
             continue;
         }
 

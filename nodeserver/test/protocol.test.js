@@ -322,6 +322,24 @@ describe('messages from clients', () => {
         assert.deepStrictEqual(transport.servers, ['tt1,a wild guess', 'ii1,42,17']);
     });
 
+    test('wavelength guesses are forwarded, including repeats from one team', () => {
+        //Teams drag their handle as often as they like, so the same team sending several
+        //values in a row is the normal case rather than something to filter.
+        const { state, transport, socks } = setupTeams(1);
+        ['wv1,50', 'wv1,51', 'wv1,99'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, ['wv1,50', 'wv1,51', 'wv1,99']);
+    });
+
+    test('the value of a wavelength guess is left to the quiz software to judge', () => {
+        //This server checks who is speaking, not what they said. A nonsense value is
+        //forwarded exactly like a nonsense map coordinate is.
+        const { state, transport, socks } = setupTeams(1);
+        ['wv1,0', 'wv1,100', 'wv1,-5', 'wv1,banana'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, ['wv1,0', 'wv1,100', 'wv1,-5', 'wv1,banana']);
+    });
+
     test('higher and lower are forwarded', () => {
         const { state, transport, socks } = setupTeams(1);
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'hi1');
@@ -333,7 +351,7 @@ describe('messages from clients', () => {
         //The team number is the client's own claim, so it is checked against the team this
         //server granted rather than taken at face value.
         const { state, transport, socks } = setupTeams(2);
-        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17'].forEach(m =>
+        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17', 'wv2,50'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
         assert.deepStrictEqual(socks[1].sent, [], 'the team spoken for hears nothing of it');
@@ -341,7 +359,7 @@ describe('messages from clients', () => {
 
     test('an answer with no team, or a team that does not exist, is dropped', () => {
         const { state, transport, socks } = setupTeams(1);
-        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17'].forEach(m =>
+        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17', 'wv,50'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
     });
