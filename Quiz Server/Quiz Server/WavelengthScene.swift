@@ -42,7 +42,7 @@ class WavelengthScene: QuizScene {
 	/// The revealed markers, keyed by zero-based team number.
 	private var markerNodes = [Int: SKNode]()
 	private var targetNodes = [SKNode]()
-	private var teamNumberNodes = [SKNode]()
+	private var teamStrip: TeamStripNode!
 	private var snow: SKEmitterNode?
 
 	//MARK: - Sound
@@ -62,7 +62,18 @@ class WavelengthScene: QuizScene {
 		addBar()
 		addScale()
 		addSweep()
-		addTeamNumbers()
+
+		//Snappier than the idle screen's: the numbers here are bookkeeping during a live
+		//round, so they say their piece and get out of the way of the bar
+		teamStrip = TeamStripNode(mode: .remaining, width: self.size.width,
+								  timing: TeamStripNode.Timing(fadeIn: 0,
+															   popScale: 1.25,
+															   popDuration: 0.2,
+															   colourDelay: 0,
+															   colourDuration: 0.4,
+															   fadeDelay: 0.8,
+															   fadeOut: 1.0))
+		self.addChild(teamStrip)
 
 		if let url = Bundle.main.url(forResource: "counter_nosting", withExtension: "wav") {
 			do {
@@ -165,102 +176,6 @@ class WavelengthScene: QuizScene {
 		self.addChild(sweepLabel)
 	}
 
-	/// The row of team numbers along the bottom, disappears when the team guesses
-	private func addTeamNumbers() {
-		for node in teamNumberNodes {
-			node.removeFromParent()
-		}
-		teamNumberNodes.removeAll()
-
-		let numTeams = Settings.shared.numTeams
-		guard numTeams > 0 else { return }
-		let margin: CGFloat = 32
-		let spacing = (size.width - (margin * 2)) / CGFloat(numTeams)
-		let baseY = margin
-
-		for i in 0..<numTeams {
-			let composite = SKNode()
-			composite.position = CGPoint(x: margin + spacing * (CGFloat(i) + 0.5), y: 0)
-			composite.zPosition = 100
-
-			let teamLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
-			teamLabel.text = "Team"
-			teamLabel.fontSize = 20
-			teamLabel.fontColor = .white
-			teamLabel.horizontalAlignmentMode = .center
-			teamLabel.verticalAlignmentMode = .bottom
-			teamLabel.position = CGPoint(x: 0, y: baseY + 80)
-			composite.addChild(teamLabel)
-
-			let numLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
-			numLabel.text = "\(i + 1)"
-			numLabel.fontSize = 80
-			numLabel.fontColor = .white
-			numLabel.horizontalAlignmentMode = .center
-			numLabel.verticalAlignmentMode = .top
-			numLabel.position = CGPoint(x: 0, y: baseY + 78)
-			composite.addChild(numLabel)
-
-			addChild(composite)
-			teamNumberNodes.append(composite)
-		}
-	}
-
-	/// A team has answered for the first time: colour their number in, then let it fade out.
-	private func extinguishTeamNumber(team: Int) {
-		guard team >= 0 && team < teamNumberNodes.count else { return }
-		let node = teamNumberNodes[team]
-
-		node.removeAllActions()
-		for case let label as SKLabelNode in node.children {
-			label.removeAllActions()
-		}
-
-		//Circular particle spray. Can't emit on a circle, so ring the node with emitters
-		//angled outwards, as the idle screen does.
-		let circleRadius: CGFloat = 50
-		for _ in 0..<40 {
-			let angle = CGFloat.random(in: 0..<2 * .pi)
-			addEmitter(named: "teambuzzed",
-					   at: CGPoint(x: node.position.x + cos(angle) * circleRadius,
-								   y: node.position.y + 90 + sin(angle) * circleRadius),
-					   zPosition: node.zPosition - 1) {
-				$0.emissionAngle = angle
-			}
-		}
-
-		node.setScale(1.25)
-		let shrink = SKAction.scale(to: 1, duration: 0.2)
-		shrink.timingMode = .easeIn
-		node.run(shrink)
-
-		let teamColour = Utils.teamColour(team)
-		let colourAction = SKAction.customAction(withDuration: 0.4) { n, t in
-			for case let label as SKLabelNode in n.children {
-				label.fontColor = NSColor.white.blended(withFraction: CGFloat(t) / 0.4, of: teamColour) ?? .white
-			}
-		}
-
-		node.run(SKAction.sequence([
-			colourAction,
-			SKAction.wait(forDuration: 0.4),
-			SKAction.fadeAlpha(to: 0.0, duration: 1.0)
-		]))
-	}
-
-	private func relightTeamNumbers() {
-		for node in teamNumberNodes {
-			node.removeAllActions()
-			node.alpha = 1.0
-			node.setScale(1.0)
-			for case let label as SKLabelNode in node.children {
-				label.removeAllActions()
-				label.fontColor = .white
-			}
-		}
-	}
-
-
 	//MARK: - Round logic
 	//--------------------------------------------------------------------------------------------------------------------------
 
@@ -279,7 +194,7 @@ class WavelengthScene: QuizScene {
 		if firstAnswer {
 			self.run(blopSound)
 			QuizWebSocket.shared?.pulseTeamColour(team)
-			extinguishTeamNumber(team: team)
+			teamStrip.trigger(team: team)
 		} else {
 			//A team fidgeting with their handle should not sound like a new answer
 			QuizWebSocket.shared?.pulseTeamColourQuick(team)
@@ -514,7 +429,7 @@ class WavelengthScene: QuizScene {
 		sweepLabel?.text = ""
 		sweepLine?.isHidden = true
 
-		relightTeamNumbers()
+		teamStrip.reset()
 	}
 
 	override func teardown() {
