@@ -74,22 +74,38 @@ class TeamStripNode: SKNode {
 			composite.position = CGPoint(x: margin + spacing * (CGFloat(team) + 0.5), y: 0)
 			composite.alpha = restingAlpha
 
-			let teamLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
+			/*let teamLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
 			teamLabel.text = "Team"
 			teamLabel.fontSize = 20
 			teamLabel.fontColor = .white
 			teamLabel.horizontalAlignmentMode = .center
 			teamLabel.verticalAlignmentMode = .bottom
-			teamLabel.position = CGPoint(x: 0, y: baseY + 80)
-			composite.addChild(teamLabel)
+			teamLabel.position = CGPoint(x: 0, y: baseY + 80)*/
 
-			let numLabel = SKLabelNode(fontNamed: "Neutra Display Titling")
+			/*let numLabel = OutlinedLabelNode(fontNamed: "Neutra Display Titling")
 			numLabel.text = "\(team + 1)"
 			numLabel.fontSize = 80
 			numLabel.fontColor = .white
 			numLabel.horizontalAlignmentMode = .center
 			numLabel.verticalAlignmentMode = .top
-			numLabel.position = CGPoint(x: 0, y: baseY + 78)
+			numLabel.position = CGPoint(x: 0, y: baseY + 78)*/
+			
+			let teamLabel = OutlinedLabelNode(
+				text: "Team",
+				fontNamed: "Neutra Display Titling",
+				fontSize: 20,
+				outlineWidth: 2
+			)
+			teamLabel.position = CGPoint(x: 0, y: baseY + 93)
+
+			let numLabel = OutlinedLabelNode(
+				text: "\(team + 1)",
+				fontNamed: "Neutra Display Titling",
+				fontSize: 80
+			)
+			numLabel.position = CGPoint(x: 0, y: baseY + 50)
+			
+			composite.addChild(teamLabel)
 			composite.addChild(numLabel)
 
 			self.addChild(composite)
@@ -120,7 +136,7 @@ class TeamStripNode: SKNode {
 		let teamColour = Utils.teamColour(team)
 		let bleed = SKAction.customAction(withDuration: timing.colourDuration) { [timing] n, elapsed in
 			let fraction = timing.colourDuration > 0 ? CGFloat(elapsed) / CGFloat(timing.colourDuration) : 1.0
-			for case let label as SKLabelNode in n.children {
+			for case let label as OutlinedLabelNode in n.children {
 				label.fontColor = NSColor.white.blended(withFraction: fraction, of: teamColour) ?? .white
 			}
 		}
@@ -136,9 +152,16 @@ class TeamStripNode: SKNode {
 
 	/// Everything back to the mode's resting state, with nothing in flight.
 	func reset() {
-		for node in teamNodes {
+		let lit = restingAlpha > 0
+		setLit { _ in lit }
+	}
+
+	/// Lights or clears numbers with no flourish
+	/// Only meaningful in `.remaining` — in `.spotlight` the numbers are meant to be dark.
+	func setLit(_ isLit: (Int) -> Bool) {
+		for (team, node) in teamNodes.enumerated() {
 			node.removeAllActions()
-			node.alpha = restingAlpha
+			node.alpha = isLit(team) ? 1.0 : 0.0
 			node.setScale(1.0)
 			for case let label as SKLabelNode in node.children {
 				label.removeAllActions()
@@ -162,3 +185,4 @@ class TeamStripNode: SKNode {
 		}
 	}
 }
+

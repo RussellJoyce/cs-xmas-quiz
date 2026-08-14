@@ -42,17 +42,11 @@ class Idle2Scene: QuizScene {
 		let year = Calendar.current.component(.year, from: Date())
 		addText(year: String(year))
 		addLights()
-
-		//The idle screen lingers over a buzz: the number holds for a good while before it
-		//starts going, since there is nothing else competing for attention between rounds
+		
 		teamStrip = TeamStripNode(mode: .spotlight, width: self.size.width,
-								  timing: TeamStripNode.Timing(fadeIn: 0.15,
-															   popScale: 1.2,
-															   popDuration: 0.2,
-															   colourDelay: 0.15,
-															   colourDuration: 0.4,
-															   fadeDelay: 1.5,
-															   fadeOut: 1.5))
+						timing: TeamStripNode.Timing(fadeIn: 0.15,
+								popScale: 1.2, popDuration: 0.2,
+								colourDelay: 0.15, colourDuration: 0.4, fadeDelay: 1.5, fadeOut: 1.5))
 		self.addChild(teamStrip)
 	}
 	

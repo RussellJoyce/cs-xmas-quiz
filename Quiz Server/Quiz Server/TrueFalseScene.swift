@@ -39,8 +39,6 @@ class TrueFalseScene: QuizScene {
 			text: "5",
 			fontNamed: ".AppleSystemUIFontBold",
 			fontSize: 120,
-			fontColor: NSColor.white,
-			outlineColor: NSColor.black,
 			outlineWidth: 6.0
 		)
 		timeLabel.positionInParent = CGPoint(x: self.centrePoint.x, y: self.frame.height - 200)

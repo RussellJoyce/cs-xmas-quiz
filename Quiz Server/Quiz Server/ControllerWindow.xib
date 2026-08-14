@@ -1008,7 +1008,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-001"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kCw-cz-Omn">
                                             <rect key="frame" x="558" y="170" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1016,7 +1019,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-002"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i6G-6W-qvk">
                                             <rect key="frame" x="558" y="151" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1024,7 +1030,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-003"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q67-3a-qsu">
                                             <rect key="frame" x="558" y="132" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1032,7 +1041,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-004"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jyv-JL-onO">
                                             <rect key="frame" x="558" y="114" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1040,7 +1052,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-005"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uIl-LV-jpM">
                                             <rect key="frame" x="558" y="76" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1048,7 +1063,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-007"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PC1-M0-spV">
                                             <rect key="frame" x="558" y="57" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1056,7 +1074,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-008"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lcZ-Y8-5wg">
                                             <rect key="frame" x="603" y="189" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1064,7 +1085,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-009"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hmb-2T-EJ6">
                                             <rect key="frame" x="603" y="170" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1072,7 +1096,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-010"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sZB-dx-QbB">
                                             <rect key="frame" x="603" y="151" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1080,7 +1107,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-011"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HOu-HE-VDL">
                                             <rect key="frame" x="603" y="132" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1088,7 +1118,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-012"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yxR-is-4bD">
                                             <rect key="frame" x="603" y="114" width="48" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1096,7 +1129,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-013"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gyS-pr-YjC">
                                             <rect key="frame" x="603" y="97" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1104,7 +1140,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-014"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eQU-To-mIb">
                                             <rect key="frame" x="603" y="76" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1112,7 +1151,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-015"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qIu-ii-DXB">
                                             <rect key="frame" x="603" y="57" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1120,7 +1162,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-016"/>
+                                        </connections>
+                                    </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kVs-w5-xnr">
                                             <rect key="frame" x="558" y="95" width="45" height="22"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1128,7 +1173,10 @@
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
-                                        </button>
+                                                                                <connections>
+                                            <action selector="geoSkipChanged:" target="-2" id="Gsk-a0-006"/>
+                                        </connections>
+                                    </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>

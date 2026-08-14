@@ -404,7 +404,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	
 	func addCounter() {
 		counter?.removeFromParent()
-		counter = OutlinedLabelNode(text: "100", fontNamed: "Electronic Highway Sign", fontSize: 110, fontColor: .white, outlineColor: .black, outlineWidth: 5.0)
+		counter = OutlinedLabelNode(text: "100", fontNamed: "Electronic Highway Sign", fontSize: 110, outlineWidth: 5.0)
 		counter?.position = CGPoint(x: size.width - 150, y: size.height / 2)
 		addChild(counter!)
 	}

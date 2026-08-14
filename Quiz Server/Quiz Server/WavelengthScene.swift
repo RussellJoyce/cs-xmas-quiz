@@ -168,9 +168,7 @@ class WavelengthScene: QuizScene {
 		sweepLine.isHidden = true
 		self.addChild(sweepLine)
 
-		sweepLabel = OutlinedLabelNode(text: "",
-				fontNamed: ".AppleSystemUIFontBold", fontSize: 150,
-				fontColor: NSColor.white, outlineColor: NSColor.black, outlineWidth: 6.0)
+		sweepLabel = OutlinedLabelNode(text: "", fontNamed: ".AppleSystemUIFontBold", fontSize: 150, outlineWidth: 6.0)
 		sweepLabel.zPosition = 20
 		sweepLabel.positionInParent = CGPoint(x: xFor(value: WavelengthScene.minValue), y: 320)
 		self.addChild(sweepLabel)

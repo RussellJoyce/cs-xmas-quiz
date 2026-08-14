@@ -42,7 +42,7 @@ class OutlinedLabelNode: SKNode {
         set { self.position = newValue }
     }
     
-    init(text: String?, fontNamed: String?, fontSize: CGFloat, fontColor: NSColor, outlineColor: NSColor, outlineWidth: CGFloat) {
+	init(text: String?, fontNamed: String?, fontSize: CGFloat, fontColor: NSColor = .white, outlineColor: NSColor = .black, outlineWidth: CGFloat = 4) {
         self.mainLabel = SKLabelNode(fontNamed: fontNamed)
         self.outlineColor = outlineColor
         self.outlineWidth = outlineWidth

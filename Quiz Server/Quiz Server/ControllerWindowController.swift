@@ -288,6 +288,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
 			quizView.setRound(round: RoundType.geography)
+			pushGeographyParticipation()
 		case tabitemNumbers:
 			socketWriteIfConnected("vinumbers")
 			quizView.setRound(round: RoundType.numbers)
@@ -322,6 +323,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
+			pushGeographyParticipation()
 		} else if (tabView.selectedTabViewItem == tabitemText) {
 			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
@@ -382,7 +384,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y, skips: skipButtons) //make zero indexed
+						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
 					}
 				} else {
 					print("Invalid Geography guess")
@@ -755,7 +757,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var skip15: NSButton!
 	@IBOutlet weak var skip16: NSButton!
 	var skipButtons = [NSButton]()
-	
+
+	/// Hands the team checkboxes to the scene. Called whenever one is toggled
+	private func pushGeographyParticipation() {
+		let teams = (0..<Settings.shared.numTeams).map { team in
+			team < skipButtons.count ? skipButtons[team].state == .on : true
+		}
+		quizView.geographyScene.setParticipating(teams)
+	}
+
+	@IBAction func geoSkipChanged(_ sender: Any) {
+		pushGeographyParticipation()
+	}
+
 	@IBOutlet weak var geoAnswerX: NSTextField!
 	@IBOutlet weak var geoAnswerY: NSTextField!
 	@IBOutlet weak var geoQuestionNumber: NSTextField!
@@ -770,6 +784,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
+		pushGeographyParticipation()
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {

@@ -349,6 +349,7 @@
 		3C727C02302E6E740043FA92 /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
+				3C3012552EAD477100F80B71 /* CustomLabels.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				3C30125F2EAD500000F80B71 /* BuzzerEffects.swift */,
 				3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */,
@@ -383,7 +384,6 @@
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
 				3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */,
-				3C3012552EAD477100F80B71 /* CustomLabels.swift */,
 				3CF749202EABE57800A38676 /* Settings.swift */,
 				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,

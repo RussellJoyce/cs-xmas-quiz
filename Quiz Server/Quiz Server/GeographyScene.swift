@@ -13,7 +13,12 @@ class GeographyScene: QuizScene {
 	
 	var answering = false
 	var teamguesses : [(x : Int, y: Int)?] = []
-	
+
+	var teamStrip: TeamStripNode!
+	/// Which teams are in this question, from the controller's team checkboxes.
+	/// Does not actually affect any logic, just the display
+	private var participating = [Bool]()
+
 	let text = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
 	let mainImage = SKSpriteNode(imageNamed: "geostart")
 	let answersText = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -21,8 +26,6 @@ class GeographyScene: QuizScene {
 	var geogReveal = -1
 	
 	override func buildScene() {
-		reset()
-
 		let bgImage = addBackground(imageNamed: "snowflakes-background")
 
 		mainImage.position = CGPoint(x: 150, y: 50.0)
@@ -43,7 +46,7 @@ class GeographyScene: QuizScene {
 		text.horizontalAlignmentMode = .left
 		text.verticalAlignmentMode = .baseline
 		text.zPosition = 6.0
-		text.position = CGPoint(x: 50, y: 50)
+		text.position = CGPoint(x: 50, y: 220)
 		text.numberOfLines = 0
 		
 		answersText.fontSize = 55
@@ -58,6 +61,33 @@ class GeographyScene: QuizScene {
 		self.addChild(text)
 		self.addChild(answersText)
 
+		teamStrip = TeamStripNode(mode: .remaining, width: self.size.width,
+								  timing: TeamStripNode.Timing(fadeIn: 0,
+															   popScale: 1.25,
+															   popDuration: 0.2,
+															   colourDelay: 0,
+															   colourDuration: 0.4,
+															   fadeDelay: 0.8,
+															   fadeOut: 1.0))
+		self.addChild(teamStrip)
+
+		reset() //Will set up the teamStrip
+	}
+
+
+	func setParticipating(_ teams: [Bool]) {
+		participating = teams
+		refreshStrip()
+	}
+
+	private func isParticipating(_ team: Int) -> Bool {
+		return team < participating.count ? participating[team] : true
+	}
+
+	private func refreshStrip() {
+		teamStrip.setLit { team in
+			isParticipating(team) && (team < teamguesses.count ? teamguesses[team] == nil : true)
+		}
 	}
 	
 	func setQuestion(question: Int) {
@@ -182,40 +212,22 @@ class GeographyScene: QuizScene {
 	
 	
 	
-	func teamAnswered(team: Int, x: Int, y: Int, skips : [NSButton]) {
+	func teamAnswered(team: Int, x: Int, y: Int) {
 		if !answering {
 			print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
+			var firstAnswer = false
 			if(team < teamguesses.count) {
+				firstAnswer = (teamguesses[team] == nil)
 				teamguesses[team] = (x, y)
 			}
-			updateTextWithSkips(skips)
+			if firstAnswer && isParticipating(team) {
+				teamStrip.trigger(team: team)
+			}
 			QuizWebSocket.shared?.pulseTeamColour(team)
 		}
 	}
-	
-	
-	func updateText() {
-		answersText.text = ""
-		text.fontSize = 70
-		text.text = "Teams Remaining: "
-		for i in 0 ..< Settings.shared.numTeams {
-			if teamguesses[i] == nil {
-				text.text! += String(i+1) + " "
-			}
-		}
-	}
-	
-	func updateTextWithSkips(_ skips : [NSButton]) {
-		answersText.text = ""
-		text.fontSize = 70
-		text.text = "Teams Remaining: "
-		for i in 0 ..< Settings.shared.numTeams {
-			if teamguesses[i] == nil && skips[i].state == .on {
-				text.text! += String(i+1) + " "
-			}
-		}
-	}
-	
+
+
 	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
 		answering = false
@@ -223,7 +235,9 @@ class GeographyScene: QuizScene {
 		for _ in 0 ..< Settings.shared.numTeams {
 			teamguesses += [nil]
 		}
-		updateText()
+		refreshStrip()
+		text.text = ""
+		answersText.text = ""
 		mainImage.removeAllChildren()
 		mainImage.texture = SKTexture(imageNamed: "geostart")
 	}
