@@ -159,12 +159,56 @@ wait 200
 :Wave - Everyone clustered on one number
 *,wave,50
 
+:Wave - Tight cluster, every team within 3
+1,wave,49
+2,wave,49
+3,wave,50
+4,wave,50
+5,wave,50
+6,wave,51
+7,wave,51
+8,wave,52
+9,wave,52
+10,wave,48
+11,wave,48
+12,wave,49
+13,wave,51
+14,wave,50
+
+:Wave - Jammed against both ends
+1,wave,1
+2,wave,1
+3,wave,2
+4,wave,2
+5,wave,3
+6,wave,3
+7,wave,4
+8,wave,99
+9,wave,99
+10,wave,98
+11,wave,98
+12,wave,97
+13,wave,97
+14,wave,96
+
 :Wave - Neighbours, for marker stacking
 1,wave,48
 2,wave,49
 3,wave,50
 4,wave,51
 5,wave,52
+
+:Wave - Neighbours 2, for marker stacking
+1,wave,48
+2,wave,49
+3,wave,50
+4,wave,51
+5,wave,52
+6,wave,48
+7,wave,49
+8,wave,50
+9,wave,51
+10,wave,52
 
 :Wave - One client dragging its handle
 1,wave,10

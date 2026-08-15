@@ -38,9 +38,18 @@ class TeamStripNode: SKNode {
 		var fadeOut: TimeInterval = 1.5
 	}
 
+	/// One team's slot in the strip. The labels are held by reference rather than fished back
+	/// out of `children` and cast, which is how the reset to white quietly stopped happening
+	/// when the labels became outlined ones: `for case let x as SKLabelNode` is a filter, so a
+	/// type that never matches is an empty loop and not an error.
+	private struct TeamNumber {
+		let node: SKNode
+		let labels: [OutlinedLabelNode]
+	}
+
 	private let mode: Mode
 	private let timing: Timing
-	private var teamNodes = [SKNode]()
+	private var teamNodes = [TeamNumber]()
 
 	/// The alpha a number sits at when it is not mid-flourish.
 	private var restingAlpha: CGFloat {
@@ -109,17 +118,21 @@ class TeamStripNode: SKNode {
 			composite.addChild(numLabel)
 
 			self.addChild(composite)
-			teamNodes.append(composite)
+			teamNodes.append(TeamNumber(node: composite, labels: [teamLabel, numLabel]))
 		}
 	}
 
 	/// This team has just done something: light its number up, colour it in, and let it fade.
 	func trigger(team: Int) {
 		guard team >= 0 && team < teamNodes.count else { return }
-		let node = teamNodes[team]
+		let entry = teamNodes[team]
+		let node = entry.node
+		let labels = entry.labels
 
+		//Back to white first, so that a team triggering again part way through the last
+		//flourish starts from the beginning rather than bleeding on from where it got to
 		node.removeAllActions()
-		for case let label as SKLabelNode in node.children {
+		for label in labels {
 			label.removeAllActions()
 			label.fontColor = .white
 		}
@@ -134,9 +147,9 @@ class TeamStripNode: SKNode {
 		node.run(shrink)
 
 		let teamColour = Utils.teamColour(team)
-		let bleed = SKAction.customAction(withDuration: timing.colourDuration) { [timing] n, elapsed in
+		let bleed = SKAction.customAction(withDuration: timing.colourDuration) { [timing, labels] _, elapsed in
 			let fraction = timing.colourDuration > 0 ? CGFloat(elapsed) / CGFloat(timing.colourDuration) : 1.0
-			for case let label as OutlinedLabelNode in n.children {
+			for label in labels {
 				label.fontColor = NSColor.white.blended(withFraction: fraction, of: teamColour) ?? .white
 			}
 		}
@@ -159,11 +172,11 @@ class TeamStripNode: SKNode {
 	/// Lights or clears numbers with no flourish
 	/// Only meaningful in `.remaining` — in `.spotlight` the numbers are meant to be dark.
 	func setLit(_ isLit: (Int) -> Bool) {
-		for (team, node) in teamNodes.enumerated() {
-			node.removeAllActions()
-			node.alpha = isLit(team) ? 1.0 : 0.0
-			node.setScale(1.0)
-			for case let label as SKLabelNode in node.children {
+		for (team, entry) in teamNodes.enumerated() {
+			entry.node.removeAllActions()
+			entry.node.alpha = isLit(team) ? 1.0 : 0.0
+			entry.node.setScale(1.0)
+			for label in entry.labels {
 				label.removeAllActions()
 				label.fontColor = .white
 			}

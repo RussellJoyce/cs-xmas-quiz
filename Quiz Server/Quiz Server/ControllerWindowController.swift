@@ -797,7 +797,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@IBOutlet weak var wavelengthNumber: NSTextField!
 	@IBOutlet weak var wavelengthRollButton: NSButton!
-	@IBOutlet weak var wavelengthTeamGuesses: NSTextField!
+	/// The guesses, and then the placings once scoring has run. A text view rather than a
+	/// label so that a long list scrolls instead of being quietly cut off at the bottom.
+	@IBOutlet var wavelengthTeamGuesses: NSTextView!
 
 	/// The number the host has rolled, or nil if the wheel has not been stopped yet
 	private var wavelengthTarget: Int?
@@ -831,11 +833,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	@IBAction func wavelengthScore(_ sender: Any) {
-		guard let target = wavelengthTarget else {
+		//Only the first press needs the number. After that the scene scores against whatever
+		//it actually swept to, so the roll being restarted here cannot change the result.
+		if !quizView.wavelengthScene.swept && wavelengthTarget == nil {
 			print("Wavelength: nothing to score against, the number has not been rolled yet")
 			return
 		}
-		quizView.wavelengthScene.score(target: target)
+		quizView.wavelengthScene.score(target: wavelengthTarget ?? 0)
+		//The second press works out the placings, so pick them up for the host's list
+		updateWavelengthGuesses()
+		updateWavelengthRollEnabled()
+	}
+
+	/// The roll is locked once the sweep has run. The answer is fixed to the number the sweep
+	/// landed on from that point, so reaching for Roll could only spin the label against a
+	/// display that has already moved past it.
+	private func updateWavelengthRollEnabled() {
+		wavelengthRollButton?.isEnabled = !quizView.wavelengthScene.swept
 	}
 
 	private func resetWavelengthControls() {
@@ -844,12 +858,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		wavelengthTarget = nil
 		wavelengthNumber?.stringValue = "--"
 		wavelengthRollButton?.title = "Roll -> 🎲"
-		wavelengthTeamGuesses?.stringValue = ""
+		wavelengthTeamGuesses?.string = ""
+		updateWavelengthRollEnabled()
 	}
 
 	private func updateWavelengthGuesses() {
+		//Once scoring has run, the list becomes the result: ordered best first and saying in
+		//words where each team came. The main display shows rank by how a marker is dressed,
+		//which a crowded bar can make hard to read, so the host always has it unambiguously.
+		let placings = quizView.wavelengthScene.placings
+		if !placings.isEmpty {
+			wavelengthTeamGuesses?.string = placings.map { placing in
+				"\(WavelengthScene.tierName(placing.tier)) — Team \(placing.team + 1): \(placing.guess) (out by \(placing.distance))"
+			}.joined(separator: "\n")
+			return
+		}
+
 		let guesses = quizView.wavelengthScene.teamGuesses
-		wavelengthTeamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+		wavelengthTeamGuesses?.string = (0..<Settings.shared.numTeams).compactMap { team -> String? in
 			if guesses.indices.contains(team), let guess = guesses[team] {
 				return "Team \(team + 1): \(guess)"
 			}
