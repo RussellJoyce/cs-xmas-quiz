@@ -75,7 +75,7 @@ class GeographyScene: QuizScene {
 	}
 
 
-	func setParticipating(_ teams: [Bool]) {
+	override func setParticipating(_ teams: [Bool]) {
 		participating = teams
 		refreshStrip()
 	}
@@ -148,7 +148,7 @@ class GeographyScene: QuizScene {
 			
 			var distances : [(d : Double, team : Int)] = []
 			for i in 0 ..< teamguesses.count {
-				if let g = teamguesses[i] {
+				if let g = teamguesses[i], isParticipating(i) {
 					
 					let dx = abs(g.x - answerx)
 					let dy = abs(g.y - answery)

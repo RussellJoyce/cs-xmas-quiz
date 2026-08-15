@@ -86,6 +86,8 @@ class WavelengthScene: QuizScene {
 	/// The scoring outcome. Empty until scoring has run.
 	private(set) var placings = [Placing]()
 
+	private var participating = [Bool]()
+
 	//MARK: - Geometry
 	private let barMargin: CGFloat = 110
 	private let barHeight: CGFloat = 180
@@ -240,10 +242,27 @@ class WavelengthScene: QuizScene {
 	//MARK: - Round logic
 	//--------------------------------------------------------------------------------------------------------------------------
 
+	override func setParticipating(_ teams: [Bool]) {
+		participating = teams
+		refreshStrip()
+	}
+
+	private func isParticipating(_ team: Int) -> Bool {
+		return team < participating.count ? participating[team] : true
+	}
+
+	/// Lights the number of every team still to guess, and clears the rest.
+	private func refreshStrip() {
+		teamStrip.setLit { team in
+			isParticipating(team) && (team < teamGuesses.count ? teamGuesses[team] == nil : true)
+		}
+	}
+
 	/// A team has moved their handle
 	func teamGuess(team: Int, value: Int) {
 		guard !revealed else { return }
 		guard team >= 0 && team < teamGuesses.count else { return }
+		guard isParticipating(team) else { return }
 		guard value >= WavelengthScene.minValue && value <= WavelengthScene.maxValue else {
 			print("Wavelength guess out of range from team \(team + 1): \(value)")
 			return
@@ -271,6 +290,7 @@ class WavelengthScene: QuizScene {
 		//Ascending, so that the packing only ever has to look leftwards
 		let guesses = teamGuesses.enumerated()
 			.compactMap { (team, value) in value.map { (team: team, value: $0) } }
+			.filter { isParticipating($0.team) }
 			.sorted { $0.value < $1.value }
 
 		for (order, placed) in layOutMarkers(guesses).enumerated() {
@@ -486,6 +506,7 @@ class WavelengthScene: QuizScene {
 	private func rankTeams(target: Int) -> [Placing] {
 		let ranked = teamGuesses.enumerated()
 			.compactMap { (team, guess) in guess.map { (team: team, guess: $0, distance: abs($0 - target)) } }
+			.filter { isParticipating($0.team) }
 			.sorted { $0.distance < $1.distance }
 		guard !ranked.isEmpty else { return [] }
 
@@ -741,7 +762,7 @@ class WavelengthScene: QuizScene {
 		sweepLabel?.text = ""
 		sweepLine?.isHidden = true
 
-		teamStrip.reset()
+		refreshStrip()
 	}
 
 	override func teardown() {

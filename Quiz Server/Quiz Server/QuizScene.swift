@@ -58,6 +58,10 @@ class QuizScene: SKScene {
 	func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
 	}
 
+	/// Which teams are playing, indexed by zero-based team number
+	func setParticipating(_ teams: [Bool]) {
+	}
+
 	override func willMove(from view: SKView) {
 		super.willMove(from: view)
 		teardown()

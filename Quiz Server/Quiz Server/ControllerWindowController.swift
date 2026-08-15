@@ -106,13 +106,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		let allSkipButtons : [NSButton] = [skip1, skip2, skip3, skip4, skip5, skip6, skip7, skip8, skip9, skip10, skip11, skip12, skip13, skip14, skip15, skip16]
-		for i in 0..<Settings.shared.numTeams {
-			if i < allSkipButtons.count {
-				skipButtons.append(allSkipButtons[i])
-			}
-		}
-		
 		if quizWindow == nil {
 			quizWindow = NSWindow(contentViewController: quizView)
 			quizWindow?.title = "Quiz Main Display"
@@ -233,6 +226,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
                 buzzersEnabled[sender.tag] = true
 				socketWriteIfConnected("on" + String(sender.tag + 1))
             }
+			pushTeamParticipation()
         }
     }
     
@@ -258,8 +252,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				}
             }
         }
+		pushTeamParticipation()
     }
 	
+	/// Which teams are playing, by zero-based team number, taken from the enable buttons along
+	/// the top of the window. There are only fifteen of those, so a team past the end of the
+	/// row counts as playing rather than reading off the end of the array.
+	var enabledTeams: [Bool] {
+		(0..<Settings.shared.numTeams).map { team in
+			!buzzersDisabled && (team < buzzersEnabled.count ? buzzersEnabled[team] : true)
+		}
+	}
+
+	/// Tells the live round who is playing. Called whenever the enable buttons change and
+	/// whenever a round starts, so that a round never has to catch up later.
+	private func pushTeamParticipation() {
+		quizView.setParticipating(enabledTeams)
+	}
+
 	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
 		socketWriteIfConnected("di\(sender.tag)")
 	}
@@ -288,7 +298,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
 			quizView.setRound(round: RoundType.geography)
-			pushGeographyParticipation()
 		case tabitemNumbers:
 			socketWriteIfConnected("vinumbers")
 			quizView.setRound(round: RoundType.numbers)
@@ -315,15 +324,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		default:
 			break
 		}
+		//Whichever round we have just moved to needs to know who is playing
+		pushTeamParticipation()
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
 		quizView.reset()
+		pushTeamParticipation()
 
 		if (tabView.selectedTabViewItem == tabitemGeography) {
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-			pushGeographyParticipation()
 		} else if (tabView.selectedTabViewItem == tabitemText) {
 			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
@@ -363,7 +374,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has buzzed
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < Settings.shared.numTeams && buzzersEnabled[team]) {
+					if (!buzzersDisabled && team >= 0 && team < buzzersEnabled.count && buzzersEnabled[team]) {
 						quizView.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
 					}
 				}
@@ -740,36 +751,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Geography
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	@IBOutlet weak var skip1: NSButton!
-	@IBOutlet weak var skip2: NSButton!
-	@IBOutlet weak var skip3: NSButton!
-	@IBOutlet weak var skip4: NSButton!
-	@IBOutlet weak var skip5: NSButton!
-	@IBOutlet weak var skip6: NSButton!
-	@IBOutlet weak var skip7: NSButton!
-	@IBOutlet weak var skip8: NSButton!
-	@IBOutlet weak var skip9: NSButton!
-	@IBOutlet weak var skip10: NSButton!
-	@IBOutlet weak var skip11: NSButton!
-	@IBOutlet weak var skip12: NSButton!
-	@IBOutlet weak var skip13: NSButton!
-	@IBOutlet weak var skip14: NSButton!
-	@IBOutlet weak var skip15: NSButton!
-	@IBOutlet weak var skip16: NSButton!
-	var skipButtons = [NSButton]()
-
-	/// Hands the team checkboxes to the scene. Called whenever one is toggled
-	private func pushGeographyParticipation() {
-		let teams = (0..<Settings.shared.numTeams).map { team in
-			team < skipButtons.count ? skipButtons[team].state == .on : true
-		}
-		quizView.geographyScene.setParticipating(teams)
-	}
-
-	@IBAction func geoSkipChanged(_ sender: Any) {
-		pushGeographyParticipation()
-	}
-
 	@IBOutlet weak var geoAnswerX: NSTextField!
 	@IBOutlet weak var geoAnswerY: NSTextField!
 	@IBOutlet weak var geoQuestionNumber: NSTextField!
@@ -784,7 +765,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
-		pushGeographyParticipation()
+		pushTeamParticipation()
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {

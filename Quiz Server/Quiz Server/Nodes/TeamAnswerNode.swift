@@ -32,6 +32,9 @@ class TeamAnswerNode: SKNode {
 	private var animatedNodes = [SKNode]()
 
 	static let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
+	static let disabledColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.28, alpha: 0.85)
+
+	private(set) var isPlaying = true
 
 	/// - Parameters:
 	///   - fontSize: size of the answer and team-number labels, normally taken straight
@@ -105,6 +108,19 @@ class TeamAnswerNode: SKNode {
 
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
+	}
+
+	/// Greys the whole box out when its team is not playing
+	func setPlaying(_ playing: Bool) {
+		isPlaying = playing
+		bgBox.fillColor = playing ? TeamAnswerNode.bgColour : TeamAnswerNode.disabledColour
+
+		let textColour = playing ? NSColor.black : NSColor(calibratedWhite: 0.5, alpha: 1.0)
+		teamNoLabel.fontColor = textColour
+		guessLabel.fontColor = textColour
+		singleLabel.fontColor = textColour
+		roundLabel.fontColor = playing ? NSColor(calibratedRed: 0.5, green: 0.5, blue: 0.5, alpha: 1.0)
+									   : NSColor(calibratedWhite: 0.4, alpha: 1.0)
 	}
 
 	func setTextSize(size : CGFloat) {

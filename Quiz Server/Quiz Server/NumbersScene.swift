@@ -34,8 +34,27 @@ class NumbersScene: QuizScene {
 		}
 	}
 
+	/// Which teams are playing, from the enable buttons at the top of the controller window.
+	private var participating = [Bool]()
+
+	override func setParticipating(_ teams: [Bool]) {
+		participating = teams
+		refreshBoxes()
+	}
+
+	private func isParticipating(_ team: Int) -> Bool {
+		//Defaults to in, for the window before the controller has said anything
+		return team < participating.count ? participating[team] : true
+	}
+
+	private func refreshBoxes() {
+		for team in 0..<min(Settings.shared.numTeams, teamBoxes.count) {
+			teamBoxes[team].setPlaying(isParticipating(team))
+		}
+	}
+
 	func teamGuess(teamid : Int, guess : Int) {
-		if teamid < Settings.shared.numTeams {
+		if teamid >= 0 && teamid < Settings.shared.numTeams && isParticipating(teamid) {
 			self.run(blopSound)
 			QuizWebSocket.shared?.pulseTeamColour(teamid)
 			teamGuesses[teamid] = guess
@@ -172,7 +191,8 @@ class NumbersScene: QuizScene {
 			teamBoxes[team].bgBox.fillColor = TeamAnswerNode.bgColour
 			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
-		
+		refreshBoxes()
+
 		for e in emitters {
 			e.removeFromParent()
 		}

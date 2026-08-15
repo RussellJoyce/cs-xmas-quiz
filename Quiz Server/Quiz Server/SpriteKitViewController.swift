@@ -86,5 +86,9 @@ class SpriteKitViewController: NSViewController {
 	func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
 		rounds[currentRound]?.buzzerPressed(team: team, type: type, options: options)
 	}
+
+	func setParticipating(_ teams: [Bool]) {
+		rounds[currentRound]?.setParticipating(teams)
+	}
 	
 }
