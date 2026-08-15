@@ -17,6 +17,10 @@ class TrueFalseScene: QuizScene {
 	
 	var counting = false
 	var teamEnabled = [Bool]()
+	/// Which teams are playing, from the enable buttons at the top of the controller window.
+	/// Separate from `teamEnabled` which means "survived so far", and a team
+	/// switched back on mid-round should not come back from having been knocked out.
+	private var participating = [Bool]()
 	var teamGuesses = [Bool?]()
 	var fireEmitter = SKEmitterNode(fileNamed: "SparksUp2")!
 	fileprivate var time: Int = TIMEOUT
@@ -78,14 +82,40 @@ class TrueFalseScene: QuizScene {
 		
 		for i in 0..<Settings.shared.numTeams {
 			teamBoxes[i].guessLabel.text = "Team \(i + 1)"
-			teamBoxes[i].setEnabled(true)
 		}
+		refreshBoxes()
 		self.time = TrueFalseScene.TIMEOUT
 		self.counting = false
 		self.stopFire();
 		QuizWebSocket.shared?.send(mode ? "h2" : "h1")
 	}
 	
+	override func setParticipating(_ teams: [Bool]) {
+		participating = teams
+		refreshBoxes()
+	}
+
+	private func isParticipating(_ team: Int) -> Bool {
+		return team < participating.count ? participating[team] : true
+	}
+
+	/// Still in it: playing at all, and not yet knocked out.
+	private func isIn(_ team: Int) -> Bool {
+		return isParticipating(team) && team < teamEnabled.count && teamEnabled[team]
+	}
+
+	/// A disabled team is greyed but never labelled OUT
+	private func refreshBoxes() {
+		for team in 0..<min(Settings.shared.numTeams, teamBoxes.count) {
+			if !isParticipating(team) {
+				teamBoxes[team].setEnabled(false)
+				teamBoxes[team].guessLabel.text = "Team \(team + 1)"
+			} else {
+				teamBoxes[team].setEnabled(isIn(team))
+			}
+		}
+	}
+
 	func addParticles() {
 		self.addEmitter(named: "BuzzGlow", at: timeLabel.position, zPosition: 2) {
 			$0.particleColorSequence = nil
@@ -192,7 +222,10 @@ class TrueFalseScene: QuizScene {
 	
 	func revealTeamGuesses() {
 		for team in 0..<Settings.shared.numTeams {
-			if teamEnabled[team] {
+			if !isParticipating(team) {
+				teamBoxes[team].setEnabled(false)
+				teamBoxes[team].guessLabel.text = "Team \(team + 1)"
+			} else if teamEnabled[team] {
 				teamBoxes[team].setEnabled(true)
 				if teamGuesses[team] != nil {
 					if mode {
@@ -213,6 +246,11 @@ class TrueFalseScene: QuizScene {
 	
 	func showAnswer(ans: Bool) {
 		for team in 0..<Settings.shared.numTeams {
+			guard isParticipating(team) else {
+				teamBoxes[team].setEnabled(false)
+				teamBoxes[team].guessLabel.text = "Team \(team + 1)"
+				continue
+			}
 			if teamGuesses[team] == nil {
 				teamEnabled[team] = false
 			} else {
@@ -226,7 +264,7 @@ class TrueFalseScene: QuizScene {
 	}
 	
 	func teamGuess(teamid : Int, guess : Bool) {
-		if counting && teamEnabled[teamid] {
+		if counting && teamid >= 0 && teamid < teamEnabled.count && isIn(teamid) {
 			teamGuesses[teamid] = guess
 			teamBoxes[teamid].setIfGuessed(true)
 			teamBoxes[teamid].pulseBox()

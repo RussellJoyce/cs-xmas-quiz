@@ -255,17 +255,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		pushTeamParticipation()
     }
 	
-	/// Which teams are playing, by zero-based team number, taken from the enable buttons along
-	/// the top of the window. There are only fifteen of those, so a team past the end of the
-	/// row counts as playing rather than reading off the end of the array.
+	/// Which teams are playing, by zero-based team number
 	var enabledTeams: [Bool] {
-		(0..<Settings.shared.numTeams).map { team in
-			!buzzersDisabled && (team < buzzersEnabled.count ? buzzersEnabled[team] : true)
-		}
+		(0..<Settings.shared.numTeams).map { isTeamEnabled($0) }
 	}
 
-	/// Tells the live round who is playing. Called whenever the enable buttons change and
-	/// whenever a round starts, so that a round never has to catch up later.
+	func isTeamEnabled(_ team: Int) -> Bool {
+		guard !buzzersDisabled, team >= 0, team < Settings.shared.numTeams else { return false }
+		return team < buzzersEnabled.count ? buzzersEnabled[team] : true
+	}
+
+	/// Tells the live round who is playing. Called whenever the enable buttons change and whenever a round starts
 	private func pushTeamParticipation() {
 		quizView.setParticipating(enabledTeams)
 	}
@@ -374,7 +374,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has buzzed
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team >= 0 && team < buzzersEnabled.count && buzzersEnabled[team]) {
+					if isTeamEnabled(team) {
 						quizView.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
 					}
 				}
@@ -414,7 +414,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has voted "true or higher"
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < Settings.shared.numTeams) {
+					if isTeamEnabled(team) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: true)
 						
 						if quizView.truefalseScene.counting {
@@ -426,7 +426,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has voted "false or lower"
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
-					if (!buzzersDisabled && team < Settings.shared.numTeams) {
+					if isTeamEnabled(team) {
 						quizView.truefalseScene.teamGuess(teamid: team, guess: false)
 						
 						if quizView.truefalseScene.counting {
