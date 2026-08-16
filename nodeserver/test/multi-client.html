@@ -108,6 +108,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="btn-connect" onclick="connectAll()">Connect All</button>
     <button class="btn-disconnect" onclick="disconnectAll()">Disconnect All</button>
     <label class="check-label"><input type="checkbox" id="cfg-autopick" checked> Auto-pick teams</label>
+    <label class="check-label"><input type="checkbox" id="cfg-filterpings" checked> Filter Pings</label>
 </div>
 
 <div id="pattern-bar">
@@ -322,7 +323,14 @@ VirtualClient.prototype.connect = function() {
 
     this.ws.onmessage = function(event) {
         var msg = event.data;
-        self.log('msg-recv', '< ' + msg);
+        // The five-second keepalive draws a pong from the server every time, which drowns
+        // everything else in the logs. The ping itself is sent straight down the socket and
+        // was never logged, so this is the only half that needs keeping out. A ping fired
+        // from a test pattern goes through send() and still shows, since that one was asked
+        // for on purpose.
+        if (msg.slice(0, 2) !== 'pb' || !document.getElementById('cfg-filterpings').checked) {
+            self.log('msg-recv', '< ' + msg);
+        }
         self.handleMessage(msg);
     };
 
