@@ -23,7 +23,7 @@ class ScoresScene: QuizScene {
 	
 	var snow1 : SKEmitterNode?
 	
-	var output : NSTextField!
+	var output : NSTextField?
 	
 	override func buildScene() {
 		addBackground(imageNamed: "abstract-dark")
@@ -51,7 +51,7 @@ class ScoresScene: QuizScene {
 		displayIndex = 0
 		
 		lastScoreSound = 0
-		output.stringValue = "Ready"
+		output?.stringValue = "Ready"
 	}
 	
 	
@@ -82,13 +82,13 @@ class ScoresScene: QuizScene {
 				}
 			} catch {
 				print("Error parsing line '\(line)': \(error)")
-				output.stringValue = "Error parsing line '\(line)': \(error)"
+				output?.stringValue = "Error parsing line '\(line)': \(error)"
 				return nil
 			}
 		}
 		
 		print("Number of teams with valid scores: \(pairs.count)")
-		output.stringValue = "Number of teams with valid scores: \(pairs.count)"
+		output?.stringValue = "Number of teams with valid scores: \(pairs.count)"
 		return pairs
 	}
 
@@ -112,7 +112,7 @@ class ScoresScene: QuizScene {
 			}
 			
 			scores = rankedScores.sorted { $0.0 > $1.0 }
-			output.stringValue = scores.map({"\($0): Team \($1) (\($2))"}).joined(separator: "\n")
+			output?.stringValue = scores.map({"\($0): Team \($1) (\($2))"}).joined(separator: "\n")
 			
 		} else {
 			print("Failed to parse input.")

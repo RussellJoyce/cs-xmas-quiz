@@ -26,6 +26,9 @@ final class Settings {
 	var uniquePath: String = ""
 	var pointlessPath: String = ""
 	
+	/// How many teams the controller window can actually drive
+	static let maxTeams = 15
+
 	var numTeams: Int = 14
 
 	/// The screen the quiz display is shown on, and whether it runs windowed rather than

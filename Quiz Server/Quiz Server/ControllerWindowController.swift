@@ -275,7 +275,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
-		switch(tabViewItem!) {
+		guard let tabViewItem = tabViewItem else { return }
+		switch(tabViewItem) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
 			quizView.setRound(round: RoundType.idle)

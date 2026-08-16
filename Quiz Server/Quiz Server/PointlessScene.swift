@@ -14,10 +14,11 @@ import AVFoundation
 class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate {
 
 	//Connections from the UI and rest of the app
-	var textQuestion: NSTextView!
-	var answerTable : NSTableView!
-	var descending : NSButton!
-	
+	var textQuestion: NSTextView?
+	var answerTable : NSTableView?
+	var descending : NSButton?
+	private var descendingBars : Bool { descending?.state == .on }
+
 	//Internal vars
 	private var teamBoxes = [BuzzerTeamNode]()
 	private var teamGuesses = [String?]()
@@ -88,7 +89,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		barEmitters = Array(repeating: nil, count: Settings.shared.numTeams)
 		
 		// Setup the answerTable with 3 columns: Team, Guess, Score
-		if answerTable != nil {
+		if let answerTable = answerTable {
 			// Remove all existing columns
 			for column in answerTable.tableColumns {
 				answerTable.removeTableColumn(column)
@@ -269,7 +270,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					barNode.strokeColor = .clear
 					barNode.position = CGPoint(x: teamBoxes[i].position.x + (CGFloat(PointlessScene.teamBoxWidth) / 2) + 20, y: teamBoxes[i].position.y)
 					barNode.zPosition = 15
-					barNode.path = CGPath(rect: CGRect(x: 0, y: -PointlessScene.barHeight/2, width: (descending.state == .off ? 0 : 100*11) + PointlessScene.barBaseWidth, height: PointlessScene.barHeight), transform: nil)
+					barNode.path = CGPath(rect: CGRect(x: 0, y: -PointlessScene.barHeight/2, width: (descendingBars ? 100*11 : 0) + PointlessScene.barBaseWidth, height: PointlessScene.barHeight), transform: nil)
 					
 					scoreBars[i]?.removeFromParent()
 					scoreBars[i] = barNode
@@ -278,7 +279,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 					// Start oscillating bar color with random durations
 					self.startOscillatingBarColor(barNode)
 					
-					let emitterPoint = CGPoint(x: barNode.position.x + 5 + (descending.state == .off ? 0 : 100*11), y: barNode.position.y)
+					let emitterPoint = CGPoint(x: barNode.position.x + 5 + (descendingBars ? 100*11 : 0), y: barNode.position.y)
 					barEmitters[i]?.removeFromParent()
 					barEmitters[i] = addEmitter(named: "SparksPointless", at: emitterPoint, zPosition: 16, autoRemove: false)
 				}
@@ -310,11 +311,11 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 			else { continue }
 			
 			let newWidth = CGFloat(
-					(descending.state == .off ? (100 - counterValue) : counterValue)
+					(descendingBars ? counterValue : (100 - counterValue))
 				* 11) + PointlessScene.barBaseWidth
 
 			if counterValue > score {
-				let scale = newWidth / (descending.state == .off ? PointlessScene.barBaseWidth : 100*11 + PointlessScene.barBaseWidth)
+				let scale = newWidth / (descendingBars ? 100*11 + PointlessScene.barBaseWidth : PointlessScene.barBaseWidth)
 				let action = SKAction.scaleX(to: scale, duration: PointlessScene.tickTime * 0.99)
 				action.timingMode = .linear
 				bar.run(action)

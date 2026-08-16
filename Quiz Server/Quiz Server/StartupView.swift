@@ -26,7 +26,7 @@ class StartupView: NSViewController {
         super.viewDidLoad()
         
         allScreens = NSScreen.screens as [NSScreen]?
-		allScreens!.sort(by: {$0.frame.width > $1.frame.width})
+		allScreens?.sort(by: {$0.frame.width > $1.frame.width})
 		
         if let screens = allScreens {
             let numScreens = screens.count
@@ -67,11 +67,17 @@ class StartupView: NSViewController {
 		Settings.shared.musicPath = musicPath.stringValue
 		Settings.shared.uniquePath = uniquePath.stringValue
 		Settings.shared.pointlessPath = pointlessPath.stringValue
-		Settings.shared.numTeams = Int(numTeamsInput.intValue)
+		let requestedTeams = Int(numTeamsInput.intValue)
+		Settings.shared.numTeams = max(1, min(Settings.maxTeams, requestedTeams))
+		if requestedTeams != Settings.shared.numTeams {
+			print("Number of teams \(requestedTeams) is out of range, using \(Settings.shared.numTeams)")
+		}
 		Settings.shared.debug = debugMode.state == NSControl.StateValue.on
 
+		//indexOfSelectedItem is -1 when nothing is selected
 		if let screens = allScreens, !screens.isEmpty {
-			Settings.shared.quizScreen = screens[screenSelector.indexOfSelectedItem]
+			let selected = screenSelector.indexOfSelectedItem
+			Settings.shared.quizScreen = screens.indices.contains(selected) ? screens[selected] : screens[0]
 		} else {
 			Settings.shared.quizScreen = nil
 		}

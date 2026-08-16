@@ -12,7 +12,7 @@ import AVFoundation
 
 class MusicScene: QuizScene {
 	
-	var useLEDs : NSButton!
+	var useLEDs : NSButton?
 	
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
@@ -56,7 +56,7 @@ class MusicScene: QuizScene {
         if music?.isPlaying ?? false {
 			music?.updateMeters()
 			
-			if useLEDs.state == .on {
+			if useLEDs?.state == .on {
 				let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
 				let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
 				let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
