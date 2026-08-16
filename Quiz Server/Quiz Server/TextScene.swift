@@ -92,16 +92,13 @@ class TextScene: QuizScene {
 	}
 	
 	func initUnique(file: String) {
-		uniques = []
-		do {
-			let data = try String(contentsOfFile:file, encoding: String.Encoding.ascii)
-			uniques = data.components(separatedBy: "\n")
-			uniques = uniques!.filter { $0 != "" }
-			uniques = uniques!.map { Utils.sanitiseString($0) }
-			print("Unique correct answers are: ", uniques!)
-		} catch let err as NSError {
-			print(err)
+		uniques = nil
+		guard let data = Utils.readQuestionFile(file) else {
+			return
 		}
+		uniques = data.components(separatedBy: .newlines)
+			.map { Utils.sanitiseString($0) }
+			.filter { $0 != "" }
 	}
 	
 	func showGuesses(showroundno : Bool) {

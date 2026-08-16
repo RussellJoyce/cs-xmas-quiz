@@ -26,6 +26,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	private var counter : OutlinedLabelNode?
 	private var scoreBars = [SKShapeNode?]()
 	private var barEmitters = [SKEmitterNode?]()
+	private var retiredEmitters = [SKEmitterNode]()
 	private var scoreLabels = [SKLabelNode]()
 	private var winEmitters = [SKEmitterNode]()
 	private var scoringTimer: Timer?
@@ -140,6 +141,8 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		
 		scoreBars.forEach {$0?.removeFromParent()}
 		barEmitters.forEach {$0?.removeFromParent()}
+		retiredEmitters.forEach {$0.removeFromParent()}
+		retiredEmitters.removeAll()
 		scoreLabels.forEach {$0.removeFromParent()}
 		scoreLabels.removeAll()
 		winEmitters.forEach {$0.removeFromParent()}
@@ -162,29 +165,38 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	}
 
 	func changeToQuestion(path : String) {
-		do {
-			let data = try String(contentsOfFile: path, encoding: .ascii)
-			let lines = data.components(separatedBy: .newlines).filter { !$0.isEmpty }
-			guard !lines.isEmpty else { return }
-			
-			questionTitle = lines[0]
-			answers = [(String, Int)]()
-			
-			for line in lines.dropFirst() {
-				let parts = line.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
-				if parts.count == 2,
-				   let intValue = Int(parts[1].trimmingCharacters(in: .whitespaces)) {
-					let strValue = String(parts[0]).lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-					answers.append((strValue, intValue))
-				}
-			}
-			
-			teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
-			textQuestion.string = questionTitle! + "\n" + answers.map({"\($0): \($1)"}).joined(separator: "\n")
+		guard let data = Utils.readQuestionFile(path) else {
+			questionTitle = nil
+			answers = []
+			textQuestion?.string = "Could not read question file:\n\(path)"
 			answerTable?.safeReloadData()
-		} catch let err as NSError {
-			print(err)
+			return
 		}
+
+		let lines = data.components(separatedBy: .newlines).filter { !$0.isEmpty }
+		guard let title = lines.first else {
+			questionTitle = nil
+			answers = []
+			textQuestion?.string = "Question file is empty:\n\(path)"
+			answerTable?.safeReloadData()
+			return
+		}
+
+		questionTitle = title
+		answers = [(String, Int)]()
+
+		for line in lines.dropFirst() {
+			let parts = line.split(separator: ",", maxSplits: 1, omittingEmptySubsequences: false)
+			if parts.count == 2,
+			   let intValue = Int(parts[1].trimmingCharacters(in: .whitespaces)) {
+				let strValue = String(parts[0]).lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+				answers.append((strValue, intValue))
+			}
+		}
+
+		teamScores = [Int?](repeating: nil, count: Settings.shared.numTeams)
+		textQuestion?.string = title + "\n" + answers.map({"\($0): \($1)"}).joined(separator: "\n")
+		answerTable?.safeReloadData()
 	}
 	
 	func teamGuess(team : Int, guess : String) {
@@ -312,9 +324,9 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 				anyActive = true
 			} else {
 				
-				// Bar reached score, remove emitter and add score label
+				// Bar reached score, retire the emitter and add score label
 				emitter.particleBirthRate = 0
-				emitter.removeWhenDone()
+				retire(emitter)
 				barEmitters[i] = nil
 				
 				//Was this a winning bar?
@@ -382,6 +394,16 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	}
 	
 	
+	/// Lets a stopped emitter's last particles die and then takes the node out of the scene.
+	/// `removeWhenDone()` only tidies up finite emitters, so a continuous one with birth rate of zero
+	/// would otherwise stay in the scene for good.
+	private func retire(_ emitter: SKEmitterNode) {
+		retiredEmitters.append(emitter)
+		let ttl = TimeInterval(emitter.particleLifetime + (emitter.particleLifetimeRange / 2.0))
+		emitter.run(SKAction.sequence([SKAction.wait(forDuration: ttl), SKAction.removeFromParent()]))
+	}
+
+
 	// Repeatedly animates the bar's color back and forth with a new random duration for each half-cycle.
 	private func startOscillatingBarColor(_ barNode: SKShapeNode, toAnimColor: Bool = true) {
 		let duration = Double.random(in: 0.2...0.5)

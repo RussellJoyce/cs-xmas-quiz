@@ -31,7 +31,7 @@ class TrueFalseScene: QuizScene {
 	
 	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
 	let tickEnd = SKAction.playSoundFileNamed("timerend.wav", waitForCompletion: false)
-	let tensionend = SKAction.playSoundFileNamed("counter_score100.wav", waitForCompletion: false)
+	let tensionend = SKAction.playSoundFileNamed("counter_score2.wav", waitForCompletion: false)
 	var music: AVAudioPlayer?
 	
 	var timeLabel: OutlinedLabelNode!

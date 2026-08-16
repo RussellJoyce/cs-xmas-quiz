@@ -106,6 +106,21 @@ final class Utils {
 	}
 
 
+	/// Reads one of the question files off disk. Use UTF-8 if possible, warn if fallback is required
+	/// - Returns: the file's contents, or nil if it could not be read at all.
+	static func readQuestionFile(_ path: String) -> String? {
+		if let utf8 = try? String(contentsOfFile: path, encoding: .utf8) {
+			return utf8
+		}
+		if let latin1 = try? String(contentsOfFile: path, encoding: .isoLatin1) {
+			print("Question file '\(path)' is not valid UTF-8, read as Latin-1 instead")
+			return latin1
+		}
+		print("Could not read question file '\(path)'")
+		return nil
+	}
+
+
 	static func sanitiseString(_ input : String) -> String {
 		var str = input.lowercased()
 		str = str.trimmingCharacters(in: .whitespacesAndNewlines)
