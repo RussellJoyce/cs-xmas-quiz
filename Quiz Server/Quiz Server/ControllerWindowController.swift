@@ -274,6 +274,33 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socketWriteIfConnected("di\(sender.tag)")
 	}
 
+	@IBOutlet weak var disconnectAllButton: NSButton!
+
+	/// Set when "Disconnect All" is armed, so a second click within the timeout actually does it
+	private var disconnectAllConfirmTimer: Timer?
+
+	@IBAction func disconnectAllPress(_ sender: NSButton) {
+		if disconnectAllConfirmTimer != nil {
+			resetDisconnectAllButton()
+			for team in 1...Settings.shared.numTeams {
+				socketWriteIfConnected("di\(team)")
+			}
+			return
+		}
+
+		//First click just arms the button. It disarms itself if the second click doesn't come.
+		sender.title = "Sure?"
+		disconnectAllConfirmTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
+			self?.resetDisconnectAllButton()
+		}
+	}
+
+	private func resetDisconnectAllButton() {
+		disconnectAllConfirmTimer?.invalidate()
+		disconnectAllConfirmTimer = nil
+		disconnectAllButton?.title = "Disconnect All"
+	}
+
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		guard let tabViewItem = tabViewItem else { return }
 		switch(tabViewItem) {

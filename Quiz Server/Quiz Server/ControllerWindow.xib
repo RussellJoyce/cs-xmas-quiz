@@ -29,6 +29,7 @@
                 <outlet property="buzzerQueueMode" destination="zab-jV-I4P" id="QoK-ce-b4E"/>
                 <outlet property="buzzerSounds" destination="dOo-JQ-UKY" id="wZz-UI-pKw"/>
                 <outlet property="buzzerTimerTime" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
+                <outlet property="disconnectAllButton" destination="Dc1-Al-btn" id="Dc1-Al-out"/>
                 <outlet property="falseButton" destination="r3f-F8-eF8" id="c6S-oh-agy"/>
                 <outlet property="geoAnswerX" destination="jQg-0f-joa" id="5Me-JP-lg1"/>
                 <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
@@ -98,7 +99,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="942" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="942" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1673,6 +1674,17 @@ Answers</string>
                                                     <action selector="disassociateTeamPress:" target="-2" id="E0b-oW-dBn"/>
                                                 </connections>
                                             </buttonCell>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dc1-Al-btn">
+                                            <rect key="frame" x="333" y="8" width="230" height="32"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Disconnect All" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Dc1-Al-cel">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="disconnectAllPress:" target="-2" id="Dc1-Al-act"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                 </view>
