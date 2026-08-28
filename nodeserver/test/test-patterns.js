@@ -25,6 +25,8 @@
 //  geo,random          a map pin somewhere random               ii<team>,<x>,<y>
 //  wave,<n>            a wavelength guess, 1-99                 wv<team>,<n>
 //  wave,random         a wavelength guess somewhere random      wv<team>,<n>
+//  choice,<n>          a multiple choice option, 1-6            mc<team>,<n>
+//  choice,random       whichever options the grid has           mc<team>,<n>
 //  pick[,<team>]       claim a team, defaulting to the client   pt<team>
 //  ping                the 5s keepalive, sent early            pi
 //  connect             open the socket
@@ -141,6 +143,47 @@ wait 200
 1,geo,55,40
 wait 200
 1,geo,70,65
+
+# ---------------------------------------------------------- multiple choice
+
+:Choice - Everyone picks something
+*,choice,random
+
+:Choice - A clean split across four options
+1,choice,1
+2,choice,2
+3,choice,3
+4,choice,4
+5,choice,1
+6,choice,2
+7,choice,3
+8,choice,4
+
+:Choice - Unanimous
+*,choice,3
+
+:Choice - Changing their minds, which is allowed until time runs out
+*,choice,1
+wait 300
+*,choice,4
+wait 300
+*,choice,2
+
+:Choice - Two teams never answer
+1,choice,2
+2,choice,2
+4,choice,3
+5,choice,1
+6,choice,4
+7,choice,2
+8,choice,3
+
+:Choice - Everything at once, for the six-option grid
+*,choice,random
+wait 100
+*,choice,random
+wait 100
+*,choice,random
 
 # ---------------------------------------------------------------- wavelength
 

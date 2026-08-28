@@ -24,6 +24,10 @@
 		3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C5CC8B21C03E18F00308572 /* SparksUp2.sks */; };
 		3C5E2A4E1A37D0F9000D6447 /* timer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4C1A37D0F9000D6447 /* timer.wav */; };
 		3C5E2A4F1A37D0F9000D6447 /* timerend.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C5E2A4D1A37D0F9000D6447 /* timerend.wav */; };
+		3C6004F63041DDB800D09C55 /* digital-alarm.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C6004F23041DDB800D09C55 /* digital-alarm.mp3 */; };
+		3C6004F73041DDB800D09C55 /* notification-1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C6004F33041DDB800D09C55 /* notification-1.mp3 */; };
+		3C6004F83041DDB800D09C55 /* notification-long.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C6004F53041DDB800D09C55 /* notification-long.mp3 */; };
+		3C6004F93041DDB800D09C55 /* notification-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C6004F43041DDB800D09C55 /* notification-2.mp3 */; };
 		3C63A1402EC4E2300044C951 /* PointlessScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */; };
 		3C63A1422EC6516C0044C951 /* SparksPointless.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3C63A1412EC6516C0044C951 /* SparksPointless.sks */; };
 		3C708BF71A379EE1007E24F5 /* buzzer.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C708BF61A379EE1007E24F5 /* buzzer.wav */; };
@@ -62,6 +66,8 @@
 		3CA10D042EE9000200A38676 /* TeamAnswerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D032EE9000200A38676 /* TeamAnswerNode.swift */; };
 		3CA10D0A2EE9100200A38676 /* WavelengthScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */; };
 		3CA10D0C2EE9200200A38676 /* TeamStripNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */; };
+		3CB70E102F0A100200A38676 /* MultiChoiceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */; };
+		3CB70E122F0A100200A38676 /* TeamGuessNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB70E132F0A100200A38676 /* TeamGuessNode.swift */; };
 		3CB99F962CFCB57B00B704E2 /* orch8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8F2CFCB57B00B704E2 /* orch8.wav */; };
 		3CB99F972CFCB57B00B704E2 /* orch6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8D2CFCB57B00B704E2 /* orch6.wav */; };
 		3CB99F982CFCB57B00B704E2 /* orch3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3CB99F8A2CFCB57B00B704E2 /* orch3.wav */; };
@@ -170,6 +176,10 @@
 		3C5CC8B21C03E18F00308572 /* SparksUp2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SparksUp2.sks; sourceTree = "<group>"; };
 		3C5E2A4C1A37D0F9000D6447 /* timer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timer.wav; sourceTree = "<group>"; };
 		3C5E2A4D1A37D0F9000D6447 /* timerend.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = timerend.wav; sourceTree = "<group>"; };
+		3C6004F23041DDB800D09C55 /* digital-alarm.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "digital-alarm.mp3"; sourceTree = "<group>"; };
+		3C6004F33041DDB800D09C55 /* notification-1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "notification-1.mp3"; sourceTree = "<group>"; };
+		3C6004F43041DDB800D09C55 /* notification-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "notification-2.mp3"; sourceTree = "<group>"; };
+		3C6004F53041DDB800D09C55 /* notification-long.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "notification-long.mp3"; sourceTree = "<group>"; };
 		3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointlessScene.swift; sourceTree = "<group>"; };
 		3C63A1412EC6516C0044C951 /* SparksPointless.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = SparksPointless.sks; path = "Quiz Server/SparksPointless.sks"; sourceTree = SOURCE_ROOT; };
 		3C708BF61A379EE1007E24F5 /* buzzer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buzzer.wav; sourceTree = "<group>"; };
@@ -206,6 +216,8 @@
 		3CA10D032EE9000200A38676 /* TeamAnswerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamAnswerNode.swift; sourceTree = "<group>"; };
 		3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WavelengthScene.swift; sourceTree = "<group>"; };
 		3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamStripNode.swift; sourceTree = "<group>"; };
+		3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiChoiceScene.swift; sourceTree = "<group>"; };
+		3CB70E132F0A100200A38676 /* TeamGuessNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamGuessNode.swift; sourceTree = "<group>"; };
 		3CB99F882CFCB57B00B704E2 /* orch1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch1.wav; sourceTree = "<group>"; };
 		3CB99F892CFCB57B00B704E2 /* orch2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch2.wav; sourceTree = "<group>"; };
 		3CB99F8A2CFCB57B00B704E2 /* orch3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = orch3.wav; sourceTree = "<group>"; };
@@ -342,6 +354,7 @@
 				3C872EAF1C03C3F000A2B397 /* TimerScene.swift */,
 				3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */,
 				3CA10D0B2EE9100200A38676 /* WavelengthScene.swift */,
+				3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */,
 			);
 			name = "SpriteKit Scenes";
 			sourceTree = "<group>";
@@ -354,6 +367,7 @@
 				3C30125F2EAD500000F80B71 /* BuzzerEffects.swift */,
 				3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */,
 				3CA10D032EE9000200A38676 /* TeamAnswerNode.swift */,
+				3CB70E132F0A100200A38676 /* TeamGuessNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -402,6 +416,10 @@
 		46056EB71A19624E00C37628 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				3C6004F23041DDB800D09C55 /* digital-alarm.mp3 */,
+				3C6004F33041DDB800D09C55 /* notification-1.mp3 */,
+				3C6004F43041DDB800D09C55 /* notification-2.mp3 */,
+				3C6004F53041DDB800D09C55 /* notification-long.mp3 */,
 				3C458A2A2EC73D1E00E069BA /* circle_illuminates.wav */,
 				3C458A2B2EC73D1E00E069BA /* display_sweep.wav */,
 				3C458A262EC73CBE00E069BA /* counter_nosting.wav */,
@@ -583,6 +601,10 @@
 				3CB99FA02CFCB57B00B704E2 /* orch10.wav in Resources */,
 				3CB99FA12CFCB57B00B704E2 /* orch4.wav in Resources */,
 				3CB99FA22CFCB57B00B704E2 /* orch5.wav in Resources */,
+				3C6004F63041DDB800D09C55 /* digital-alarm.mp3 in Resources */,
+				3C6004F73041DDB800D09C55 /* notification-1.mp3 in Resources */,
+				3C6004F83041DDB800D09C55 /* notification-long.mp3 in Resources */,
+				3C6004F93041DDB800D09C55 /* notification-2.mp3 in Resources */,
 				3CB99FA32CFCB57B00B704E2 /* orch12.wav in Resources */,
 				3C5CC8B31C03E18F00308572 /* SparksUp2.sks in Resources */,
 				4616724A1DF87DA30049C8D1 /* BoggleSparksBonus.sks in Resources */,
@@ -663,6 +685,8 @@
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
 				3CA10D0A2EE9100200A38676 /* WavelengthScene.swift in Sources */,
+				3CB70E102F0A100200A38676 /* MultiChoiceScene.swift in Sources */,
+				3CB70E122F0A100200A38676 /* TeamGuessNode.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,

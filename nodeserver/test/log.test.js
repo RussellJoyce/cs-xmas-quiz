@@ -114,7 +114,8 @@ describe('decoding the protocol', () => {
         //If a code is added to protocol.js and not here, the log silently degrades to
         //"unrecognised", which looks like a fault rather than an omission.
         ['on', 'of', 'hh', 'hl', 'hn', 'ha', 'h1', 'h2', 'vi', 'im', 'di', 'le', 'ls', 'lr',
-         'pt', 're', 'pi', 'pb', 'ok', 'px', 'zz', 'hi', 'lo', 'tt', 'ii'].forEach(code => {
+         'pt', 're', 'pi', 'pb', 'ok', 'px', 'zz', 'hi', 'lo', 'tt', 'ii', 'wv',
+         'mo', 'ms', 'mc'].forEach(code => {
             assert.ok(log.CODES[code], 'no translation for ' + code);
         });
     });

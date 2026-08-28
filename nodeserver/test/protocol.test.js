@@ -5,7 +5,7 @@ const assert = require('node:assert');
 
 const { QuizState, safeSend, clientKey, clientKeyForConnection, asText, validTeam,
         DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
-        DEFAULT_VIEW, DEFAULT_GEO_IMAGE } = require('../protocol');
+        DEFAULT_VIEW, DEFAULT_GEO_IMAGE, DEFAULT_MULTI } = require('../protocol');
 const { FakeSocket, recordingTransport, muteLogs } = require('./helpers');
 
 let unmute;
@@ -98,12 +98,12 @@ describe('client identity', () => {
 
 
 describe('picking a team', () => {
-    test('claiming a free team confirms it and sends the current view and image', () => {
+    test('claiming a free team confirms it and replays the current view, image and grid', () => {
         const { state, socks } = setup(1);
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt3');
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE]);
+            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI]);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '3');
     });
 
@@ -137,7 +137,7 @@ describe('reconnection', () => {
         const fresh = new FakeSocket('c1-again');
         state.addClient('10.0.0.9_test1', fresh);
 
-        assert.deepStrictEqual(fresh.sent, ['vigeography', 'imfrance.jpg']);
+        assert.deepStrictEqual(fresh.sent, ['vigeography', 'imfrance.jpg', 'mo' + DEFAULT_MULTI]);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1');
         assert.strictEqual(state.clients['10.0.0.9_test1'].sock, fresh,
             'messages for team 1 now go to the new socket');
@@ -204,6 +204,36 @@ describe('routing from the quiz software', () => {
         state.handleServerMessage('imspain.jpg');
         assert.deepStrictEqual(transport.clients, ['imspain.jpg']);
         assert.strictEqual(state.lastGeoImage, 'spain.jpg');
+    });
+
+    test('mo broadcasts and becomes the grid replayed to later clients', () => {
+        const { state, transport } = setup(0);
+        state.handleServerMessage('mo6,1');
+        assert.deepStrictEqual(transport.clients, ['mo6,1']);
+        assert.strictEqual(state.lastMulti, '6,1');
+    });
+
+    test('the shape of a multiple choice grid is the quiz software\'s business, not ours', () => {
+        //As with a geography image, this server carries the setting without judging it.
+        //A grid of nine is a mistake to be seen on the phones, not one to be hidden here.
+        const { state, transport } = setup(0);
+        ['mo9,A', 'mo0,', 'mobanana'].forEach(m => state.handleServerMessage(m));
+        assert.deepStrictEqual(transport.clients, ['mo9,A', 'mo0,', 'mobanana']);
+    });
+
+    test('ms lights up one option for one team and nobody else', () => {
+        const { state, transport, socks } = setupTeams(3);
+        state.handleServerMessage('ms2,4');
+        assert.deepStrictEqual(socks[1].sent, ['ms4'], 'the team hears which option took');
+        assert.deepStrictEqual(socks[0].sent, [], 'and no other team hears anything');
+        assert.deepStrictEqual(socks[2].sent, []);
+        assert.deepStrictEqual(transport.clients, [], 'it is not a broadcast');
+    });
+
+    test('an ms for a team that is not connected is dropped', () => {
+        const { state, socks } = setupTeams(1);
+        ['ms9,2', 'ms,2', 'ms2', 'msx,2'].forEach(m => state.handleServerMessage(m));
+        assert.deepStrictEqual(socks[0].sent, []);
     });
 
     test('ha resets every higher/lower', () => {
@@ -340,6 +370,15 @@ describe('messages from clients', () => {
         assert.deepStrictEqual(transport.servers, ['wv1,0', 'wv1,100', 'wv1,-5', 'wv1,banana']);
     });
 
+    test('multiple choice selections are forwarded, including a team changing its mind', () => {
+        //Teams may re-answer as often as they like until the timer runs out, so the same
+        //team sending several options in a row is the normal case, not a fault.
+        const { state, transport, socks } = setupTeams(1);
+        ['mc1,1', 'mc1,3', 'mc1,2'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, ['mc1,1', 'mc1,3', 'mc1,2']);
+    });
+
     test('higher and lower are forwarded', () => {
         const { state, transport, socks } = setupTeams(1);
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'hi1');
@@ -351,7 +390,7 @@ describe('messages from clients', () => {
         //The team number is the client's own claim, so it is checked against the team this
         //server granted rather than taken at face value.
         const { state, transport, socks } = setupTeams(2);
-        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17', 'wv2,50'].forEach(m =>
+        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17', 'wv2,50', 'mc2,1'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
         assert.deepStrictEqual(socks[1].sent, [], 'the team spoken for hears nothing of it');
@@ -359,7 +398,7 @@ describe('messages from clients', () => {
 
     test('an answer with no team, or a team that does not exist, is dropped', () => {
         const { state, transport, socks } = setupTeams(1);
-        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17', 'wv,50'].forEach(m =>
+        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17', 'wv,50', 'mc,1'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
     });
@@ -487,7 +526,7 @@ describe('message framing', () => {
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], buf('pt3'));
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE]);
+            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI]);
     });
 
     test('the quiz software can route with a Buffer', () => {
@@ -647,7 +686,7 @@ describe('re-picking a team you already hold', () => {
         //Reconnect on a new socket, then pick the same team again.
         const fresh = new FakeSocket('c2-again');
         state.addClient('10.0.0.9_test2', fresh);
-        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg'],
+        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg', 'mo' + DEFAULT_MULTI],
             'reconnect replays the view but does not confirm the team');
         fresh.drain();
 

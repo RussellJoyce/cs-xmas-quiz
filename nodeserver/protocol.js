@@ -14,6 +14,7 @@ const log = require('./log');
 
 const DEFAULT_VIEW = "buzzer";
 const DEFAULT_GEO_IMAGE = "start.jpg";
+const DEFAULT_MULTI = "4,A";
 const DEFAULT_NUM_TEAMS = 14;
 const ACTIVE_WINDOW_MS = 10000; //Clients ping every 5s, so this tolerates one missed ping.
 
@@ -72,6 +73,7 @@ class QuizState {
         this.clients = {};
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
+        this.lastMulti = DEFAULT_MULTI;
         //Short handles for the log. 
         this.nextHandle = 1;
     }
@@ -110,6 +112,7 @@ class QuizState {
             client.sock = sock;
             safeSend(sock, 'vi' + this.lastView); //Forward them to the current view
             safeSend(sock, 'im' + this.lastGeoImage); //Set the geography image
+            safeSend(sock, 'mo' + this.lastMulti); //Rebuild the multiple choice grid
         } else {
             const known = this.clients[key];
             const handle = (known && known.handle) || ('c' + this.nextHandle++);
@@ -148,6 +151,23 @@ class QuizState {
                         }
                         break;
                     }
+                    case "ms": { //Confirm a team's multiple choice selection
+                        const parts = message.slice(2).split(",");
+                        const id = parseInt(parts[0]); //Teams are 1-based, so 0/NaN are both invalid
+                        const option = parts[1];
+                        if(id && option) {
+                            const c = this.getClientByID(id);
+                            if(c) {
+                                log.info('quiz', 'T' + id, 'ms', 'option ' + option + ' accepted');
+                                safeSend(c.sock, 'ms' + option);
+                            } else {
+                                log.debug('quiz', 'T' + id, 'ms', 'dropped, team not connected');
+                            }
+                        } else {
+                            log.warn('quiz', 'all', 'ms', "cannot read '" + message + "', ignored");
+                        }
+                        break;
+                    }
                     case "le": //Set LED function
                         log.info('quiz', 'leds', 'le', message.slice(2));
                         this.transport.toLeds(message.slice(2));
@@ -170,6 +190,11 @@ class QuizState {
                     case "vi": //Set view
                         this.lastView = message.slice(2);
                         log.info('quiz', 'all', 'vi', 'view → ' + this.lastView);
+                        this.transport.toClients(message);
+                        break;
+                    case "mo": //Set up the multiple choice grid
+                        this.lastMulti = message.slice(2);
+                        log.info('quiz', 'all', 'mo', 'options → ' + this.lastMulti);
                         this.transport.toClients(message);
                         break;
                     case "im": //Set geography image
@@ -231,6 +256,7 @@ class QuizState {
                             safeSend(sock, "ok" + teampick);
                             safeSend(sock, 'vi' + this.lastView);
                             safeSend(sock, 'im' + this.lastGeoImage);
+                            safeSend(sock, 'mo' + this.lastMulti);
                         } else {
                             const holder = this.getClientByID(teampick);
                             log.warn(who, 'srv', 'pt', 'claims team ' + teampick + ' — refused, already held by ' + holder.handle);
@@ -270,6 +296,7 @@ class QuizState {
                         case "lo": //Lower, or false
                         case "tt": //Text answer
                         case "wv": //Wavelength slider guess
+                        case "mc": //Multiple choice selection
                         case "ii": { //Map guess
                             //Check that the claimed team is actually the one that the client holds
                             const code = message.slice(0,2);
@@ -305,5 +332,6 @@ module.exports = {
     DEFAULT_NUM_TEAMS,
     DEFAULT_VIEW,
     DEFAULT_GEO_IMAGE,
+    DEFAULT_MULTI,
     ACTIVE_WINDOW_MS
 };

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, QuizWebSocketDelegate {
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, NSTableViewDataSource, NSTableViewDelegate, QuizWebSocketDelegate {
     
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
 	
@@ -57,6 +57,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemScores: NSTabViewItem!
 	@IBOutlet weak var tabitemPointless: NSTabViewItem!
 	@IBOutlet weak var tabitemWavelength: NSTabViewItem!
+	@IBOutlet weak var tabitemMultiChoice: NSTabViewItem!
+	@IBOutlet weak var tabitemDisconnect: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -175,10 +177,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		//We don't currently need these views
-		tabView.removeTabViewItem(tabitemTest)
-		tabView.removeTabViewItem(tabitemTimer)
-		
+		configureSidebar()
+
 		//Default to Idle on load regardless of what we left it on in Interface Builder
 		quizView.setRound(round: RoundType.idle)
 
@@ -349,41 +349,155 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			socketWriteIfConnected("viwavelength")
 			quizView.setRound(round: RoundType.wavelength)
 			resetWavelengthControls()
+		case tabitemMultiChoice:
+			socketWriteIfConnected("vimulti")
+			quizView.setRound(round: RoundType.multichoice)
+			resetMultiChoiceControls()
 		default:
 			break
 		}
 		//Whichever round we have just moved to needs to know who is playing
 		pushTeamParticipation()
+		
+		//Keeps the highlight correct if something other than a click moved us
+		selectSidebarRow(for: tabViewItem)
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
 		quizView.reset()
 		pushTeamParticipation()
 
-		if (tabView.selectedTabViewItem == tabitemGeography) {
+		if (quizView.currentRound == .geography) {
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-		} else if (tabView.selectedTabViewItem == tabitemText) {
+		} else if (quizView.currentRound == .text) {
 			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
-		} else if (tabView.selectedTabViewItem == tabitemNumbers) {
+		} else if (quizView.currentRound == .numbers) {
 			socketWriteIfConnected("vinumbers")
 			quizView.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
-		} else if (tabView.selectedTabViewItem == tabitemtruefalse) {
+		} else if (quizView.currentRound == .trueFalse) {
 			socketWriteIfConnected("ha")
-		} else if (tabView.selectedTabViewItem == tabitemWavelength) {
+		} else if (quizView.currentRound == .wavelength) {
 			socketWriteIfConnected("viwavelength")
 			resetWavelengthControls()
+		} else if (quizView.currentRound == .multichoice) {
+			socketWriteIfConnected("vimulti")
+			resetMultiChoiceControls()
 		}
     }
 	
 	//--------------------------------------------------------------------------------------------------------------------------
+	//MARK: - Sidebar
+	//--------------------------------------------------------------------------------------------------------------------------
+
+	private enum SidebarRow {
+		case group(String)
+		case round(NSTabViewItem, String)
+	}
+
+	private var sidebarRows = [SidebarRow]()
+
+	@IBOutlet weak var sidebarTable: NSTableView!
+
+	private func buildSidebarRows() {
+		sidebarRows = [
+			.group("Show"),
+			.round(tabitemIdle, "🎄 Idle"),
+			.round(tabitemScores, "📋 Scores"),
+			
+			.group("Rounds"),
+			.round(tabitemBuzzers, "🔊 Buzzers"),
+			.round(tabitemMusic, "🎶 Music + Video"),
+			.round(tabitemtruefalse, "✅ True / False"),
+			.round(tabitemMultiChoice, "🎲 Multiple Choice"),
+			.round(tabitemGeography, "🌍 Geography"),
+			.round(tabitemText, "✍️ Text"),
+			.round(tabitemNumbers, "🔢 Numbers"),
+			.round(tabitemWavelength, "🌊 Wavelength"),
+			.round(tabitemPointless, "0️⃣ Pointless"),
+			.round(tabitemTimer, "🕓 Timer"),
+
+			.group("Admin"),
+			.round(tabitemTest, "🧪 Test Screen"),
+			.round(tabitemDisconnect, "❌ Disconnect")
+		]
+	}
+
+	private func configureSidebar() {
+		buildSidebarRows()
+		sidebarTable.style = .sourceList
+		sidebarTable.reloadData()
+		selectSidebarRow(for: tabitemIdle)
+		sidebarTable.scrollRowToVisible(0)
+	}
+
+	/// Moves the sidebar's highlight to whichever row stands for `item`
+	private func selectSidebarRow(for item: NSTabViewItem?) {
+		guard let item = item, let table = sidebarTable else {
+			return
+		}
+		let index = sidebarRows.firstIndex { row in
+			if case .round(let candidate, _) = row {
+				return candidate === item
+			}
+			return false
+		}
+		if let index = index, table.selectedRow != index {
+			table.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+			table.scrollRowToVisible(index)
+		}
+	}
+
+	func numberOfRows(in tableView: NSTableView) -> Int {
+		return sidebarRows.count
+	}
+
+	func tableView(_ tableView: NSTableView, isGroupRow row: Int) -> Bool {
+		if case .group = sidebarRows[row] {
+			return true
+		}
+		return false
+	}
+
+	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+		return !self.tableView(tableView, isGroupRow: row)
+	}
+
+	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+		let title: String
+		let identifier: String
+		switch sidebarRows[row] {
+		case .group(let name):
+			title = name
+			identifier = "SidebarGroupCell"
+		case .round(_, let name):
+			title = name
+			identifier = "SidebarRoundCell"
+		}
+
+		let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(identifier), owner: self) as? NSTableCellView
+		cell?.textField?.stringValue = title
+		return cell
+	}
+
+	func tableViewSelectionDidChange(_ notification: Notification) {
+		guard let table = sidebarTable, table.selectedRow >= 0 else {
+			return
+		}
+		if case .round(let item, _) = sidebarRows[table.selectedRow] {
+			//Selecting the item is all this does. Everything that happens on a round change
+			//still happens in tabView(_:didSelect:)
+			tabView.selectTabViewItem(item)
+		}
+	}
+
 	//MARK: - Websockets
 	//--------------------------------------------------------------------------------------------------------------------------
 	
@@ -462,13 +576,29 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 						}
 					}
 				}
+			case "mc":
+				//A team has picked one of the multiple choice options
+				let details = text.suffix(text.count - 2)
+				let vals = details.components(separatedBy: ",")
+				if vals.count >= 2, let team = Int(vals[0]), let option = Int(vals[1]) {
+					if isTeamEnabled(team - 1) && quizView.multiChoiceScene.counting {
+						quizView.multiChoiceScene.teamGuess(teamid: team - 1, option: option) //make zero indexed
+						if let taken = quizView.multiChoiceScene.teamGuesses[team - 1] {
+							//If the round rejected it we wont light the tile on the client
+							socketWriteIfConnected("ms\(team),\(taken)")
+						}
+						updateMultiChoiceGuesses()
+					}
+				} else {
+					print("Invalid multiple choice answer")
+				}
 			case "tt":
 				
 				//A team has guessed a textual answer. Parse it and route to appropriate scene
 				if (
-					(tabView.selectedTabViewItem == tabitemText && textAllowAnswers.state == .on) ||
-					(tabView.selectedTabViewItem == tabitemNumbers && numbersAllowAnswers.state == .on) ||
-					(tabView.selectedTabViewItem == tabitemPointless && pointlessAllowAnswers.state == .on) ) {
+					(quizView.currentRound == .text && textAllowAnswers.state == .on) ||
+					(quizView.currentRound == .numbers && numbersAllowAnswers.state == .on) ||
+					(quizView.currentRound == .pointless && pointlessAllowAnswers.state == .on) ) {
 					
 					let details = text.suffix(text.count - 2)
 					let vals = details.components(separatedBy: ",")
@@ -477,8 +607,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							let guessText = String(vals[1].prefix(20)) //TODO Max size of 20 is too low?
 							
 							//Now route the logic according to the current round
-							switch tabView.selectedTabViewItem {
-							case tabitemText:
+							switch quizView.currentRound {
+							case .text:
 								quizView.textScene.teamGuess(
 									teamid: team - 1, //make zero indexed
 									guess: guessText,
@@ -493,7 +623,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 									}
 									return nil
 								}.joined(separator: "\n")
-							case tabitemNumbers:
+							case .numbers:
 								let guess = Int(guessText)
 								if guess != nil {
 									quizView.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
@@ -507,7 +637,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 									return nil
 								}.joined(separator: "\n")
 								
-							case tabitemPointless:
+							case .pointless:
 								quizView.pointlessScene.teamGuess(team: team-1, guess: guessText)
 								
 							default:
@@ -771,6 +901,125 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
 	}
 	
+	//MARK: - Multiple choice
+	//--------------------------------------------------------------------------------------------------------------------------
+
+	@IBOutlet weak var multiOptionsStepper: NSStepper!
+	@IBOutlet weak var multiOptionsNumber: NSTextField!
+	@IBOutlet weak var multiStyleToggle: NSButton!
+	@IBOutlet weak var multiSounds: NSButton!
+	@IBOutlet weak var multiStartButton: NSButton!
+	@IBOutlet weak var multiTeamGuesses: NSTextField!
+	@IBOutlet weak var multiTime10: NSButton!
+	@IBOutlet weak var multiTime20: NSButton!
+	@IBOutlet weak var multiTime30: NSButton!
+	@IBOutlet weak var multiAnswer1: NSButton!
+	@IBOutlet weak var multiAnswer2: NSButton!
+	@IBOutlet weak var multiAnswer3: NSButton!
+	@IBOutlet weak var multiAnswer4: NSButton!
+	@IBOutlet weak var multiAnswer5: NSButton!
+	@IBOutlet weak var multiAnswer6: NSButton!
+
+	/// Seconds on the clock, as chosen by the three time buttons.
+	private var multiTimeout = MultiChoiceScene.defaultTimeout
+
+	private var multiAnswerButtons: [NSButton?] {
+		[multiAnswer1, multiAnswer2, multiAnswer3, multiAnswer4, multiAnswer5, multiAnswer6]
+	}
+
+	private var multiStyle: MultiChoiceScene.LabelStyle {
+		(multiStyleToggle?.state ?? .on) == .on ? .letters : .numbers
+	}
+
+	@IBAction func multiOptionsStepperChange(_ sender: Any) {
+		pushMultiChoiceOptions()
+	}
+
+	@IBAction func multiStyleToggled(_ sender: Any) {
+		multiStyleToggle.title = multiStyle == .letters ? "Letters (A B C)" : "Numbers (1 2 3)"
+		pushMultiChoiceOptions()
+	}
+
+	/// The three time buttons carry the time length as their tag
+	@IBAction func multiTimeChange(_ sender: NSButton) {
+		multiTimeout = sender.tag
+		for button in [multiTime10, multiTime20, multiTime30] {
+			button?.state = (button?.tag == multiTimeout) ? .on : .off
+		}
+		pushMultiChoiceOptions()
+	}
+
+	@IBAction func multiStart(_ sender: NSButton) {
+		if quizView.multiChoiceScene.counting {
+			quizView.multiChoiceScene.stop()
+		} else {
+			//The teams' phones still show the last question's selection until they are told
+			//otherwise, and 'mo' is what clears them.
+			socketWriteIfConnected("mo" + quizView.multiChoiceScene.optionsMessage)
+			multiTeamGuesses?.stringValue = ""
+			quizView.multiChoiceScene.start(sounds: multiSounds.state == .on)
+		}
+		updateMultiChoiceStartButton()
+	}
+
+	@IBAction func multiAnswerPressed(_ sender: NSButton) {
+		quizView.multiChoiceScene.showAnswer(option: sender.tag)
+		updateMultiChoiceStartButton()
+		updateMultiChoiceGuesses()
+	}
+
+	private func pushMultiChoiceOptions() {
+		if quizView.multiChoiceScene.counting {
+			print("Multiple choice: ignoring a setup change while the question is running")
+			syncMultiChoiceControls()
+			return
+		}
+
+		let options = Int(multiOptionsStepper?.intValue ?? Int32(MultiChoiceScene.defaultOptions))
+		let payload = quizView.multiChoiceScene.configure(options: options, style: multiStyle, timeout: multiTimeout)
+		socketWriteIfConnected("mo" + payload)
+		multiTeamGuesses?.stringValue = ""
+		syncMultiChoiceControls()
+	}
+
+	/// Puts the controls back in step with whatever the scene actually holds.
+	private func syncMultiChoiceControls() {
+		let scene = quizView.multiChoiceScene
+		multiOptionsStepper?.intValue = Int32(scene.optionCount)
+		multiOptionsNumber?.stringValue = String(scene.optionCount)
+
+		//Only the answers that exist can be the right one
+		for (index, button) in multiAnswerButtons.enumerated() {
+			let option = index + 1
+			button?.title = scene.labelStyle.label(option)
+			button?.isEnabled = option <= scene.optionCount
+		}
+		updateMultiChoiceStartButton()
+	}
+
+	private func updateMultiChoiceStartButton() {
+		multiStartButton?.title = quizView.multiChoiceScene.counting ? "Stop" : "Start"
+	}
+	
+	private func updateMultiChoiceGuesses() {
+		let scene = quizView.multiChoiceScene
+		multiTeamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			guard team < scene.teamGuesses.count, let guess = scene.teamGuesses[team] else {
+				return nil
+			}
+			return "Team \(team + 1): \(scene.labelStyle.label(guess))"
+		}.joined(separator: "\n")
+	}
+
+	private func resetMultiChoiceControls() {
+		multiTimeout = MultiChoiceScene.defaultTimeout
+		for button in [multiTime10, multiTime20, multiTime30] {
+			button?.state = (button?.tag == multiTimeout) ? .on : .off
+		}
+		multiTeamGuesses?.stringValue = ""
+		pushMultiChoiceOptions()
+	}
+
 	//MARK: - Test
 	//--------------------------------------------------------------------------------------------------------------------------
 	

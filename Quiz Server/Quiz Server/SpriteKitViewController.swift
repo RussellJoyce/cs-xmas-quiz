@@ -25,6 +25,7 @@ class SpriteKitViewController: NSViewController {
 	let scoresScene = ScoresScene()
 	let pointlessScene = PointlessScene()
 	let wavelengthScene = WavelengthScene()
+	let multiChoiceScene = MultiChoiceScene()
 
 	var rounds : [RoundType : QuizScene] = [:]
 	var currentRound = RoundType.none
@@ -42,7 +43,7 @@ class SpriteKitViewController: NSViewController {
 			.music : musicScene, .timer : timerScene, .trueFalse : truefalseScene,
 			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
 			.scores : scoresScene, .pointless : pointlessScene,
-			.wavelength : wavelengthScene]
+			.wavelength : wavelengthScene, .multichoice : multiChoiceScene]
 
 		rounds.forEach { $1.setUpScene(size: skView.bounds.size) }
 

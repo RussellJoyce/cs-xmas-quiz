@@ -68,6 +68,7 @@ enum RoundType {
 	case scores
 	case pointless
 	case wavelength
+	case multichoice
 }
 
 

@@ -135,12 +135,12 @@ describe('over real sockets', () => {
         await b.next();
 
         a.send('pt1');
-        assert.deepStrictEqual(await a.nextN(3), ['ok1', 'vibuzzer', 'imstart.jpg']);
+        assert.deepStrictEqual(await a.nextN(4), ['ok1', 'vibuzzer', 'imstart.jpg', 'mo4,A']);
 
         //b is a different client, so it can take a different team rather than
         //inheriting a's.
         b.send('pt2');
-        assert.strictEqual((await b.nextN(3))[0], 'ok2');
+        assert.strictEqual((await b.nextN(4))[0], 'ok2');
 
         a.close();
         b.close();
@@ -152,7 +152,7 @@ describe('over real sockets', () => {
         const c = connect(ports.clientWs, '/?vcid=buzzer');
         await c.next();
         c.send('pt5');
-        await c.nextN(3);
+        await c.nextN(4);
 
         c.send('zz5');
         assert.strictEqual(await quiz.next(), 'zz5');
@@ -167,8 +167,8 @@ describe('over real sockets', () => {
         const a = connect(ports.clientWs, '/?vcid=r1');
         const b = connect(ports.clientWs, '/?vcid=r2');
         await a.next(); await b.next();
-        a.send('pt7'); await a.nextN(3);
-        b.send('pt8'); await b.nextN(3);
+        a.send('pt7'); await a.nextN(4);
+        b.send('pt8'); await b.nextN(4);
 
         quiz.send('on7');
         assert.strictEqual(await a.next(), 'on');
@@ -193,7 +193,7 @@ describe('over real sockets', () => {
         const late = connect(ports.clientWs, '/?vcid=v3');
         assert.strictEqual(await late.next(), 'vipickteam');
         late.send('pt11');
-        assert.deepStrictEqual(await late.nextN(3), ['ok11', 'vinumbers', 'imstart.jpg']);
+        assert.deepStrictEqual(await late.nextN(4), ['ok11', 'vinumbers', 'imstart.jpg', 'mo4,A']);
 
         quiz.close(); a.close(); b.close(); late.close();
         //Put the view back for any later test.
@@ -207,7 +207,7 @@ describe('over real sockets', () => {
         const c = connect(ports.clientWs, '/?vcid=sleepy');
         await c.next();
         c.send('pt12');
-        await c.nextN(3);
+        await c.nextN(4);
 
         //Phone sleeps.
         c.close();
@@ -220,7 +220,7 @@ describe('over real sockets', () => {
         assert.ok(first.startsWith('vi'), 'is put back into the current view');
 
         again.send('re');
-        await again.next();  //the 'im' that follows the view
+        await again.nextN(2);  //the 'im' and 'mo' that follow the view
         assert.strictEqual(await again.next(), 'ok12', 'still team 12');
         again.close();
     });
@@ -231,7 +231,7 @@ describe('over real sockets', () => {
         const c = connect(ports.clientWs, '/?vcid=listed');
         await c.next();
         c.send('pt14');
-        await c.nextN(3);
+        await c.nextN(4);
 
         //An idle client that connects but never picks must not appear.
         const idle = connect(ports.clientWs, '/?vcid=idle');
@@ -319,7 +319,7 @@ describe('over real sockets', () => {
         const c = connect(ports.clientWs, '/?vcid=bystander');
         await c.next();
         c.send('pt13');
-        await c.nextN(3);
+        await c.nextN(4);
 
         await sendMalformedFrame(ports.clientWs, UNMASKED_FRAME);
 
@@ -370,7 +370,7 @@ describe('over TLS', { skip: certsPresent() ? false : 'no certificates in certs/
 
         ws.send('pt1');
         await new Promise(resolve => setTimeout(resolve, 250));
-        assert.deepStrictEqual(got, ['vipickteam', 'ok1', 'vibuzzer', 'imstart.jpg']);
+        assert.deepStrictEqual(got, ['vipickteam', 'ok1', 'vibuzzer', 'imstart.jpg', 'mo4,A']);
         ws.close();
     });
 
@@ -397,7 +397,7 @@ describe('over TLS', { skip: certsPresent() ? false : 'no certificates in certs/
         await new Promise((resolve, reject) => { impostor.on('open', resolve); impostor.on('error', reject); });
         await new Promise(resolve => setTimeout(resolve, 250));
 
-        assert.deepStrictEqual(got, ['vibuzzer', 'imstart.jpg']);
+        assert.deepStrictEqual(got, ['vibuzzer', 'imstart.jpg', 'mo4,A']);
         impostor.close();
     });
 });

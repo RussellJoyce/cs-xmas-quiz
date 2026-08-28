@@ -27,7 +27,7 @@ class TrueFalseScene: QuizScene {
 	fileprivate var timer: Timer?
 	fileprivate var mode: Bool = true
 	fileprivate var tickSounds : Bool = true
-	var teamBoxes = [TrueFalseTeamNode]()
+	var teamBoxes = [TeamGuessNode]()
 	
 	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
 	let tickEnd = SKAction.playSoundFileNamed("timerend.wav", waitForCompletion: false)
@@ -51,7 +51,7 @@ class TrueFalseScene: QuizScene {
 		
 		let layout = teamGridLayout()
 		for team in 0..<Settings.shared.numTeams {
-			let box = TrueFalseTeamNode(team: team, width: 600, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
+			let box = TeamGuessNode(team: team, width: 600, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)
@@ -271,79 +271,3 @@ class TrueFalseScene: QuizScene {
 		}
 	}
 }
-
-class TrueFalseTeamNode: SKNode {
-	
-	var width : Int = 0
-	var height : Int = 0
-	var teamNo : Int
-	var fontsize : CGFloat
-	var bgBox : SKShapeNode
-	
-	static let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
-	static let bgColourTrue = NSColor(calibratedHue: 0.3, saturation: 0.4, brightness: 0.9, alpha: 0.9)
-	static let bgColourFalse = NSColor(calibratedHue: 0, saturation: 0.4, brightness: 0.9, alpha: 0.9)
-	static let bgColourDisabled = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.4, alpha: 0.9)
-	static let bgColourGuessed = NSColor(calibratedHue: 0.5, saturation: 0.5, brightness: 0.9, alpha: 0.9)
-	static let textColStd = NSColor.black
-	static let textColOut = NSColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1)
-	
-	var guessLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
-	
-	func setEnabled(_ e : Bool) {
-		if e {
-			bgBox.fillColor = TrueFalseTeamNode.bgColour
-			guessLabel.fontColor = TrueFalseTeamNode.textColStd
-		} else {
-			bgBox.fillColor = TrueFalseTeamNode.bgColourDisabled
-			guessLabel.fontColor = TrueFalseTeamNode.textColOut
-		}
-	}
-	
-	func setGuessColour(_ g : Bool) {
-		bgBox.fillColor = g ? TrueFalseTeamNode.bgColourTrue : TrueFalseTeamNode.bgColourFalse
-	}
-	
-	func setIfGuessed(_ g : Bool) {
-		bgBox.fillColor = g ? TrueFalseTeamNode.bgColourGuessed : TrueFalseTeamNode.bgColour
-	}
-	
-	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat) {
-		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
-		bgBox.zPosition = 5
-		bgBox.position = CGPoint.zero
-		bgBox.fillColor = TrueFalseTeamNode.bgColour
-		bgBox.lineWidth = 2.0
-		
-		guessLabel.text = "aaa"
-		guessLabel.fontSize = fontsize
-		guessLabel.fontColor = NSColor.black
-		guessLabel.horizontalAlignmentMode = .center
-		guessLabel.verticalAlignmentMode = .center
-		guessLabel.zPosition = 6
-		guessLabel.position = CGPoint(x: 0, y: 0)
-		
-		self.width = width
-		self.height = height
-		self.teamNo = team
-		self.fontsize = fontsize
-		
-		super.init()
-		
-		self.position = position
-		self.addChild(bgBox)
-		self.addChild(guessLabel)
-	}
-	
-	func pulseBox() {
-		let pulseSequence = SKAction.sequence([SKAction.scale(to: 1.1, duration: 0.1), SKAction.scale(to: 1.0, duration: 0.5)])
-		pulseSequence.timingMode = .easeInEaseOut
-		self.run(pulseSequence)
-	}
-	
-	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-}
-

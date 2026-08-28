@@ -168,6 +168,7 @@ function VirtualClient(index) {
     this.view = 'pickteam';
     this.buzzerOn = false;
     this.hlLabels = 'truefalse'; // 'truefalse' or 'higherlower'
+    this.optionCount = 4;        // Multiple choice tiles, as last set by 'mo'
     this.pingInterval = null;
 
     // Create DOM
@@ -193,6 +194,11 @@ function VirtualClient(index) {
             '<input type="text" id="geo-' + index + '" placeholder="x,y (0-100)">' +
             '<button class="btn-sm-teal" onclick="clients[' + index + '].sendGeo()" disabled id="geosend-' + index + '">Send</button>' +
             '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomGeo()" disabled id="georand-' + index + '">Rnd</button>' +
+        '</div>' +
+        '<div class="input-row">' +
+            '<input type="text" id="choice-' + index + '" placeholder="choice (1-6)">' +
+            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendChoice()" disabled id="choicesend-' + index + '">Send</button>' +
+            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomChoice()" disabled id="choicerand-' + index + '">Rnd</button>' +
         '</div>' +
         '<div class="input-row">' +
             '<input type="text" id="wave-' + index + '" placeholder="wavelength (1-99)">' +
@@ -253,6 +259,8 @@ VirtualClient.prototype.updateStatus = function() {
     document.getElementById('txtsend-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('geosend-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('georand-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('choicesend-' + this.index).disabled = !(connected && hasTeam);
+    document.getElementById('choicerand-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('wavesend-' + this.index).disabled = !(connected && hasTeam);
     document.getElementById('waverand-' + this.index).disabled = !(connected && hasTeam);
 
@@ -409,6 +417,18 @@ VirtualClient.prototype.handleMessage = function(msg) {
         case 'im':
             // Geo image update - just log it
             break;
+        case 'mo':
+            // The multiple choice grid. Remembered so that a random choice picks an
+            // option that exists.
+            var count = parseInt(payload.split(',')[0], 10);
+            if (count >= 2 && count <= 6) {
+                this.optionCount = count;
+            }
+            break;
+        case 'ms':
+            // Our selection was accepted. The harness has no tiles to light up, and the
+            // echo is already in the log above, so there is nothing to do with it here.
+            break;
         case 'hh':
             document.getElementById('btn-a-' + this.index).style.outline = '2px solid #2ecc71';
             document.getElementById('btn-b-' + this.index).style.outline = 'none';
@@ -489,6 +509,27 @@ VirtualClient.prototype.sendRandomGeo = function() {
     this.sendGeoAt(Math.floor(Math.random() * 100), Math.floor(Math.random() * 100));
 };
 
+VirtualClient.prototype.sendChoiceOf = function(option) {
+    if (this.team) {
+        option = Math.max(1, Math.min(6, option));
+        document.getElementById('choice-' + this.index).value = option;
+        this.send('mc' + this.team + ',' + option);
+    }
+};
+
+VirtualClient.prototype.sendChoice = function() {
+    if (this.team) {
+        var option = parseInt(document.getElementById('choice-' + this.index).value.trim(), 10);
+        if (!isNaN(option)) {
+            this.sendChoiceOf(option);
+        }
+    }
+};
+
+VirtualClient.prototype.sendRandomChoice = function() {
+    this.sendChoiceOf(1 + Math.floor(Math.random() * this.optionCount));
+};
+
 VirtualClient.prototype.sendWaveAt = function(value) {
     if (this.team) {
         value = Math.max(1, Math.min(99, value));
@@ -551,6 +592,14 @@ VirtualClient.prototype.runAction = function(verb, args) {
                 this.sendGeoAt(parseInt(args[0], 10), parseInt(args[1], 10));
             }
             return 'geo';
+        case 'choice':
+            if (!this.team) return null;
+            if (args[0] === 'random') {
+                this.sendRandomChoice();
+            } else {
+                this.sendChoiceOf(parseInt(args[0], 10));
+            }
+            return 'choice';
         case 'wave':
             if (!this.team) return null;
             if (args[0] === 'random') {
@@ -630,7 +679,8 @@ var ACTIONS = {
     text:       { min: 1, max: Infinity },
     raw:        { min: 1, max: Infinity },
     geo:        { min: 1, max: 2 },
-    wave:       { min: 1, max: 1 }
+    wave:       { min: 1, max: 1 },
+    choice:     { min: 1, max: 1 }
 };
 
 // Names that read better in a pattern than the two-letter protocol codes do.
@@ -714,6 +764,10 @@ function parsePatterns(text) {
         }
         if (verb === 'wave' && args[0] !== 'random' && !/^[0-9]+$/.test(args[0])) {
             bad(line, 'wave takes "random" or one number 1-99');
+            continue;
+        }
+        if (verb === 'choice' && args[0] !== 'random' && !/^[1-6]$/.test(args[0])) {
+            bad(line, 'choice takes "random" or one number 1-6');
             continue;
         }
 

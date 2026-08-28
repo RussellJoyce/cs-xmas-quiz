@@ -21,6 +21,7 @@ const CODES = {
     ha: 'clear all higher/lower',
     h1: 'label higher/lower', h2: 'label true/false',
     vi: 'view',           im: 'geography image',
+    mo: 'multiple choice options', ms: 'multiple choice accepted',
     ok: 'team confirmed', px: 'team refused',
     di: 'release team',   pb: 'pong',
 
@@ -34,7 +35,7 @@ const CODES = {
     pt: 'pick team',      re: 'resume',        pi: 'ping',
     zz: 'buzz',           hi: 'higher',        lo: 'lower',
     tt: 'text answer',    ii: 'map guess',
-    wv: 'wavelength guess'
+    wv: 'wavelength guess', mc: 'multiple choice'
 };
 
 //How wide each column is. Names longer than this push the line out rather than being

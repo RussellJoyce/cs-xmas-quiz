@@ -9,8 +9,10 @@
 import Cocoa
 import SpriteKit
 
-/// Geometry for the two-column grid of team boxes used by the guessing rounds.
+/// Geometry for a grid of team boxes, one box per team.
 struct TeamGridLayout {
+	/// Width of each box.
+	let boxWidth: Int
 	/// Height of each box, reduced when there are enough teams to need it.
 	let boxHeight: Int
 	/// Matching label size: text shrinks along with the boxes rather than against them.
@@ -146,7 +148,61 @@ class QuizScene: SKScene {
 			))
 		}
 
-		return TeamGridLayout(boxHeight: boxHeight, fontSize: boxHeight >= 150 ? 60 : 40, positions: positions)
+		return TeamGridLayout(boxWidth: 600, boxHeight: boxHeight, fontSize: boxHeight >= 150 ? 60 : 40, positions: positions)
+	}
+
+
+	/// Works out where the team boxes go for the rounds that give each team a small box
+	/// rather than a wide one: a centred grid of near-square cells, filled left to right
+	/// and top to bottom, sized to whatever space the caller has left over.
+	///
+	/// Unlike `teamGridLayout`, the number of columns follows the number of teams, so
+	/// fourteen teams get 5x3 rather than a pair of long columns.
+	/// - Parameters:
+	///   - top: y of the top edge of the grid.
+	///   - bottom: y of the bottom edge, leaving room for whatever sits below it.
+	///   - sideMargin: space kept clear at each side of the scene.
+	func teamSquareGridLayout(top: CGFloat, bottom: CGFloat, sideMargin: CGFloat = 120) -> TeamGridLayout {
+		let numTeams = max(1, Settings.shared.numTeams)
+
+		//Enough columns to keep the cells from growing long and thin, but few enough that
+		//a small quiz still gets big boxes.
+		let columns: Int
+		switch numTeams {
+		case 1...4:   columns = 2
+		case 5...6:   columns = 3
+		case 7...10:  columns = 4
+		default:      columns = 5
+		}
+		let rows = Int((Double(numTeams) / Double(columns)).rounded(.up))
+
+		let cellWidth = (self.size.width - (2 * sideMargin)) / CGFloat(columns)
+		let cellHeight = (top - bottom) / CGFloat(rows)
+		//The gap between boxes is taken out of the cell, so the grid as a whole still
+		//fills the space it was given.
+		let boxWidth = Int(cellWidth * 0.9)
+		let boxHeight = Int(cellHeight * 0.88)
+
+		var positions = [CGPoint]()
+		for team in 0..<numTeams {
+			let row = team / columns
+			let column = team % columns
+			//A short last row is centred under the ones above rather than left-aligned.
+			let inThisRow = min(columns, numTeams - (row * columns))
+			let rowWidth = CGFloat(inThisRow) * cellWidth
+			let rowLeft = (self.size.width - rowWidth) / 2
+			positions.append(CGPoint(
+				x: rowLeft + (CGFloat(column) + 0.5) * cellWidth,
+				y: top - (CGFloat(row) + 0.5) * cellHeight
+			))
+		}
+
+		//Roughly a third of the box height reads well for a couple of characters, and is
+		//held back from growing silly when there are only a few teams.
+		let fontSize = min(CGFloat(boxHeight) * 0.42, 110)
+
+		return TeamGridLayout(boxWidth: boxWidth, boxHeight: boxHeight,
+							  fontSize: fontSize, positions: positions)
 	}
 
 
@@ -154,12 +210,9 @@ class QuizScene: SKScene {
 	/// already falling across the screen the moment the round appears.
 	///
 	/// Scenes re-create these on every `didMove(to:)`, so pass the previous emitter as
-	/// `replacing` and assign the result back to the same property — otherwise a new
-	/// emitter is added on each visit and the old ones are never torn down:
+	/// `replacing` and assign the result back to the same property
 	///
 	///     snow = addSnow(replacing: snow, emitterNamed: "Snow", zPosition: 20)
-	///
-	/// - Returns: the new emitter, or nil if the .sks file could not be loaded.
 	@discardableResult
 	func addSnow(replacing existing: SKEmitterNode?,
 				 emitterNamed name: String,

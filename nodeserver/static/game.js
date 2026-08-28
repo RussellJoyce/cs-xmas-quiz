@@ -10,6 +10,7 @@ var lower = document.getElementById("lower");
 var wavetrack = document.getElementById("wavetrack");
 var wavehandle = document.getElementById("wavehandle");
 var wavevalue = document.getElementById("wavevalue");
+var multigrid = document.getElementById("multigrid");
 
 
 var ws;
@@ -112,6 +113,15 @@ function connect() {
                 console.log("Setting geo image: " + event.data.slice(2));
                 toggleState(true);
                 geoimg.style.backgroundImage = "url(geography/" + event.data.slice(2) + ")";
+                break;
+            case "mo":
+                //Build the multiple choice grid: "mo<options>,<style>"
+                console.log("Setting multiple choice options: " + event.data.slice(2));
+                setMultiOptions(event.data.slice(2));
+                break;
+            case "ms":
+                //Our selection was accepted, so light up that tile
+                setMultiSelection(parseInt(event.data.slice(2), 10));
                 break;
             case "hh":
                 //Add class .higherLowerSelected to the higher button
@@ -387,6 +397,81 @@ wavetrack.addEventListener('touchcancel', waveEnd);
 wavetrack.addEventListener('mousedown', waveStart);
 document.addEventListener('mousemove', waveMove);
 document.addEventListener('mouseup', waveEnd);
+
+
+/*
+Multiple choice: a grid of 2 to 6 tiles, labelled either A, B, C... or 1, 2, 3...
+The quiz software decides how many there are and sends "mo<options>,<style>" whenever it
+changes, which is also how a selection gets cleared for a new question.
+*/
+var MULTI_MIN = 2;
+var MULTI_MAX = 6;
+
+var multiCount = 0;
+var multiButtons = [];
+
+function multiColumns(count) {
+    return count <= 3 ? count : 2;
+}
+
+function multiFontSize(columns, rows) {
+    return "min(" + (80 / rows * 0.55).toFixed(2) + "vh, " + (80 / columns * 0.70).toFixed(2) + "vw)";
+}
+
+function multiLabel(index, style) {
+    //index is 1-based, as it is on the wire
+    return (style === "A") ? String.fromCharCode(64 + index) : String(index);
+}
+
+//Takes the payload of an "mo" message: "<options>,<style>"
+function setMultiOptions(payload) {
+    var parts = payload.split(",");
+    var count = parseInt(parts[0], 10);
+    var style = (parts[1] === "A") ? "A" : "1";
+
+    if(!(count >= MULTI_MIN && count <= MULTI_MAX)) {
+        console.log("Ignoring a multiple choice grid of " + parts[0] + " options");
+        return;
+    }
+
+    var columns = multiColumns(count);
+    var rows = Math.ceil(count / columns);
+    multigrid.style.gridTemplateColumns = "repeat(" + columns + ", 1fr)";
+    multigrid.style.gridTemplateRows = "repeat(" + rows + ", 1fr)";
+    multigrid.style.fontSize = multiFontSize(columns, rows);
+
+    multigrid.innerHTML = "";
+    multiButtons = [];
+    multiCount = count;
+
+    for(var i = 1; i <= count; i++) {
+        var tile = document.createElement("div");
+        tile.className = "multiButton buttonOn";
+        tile.id = "multibutton" + i;
+        tile.innerHTML = multiLabel(i, style);
+        tile.addEventListener(eventtouse, multiPressHandler(i));
+        multigrid.appendChild(tile);
+        multiButtons.push(tile);
+    }
+}
+
+function multiPressHandler(option) {
+    return function() {
+        if(myid > 0 && myid <= 99) {
+            ws.send("mc" + myid + "," + option);
+        }
+    };
+}
+
+function setMultiSelection(option) {
+    for(var i = 0; i < multiButtons.length; i++) {
+        if(i + 1 === option) {
+            multiButtons[i].classList.add("multiSelected");
+        } else {
+            multiButtons[i].classList.remove("multiSelected");
+        }
+    }
+}
 
 
 //Attach a hander to each team pick handler
