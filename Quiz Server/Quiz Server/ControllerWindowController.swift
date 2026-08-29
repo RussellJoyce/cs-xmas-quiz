@@ -212,12 +212,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func pressedNumber(_ sender: NSButton) {
         // Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
 		if virtualBuzzersBtn.state == .on {
-            if (sender.state == NSControl.StateValue.on) {
-				quizView.buzzerPressed(team: sender.tag, type: .test, options: buzzerOptions)
-				sender.state = NSControl.StateValue.off
-            }
+			//If we were disabled (which is not actually .disabled because then we couldn't press it)
+			if buzzersEnabled[sender.tag] == false {
+				//Leave it disabled
+				sender.state = .on
+			} else {
+				//Otherwise fire a virtual buzzer press
+				if (sender.state == NSControl.StateValue.on) {
+					quizView.buzzerPressed(team: sender.tag, type: .test, options: buzzerOptions)
+					sender.state = NSControl.StateValue.off
+				}
+			}
         }
         else {
+			//Enabling or disabling the client
             if (sender.state == NSControl.StateValue.on) {
                 buzzersEnabled[sender.tag] = false
 				socketWriteIfConnected("of" + String(sender.tag + 1))
