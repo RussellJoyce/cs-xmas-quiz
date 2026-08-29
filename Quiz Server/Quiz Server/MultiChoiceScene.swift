@@ -100,7 +100,9 @@ class MultiChoiceScene: QuizScene {
 
 
 	override func buildScene() {
-		addBackground(imageNamed: "blackflakes")
+		self.backgroundColor = .black
+		addBokehBackground(replacing: nil, textureName: "flake", zPosition: 1)
+		addBokehBackground(replacing: nil, textureName: "spark", zPosition: 1)
 
 		//The track the bar drains along, so that the time already gone is still visible.
 		barTrack = SKShapeNode(rect: CGRect(x: MultiChoiceScene.barMargin, y: MultiChoiceScene.barBottom, width: barWidth, height: MultiChoiceScene.barHeight),

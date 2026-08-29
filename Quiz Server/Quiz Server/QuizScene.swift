@@ -232,4 +232,39 @@ class QuizScene: SKScene {
 		self.addChild(snow)
 		return snow
 	}
+	
+	
+	@discardableResult
+	func addBokehBackground(replacing existing: SKEmitterNode?,
+							textureName: String,
+							zPosition: CGFloat,
+							preSimulate: TimeInterval = 8) -> SKEmitterNode?
+	{
+		existing?.removeFromParent()
+		
+		let bok = SKEmitterNode()
+		bok.particleTexture = SKTexture(imageNamed: textureName)
+		bok.position = self.centrePoint
+		bok.zPosition = zPosition
+		bok.particlePositionRange = CGVector(dx: self.size.width, dy: self.size.height)
+		bok.particleBirthRate = 20
+		bok.particleLifetime = 10
+		bok.particleLifetimeRange = 0
+		bok.particleScale = 1.5
+		bok.particleScaleRange = 2
+		bok.particleScaleSpeed = 0.03
+		bok.particleRotationRange = 2 * .pi
+		bok.particleSpeed = 0
+		bok.particleSpeedRange = 10
+		bok.emissionAngleRange = 2 * .pi
+		
+		let fade = SKKeyframeSequence(keyframeValues: [0.0, 0.3, 0.0], times: [0.0, 0.5, 1.0])
+		fade.interpolationMode = .spline
+		bok.particleAlphaSequence = fade
+		
+		bok.advanceSimulationTime(preSimulate)
+		self.addChild(bok)
+		return bok
+	}
 }
+
