@@ -69,7 +69,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
-	let quizView = SpriteKitViewController(nibName: "SpriteKitViewController", bundle: nil)
+	let quizDisplay = SpriteKitViewController()
 	var quizWindow: NSWindow?
 	
 	
@@ -77,17 +77,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         super.windowDidLoad()
 
 		//Connect any output UI elements
-		quizView.scoresScene.output = scoresOutput
+		quizDisplay.scoresScene.output = scoresOutput
 
 		if let scrollView = pointlessQuestion, let textView = scrollView.documentView as? NSTextView {
-			quizView.pointlessScene.textQuestion = textView
+			quizDisplay.pointlessScene.textQuestion = textView
 		} else {
 			print("Warning: Could not set PointlessScene's textQuestion (not found or not NSTextView)")
 		}
 		
-		quizView.pointlessScene.answerTable = pointlessTable
-		quizView.pointlessScene.descending = pointlessDescending
-		quizView.musicScene.useLEDs = musicUseLEDs
+		quizDisplay.pointlessScene.answerTable = pointlessTable
+		quizDisplay.pointlessScene.descending = pointlessDescending
+		quizDisplay.musicScene.useLEDs = musicUseLEDs
 		
 		//Connect to Node server
 		print("Connect to Node server...")
@@ -109,7 +109,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		if quizWindow == nil {
-			quizWindow = NSWindow(contentViewController: quizView)
+			quizWindow = NSWindow(contentViewController: quizDisplay)
 			quizWindow?.title = "Quiz Main Display"
 			quizWindow?.styleMask = [.titled, .resizable, .closable]
 			quizWindow?.makeKeyAndOrderFront(self)
@@ -117,15 +117,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		if !Settings.shared.windowedMode, let quizScreen = Settings.shared.quizScreen {
 			//Old exclusive fullscreen method
-			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.width,
+			quizDisplay.view.addConstraint(NSLayoutConstraint(item: quizDisplay.view, attribute: NSLayoutConstraint.Attribute.width,
 								   relatedBy: NSLayoutConstraint.Relation.equal,toItem: nil,
 								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 								   multiplier: 1, constant: quizScreen.frame.width))
-			quizView.view.addConstraint(NSLayoutConstraint(item: quizView.view, attribute: NSLayoutConstraint.Attribute.height,
+			quizDisplay.view.addConstraint(NSLayoutConstraint(item: quizDisplay.view, attribute: NSLayoutConstraint.Attribute.height,
 								   relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
 								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
 								   multiplier: 1, constant: quizScreen.frame.height))
-			quizView.view.enterFullScreenMode(quizScreen, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
+			quizDisplay.view.enterFullScreenMode(quizScreen, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
         }
 		
 		socketWriteIfConnected("vibuzzer")
@@ -180,7 +180,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		configureSidebar()
 
 		//Default to Idle on load regardless of what we left it on in Interface Builder
-		quizView.setRound(round: RoundType.idle)
+		quizDisplay.setRound(round: RoundType.idle)
 
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
@@ -219,7 +219,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			} else {
 				//Otherwise fire a virtual buzzer press
 				if (sender.state == NSControl.StateValue.on) {
-					quizView.buzzerPressed(team: sender.tag, type: .test, options: buzzerOptions)
+					quizDisplay.buzzerPressed(team: sender.tag, type: .test, options: buzzerOptions)
 					sender.state = NSControl.StateValue.off
 				}
 			}
@@ -275,7 +275,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	/// Tells the live round who is playing. Called whenever the enable buttons change and whenever a round starts
 	private func pushTeamParticipation() {
-		quizView.setParticipating(enabledTeams)
+		quizDisplay.setParticipating(enabledTeams)
 	}
 
 	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
@@ -314,52 +314,52 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		switch(tabViewItem) {
 		case tabitemIdle:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.idle)
+			quizDisplay.setRound(round: RoundType.idle)
 		case tabitemTest:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.test)
+			quizDisplay.setRound(round: RoundType.test)
 		case tabitemBuzzers:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.buzzers)
+			quizDisplay.setRound(round: RoundType.buzzers)
         case tabitemMusic:
             socketWriteIfConnected("vibuzzer")
-            quizView.setRound(round: RoundType.music)
+            quizDisplay.setRound(round: RoundType.music)
 		case tabitemtruefalse:
 			socketWriteIfConnected("vihigherlower")
-			quizView.setRound(round: RoundType.trueFalse)
+			quizDisplay.setRound(round: RoundType.trueFalse)
 		case tabitemTimer:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.timer)
+			quizDisplay.setRound(round: RoundType.timer)
 		case tabitemGeography:
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-			quizView.setRound(round: RoundType.geography)
+			quizDisplay.setRound(round: RoundType.geography)
 		case tabitemNumbers:
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers)
+			quizDisplay.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
 		case tabitemText:
 			socketWriteIfConnected("vitext")
-			quizView.setRound(round: RoundType.text)
+			quizDisplay.setRound(round: RoundType.text)
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
 		case tabitemScores:
 			socketWriteIfConnected("vibuzzer")
-			quizView.setRound(round: RoundType.scores)
+			quizDisplay.setRound(round: RoundType.scores)
 		case tabitemPointless:
 			socketWriteIfConnected("vitext")
-			quizView.setRound(round: RoundType.pointless)
+			quizDisplay.setRound(round: RoundType.pointless)
 		case tabitemWavelength:
 			socketWriteIfConnected("viwavelength")
-			quizView.setRound(round: RoundType.wavelength)
+			quizDisplay.setRound(round: RoundType.wavelength)
 			resetWavelengthControls()
 		case tabitemMultiChoice:
 			socketWriteIfConnected("vimulti")
-			quizView.setRound(round: RoundType.multichoice)
+			quizDisplay.setRound(round: RoundType.multichoice)
 			resetMultiChoiceControls()
 		default:
 			break
@@ -372,30 +372,30 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
-		quizView.reset()
+		quizDisplay.reset()
 		pushTeamParticipation()
 
-		if (quizView.currentRound == .geography) {
+		if (quizDisplay.currentRound == .geography) {
 			socketWriteIfConnected("vigeo")
 			socketWriteIfConnected("imstart.jpg")
-		} else if (quizView.currentRound == .text) {
+		} else if (quizDisplay.currentRound == .text) {
 			socketWriteIfConnected("vitext")
 			textStepper.intValue = 1
 			textQuestionNumber.stringValue = "1"
 			textTeamGuesses.stringValue = ""
 			textAllowAnswers.state = .on
-		} else if (quizView.currentRound == .numbers) {
+		} else if (quizDisplay.currentRound == .numbers) {
 			socketWriteIfConnected("vinumbers")
-			quizView.setRound(round: RoundType.numbers)
+			quizDisplay.setRound(round: RoundType.numbers)
 			numbersActualAnswer.intValue = 0
 			numbersAllowAnswers.state = .on
 			numbersTeamGuesses.stringValue = ""
-		} else if (quizView.currentRound == .trueFalse) {
+		} else if (quizDisplay.currentRound == .trueFalse) {
 			socketWriteIfConnected("ha")
-		} else if (quizView.currentRound == .wavelength) {
+		} else if (quizDisplay.currentRound == .wavelength) {
 			socketWriteIfConnected("viwavelength")
 			resetWavelengthControls()
-		} else if (quizView.currentRound == .multichoice) {
+		} else if (quizDisplay.currentRound == .multichoice) {
 			socketWriteIfConnected("vimulti")
 			resetMultiChoiceControls()
 		}
@@ -525,7 +525,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if isTeamEnabled(team) {
-						quizView.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
+						quizDisplay.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
 					}
 				}
 			case "lr":
@@ -545,7 +545,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
 					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-						quizView.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
+						quizDisplay.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
 					}
 				} else {
 					print("Invalid Geography guess")
@@ -555,7 +555,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let details = text.suffix(text.count - 2)
 				let vals = details.components(separatedBy: ",")
 				if vals.count >= 2, let team = Int(vals[0]), let value = Int(vals[1]) {
-					quizView.wavelengthScene.teamGuess(team: team - 1, value: value) //make zero indexed
+					quizDisplay.wavelengthScene.teamGuess(team: team - 1, value: value) //make zero indexed
 					updateWavelengthGuesses()
 				} else {
 					print("Invalid Wavelength guess")
@@ -565,9 +565,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if isTeamEnabled(team) {
-						quizView.truefalseScene.teamGuess(teamid: team, guess: true)
+						quizDisplay.truefalseScene.teamGuess(teamid: team, guess: true)
 						
-						if quizView.truefalseScene.counting {
+						if quizDisplay.truefalseScene.counting {
 							socketWriteIfConnected("hh" + String(team+1))
 						}
 					}
@@ -577,9 +577,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
 					let team = idx - 1 // Make zero-indexed
 					if isTeamEnabled(team) {
-						quizView.truefalseScene.teamGuess(teamid: team, guess: false)
+						quizDisplay.truefalseScene.teamGuess(teamid: team, guess: false)
 						
-						if quizView.truefalseScene.counting {
+						if quizDisplay.truefalseScene.counting {
 							socketWriteIfConnected("hl" + String(team+1))
 						}
 					}
@@ -589,9 +589,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let details = text.suffix(text.count - 2)
 				let vals = details.components(separatedBy: ",")
 				if vals.count >= 2, let team = Int(vals[0]), let option = Int(vals[1]) {
-					if isTeamEnabled(team - 1) && quizView.multiChoiceScene.counting {
-						quizView.multiChoiceScene.teamGuess(teamid: team - 1, option: option) //make zero indexed
-						if let taken = quizView.multiChoiceScene.teamGuesses[team - 1] {
+					if isTeamEnabled(team - 1) && quizDisplay.multiChoiceScene.counting {
+						quizDisplay.multiChoiceScene.teamGuess(teamid: team - 1, option: option) //make zero indexed
+						if let taken = quizDisplay.multiChoiceScene.teamGuesses[team - 1] {
 							//If the round rejected it we wont light the tile on the client
 							socketWriteIfConnected("ms\(team),\(taken)")
 						}
@@ -604,9 +604,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				
 				//A team has guessed a textual answer. Parse it and route to appropriate scene
 				if (
-					(quizView.currentRound == .text && textAllowAnswers.state == .on) ||
-					(quizView.currentRound == .numbers && numbersAllowAnswers.state == .on) ||
-					(quizView.currentRound == .pointless && pointlessAllowAnswers.state == .on) ) {
+					(quizDisplay.currentRound == .text && textAllowAnswers.state == .on) ||
+					(quizDisplay.currentRound == .numbers && numbersAllowAnswers.state == .on) ||
+					(quizDisplay.currentRound == .pointless && pointlessAllowAnswers.state == .on) ) {
 					
 					let details = text.suffix(text.count - 2)
 					let vals = details.components(separatedBy: ",")
@@ -615,9 +615,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							let guessText = String(vals[1].prefix(20)) //TODO Max size of 20 is too low?
 							
 							//Now route the logic according to the current round
-							switch quizView.currentRound {
+							switch quizDisplay.currentRound {
 							case .text:
-								quizView.textScene.teamGuess(
+								quizDisplay.textScene.teamGuess(
 									teamid: team - 1, //make zero indexed
 									guess: guessText,
 									roundid: Int(textQuestionNumber.intValue),
@@ -626,7 +626,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 								
 								// Update the guesses in the controller window
 								textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-									if let tg = quizView.textScene.teamGuesses[team] {
+									if let tg = quizDisplay.textScene.teamGuesses[team] {
 										return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
 									}
 									return nil
@@ -634,19 +634,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 							case .numbers:
 								let guess = Int(guessText)
 								if guess != nil {
-									quizView.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
+									quizDisplay.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
 								}
 								
 								// Update the guesses in the controller window
 								numbersTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-									if let tg = quizView.numbersScene.teamGuesses[team] {
+									if let tg = quizDisplay.numbersScene.teamGuesses[team] {
 										return "Team \(team + 1): \(tg)"
 									}
 									return nil
 								}.joined(separator: "\n")
 								
 							case .pointless:
-								quizView.pointlessScene.teamGuess(team: team-1, guess: guessText)
+								quizDisplay.pointlessScene.teamGuess(team: team-1, guess: guessText)
 								
 							default:
 								break
@@ -695,17 +695,17 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var buzzerTimerTime: NSTextField!
 
 	@IBAction func buzzersNextTeam(_ sender: AnyObject) {
-		quizView.buzzerScene.nextTeam()
+		quizDisplay.buzzerScene.nextTeam()
 	}
 	
 	@IBAction func startBuzzerTimer(_ sender: Any) {
 		if let secs = Int(buzzerTimerTime.stringValue) {
-			quizView.buzzerScene.startTimer(secs)
+			quizDisplay.buzzerScene.startTimer(secs)
 		}
 	}
 	
 	@IBAction func stopBuzzerTimer(_ sender: Any) {
-		quizView.buzzerScene.stopTimer()
+		quizDisplay.buzzerScene.stopTimer()
 	}
 	
 	
@@ -729,26 +729,26 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var musicUseLEDs: NSButton!
 	
 	@IBAction func musicNextTeam(_ sender: AnyObject) {
-		quizView.musicScene.nextTeam()
+		quizDisplay.musicScene.nextTeam()
 	}
 	
 	@IBAction func musicPlay(_ sender: AnyObject) {
-		quizView.musicScene.resumeMusic()
+		quizDisplay.musicScene.resumeMusic()
 	}
 	
 	@IBAction func musicPause(_ sender: AnyObject) {
-		quizView.musicScene.pauseMusic()
+		quizDisplay.musicScene.pauseMusic()
 	}
 	
 	@IBAction func musicStop(_ sender: AnyObject) {
-		quizView.musicScene.stopMusic()
+		quizDisplay.musicScene.stopMusic()
 	}
 
 	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
 		if Settings.shared.musicPath != "" {
 			if let fileName = sender.selectedItem?.title {
 				let path =  Settings.shared.musicPath + "/" + fileName
-				quizView.musicScene.initMusic(file: path)
+				quizDisplay.musicScene.initMusic(file: path)
 			}
 		}
 		else {
@@ -757,14 +757,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func playVideo(_ sender: Any) {
-		quizView.musicScene.resumeVideo()
+		quizDisplay.musicScene.resumeVideo()
 	}
 	
 	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
 		if Settings.shared.musicPath != "" {
 			if let fileName = sender.selectedItem?.title {
 				let path = Settings.shared.musicPath + "/" + fileName
-				quizView.musicScene.prepareVideo(file: path)
+				quizDisplay.musicScene.prepareVideo(file: path)
 			}
 			else {
 				print("Error choosing video file")
@@ -779,27 +779,27 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var timerShowCounter: NSButton!
 	
 	@IBAction func startTimer(_ sender: AnyObject) {
-		quizView.timerScene.startTimer(music: false)
+		quizDisplay.timerScene.startTimer(music: false)
 	}
 	
 	@IBAction func stopTimer(_ sender: AnyObject) {
-		quizView.timerScene.stopTimer()
+		quizDisplay.timerScene.stopTimer()
 	}
 	
 	@IBAction func timerIncrement(_ sender: AnyObject) {
-		quizView.timerScene.timerIncrement()
+		quizDisplay.timerScene.timerIncrement()
 	}
 	
 	@IBAction func timerDecrement(_ sender: AnyObject) {
-		quizView.timerScene.timerDecrement()
+		quizDisplay.timerScene.timerDecrement()
 	}
 	
 	@IBAction func timerStartWithMusic(_ sender: Any) {
-		quizView.timerScene.startTimer(music: true)
+		quizDisplay.timerScene.startTimer(music: true)
 	}
 	
 	@IBAction func timerShowCounterChange(_ sender: NSButton) {
-		quizView.timerScene.showCounter(timerShowCounter.state == .on)
+		quizDisplay.timerScene.showCounter(timerShowCounter.state == .on)
 	}
 	
 	
@@ -818,18 +818,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	@IBAction func textShowGuesses(_ sender: Any) {
 		textAllowAnswers.state = .off
-		quizView.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
+		quizDisplay.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
 	}
 	
 	@IBAction func textScoreUnique(_ sender: Any) {
-		quizView.textScene.scoreUnique()
+		quizDisplay.textScene.scoreUnique()
 	}
 
 	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
 		if Settings.shared.uniquePath != "" {
 			if let fileName = sender.selectedItem?.title {
 				let path = Settings.shared.uniquePath + "/" + fileName
-				quizView.textScene.initUnique(file: path)
+				quizDisplay.textScene.initUnique(file: path)
 			}
 			else {
 				print("Error choosing unique list")
@@ -843,7 +843,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
-		quizView.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
+		quizDisplay.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
 	}
 	
 	
@@ -862,11 +862,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func scoresParseAndReset(_ sender: Any) {
-		quizView.scoresScene.parseAndReset(scoreText: scoresText.string)
+		quizDisplay.scoresScene.parseAndReset(scoreText: scoresText.string)
 	}
 	
 	@IBAction func scoresShowNext(_ sender: Any) {
-		quizView.scoresScene.next()
+		quizDisplay.scoresScene.next()
 	}
 	
 
@@ -879,19 +879,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var truefalseSounds: NSButton!
 
 	@IBAction func trueFalseStart(_ sender: NSButton) {
-		quizView.truefalseScene.start(sounds: truefalseSounds.state == .on)
+		quizDisplay.truefalseScene.start(sounds: truefalseSounds.state == .on)
 	}
 	
 	@IBAction func trueFalseStartNoTimer(_ sender: NSButton) {
-		quizView.truefalseScene.startNoTimer(sounds: truefalseSounds.state == .on)
+		quizDisplay.truefalseScene.startNoTimer(sounds: truefalseSounds.state == .on)
 	}
 	
 	@IBAction func trueFalseTrue(_ sender: NSButton) {
-		quizView.truefalseScene.showAnswer(ans: true)
+		quizDisplay.truefalseScene.showAnswer(ans: true)
 	}
 	
 	@IBAction func trueFalseFalse(_ sender: NSButton) {
-		quizView.truefalseScene.showAnswer(ans: false)
+		quizDisplay.truefalseScene.showAnswer(ans: false)
 	}
 	
 	@IBAction func trueFalseToggled(_ sender: Any) {
@@ -906,7 +906,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			trueFalseToggle.title = "Higher/Lower Mode"
 			socketWriteIfConnected("h1")
 		}
-		quizView.truefalseScene.setMode(self.trueFalseToggle.state == .on)
+		quizDisplay.truefalseScene.setMode(self.trueFalseToggle.state == .on)
 	}
 	
 	//MARK: - Multiple choice
@@ -958,33 +958,33 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	@IBAction func multiStart(_ sender: NSButton) {
-		if quizView.multiChoiceScene.counting {
-			quizView.multiChoiceScene.stop()
+		if quizDisplay.multiChoiceScene.counting {
+			quizDisplay.multiChoiceScene.stop()
 		} else {
 			//The teams' phones still show the last question's selection until they are told
 			//otherwise, and 'mo' is what clears them.
-			socketWriteIfConnected("mo" + quizView.multiChoiceScene.optionsMessage)
+			socketWriteIfConnected("mo" + quizDisplay.multiChoiceScene.optionsMessage)
 			multiTeamGuesses?.stringValue = ""
-			quizView.multiChoiceScene.start(sounds: multiSounds.state == .on)
+			quizDisplay.multiChoiceScene.start(sounds: multiSounds.state == .on)
 		}
 		updateMultiChoiceStartButton()
 	}
 
 	@IBAction func multiAnswerPressed(_ sender: NSButton) {
-		quizView.multiChoiceScene.showAnswer(option: sender.tag)
+		quizDisplay.multiChoiceScene.showAnswer(option: sender.tag)
 		updateMultiChoiceStartButton()
 		updateMultiChoiceGuesses()
 	}
 
 	private func pushMultiChoiceOptions() {
-		if quizView.multiChoiceScene.counting {
+		if quizDisplay.multiChoiceScene.counting {
 			print("Multiple choice: ignoring a setup change while the question is running")
 			syncMultiChoiceControls()
 			return
 		}
 
 		let options = Int(multiOptionsStepper?.intValue ?? Int32(MultiChoiceScene.defaultOptions))
-		let payload = quizView.multiChoiceScene.configure(options: options, style: multiStyle, timeout: multiTimeout)
+		let payload = quizDisplay.multiChoiceScene.configure(options: options, style: multiStyle, timeout: multiTimeout)
 		socketWriteIfConnected("mo" + payload)
 		multiTeamGuesses?.stringValue = ""
 		syncMultiChoiceControls()
@@ -992,7 +992,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	/// Puts the controls back in step with whatever the scene actually holds.
 	private func syncMultiChoiceControls() {
-		let scene = quizView.multiChoiceScene
+		let scene = quizDisplay.multiChoiceScene
 		multiOptionsStepper?.intValue = Int32(scene.optionCount)
 		multiOptionsNumber?.stringValue = String(scene.optionCount)
 
@@ -1006,11 +1006,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	private func updateMultiChoiceStartButton() {
-		multiStartButton?.title = quizView.multiChoiceScene.counting ? "Stop" : "Start"
+		multiStartButton?.title = quizDisplay.multiChoiceScene.counting ? "Stop" : "Start"
 	}
 	
 	private func updateMultiChoiceGuesses() {
-		let scene = quizView.multiChoiceScene
+		let scene = quizDisplay.multiChoiceScene
 		multiTeamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
 			guard team < scene.teamGuesses.count, let guess = scene.teamGuesses[team] else {
 				return nil
@@ -1046,15 +1046,15 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizView.reset()
+		quizDisplay.reset()
 		socketWriteIfConnected("vigeo")
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
-		quizView.geographyScene.setQuestion(question: Int(geoStepper.intValue))
+		quizDisplay.geographyScene.setQuestion(question: Int(geoStepper.intValue))
 		pushTeamParticipation()
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {
-		quizView.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
+		quizDisplay.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
 	}
 	
 	
@@ -1094,18 +1094,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	@IBAction func wavelengthReveal(_ sender: Any) {
-		quizView.wavelengthScene.reveal()
+		quizDisplay.wavelengthScene.reveal()
 		updateWavelengthGuesses()
 	}
 
 	@IBAction func wavelengthScore(_ sender: Any) {
 		//Only the first press needs the number. After that the scene scores against whatever
 		//it actually swept to, so the roll being restarted here cannot change the result.
-		if !quizView.wavelengthScene.swept && wavelengthTarget == nil {
+		if !quizDisplay.wavelengthScene.swept && wavelengthTarget == nil {
 			print("Wavelength: nothing to score against, the number has not been rolled yet")
 			return
 		}
-		quizView.wavelengthScene.score(target: wavelengthTarget ?? 0)
+		quizDisplay.wavelengthScene.score(target: wavelengthTarget ?? 0)
 		//The second press works out the placings, so pick them up for the host's list
 		updateWavelengthGuesses()
 		updateWavelengthRollEnabled()
@@ -1115,7 +1115,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// landed on from that point, so reaching for Roll could only spin the label against a
 	/// display that has already moved past it.
 	private func updateWavelengthRollEnabled() {
-		wavelengthRollButton?.isEnabled = !quizView.wavelengthScene.swept
+		wavelengthRollButton?.isEnabled = !quizDisplay.wavelengthScene.swept
 	}
 
 	private func resetWavelengthControls() {
@@ -1132,7 +1132,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		//Once scoring has run, the list becomes the result: ordered best first and saying in
 		//words where each team came. The main display shows rank by how a marker is dressed,
 		//which a crowded bar can make hard to read, so the host always has it unambiguously.
-		let placings = quizView.wavelengthScene.placings
+		let placings = quizDisplay.wavelengthScene.placings
 		if !placings.isEmpty {
 			wavelengthTeamGuesses?.string = placings.map { placing in
 				"\(WavelengthScene.tierName(placing.tier)) — Team \(placing.team + 1): \(placing.guess) (out by \(placing.distance))"
@@ -1140,7 +1140,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			return
 		}
 
-		let guesses = quizView.wavelengthScene.teamGuesses
+		let guesses = quizDisplay.wavelengthScene.teamGuesses
 		wavelengthTeamGuesses?.string = (0..<Settings.shared.numTeams).compactMap { team -> String? in
 			if guesses.indices.contains(team), let guess = guesses[team] {
 				return "Team \(team + 1): \(guess)"
@@ -1161,24 +1161,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var pointlessQuestion: NSScrollView!
 	
 	@IBAction func pointlessShowAnswers(_ sender: Any) {
-		quizView.pointlessScene.showAnswers()
+		quizDisplay.pointlessScene.showAnswers()
 	}
 
 	@IBAction func pointlessRunScoring(_ sender: Any) {
-		quizView.pointlessScene.runScoring()
+		quizDisplay.pointlessScene.runScoring()
 	}
 	
 	@IBAction func pointlessQuestionSelected(_ sender: Any) {
 		if Settings.shared.pointlessPath != "" {
 			if let title = pointlessQuestionSelector.selectedItem?.title {
 				let path = Settings.shared.pointlessPath + "/" + title
-				quizView.pointlessScene.changeToQuestion(path: path)
+				quizDisplay.pointlessScene.changeToQuestion(path: path)
 			}
 		}
 	}
 
 	@IBAction func pointlessTest(_ sender: Any) {
-		quizView.pointlessScene.debugTest()
+		quizDisplay.pointlessScene.debugTest()
 	}
 	
 	@IBAction func pointlessTableChange(_ sender: Any) {

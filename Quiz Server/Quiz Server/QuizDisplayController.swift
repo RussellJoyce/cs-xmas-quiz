@@ -1,5 +1,5 @@
 //
-//  SpriteKitViewController.swift
+//  QuizDisplayController.swift
 //  Quiz Server
 //
 //  Created by Russell Joyce on 17/11/2015.
@@ -10,9 +10,9 @@ import Cocoa
 import SpriteKit
 
 class SpriteKitViewController: NSViewController {
-	
-	@IBOutlet weak var skView: SKView!
-	
+
+	var skView: SKView { view as! SKView }
+
 	let idleScene = Idle2Scene()
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
@@ -32,6 +32,11 @@ class SpriteKitViewController: NSViewController {
 	
 	private let transitionDuration = 1.0
 	private var transitions = [SKTransition]()
+
+
+	override func loadView() {
+		view = SKView(frame: NSRect(x: 0, y: 0, width: 1920, height: 1080))
+	}
 
 
 	override func viewDidLoad() {

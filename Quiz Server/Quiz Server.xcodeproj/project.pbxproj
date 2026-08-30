@@ -34,8 +34,7 @@
 		46056ED61A1974A800C37628 /* StartupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056ED51A1974A800C37628 /* StartupView.swift */; };
 		46596C801A38DE5900822FB7 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46596C7F1A38DE5900822FB7 /* SpriteKit.framework */; };
 		466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 466B46D41DEC98E400428CDC /* GeographyScene.swift */; };
-		46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */; };
-		46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */; };
+		46A739361BFAAD9800E03DE5 /* QuizDisplayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739341BFAAD9800E03DE5 /* QuizDisplayController.swift */; };
 		46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739381BFAB45300E03DE5 /* BuzzerScene.swift */; };
 		46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393A1BFAB46A00E03DE5 /* TestScene.swift */; };
 		46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */; };
@@ -95,8 +94,7 @@
 		46056ED51A1974A800C37628 /* StartupView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupView.swift; sourceTree = "<group>"; };
 		46596C7F1A38DE5900822FB7 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		466B46D41DEC98E400428CDC /* GeographyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyScene.swift; sourceTree = "<group>"; };
-		46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpriteKitViewController.swift; sourceTree = "<group>"; };
-		46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpriteKitViewController.xib; sourceTree = "<group>"; };
+		46A739341BFAAD9800E03DE5 /* QuizDisplayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizDisplayController.swift; sourceTree = "<group>"; };
 		46A739381BFAB45300E03DE5 /* BuzzerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerScene.swift; sourceTree = "<group>"; };
 		46A7393A1BFAB46A00E03DE5 /* TestScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
@@ -191,13 +189,12 @@
 				3C727C02302E6E740043FA92 /* Nodes */,
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
 				46B025B81A1C0FE10088294B /* ControllerWindowController.swift */,
+				46A739341BFAAD9800E03DE5 /* QuizDisplayController.swift */,
 				3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */,
 				3CF749202EABE57800A38676 /* Settings.swift */,
-				46A739341BFAAD9800E03DE5 /* SpriteKitViewController.swift */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
 				46B025B91A1C0FE10088294B /* ControllerWindow.xib */,
 				46056EBD1A19624E00C37628 /* MainMenu.xib */,
-				46A739351BFAAD9800E03DE5 /* SpriteKitViewController.xib */,
 				3C0CCCBF2EAEB21F008862F8 /* IdleScene.xcassets */,
 				46056EBB1A19624E00C37628 /* Images.xcassets */,
 				3C7C207D3043276E008AA905 /* Audio */,
@@ -304,7 +301,6 @@
 			files = (
 				46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */,
 				3C0CCCC02EAEB21F008862F8 /* IdleScene.xcassets in Resources */,
-				46A739371BFAAD9800E03DE5 /* SpriteKitViewController.xib in Resources */,
 				46056EBC1A19624E00C37628 /* Images.xcassets in Resources */,
 				46056EBF1A19624E00C37628 /* MainMenu.xib in Resources */,
 			);
@@ -337,7 +333,7 @@
 				3CB70E122F0A100200A38676 /* TeamGuessNode.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
-				46A739361BFAAD9800E03DE5 /* SpriteKitViewController.swift in Sources */,
+				46A739361BFAAD9800E03DE5 /* QuizDisplayController.swift in Sources */,
 				46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */,
 				3C63A1402EC4E2300044C951 /* PointlessScene.swift in Sources */,
 				3CF749212EABE57F00A38676 /* Settings.swift in Sources */,
