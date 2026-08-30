@@ -34,8 +34,37 @@ class QuizDisplayController: NSViewController {
 	private var transitions = [SKTransition]()
 
 
+	/// The window the display lives in
+	private var displayWindow: NSWindow?
+
 	override func loadView() {
 		view = SKView(frame: NSRect(x: 0, y: 0, width: 1920, height: 1080))
+	}
+
+
+	/// Puts the main display on screen, either in a window or filling the chosen screen,
+	/// according to `Settings.shared`.
+	func present() {
+		if displayWindow == nil {
+			let window = NSWindow(contentViewController: self)
+			window.title = "Quiz Main Display"
+			window.styleMask = [.titled, .resizable, .closable]
+			window.makeKeyAndOrderFront(self)
+			displayWindow = window
+		}
+
+		if !Settings.shared.windowedMode, let quizScreen = Settings.shared.quizScreen {
+			//Old exclusive fullscreen method
+			view.addConstraint(NSLayoutConstraint(item: view, attribute: .width,
+								   relatedBy: .equal, toItem: nil,
+								   attribute: .notAnAttribute,
+								   multiplier: 1, constant: quizScreen.frame.width))
+			view.addConstraint(NSLayoutConstraint(item: view, attribute: .height,
+								   relatedBy: .equal, toItem: nil,
+								   attribute: .notAnAttribute,
+								   multiplier: 1, constant: quizScreen.frame.height))
+			view.enterFullScreenMode(quizScreen, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
+		}
 	}
 
 

@@ -70,7 +70,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
 	let quizDisplay = QuizDisplayController()
-	var quizWindow: NSWindow?
 	
 	
     override func windowDidLoad() {
@@ -108,27 +107,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
-		if quizWindow == nil {
-			quizWindow = NSWindow(contentViewController: quizDisplay)
-			quizWindow?.title = "Quiz Main Display"
-			quizWindow?.styleMask = [.titled, .resizable, .closable]
-			quizWindow?.makeKeyAndOrderFront(self)
-		}
-		
-		if !Settings.shared.windowedMode, let quizScreen = Settings.shared.quizScreen {
-			//Old exclusive fullscreen method
-			quizDisplay.view.addConstraint(NSLayoutConstraint(item: quizDisplay.view, attribute: NSLayoutConstraint.Attribute.width,
-								   relatedBy: NSLayoutConstraint.Relation.equal,toItem: nil,
-								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-								   multiplier: 1, constant: quizScreen.frame.width))
-			quizDisplay.view.addConstraint(NSLayoutConstraint(item: quizDisplay.view, attribute: NSLayoutConstraint.Attribute.height,
-								   relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil,
-								   attribute: NSLayoutConstraint.Attribute.notAnAttribute,
-								   multiplier: 1, constant: quizScreen.frame.height))
-			quizDisplay.view.enterFullScreenMode(quizScreen, withOptions: [NSView.FullScreenModeOptionKey.fullScreenModeAllScreens: 0])
-        }
-		
-		socketWriteIfConnected("vibuzzer")
+		quizDisplay.present()
         
         if Settings.shared.musicPath != "" {
             do {
@@ -180,7 +159,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		configureSidebar()
 
 		//Default to Idle on load regardless of what we left it on in Interface Builder
-		quizDisplay.setRound(round: RoundType.idle)
+		startRound(.idle)
 
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
@@ -309,57 +288,50 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		disconnectAllButton?.title = "Disconnect All"
 	}
 
+	/// Puts the teams' phones into the view that goes with the current round.
+	private func pushClientView() {
+		socketWriteIfConnected("vi" + quizDisplay.currentRound.clientView)
+	}
+
+	/// Moves the main display and the teams' phones to `round` together.
+	private func startRound(_ round: RoundType) {
+		socketWriteIfConnected("vi" + round.clientView)
+		quizDisplay.setRound(round: round)
+	}
+
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		guard let tabViewItem = tabViewItem else { return }
 		switch(tabViewItem) {
 		case tabitemIdle:
-			socketWriteIfConnected("vibuzzer")
-			quizDisplay.setRound(round: RoundType.idle)
+			startRound(.idle)
 		case tabitemTest:
-			socketWriteIfConnected("vibuzzer")
-			quizDisplay.setRound(round: RoundType.test)
+			startRound(.test)
 		case tabitemBuzzers:
-			socketWriteIfConnected("vibuzzer")
-			quizDisplay.setRound(round: RoundType.buzzers)
-        case tabitemMusic:
-            socketWriteIfConnected("vibuzzer")
-            quizDisplay.setRound(round: RoundType.music)
+			startRound(.buzzers)
+		case tabitemMusic:
+			startRound(.music)
 		case tabitemtruefalse:
-			socketWriteIfConnected("vihigherlower")
-			quizDisplay.setRound(round: RoundType.trueFalse)
+			startRound(.trueFalse)
 		case tabitemTimer:
-			socketWriteIfConnected("vibuzzer")
-			quizDisplay.setRound(round: RoundType.timer)
+			startRound(.timer)
 		case tabitemGeography:
-			socketWriteIfConnected("vigeo")
+			startRound(.geography)
 			socketWriteIfConnected("imstart.jpg")
-			quizDisplay.setRound(round: RoundType.geography)
 		case tabitemNumbers:
-			socketWriteIfConnected("vinumbers")
-			quizDisplay.setRound(round: RoundType.numbers)
-			numbersActualAnswer.intValue = 0
-			numbersAllowAnswers.state = .on
-			numbersTeamGuesses.stringValue = ""
+			startRound(.numbers)
+			resetNumbersControls()
 		case tabitemText:
-			socketWriteIfConnected("vitext")
-			quizDisplay.setRound(round: RoundType.text)
-			textStepper.intValue = 1
-			textQuestionNumber.stringValue = "1"
-			textTeamGuesses.stringValue = ""
-			textAllowAnswers.state = .on
+			startRound(.text)
+			resetTextControls()
 		case tabitemScores:
-			socketWriteIfConnected("vibuzzer")
-			quizDisplay.setRound(round: RoundType.scores)
+			startRound(.scores)
 		case tabitemPointless:
-			socketWriteIfConnected("vitext")
-			quizDisplay.setRound(round: RoundType.pointless)
+			startRound(.pointless)
 		case tabitemWavelength:
-			socketWriteIfConnected("viwavelength")
-			quizDisplay.setRound(round: RoundType.wavelength)
+			startRound(.wavelength)
 			resetWavelengthControls()
 		case tabitemMultiChoice:
-			socketWriteIfConnected("vimulti")
-			quizDisplay.setRound(round: RoundType.multichoice)
+			startRound(.multichoice)
 			resetMultiChoiceControls()
 		default:
 			break
@@ -374,30 +346,23 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     @IBAction func resetRound(_ sender: AnyObject) {
 		quizDisplay.reset()
 		pushTeamParticipation()
-
-		if (quizDisplay.currentRound == .geography) {
-			socketWriteIfConnected("vigeo")
+		pushClientView()
+		
+		switch quizDisplay.currentRound {
+		case .geography:
 			socketWriteIfConnected("imstart.jpg")
-		} else if (quizDisplay.currentRound == .text) {
-			socketWriteIfConnected("vitext")
-			textStepper.intValue = 1
-			textQuestionNumber.stringValue = "1"
-			textTeamGuesses.stringValue = ""
-			textAllowAnswers.state = .on
-		} else if (quizDisplay.currentRound == .numbers) {
-			socketWriteIfConnected("vinumbers")
-			quizDisplay.setRound(round: RoundType.numbers)
-			numbersActualAnswer.intValue = 0
-			numbersAllowAnswers.state = .on
-			numbersTeamGuesses.stringValue = ""
-		} else if (quizDisplay.currentRound == .trueFalse) {
+		case .text:
+			resetTextControls()
+		case .numbers:
+			resetNumbersControls()
+		case .trueFalse:
 			socketWriteIfConnected("ha")
-		} else if (quizDisplay.currentRound == .wavelength) {
-			socketWriteIfConnected("viwavelength")
+		case .wavelength:
 			resetWavelengthControls()
-		} else if (quizDisplay.currentRound == .multichoice) {
-			socketWriteIfConnected("vimulti")
+		case .multichoice:
 			resetMultiChoiceControls()
+		default:
+			break
 		}
     }
 	
@@ -544,8 +509,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				let details = text.suffix(text.count - 2)
 				let vals = details.components(separatedBy: ",")
 				if(vals.count >= 3) {
-					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]) {
-						quizDisplay.geographyScene.teamAnswered(team: team - 1, x: x, y: y) //make zero indexed
+					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]),
+					   isTeamEnabled(team - 1) { //make zero indexed
+						quizDisplay.geographyScene.teamAnswered(team: team - 1, x: x, y: y)
 					}
 				} else {
 					print("Invalid Geography guess")
@@ -554,8 +520,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				//A team has moved their slider in the Wavelength round
 				let details = text.suffix(text.count - 2)
 				let vals = details.components(separatedBy: ",")
-				if vals.count >= 2, let team = Int(vals[0]), let value = Int(vals[1]) {
-					quizDisplay.wavelengthScene.teamGuess(team: team - 1, value: value) //make zero indexed
+				if vals.count >= 2, let team = Int(vals[0]), let value = Int(vals[1]),
+				   isTeamEnabled(team - 1) { //make zero indexed
+					quizDisplay.wavelengthScene.teamGuess(team: team - 1, value: value)
 					updateWavelengthGuesses()
 				} else {
 					print("Invalid Wavelength guess")
@@ -612,6 +579,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					let vals = details.components(separatedBy: ",")
 					if(vals.count >= 2) {
 						if let team = Int(vals[0]) {
+							//Ignore teams the host has disabled
+							guard isTeamEnabled(team - 1) else { //make zero indexed
+								break
+							}
+
 							let guessText = String(vals[1].prefix(20)) //TODO Max size of 20 is too low?
 							
 							//Now route the logic according to the current round
@@ -813,6 +785,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var textTeamGuesses: NSTextField!
 	@IBOutlet weak var uniqueFile: NSPopUpButton!
 	
+	/// Back to question one with answering open and no guesses shown.
+	private func resetTextControls() {
+		textStepper.intValue = 1
+		textQuestionNumber.stringValue = "1"
+		textTeamGuesses.stringValue = ""
+		textAllowAnswers.state = .on
+	}
+
 	@IBAction func textStepperChange(_ sender: Any) {
 		textQuestionNumber.stringValue = textStepper.stringValue
 	}
@@ -841,6 +821,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 	@IBOutlet weak var numbersTeamGuesses: NSTextField!
 	
+	/// Clears the answer and the guess list, and reopens answering.
+	private func resetNumbersControls() {
+		numbersActualAnswer.intValue = 0
+		numbersAllowAnswers.state = .on
+		numbersTeamGuesses.stringValue = ""
+	}
+
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {
 		numbersAllowAnswers.state = .off
 		quizDisplay.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
@@ -1047,7 +1034,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
 		quizDisplay.reset()
-		socketWriteIfConnected("vigeo")
+		pushClientView()
 		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
 		quizDisplay.geographyScene.setQuestion(question: Int(geoStepper.intValue))
 		pushTeamParticipation()

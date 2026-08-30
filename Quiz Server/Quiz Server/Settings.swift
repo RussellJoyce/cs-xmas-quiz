@@ -69,6 +69,22 @@ enum RoundType {
 	case pointless
 	case wavelength
 	case multichoice
+
+	/// Which view the teams' phones should show while this round is live.
+	/// Sent as the argument of the "vi" command, so it must match a view name the client knows.
+	var clientView: String {
+		switch self {
+		case .trueFalse:   return "higherlower"
+		case .geography:   return "geo"
+		case .text:        return "text"
+		case .numbers:     return "numbers"
+		case .pointless:   return "text"
+		case .wavelength:  return "wavelength"
+		case .multichoice: return "multi"
+		case .none, .idle, .test, .buzzers, .music, .timer, .scores:
+			return "buzzer"
+		}
+	}
 }
 
 

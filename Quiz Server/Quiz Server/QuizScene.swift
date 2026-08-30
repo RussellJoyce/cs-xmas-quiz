@@ -23,7 +23,7 @@ struct TeamGridLayout {
 
 
 /// Common base class for the quiz round scenes.
-/// Every round is a `QuizScene`, held by a `SpriteKitViewController`
+/// Every round is a `QuizScene`, held by a `QuizDisplayController`
 class QuizScene: SKScene {
 
 	/// True once `setUpScene(size:)` has run.
@@ -48,7 +48,7 @@ class QuizScene: SKScene {
 	func buildScene() {
 	}
 
-	/// Returns the round to its starting state. Called by `SpriteKitViewController` on every round change
+	/// Returns the round to its starting state. Called by `QuizDisplayController` on every round change
 	func reset() {
 	}
 
