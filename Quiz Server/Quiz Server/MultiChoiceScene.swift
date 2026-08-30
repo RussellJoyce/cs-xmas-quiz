@@ -49,6 +49,9 @@ class MultiChoiceScene: QuizScene {
 	let tickSound = SKAction.playSoundFileNamed("notification-2.mp3", waitForCompletion: false)
 	let tickEnd = SKAction.playSoundFileNamed("notification-long.mp3", waitForCompletion: false)
 
+	var bg1: SKEmitterNode? = nil
+	var bg2: SKEmitterNode? = nil
+	
 	//MARK: - The timer bar
 
 	/// Geometry of the bar along the bottom. The grid of team boxes gets everything above it.
@@ -101,8 +104,8 @@ class MultiChoiceScene: QuizScene {
 
 	override func buildScene() {
 		self.backgroundColor = .black
-		addBokehBackground(replacing: nil, textureName: "flake", zPosition: 1)
-		addBokehBackground(replacing: nil, textureName: "spark", zPosition: 1)
+		bg1 = addBokehBackground(replacing: bg1, textureName: "flake", zPosition: 1)
+		bg2 = addBokehBackground(replacing: bg2, textureName: "spark", zPosition: 1)
 
 		//The track the bar drains along, so that the time already gone is still visible.
 		barTrack = SKShapeNode(rect: CGRect(x: MultiChoiceScene.barMargin, y: MultiChoiceScene.barBottom, width: barWidth, height: MultiChoiceScene.barHeight),
