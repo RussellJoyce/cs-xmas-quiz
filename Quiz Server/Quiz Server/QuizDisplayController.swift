@@ -9,7 +9,7 @@
 import Cocoa
 import SpriteKit
 
-class SpriteKitViewController: NSViewController {
+class QuizDisplayController: NSViewController {
 
 	var skView: SKView { view as! SKView }
 

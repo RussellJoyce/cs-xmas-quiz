@@ -69,7 +69,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var buzzersEnabled = [Bool]()
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
-	let quizDisplay = SpriteKitViewController()
+	let quizDisplay = QuizDisplayController()
 	var quizWindow: NSWindow?
 	
 	
