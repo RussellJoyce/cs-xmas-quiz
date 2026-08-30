@@ -38,6 +38,7 @@
 		46A739391BFAB45300E03DE5 /* BuzzerScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A739381BFAB45300E03DE5 /* BuzzerScene.swift */; };
 		46A7393B1BFAB46A00E03DE5 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393A1BFAB46A00E03DE5 /* TestScene.swift */; };
 		46A7393D1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */; };
+		46A7400B1BFAAD9800E03DE5 /* GeographyPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A7400A1BFAAD9800E03DE5 /* GeographyPreviewView.swift */; };
 		46B0254B1A1BF04D0088294B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B0254A1A1BF04D0088294B /* IOKit.framework */; };
 		46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46B025B81A1C0FE10088294B /* ControllerWindowController.swift */; };
 		46B025BB1A1C0FE10088294B /* ControllerWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46B025B91A1C0FE10088294B /* ControllerWindow.xib */; };
@@ -98,6 +99,7 @@
 		46A739381BFAB45300E03DE5 /* BuzzerScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerScene.swift; sourceTree = "<group>"; };
 		46A7393A1BFAB46A00E03DE5 /* TestScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuzzerTeamNode.swift; sourceTree = "<group>"; };
+		46A7400A1BFAAD9800E03DE5 /* GeographyPreviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeographyPreviewView.swift; sourceTree = "<group>"; };
 		46B0254A1A1BF04D0088294B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		46B025B81A1C0FE10088294B /* ControllerWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ControllerWindowController.swift; sourceTree = "<group>"; };
 		46B025B91A1C0FE10088294B /* ControllerWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ControllerWindow.xib; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				3C3012552EAD477100F80B71 /* CustomLabels.swift */,
 				46A7393C1BFAB7AA00E03DE5 /* BuzzerTeamNode.swift */,
 				3C30125F2EAD500000F80B71 /* BuzzerEffects.swift */,
+				46A7400A1BFAAD9800E03DE5 /* GeographyPreviewView.swift */,
 				3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */,
 				3CA10D032EE9000200A38676 /* TeamAnswerNode.swift */,
 				3CB70E132F0A100200A38676 /* TeamGuessNode.swift */,
@@ -314,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				466B46D51DEC98E400428CDC /* GeographyScene.swift in Sources */,
+				46A7400B1BFAAD9800E03DE5 /* GeographyPreviewView.swift in Sources */,
 				46056ED61A1974A800C37628 /* StartupView.swift in Sources */,
 				3C2543262B123E7D008A3FDB /* QuizWebSocket.swift in Sources */,
 				3C3012562EAD48FF00F80B71 /* CustomLabels.swift in Sources */,

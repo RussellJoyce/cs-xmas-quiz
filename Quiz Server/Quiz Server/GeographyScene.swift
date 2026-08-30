@@ -90,16 +90,22 @@ class GeographyScene: QuizScene {
 		}
 	}
 	
-	func setQuestion(question: Int) {
-		if(question > 0 && question <= 10) {
-			let imagePath = "\(Settings.shared.geographyImagesPath)/geo\(question).jpg"
-			let image = NSImage(contentsOfFile: imagePath)
-			if let image = image {
-				mainImage.texture = SKTexture(image: image)
-			}
-			else {
-				mainImage.texture = SKTexture(imageNamed: "geostart")
-			}
+	/// The image the round sits on when no question is up. The phones load it by name from
+	/// the same folder; the main display uses the bundled "geostart" asset for this state.
+	static let startImage = "start.jpg"
+
+	/// What the question picker will offer from the geography folder.
+	static let imageExtensions: Set<String> = ["jpg", "jpeg", "png", "gif", "heic", "webp"]
+
+	/// Shows one image from the geography folder, named as the host picked it.
+	func setQuestion(file: String) {
+		let imagePath = "\(Settings.shared.geographyImagesPath)/\(file)"
+		if let image = NSImage(contentsOfFile: imagePath) {
+			mainImage.texture = SKTexture(image: image)
+		}
+		else {
+			print("Geography: could not load \(imagePath)")
+			mainImage.texture = SKTexture(imageNamed: "geostart")
 		}
 	}
 	

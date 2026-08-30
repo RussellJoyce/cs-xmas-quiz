@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, NSTableViewDataSource, NSTableViewDelegate, QuizWebSocketDelegate {
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, QuizWebSocketDelegate {
     
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
 	
@@ -142,6 +142,21 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
+		if Settings.shared.geographyImagesPath != "" {
+			do {
+				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.geographyImagesPath)
+				for file in files.sorted() {
+					//The start image is the round's blank state, not a question
+					if !file.hasPrefix(".") && file != GeographyScene.startImage
+						&& GeographyScene.imageExtensions.contains((file as NSString).pathExtension.lowercased()) {
+						geoQuestionSelector.addItem(withTitle: file)
+					}
+				}
+			} catch {
+				print("Error while enumerating files \(Settings.shared.geographyImagesPath): \(error.localizedDescription)")
+			}
+		}
+		
 		if Settings.shared.pointlessPath != "" {
 			do {
 				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.pointlessPath)
@@ -156,10 +171,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		
+		updateGeographyPreview()
 		configureSidebar()
 
 		//Default to Idle on load regardless of what we left it on in Interface Builder
-		startRound(.idle)
+		isReady = true
+		enterRound(.idle, presenting: true)
 
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
@@ -288,80 +305,60 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		disconnectAllButton?.title = "Disconnect All"
 	}
 
-	/// Puts the teams' phones into the view that goes with the current round.
-	private func pushClientView() {
-		socketWriteIfConnected("vi" + quizDisplay.currentRound.clientView)
+	/// The round a tab stands for, or nil for a tab that is a control panel rather than a round
+	private func round(for item: NSTabViewItem) -> RoundType? {
+		for row in sidebarRows {
+			if case .round(let candidate, let round, _) = row, candidate === item {
+				return round
+			}
+		}
+		return nil
 	}
 
-	/// Moves the main display and the teams' phones to `round` together.
-	private func startRound(_ round: RoundType) {
+	/// Puts `round` into its starting state: the scene, the teams' phones, and the host's controls.
+	/// `presenting` is true for a round change, false for a reset in place.
+	private func enterRound(_ round: RoundType, presenting: Bool) {
+		if presenting {
+			quizDisplay.setRound(round: round) //presents the scene, and resets it on the way in
+		} else {
+			quizDisplay.reset()
+		}
+
 		socketWriteIfConnected("vi" + round.clientView)
-		quizDisplay.setRound(round: round)
+		resetControls(for: round, presenting: presenting)
+
+		//Whichever round we are now in needs to know who is playing
+		pushTeamParticipation()
+	}
+
+	/// Everything a round needs put back that the "vi" view change does not already cover:
+	/// the host's controls, and any client state carrying a message of its own.
+	/// A reset re-arms the question the host is on, so it clears answers but keeps their
+	/// place in the round. A round change puts that place back to the start.
+	private func resetControls(for round: RoundType, presenting: Bool) {
+		switch round {
+		case .geography:   resetGeographyControls(presenting: presenting)
+		case .text:        resetTextControls(presenting: presenting)
+		case .numbers:     resetNumbersControls(presenting: presenting)
+		case .pointless:   resetPointlessControls()
+		case .wavelength:  resetWavelengthControls()
+		case .multichoice: resetMultiChoiceControls(presenting: presenting)
+		default:           break
+		}
 	}
 
     func tabView(_ tabView: NSTabView, didSelect tabViewItem: NSTabViewItem?) {
 		guard let tabViewItem = tabViewItem else { return }
-		switch(tabViewItem) {
-		case tabitemIdle:
-			startRound(.idle)
-		case tabitemTest:
-			startRound(.test)
-		case tabitemBuzzers:
-			startRound(.buzzers)
-		case tabitemMusic:
-			startRound(.music)
-		case tabitemtruefalse:
-			startRound(.trueFalse)
-		case tabitemTimer:
-			startRound(.timer)
-		case tabitemGeography:
-			startRound(.geography)
-			socketWriteIfConnected("imstart.jpg")
-		case tabitemNumbers:
-			startRound(.numbers)
-			resetNumbersControls()
-		case tabitemText:
-			startRound(.text)
-			resetTextControls()
-		case tabitemScores:
-			startRound(.scores)
-		case tabitemPointless:
-			startRound(.pointless)
-		case tabitemWavelength:
-			startRound(.wavelength)
-			resetWavelengthControls()
-		case tabitemMultiChoice:
-			startRound(.multichoice)
-			resetMultiChoiceControls()
-		default:
-			break
-		}
-		//Whichever round we have just moved to needs to know who is playing
-		pushTeamParticipation()
+		guard isReady, let round = round(for: tabViewItem) else { return }
 		
+		enterRound(round, presenting: true)
+
 		//Keeps the highlight correct if something other than a click moved us
 		selectSidebarRow(for: tabViewItem)
     }
     
     @IBAction func resetRound(_ sender: AnyObject) {
-		quizDisplay.reset()
-		pushTeamParticipation()
-		pushClientView()
-		
-		switch quizDisplay.currentRound {
-		case .geography:
-			socketWriteIfConnected("imstart.jpg")
-		case .text:
-			resetTextControls()
-		case .numbers:
-			resetNumbersControls()
-		case .wavelength:
-			resetWavelengthControls()
-		case .multichoice:
-			resetMultiChoiceControls()
-		default:
-			break
-		}
+		enterRound(quizDisplay.currentRound, presenting: false)
     }
 	
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -370,34 +367,34 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	private enum SidebarRow {
 		case group(String)
-		case round(NSTabViewItem, String)
+		case round(NSTabViewItem, RoundType?, String)
 	}
 
 	private var sidebarRows = [SidebarRow]()
-
+	private var isReady = false
 	@IBOutlet weak var sidebarTable: NSTableView!
 
 	private func buildSidebarRows() {
 		sidebarRows = [
 			.group("Show"),
-			.round(tabitemIdle, "🎄 Idle"),
-			.round(tabitemScores, "📋 Scores"),
+			.round(tabitemIdle, .idle, "🎄 Idle"),
+			.round(tabitemScores, .scores, "📋 Scores"),
 			
 			.group("Rounds"),
-			.round(tabitemBuzzers, "🔊 Buzzers"),
-			.round(tabitemMusic, "🎶 Music + Video"),
-			.round(tabitemtruefalse, "✅ True / False"),
-			.round(tabitemMultiChoice, "🎲 Multiple Choice"),
-			.round(tabitemGeography, "🌍 Geography"),
-			.round(tabitemText, "✍️ Text"),
-			.round(tabitemNumbers, "🔢 Numbers"),
-			.round(tabitemWavelength, "🌊 Wavelength"),
-			.round(tabitemPointless, "0️⃣ Pointless"),
-			.round(tabitemTimer, "🕓 Timer"),
+			.round(tabitemBuzzers, .buzzers, "🔊 Buzzers"),
+			.round(tabitemMusic, .music, "🎶 Music + Video"),
+			.round(tabitemtruefalse, .trueFalse, "✅ True / False"),
+			.round(tabitemMultiChoice, .multichoice, "🎲 Multiple Choice"),
+			.round(tabitemGeography, .geography, "🌍 Geography"),
+			.round(tabitemText, .text, "✍️ Text"),
+			.round(tabitemNumbers, .numbers, "🔢 Numbers"),
+			.round(tabitemWavelength, .wavelength, "🌊 Wavelength"),
+			.round(tabitemPointless, .pointless, "0️⃣ Pointless"),
+			.round(tabitemTimer, .timer, "🕓 Timer"),
 
 			.group("Admin"),
-			.round(tabitemTest, "🧪 Test Screen"),
-			.round(tabitemDisconnect, "❌ Disconnect")
+			.round(tabitemTest, .test, "🧪 Test Screen"),
+			.round(tabitemDisconnect, nil, "❌ Disconnect")
 		]
 	}
 
@@ -415,7 +412,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			return
 		}
 		let index = sidebarRows.firstIndex { row in
-			if case .round(let candidate, _) = row {
+			if case .round(let candidate, _, _) = row {
 				return candidate === item
 			}
 			return false
@@ -448,7 +445,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .group(let name):
 			title = name
 			identifier = "SidebarGroupCell"
-		case .round(_, let name):
+		case .round(_, _, let name):
 			title = name
 			identifier = "SidebarRoundCell"
 		}
@@ -462,7 +459,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		guard let table = sidebarTable, table.selectedRow >= 0 else {
 			return
 		}
-		if case .round(let item, _) = sidebarRows[table.selectedRow] {
+		if case .round(let item, _, _) = sidebarRows[table.selectedRow] {
 			//Selecting the item is all this does. Everything that happens on a round change
 			//still happens in tabView(_:didSelect:)
 			tabView.selectTabViewItem(item)
@@ -782,11 +779,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var textStepper: NSStepper!
 	@IBOutlet weak var textTeamGuesses: NSTextField!
 	@IBOutlet weak var uniqueFile: NSPopUpButton!
-	
-	/// Back to question one with answering open and no guesses shown.
-	private func resetTextControls() {
-		textStepper.intValue = 1
-		textQuestionNumber.stringValue = "1"
+
+	private func resetTextControls(presenting: Bool) {
+		if presenting { //If entering this round reset the question controls as well
+			textStepper.intValue = 1
+			textQuestionNumber.stringValue = "1"
+		}
 		textTeamGuesses.stringValue = ""
 		textAllowAnswers.state = .on
 	}
@@ -819,9 +817,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var numbersActualAnswer: NSTextField!
 	@IBOutlet weak var numbersTeamGuesses: NSTextField!
 	
-	/// Clears the answer and the guess list, and reopens answering.
-	private func resetNumbersControls() {
-		numbersActualAnswer.intValue = 0
+	private func resetNumbersControls(presenting: Bool) {
+		if presenting {
+			numbersActualAnswer.intValue = 0
+		}
 		numbersAllowAnswers.state = .on
 		numbersTeamGuesses.stringValue = ""
 	}
@@ -1004,10 +1003,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}.joined(separator: "\n")
 	}
 
-	private func resetMultiChoiceControls() {
-		multiTimeout = MultiChoiceScene.defaultTimeout
-		for button in [multiTime10, multiTime20, multiTime30] {
-			button?.state = (button?.tag == multiTimeout) ? .on : .off
+	private func resetMultiChoiceControls(presenting: Bool) {
+		if presenting {
+			multiTimeout = MultiChoiceScene.defaultTimeout
+			for button in [multiTime10, multiTime20, multiTime30] {
+				button?.state = (button?.tag == multiTimeout) ? .on : .off
+			}
 		}
 		multiTeamGuesses?.stringValue = ""
 		pushMultiChoiceOptions()
@@ -1023,19 +1024,55 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	@IBOutlet weak var geoAnswerX: NSTextField!
 	@IBOutlet weak var geoAnswerY: NSTextField!
-	@IBOutlet weak var geoQuestionNumber: NSTextField!
-	@IBOutlet weak var geoStepper: NSStepper!
+	@IBOutlet weak var geoQuestionSelector: NSPopUpButton!
+	@IBOutlet weak var geoPreview: GeographyPreviewView!
 	
-	@IBAction func geoStepperChange(_ sender: Any) {
-		geoQuestionNumber.stringValue = geoStepper.stringValue
+	/// `GeographyScene.reset()` always returns the main display to the start image
+	private func resetGeographyControls(presenting: Bool) {
+		if presenting && geoQuestionSelector.numberOfItems > 0 {
+			geoQuestionSelector.selectItem(at: 0)
+		}
+		updateGeographyPreview()
+		socketWriteIfConnected("im" + GeographyScene.startImage)
+	}
+
+	@IBAction func geoQuestionSelected(_ sender: Any) {
+		updateGeographyPreview()
+	}
+
+	/// Reloads the preview from the selected file. The host is picking a question here, not
+	/// starting one, so nothing is sent to the phones or the main display.
+	private func updateGeographyPreview() {
+		if let file = geoQuestionSelector.selectedItem?.title {
+			geoPreview.image = NSImage(contentsOfFile: "\(Settings.shared.geographyImagesPath)/\(file)")
+		} else {
+			geoPreview.image = nil
+		}
+		updateGeographyMarker()
+	}
+
+	/// Moves the preview's marker to the answer position currently typed in.
+	private func updateGeographyMarker() {
+		geoPreview.marker = (x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
+	}
+
+	/// The X and Y fields are this window's only text delegates, so the dot tracks live
+	/// rather than waiting for the host to commit the field.
+	func controlTextDidChange(_ obj: Notification) {
+		guard let field = obj.object as? NSTextField else { return }
+		if field === geoAnswerX || field === geoAnswerY {
+			updateGeographyMarker()
+		}
 	}
 	
 	@IBAction func geoStartQuestion(_ sender: Any) {
-		quizDisplay.reset()
-		pushClientView()
-		socketWriteIfConnected("imgeo" + geoStepper.stringValue + ".jpg")
-		quizDisplay.geographyScene.setQuestion(question: Int(geoStepper.intValue))
-		pushTeamParticipation()
+		guard let file = geoQuestionSelector.selectedItem?.title else {
+			print("Geography: no image selected")
+			return
+		}
+		enterRound(.geography, presenting: false)
+		socketWriteIfConnected("im" + file)
+		quizDisplay.geographyScene.setQuestion(file: file)
 	}
 	
 	@IBAction func geoShowWinner(_ sender: Any) {
@@ -1145,6 +1182,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var pointlessDescending: NSButton!
 	@IBOutlet weak var pointlessQuestion: NSScrollView!
 	
+	private func resetPointlessControls() {
+		pointlessAllowAnswers.state = .on
+	}
+
 	@IBAction func pointlessShowAnswers(_ sender: Any) {
 		quizDisplay.pointlessScene.showAnswers()
 	}

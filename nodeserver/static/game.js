@@ -112,7 +112,7 @@ function connect() {
                 //Set the geo image
                 console.log("Setting geo image: " + event.data.slice(2));
                 toggleState(true);
-                geoimg.style.backgroundImage = "url(geography/" + event.data.slice(2) + ")";
+                geoimg.style.backgroundImage = "url('geography/" + encodeURIComponent(event.data.slice(2)) + "')";
                 break;
             case "mo":
                 //Build the multiple choice grid: "mo<options>,<style>"
