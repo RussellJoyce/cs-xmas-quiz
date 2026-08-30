@@ -155,6 +155,7 @@ class MultiChoiceScene: QuizScene {
 	override func reset() {
 		self.timer?.invalidate()
 		self.timer = nil
+		QuizWebSocket.shared?.ledsOff()
 		self.counting = false
 		self.revealed = false
 		self.time = Float(timeout)

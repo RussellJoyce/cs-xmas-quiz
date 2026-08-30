@@ -87,7 +87,10 @@ class TrueFalseScene: QuizScene {
 		self.time = TrueFalseScene.TIMEOUT
 		self.counting = false
 		self.stopFire();
+		QuizWebSocket.shared?.ledsOff()
 		QuizWebSocket.shared?.send(mode ? "h2" : "h1")
+		//"ha" clears a selection already lit on the teams' phones
+		QuizWebSocket.shared?.send("ha")
 	}
 	
 	override func setParticipating(_ teams: [Bool]) {
@@ -129,6 +132,7 @@ class TrueFalseScene: QuizScene {
 	func start(sounds: Bool) {
 		self.time = TrueFalseScene.TIMEOUT
 		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
+		QuizWebSocket.shared?.send("ha") //As startNoTimer: the phones still show the last answer
 		
 		timer?.invalidate()
 		tickSounds = sounds

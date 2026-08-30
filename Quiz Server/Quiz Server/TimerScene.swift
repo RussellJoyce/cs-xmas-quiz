@@ -119,6 +119,7 @@ class TimerScene: QuizScene {
 		correct = 0
 		time = 60
 		timer?.invalidate()
+		QuizWebSocket.shared?.ledsOff()
 		updateAnswers()
 		updateTime()
 		audioNode.run(SKAction.stop())

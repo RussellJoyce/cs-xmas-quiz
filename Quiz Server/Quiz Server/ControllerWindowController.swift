@@ -355,8 +355,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			resetTextControls()
 		case .numbers:
 			resetNumbersControls()
-		case .trueFalse:
-			socketWriteIfConnected("ha")
 		case .wavelength:
 			resetWavelengthControls()
 		case .multichoice:
