@@ -26,9 +26,9 @@ void anim_init() {
 }
 
 void anim_tick() {
-    framenum++;
-    if(current_anim != 0) 
+    if(current_anim != 0)
         current_anim->tick();
+    framenum++;
 }
 
 void anim_set_anim(AnimID id, int param) {
