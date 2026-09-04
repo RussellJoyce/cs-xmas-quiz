@@ -89,6 +89,7 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
 		switch(data->op_code) {
 			case 1:
 				if(data->data_len >= 3) { //All commands are at least 3 bytes
+					if(data->data_len > sizeof(command_to_parse)) data->data_len = sizeof(command_to_parse);
 					memcpy(command_to_parse, data->data_ptr, data->data_len);
 				}
 				command_length = data->data_len;
@@ -118,7 +119,6 @@ void connect_websocket() {
 		Serial.println("Error connecting to websocket");
 	}
 }
-
 
 uint8_t bytesToInt(char *b) {
 	return 100*(b[0]-'0') + 10*(b[1]-'0') + (b[2]-'0');
@@ -176,6 +176,7 @@ void network_tick() {
 					case 2:
 						Serial.println("Anim: Timer twinkle");
 						anim_set_anim(TIMERTWINKLE, 0);
+						break;
 					default:
 						Serial.printf("Unknown animation %d\n", animnum);
 						break;

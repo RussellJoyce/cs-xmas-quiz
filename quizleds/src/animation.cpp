@@ -133,23 +133,6 @@ HslColor team_col(int t) {
     return HslColor(std::fmod(0.1 * t, 1.0) , 1.0, 0.5);
 }
 
-bool fadeLeds(int speed) {
-    const int threshold = 10;
-    bool any_on = false;
-	for(auto i = 0; i < NUM_LEDS; i++) {
-		RgbColor c = leds.GetPixelColor(i);
-        if(c.R > threshold || c.B > threshold || c.G > threshold) any_on = true;
-		c.Darken(speed);
-		leds.SetPixelColor(i, c);
-	}
-	leds.Show();
-    return any_on;
-}
-
-void fadeLEDsOut(int speed) {
-    while(fadeLeds(speed));
-    clearLEDs();
-}
 
 void display_current() {
     for(int i = 0; i < NUM_LEDS; i++) {
@@ -352,7 +335,7 @@ void TeamPulse::tick() {
     if(framenum <= frames_up+frames_down) {
         if(framenum <= frames_up) {
             this->col.B = float(framenum) * (1.0 / float(frames_up));
-        } else if(framenum >= frames_down+frames_up) {
+        } else if(framenum >= frames_up) {
             this->col.B = 1.0 - (float(framenum-frames_up)*(1.0/float(frames_down)));
         }
         leds.ClearTo(this->col);
@@ -481,8 +464,7 @@ void BuzzCentre::start(int param) {
 void BuzzCentre::tick() {
 	if(framenum < NUM_LEDS/4) {
         for(int i = 0; i < 2; i++) {
-            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
-            current[ledlookup_clamp(NUM_LEDS/2+(framenum*2+1), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2+i), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
         }
     } else if(framenum == (NUM_LEDS/4 + 20)) {
         for(int i = 0; i < NUM_LEDS; i++) {
