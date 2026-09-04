@@ -47,6 +47,8 @@ That is why `web.cpp` copies each command into `command_to_parse` and parses it 
     --plain                  no alternate screen or raw input; serial goes to stdout
     --seed <n>               fixed random seed, for reproducible animations
     --render-hz <n>          terminal redraw rate (default 30)
+    --frame-file <path>      shared frame file (default /tmp/quizledsim.frame)
+    --no-frame-file          do not publish frames
 
 The layout adapts to the window: the status line and the strip are always drawn in full,
 and the serial pane and the footer are dropped when there is not enough height for them,
@@ -65,6 +67,27 @@ shows the difference:
     wiring order    WWWWWWWWWWWWWWWWWWWWWWWWW..........................  (25 at each end)
                     ...........................WWWWWWWWWWWWWWWWWWWWWWWWW
     animation order WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW..  (50 contiguous)
+
+## Showing the strip in Quiz Server
+
+Every frame is also published to a small shared-memory file, which the controller window
+reads to draw the strip along the bottom. The window carries only a one-line status while
+no simulator is running, and grows to make room for the strip when one appears. `frameshm.h` defines the layout and is the
+authority on it: the Swift reader in `Quiz Server/Quiz Server/LEDMonitor/` hand-writes the
+same offsets, and every one of them is pinned here with a `static_assert`.
+
+The mapping is the memory ledsim writes to, so nothing on the reading side can ever stall
+the animation loop -- a reader that falls behind simply misses frames. Several readers can
+watch at once, which is why the terminal view above keeps working while the app is showing
+the same strip.
+
+Liveness is the `heartbeat` field, written from `loop()` and not from `Show()`. It has to
+be: an animation that has settled stops producing frames entirely and holds its last one,
+exactly as real LEDs do, so "no new frames" is a resting state and not a sign that ledsim
+has gone away.
+
+The file is created if absent and never truncated or unlinked, so ledsim can be restarted
+underneath a reader that has already mapped it.
 
 ## Driving it without the Swift app
 

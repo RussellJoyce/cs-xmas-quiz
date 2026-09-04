@@ -10,6 +10,7 @@ in command_to_parse.
 #include <Arduino.h>
 #include <NeoPixelBus.h>
 #include <esp_websocket_client.h>
+#include "frameshm.h"
 #include <settings.h>
 #include <ledmapping.h>
 
@@ -44,6 +45,7 @@ struct Options {
 	bool plain = false;        //No alternate screen or raw input, for piping to a file
 	unsigned long seed = 0;    //0 means seed from the clock
 	int renderHz = 30;
+	std::string frameFile = FRAMESHM_DEFAULT_PATH;  //Empty disables publishing
 };
 Options opts;
 
@@ -150,6 +152,7 @@ int last_cols = 0;
 //A full block in the pixel's colour. 24-bit colour is assumed; there is no sensible
 //256-colour fallback for arbitrary RGB.
 void render();
+void beat();
 
 void appendPixel(std::string& out, const RgbColor& c) {
 	char buf[32];
@@ -173,6 +176,16 @@ void maybeRender() {
 	}
 	last_render = now;
 	render();
+}
+
+//10Hz is ample for a reader using a sub-second staleness threshold, and keeps this off
+//the clock on every one of the ~1000 loop iterations a second.
+void beat() {
+	static std::chrono::steady_clock::time_point last;
+	const auto now = std::chrono::steady_clock::now();
+	if(std::chrono::duration_cast<std::chrono::milliseconds>(now - last).count() < 100) return;
+	last = now;
+	frameshm_heartbeat();
 }
 
 void render() {
@@ -309,6 +322,18 @@ void sim_leds_show(const RgbColor* pixels, uint16_t count) {
 	const uint16_t n = count < NUM_LEDS ? count : NUM_LEDS;
 	memcpy(frame, pixels, n * sizeof(RgbColor));
 	shows++;
+
+	if(frameshm_active()) {
+		//Copied component by component rather than memcpy'd: RgbColor is very likely three
+		//packed bytes, but nothing in the library promises it.
+		static uint8_t rgb[NUM_LEDS * 3];
+		for(uint16_t i = 0; i < n; i++) {
+			rgb[i * 3 + 0] = pixels[i].R;
+			rgb[i * 3 + 1] = pixels[i].G;
+			rgb[i * 3 + 2] = pixels[i].B;
+		}
+		frameshm_write(rgb, n);
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -321,6 +346,9 @@ static void usage() {
 		"  --plain                  no alternate screen or raw input; serial goes to stdout\n"
 		"  --seed <n>               fixed random seed, for reproducible animations\n"
 		"  --render-hz <n>          terminal redraw rate (default 30)\n"
+		"  --frame-file <path>      shared frame file for other viewers\n"
+		"                           (default " FRAMESHM_DEFAULT_PATH ")\n"
+		"  --no-frame-file          do not publish frames\n"
 		"  --help\n");
 }
 
@@ -332,12 +360,20 @@ int main(int argc, char** argv) {
 		else if(a == "--plain") opts.plain = true;
 		else if(a == "--seed" && i + 1 < argc) opts.seed = strtoul(argv[++i], 0, 10);
 		else if(a == "--render-hz" && i + 1 < argc) opts.renderHz = atoi(argv[++i]);
+		else if(a == "--frame-file" && i + 1 < argc) opts.frameFile = argv[++i];
+		else if(a == "--no-frame-file") opts.frameFile.clear();
 		else { usage(); return a == "--help" ? 0 : 1; }
 	}
 	if(opts.renderHz < 1) opts.renderHz = 1;
 
 	randomSeed(opts.seed ? opts.seed : (unsigned long) time(0));
 	sim_websocket_set_uri(opts.uri.c_str());
+
+	//ledlookup is published alongside the pixels so that a viewer can offer the same
+	//wiring/animation order choice without keeping its own copy of the table.
+	if(!opts.frameFile.empty()) {
+		frameshm_open(opts.frameFile.c_str(), NUM_LEDS, ledlookup, NUM_LEDS);
+	}
 
 	signal(SIGINT, onSignal);
 	signal(SIGTERM, onSignal);
@@ -349,11 +385,13 @@ int main(int argc, char** argv) {
 	while(!quit) {
 		loop();
 		maybeRender();
+		beat();
 		//The real loop() is called back to back by the Arduino core. A short sleep keeps
 		//the simulator off a spinning core without affecting the 13ms frame timing.
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	restoreTerminal();
+	frameshm_close();
 	return 0;
 }

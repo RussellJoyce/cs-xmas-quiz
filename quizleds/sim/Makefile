@@ -21,7 +21,7 @@ NPBCOLOR := $(NPB)/internal/colors
 INCLUDES := -I$(SHIMDIR) -I$(SRCDIR) -I$(NPB)
 
 FIRMWARE := $(SRCDIR)/main.cpp $(SRCDIR)/animation.cpp $(SRCDIR)/ledmapping.cpp $(SRCDIR)/web.cpp
-SIM      := simmain.cpp $(SHIMDIR)/arduino_shim.cpp $(SHIMDIR)/esp_websocket_client.cpp
+SIM      := simmain.cpp frameshm.cpp $(SHIMDIR)/arduino_shim.cpp $(SHIMDIR)/esp_websocket_client.cpp
 COLOURS  := $(NPBCOLOR)/RgbColor.cpp $(NPBCOLOR)/RgbColorBase.cpp \
             $(NPBCOLOR)/HslColor.cpp $(NPBCOLOR)/HsbColor.cpp
 

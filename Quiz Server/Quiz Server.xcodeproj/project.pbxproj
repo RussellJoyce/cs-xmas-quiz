@@ -110,6 +110,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3C3E02D4304B692000D170C0 /* LEDMonitor */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = LEDMonitor; sourceTree = "<group>"; };
 		3C7C207D3043276E008AA905 /* Audio */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Audio; sourceTree = "<group>"; };
 		3C7C214B30432995008AA905 /* Particles */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Particles; sourceTree = "<group>"; };
 		3C7C217C30432A29008AA905 /* Fonts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Fonts; sourceTree = "<group>"; };
@@ -188,6 +189,7 @@
 		46056EB61A19624E00C37628 /* Quiz Server */ = {
 			isa = PBXGroup;
 			children = (
+				3C3E02D4304B692000D170C0 /* LEDMonitor */,
 				3C366CC61FBC5D29006BA9B1 /* SpriteKit Scenes */,
 				3C727C02302E6E740043FA92 /* Nodes */,
 				46056EB91A19624E00C37628 /* AppDelegate.swift */,
@@ -244,6 +246,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				3C3E02D4304B692000D170C0 /* LEDMonitor */,
 				3C7C207D3043276E008AA905 /* Audio */,
 				3C7C214B30432995008AA905 /* Particles */,
 				3C7C217C30432A29008AA905 /* Fonts */,
