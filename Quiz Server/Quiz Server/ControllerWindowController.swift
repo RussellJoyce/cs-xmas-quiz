@@ -274,16 +274,43 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		quizDisplay.setParticipating(enabledTeams)
 	}
 
-	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
-		socketWriteIfConnected("di\(sender.tag)")
+	//MARK: - Repairing a client
+	//-----------------------------------------------------------------------------------------------------------
+	@IBOutlet weak var resyncModeBtn: NSButton!
+	@IBOutlet weak var repairWarningLabel: NSTextField!
+	@IBOutlet weak var disconnectAllButton: NSButton!
+
+	/// True when the team buttons resync rather than disconnect
+	private var resyncMode: Bool {
+		resyncModeBtn?.state == .on
 	}
 
-	@IBOutlet weak var disconnectAllButton: NSButton!
+	@IBAction func resyncModePress(_ sender: NSButton) {
+		resetDisconnectAllButton()
+		repairWarningLabel?.stringValue = resyncMode
+			? "Resync tells a team's device what the current state of play is. Safe to press at any time."
+			: "WARNING: Pressing these buttons will disassociate that team's device and they will have to reconnect."
+	}
+
+	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
+		if resyncMode {
+			resyncTeam(sender.tag)
+		} else {
+			socketWriteIfConnected("di\(sender.tag)")
+		}
+	}
 
 	/// Set when "Disconnect All" is armed, so a second click within the timeout actually does it
 	private var disconnectAllConfirmTimer: Timer?
 
 	@IBAction func disconnectAllPress(_ sender: NSButton) {
+		if resyncMode {
+			for team in 1...Settings.shared.numTeams {
+				resyncTeam(team)
+			}
+			return
+		}
+
 		if disconnectAllConfirmTimer != nil {
 			resetDisconnectAllButton()
 			for team in 1...Settings.shared.numTeams {
@@ -302,7 +329,67 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	private func resetDisconnectAllButton() {
 		disconnectAllConfirmTimer?.invalidate()
 		disconnectAllConfirmTimer = nil
-		disconnectAllButton?.title = "Disconnect All"
+		disconnectAllButton?.title = resyncMode ? "Resync All" : "Disconnect All"
+	}
+
+	/// Sends one team everything it needs to show the current state of play.
+	/// `team` is 1-based, as the button tags and the wire protocol both are.
+	private func resyncTeam(_ team: Int) {
+		guard team >= 1 && team <= Settings.shared.numTeams else { return }
+		for message in clientState(for: team) {
+			socketWriteIfConnected("to\(team),\(message)")
+		}
+	}
+
+	/// Everything a client needs in order to show the current state of play
+	/// These are messages as a client reads them, which is not always how the quiz software
+	/// writes them: normally the node server strips the team off "on3" or "ms3,4" on the way
+	/// past. `team` is 1-based.
+	private func clientState(for team: Int) -> [String] {
+		let idx = team - 1 //The scenes index their teams from zero
+		let round = quizDisplay.currentRound
+		var messages = [String]()
+
+		//"vs" rather than "vi": a device already on the right view must keep the answer its
+		//team is part way through typing or dragging. "vi" is a reset and would throw it away.
+		messages.append("vs" + round.clientView)
+
+		//Decoration belonging to the round rather than to any one team
+		//New rounds might need things adding to this!
+		switch round {
+		case .geography:
+			messages.append("im" + currentGeoImage)
+		case .multichoice:
+			messages.append("mo" + quizDisplay.multiChoiceScene.optionsMessage)
+		case .trueFalse:
+			messages.append(trueFalseToggle.state == .on ? "h2" : "h1")
+		default:
+			break
+		}
+		
+		//Is this team enabled?
+		messages.append(isTeamEnabled(idx) ? "on" : "of")
+
+		//An answer this team has already given
+		//This is likely to be unnecessary, but it is here for completeness
+		switch round {
+		case .trueFalse:
+			let guesses = quizDisplay.truefalseScene.teamGuesses
+			if idx < guesses.count, let guess = guesses[idx] {
+				messages.append(guess ? "hh" : "hl")
+			} else {
+				messages.append("hn")
+			}
+		case .multichoice:
+			let guesses = quizDisplay.multiChoiceScene.teamGuesses
+			if idx < guesses.count, let option = guesses[idx] {
+				messages.append("ms\(option)")
+			}
+		default:
+			break
+		}
+
+		return messages
 	}
 
 	/// The round a tab stands for, or nil for a tab that is a control panel rather than a round
@@ -331,9 +418,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		pushTeamParticipation()
 	}
 
-	/// Everything a round needs put back that the "vi" view change does not already cover:
-	/// the host's controls, and any client state carrying a message of its own.
-	/// A reset re-arms the question the host is on, so it clears answers but keeps their
+	/// Reset re-arms the question the host is on, so it clears answers but keeps their
 	/// place in the round. A round change puts that place back to the start.
 	private func resetControls(for round: RoundType, presenting: Bool) {
 		switch round {
@@ -394,7 +479,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 			.group("Admin"),
 			.round(tabitemTest, .test, "🧪 Test Screen"),
-			.round(tabitemDisconnect, nil, "❌ Disconnect")
+			.round(tabitemDisconnect, nil, "🔧 Repair Client")
 		]
 	}
 
@@ -1027,13 +1112,19 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var geoQuestionSelector: NSPopUpButton!
 	@IBOutlet weak var geoPreview: GeographyPreviewView!
 	
+	/// The image the phones are currently showing, which is not the same as the one selected
+	/// in `geoQuestionSelector`: the host picks a question there long before starting it.
+	/// Only a resync needs this, but it has to be recorded wherever an "im" is sent.
+	private var currentGeoImage = GeographyScene.startImage
+
 	/// `GeographyScene.reset()` always returns the main display to the start image
 	private func resetGeographyControls(presenting: Bool) {
 		if presenting && geoQuestionSelector.numberOfItems > 0 {
 			geoQuestionSelector.selectItem(at: 0)
 		}
 		updateGeographyPreview()
-		socketWriteIfConnected("im" + GeographyScene.startImage)
+		currentGeoImage = GeographyScene.startImage
+		socketWriteIfConnected("im" + currentGeoImage)
 	}
 
 	@IBAction func geoQuestionSelected(_ sender: Any) {
@@ -1071,6 +1162,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			return
 		}
 		enterRound(.geography, presenting: false)
+		currentGeoImage = file
 		socketWriteIfConnected("im" + file)
 		quizDisplay.geographyScene.setQuestion(file: file)
 	}

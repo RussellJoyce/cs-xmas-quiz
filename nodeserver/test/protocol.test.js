@@ -236,6 +236,55 @@ describe('routing from the quiz software', () => {
         assert.deepStrictEqual(socks[0].sent, []);
     });
 
+    test('to delivers the inner message to one team and nobody else', () => {
+        const { state, transport, socks } = setupTeams(3);
+        state.handleServerMessage('to2,vibuzzer');
+        assert.deepStrictEqual(socks[1].sent, ['vibuzzer']);
+        assert.deepStrictEqual(socks[0].sent, [], 'and no other team hears anything');
+        assert.deepStrictEqual(socks[2].sent, []);
+        assert.deepStrictEqual(transport.clients, [], 'it is not a broadcast');
+    });
+
+    test('to splits on the first comma only, so a payload may contain commas', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('to1,mo4,A');
+        assert.deepStrictEqual(socks[0].sent, ['mo4,A']);
+    });
+
+    test('to is a repair, so it does not disturb what everyone was last told', () => {
+        //The whole point: putting one straggler right must not rewrite the state that
+        //a future client, or a reconnecting one, gets replayed to it.
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('vibuzzer');
+        socks[0].drain();
+        state.handleServerMessage('to1,vigeo');
+        state.handleServerMessage('to1,imspain.jpg');
+        state.handleServerMessage('to1,mo6,1');
+        assert.deepStrictEqual(socks[0].sent, ['vigeo', 'imspain.jpg', 'mo6,1']);
+        assert.strictEqual(state.lastView, 'buzzer');
+        assert.strictEqual(state.lastGeoImage, DEFAULT_GEO_IMAGE);
+        assert.strictEqual(state.lastMulti, DEFAULT_MULTI);
+    });
+
+    test('a to that cannot be read, or is for an absent team, is dropped', () => {
+        const { state, transport, socks } = setupTeams(1);
+        ['to9,vibuzzer', 'to,vibuzzer', 'to1,v', 'to1,', 'to1', 'tox,vibuzzer', 'to']
+            .forEach(m => state.handleServerMessage(m)); //none of these may throw
+        assert.deepStrictEqual(socks[0].sent, []);
+        assert.deepStrictEqual(transport.clients, []);
+    });
+
+    test('a whole resync reaches one team in the order the quiz software sent it', () => {
+        //The sequence the Resync button produces for a team part way through a multiple
+        //choice round. The grid has to arrive before the selection, because rebuilding the
+        //grid is what clears the previously lit tile.
+        const { state, transport, socks } = setupTeams(2);
+        ['to2,vsmulti', 'to2,mo4,A', 'to2,on', 'to2,ms3'].forEach(m => state.handleServerMessage(m));
+        assert.deepStrictEqual(socks[1].sent, ['vsmulti', 'mo4,A', 'on', 'ms3']);
+        assert.deepStrictEqual(socks[0].sent, [], 'the team that was fine is left alone');
+        assert.deepStrictEqual(transport.clients, []);
+    });
+
     test('ha resets every higher/lower', () => {
         const { state, transport } = setup(0);
         state.handleServerMessage('ha');

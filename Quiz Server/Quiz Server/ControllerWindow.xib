@@ -29,6 +29,8 @@
                 <outlet property="buzzerSounds" destination="dOo-JQ-UKY" id="wZz-UI-pKw"/>
                 <outlet property="buzzerTimerTime" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
                 <outlet property="disconnectAllButton" destination="Dc1-Al-btn" id="Dc1-Al-out"/>
+                <outlet property="repairWarningLabel" destination="Vsw-nV-o5k" id="Rpr-wn-out"/>
+                <outlet property="resyncModeBtn" destination="Rsy-md-btn" id="Rsy-md-out"/>
                 <outlet property="falseButton" destination="r3f-F8-eF8" id="c6S-oh-agy"/>
                 <outlet property="geoAnswerX" destination="jQg-0f-joa" id="5Me-JP-lg1"/>
                 <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
@@ -1803,6 +1805,17 @@ Answers</string>
                                     <rect key="frame" x="10" y="7" width="896" height="284"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
+                                        <button focusRingType="none" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rsy-md-btn">
+                                            <rect key="frame" x="333" y="245" width="230" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Disconnect Mode" alternateTitle="Resync Mode" bezelStyle="rounded" alignment="center" state="off" focusRingType="none" inset="2" id="Rsy-md-cel">
+                                                <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="resyncModePress:" target="-2" id="Rsy-md-act"/>
+                                            </connections>
+                                        </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vsw-nV-o5k">
                                             <rect key="frame" x="28" y="215" width="840" height="21"/>
                                             <autoresizingMask key="autoresizingMask"/>

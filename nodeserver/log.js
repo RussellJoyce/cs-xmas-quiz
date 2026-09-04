@@ -20,10 +20,12 @@ const CODES = {
     hh: 'higher accepted', hl: 'lower accepted', hn: 'clear higher/lower',
     ha: 'clear all higher/lower',
     h1: 'label higher/lower', h2: 'label true/false',
-    vi: 'view',           im: 'geography image',
+    vi: 'view',           vs: 'view if not already',
+    im: 'geography image',
     mo: 'multiple choice options', ms: 'multiple choice accepted',
     ok: 'team confirmed', px: 'team refused',
     di: 'release team',   pb: 'pong',
+    to: 'to one team',
 
     //Quiz software to this server
     le: 'led',            ls: 'list teams',

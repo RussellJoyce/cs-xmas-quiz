@@ -187,6 +187,23 @@ class QuizState {
                         }
                         break;
                     }
+                    case "to": { //Send a message to one team only: "to<team>,<message>"
+                        const comma = message.indexOf(",");
+                        const team = comma > 2 ? parseInt(message.slice(2, comma)) : 0; //Teams are 1-based, so 0/NaN are both invalid
+                        const inner = comma > 2 ? message.slice(comma + 1) : '';
+                        if(!team || inner.length < 2) {
+                            log.warn('quiz', 'all', 'to', "cannot read '" + message + "', ignored");
+                        } else {
+                            const c = this.getClientByID(team);
+                            if(c) {
+                                log.info('quiz', 'T' + team, 'to', 'for this team only: ' + log.describe(inner));
+                                safeSend(c.sock, inner);
+                            } else {
+                                log.debug('quiz', 'T' + team, 'to', 'dropped, team not connected');
+                            }
+                        }
+                        break;
+                    }
                     case "vi": //Set view
                         this.lastView = message.slice(2);
                         log.info('quiz', 'all', 'vi', 'view → ' + this.lastView);

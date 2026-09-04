@@ -84,28 +84,17 @@ function connect() {
                 console.log("button off");
                 break;
             case "vi":
-                //Set our view
+                //Set our view, clearing whatever we were part way through answering.
                 console.log("Server requests setting view: " + event.data.slice(2));
-                lastview = event.data.slice(2);
-                toggleState(true);
-
-                if(event.data.slice(2) == "text") {
-                    setView("text");
-                    document.getElementById("textbox").type = "text";
-                    textbox.focus();
-                    removeTextmodeHandlers();
-                    textbox.value = "";
-                } else if(event.data.slice(2) == "numbers") {
-                    setView("text");
-                    document.getElementById("textbox").type = "number";
-                    textbox.focus();
-                    removeTextmodeHandlers();
-                    textbox.value = "";
-                } else if(event.data.slice(2) == "wavelength") {
-                    setView("wavelength");
-                    setWavelength(50, false);
+                applyView(event.data.slice(2));
+                break;
+            case "vs":
+                //Put us on a view only if we are not already there
+                if(event.data.slice(2) == lastview) {
+                    console.log("Already on view " + lastview + ", ignoring the resync");
                 } else {
-                    setView(event.data.slice(2));
+                    console.log("Resync moves us from " + lastview + " to " + event.data.slice(2));
+                    applyView(event.data.slice(2));
                 }
                 break;
             case "im":
@@ -171,6 +160,28 @@ function connect() {
     ws.onerror = function(event) {
         /* If the websocker errors then disconnect, which will fire the ws.onclose handler. */
         ws.close()
+    }
+}
+
+
+/*
+Move to a new view, resetting everything
+*/
+function applyView(view) {
+    lastview = view;
+    toggleState(true);
+
+    if(view == "text" || view == "numbers") {
+        setView("text");
+        textbox.type = (view == "numbers") ? "number" : "text";
+        textbox.focus();
+        removeTextmodeHandlers();
+        textbox.value = "";
+    } else if(view == "wavelength") {
+        setView("wavelength");
+        setWavelength(50, false);
+    } else {
+        setView(view);
     }
 }
 
