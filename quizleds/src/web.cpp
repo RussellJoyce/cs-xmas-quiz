@@ -89,7 +89,7 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
 		switch(data->op_code) {
 			case 1:
 				if(data->data_len >= 3) { //All commands are at least 3 bytes
-					if(data->data_len > sizeof(command_to_parse)) data->data_len = sizeof(command_to_parse);
+					if((unsigned long) data->data_len > sizeof(command_to_parse)) data->data_len = sizeof(command_to_parse);
 					memcpy(command_to_parse, data->data_ptr, data->data_len);
 				}
 				command_length = data->data_len;

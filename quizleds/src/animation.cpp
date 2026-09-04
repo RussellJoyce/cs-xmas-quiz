@@ -352,7 +352,7 @@ void Counter::start(int param) {
         if(i < this->c) {
             leds.SetPixelColor(ledlookup[i], RgbColor(255, 255, 255));
         } else {
-            leds.SetPixelColor(ledlookup[i], HsbColor(((float)rand()) / RAND_MAX, 1.0, 0.5));
+            leds.SetPixelColor(ledlookup[i], HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 0.5));
         }
     }
     leds.Show();
@@ -430,7 +430,7 @@ void BuzzFlash::tick() {
         }
     } else {
         if(flashhold == 0) {
-            flashcol = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+            flashcol = HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 1.0);
         } else {
             flashcol.B -= 0.1;
         }
@@ -464,7 +464,7 @@ void BuzzCentre::start(int param) {
 void BuzzCentre::tick() {
 	if(framenum < NUM_LEDS/4) {
         for(int i = 0; i < 2; i++) {
-            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2+i), false)] = HsbColor(((float)rand()) / RAND_MAX, 1.0, 1.0);
+            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2+i), false)] = HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 1.0);
         }
     } else if(framenum == (NUM_LEDS/4 + 20)) {
         for(int i = 0; i < NUM_LEDS; i++) {
