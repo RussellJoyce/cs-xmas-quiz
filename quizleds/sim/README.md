@@ -43,7 +43,7 @@ That is why `web.cpp` copies each command into `command_to_parse` and parses it 
 ## Options
 
     --uri <ws://host:port/>  LED websocket to connect to (default ws://127.0.0.1:8092/)
-    --logical                show the strip in animation order rather than wiring order
+    --wiring                 show the raw physical strip rather than the line it forms
     --plain                  no alternate screen or raw input; serial goes to stdout
     --seed <n>               fixed random seed, for reproducible animations
     --render-hz <n>          terminal redraw rate (default 30)
@@ -54,19 +54,22 @@ The layout adapts to the window: the status line and the strip are always drawn 
 and the serial pane and the footer are dropped when there is not enough height for them,
 so the display never scrolls.
 
-Keystrokes go to the firmware's own debug console in `main.cpp` (`m o r g b z c p = -`),
+Keystrokes go to the firmware's own debug console in `main.cpp` (`m s e o r g b z c p = -`,
+where `s` and `e` are the two background animations),
 because the shim's `Serial` reads the terminal. ctrl-C quits.
 
-### Wiring order vs animation order
+### Animation order vs wiring order
 
-By default the strip is drawn in wiring order: pixel *n* is the *n*th LED along the real
-strip. `ledlookup` folds that, so animation index 0 is at one end, 1 at the other, 2 next
-to 0, and so on. `--logical` draws through the lookup instead. Setting the counter to 50
-shows the difference:
+The strip is physically folded, so the LEDs are not in the order they appear on the wall.
+`ledlookup` undoes that: animation index 0..199 is the line left to right, which is the
+space the animations are written in and what is drawn by default.
 
+`--wiring` shows the raw physical run instead, which is what you want when checking the
+mapping itself rather than the animation. Setting the counter to 50 shows the difference:
+
+    animation order WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW..  (50 contiguous)
     wiring order    WWWWWWWWWWWWWWWWWWWWWWWWW..........................  (25 at each end)
                     ...........................WWWWWWWWWWWWWWWWWWWWWWWWW
-    animation order WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW..  (50 contiguous)
 
 ## Showing the strip in Quiz Server
 

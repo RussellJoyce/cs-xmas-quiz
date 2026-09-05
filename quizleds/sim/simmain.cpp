@@ -41,7 +41,9 @@ namespace {
 
 struct Options {
 	std::string uri = "ws://127.0.0.1:8092/";
-	bool logical = false;      //Show the strip in animation order rather than wiring order
+	//Animation order by default: the strip is folded, so index 0..199 through ledlookup is
+	//the left-to-right line people actually see. Wiring order is the raw physical run.
+	bool logical = true;
 	bool plain = false;        //No alternate screen or raw input, for piping to a file
 	unsigned long seed = 0;    //0 means seed from the clock
 	int renderHz = 30;
@@ -342,7 +344,7 @@ static void usage() {
 	fprintf(stderr,
 		"ledsim - runs the quizleds firmware on the host and draws the strip in the terminal\n\n"
 		"  --uri <ws://host:port/>  LED websocket to connect to (default ws://127.0.0.1:8092/)\n"
-		"  --logical                show the strip in animation order rather than wiring order\n"
+		"  --wiring                 show the raw physical strip rather than the line it forms\n"
 		"  --plain                  no alternate screen or raw input; serial goes to stdout\n"
 		"  --seed <n>               fixed random seed, for reproducible animations\n"
 		"  --render-hz <n>          terminal redraw rate (default 30)\n"
@@ -356,7 +358,7 @@ int main(int argc, char** argv) {
 	for(int i = 1; i < argc; i++) {
 		std::string a = argv[i];
 		if(a == "--uri" && i + 1 < argc) opts.uri = argv[++i];
-		else if(a == "--logical") opts.logical = true;
+		else if(a == "--wiring") opts.logical = false;
 		else if(a == "--plain") opts.plain = true;
 		else if(a == "--seed" && i + 1 < argc) opts.seed = strtoul(argv[++i], 0, 10);
 		else if(a == "--render-hz" && i + 1 < argc) opts.renderHz = atoi(argv[++i]);

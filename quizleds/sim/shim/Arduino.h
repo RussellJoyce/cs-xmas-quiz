@@ -36,6 +36,18 @@ than a UART.
 #define memcpy_P(d, s, n)      memcpy(d, s, n)
 
 //-------------------------------------------------------------------------------------------------
+// The maths constants the Arduino core defines. Worth having even though nothing needed
+// them at first: without them the host build happily accepts a local name like TWO_PI that
+// then collides with the core's macro when built for the board.
+
+#define PI         3.1415926535897932384626433832795
+#define HALF_PI    1.5707963267948966192313216916398
+#define TWO_PI     6.283185307179586476925286766559
+#define DEG_TO_RAD 0.017453292519943295769236907684886
+#define RAD_TO_DEG 57.295779513082320876798154814105
+#define EULER      2.718281828459045235360287471352
+
+//-------------------------------------------------------------------------------------------------
 // Time and randomness
 
 unsigned long millis();
