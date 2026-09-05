@@ -17,7 +17,9 @@ class LEDStripView: NSView {
 		case animation
 	}
 
-	var order: Order = .wiring { didSet { needsDisplay = true } }
+	//Animation order by default: the strip is folded, so this is the line as it appears on
+	//the wall. Wiring order is only useful for checking the mapping itself.
+	var order: Order = .animation { didSet { needsDisplay = true } }
 
 	private var pixels: [UInt8] = []
 	private var count = 0
