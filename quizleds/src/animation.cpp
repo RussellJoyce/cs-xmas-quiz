@@ -19,6 +19,8 @@ BuzzFlash buzzflash;
 BuzzCentre buzzcentre;
 BuzzRainbow buzzrainbow;
 Counter counter;
+Swell swell;
+Embers embers;
 Animation* current_anim = &noanim;
 
 void anim_init() {
@@ -75,6 +77,12 @@ void anim_set_anim(AnimID id, int param) {
             break;
         case BUZZRAINBOW:
             current_anim = &buzzrainbow;
+            break;
+        case SWELL:
+            current_anim = &swell;
+            break;
+        case EMBERS:
+            current_anim = &embers;
             break;
     }
     framenum = 0;
@@ -508,4 +516,86 @@ void BuzzRainbow::tick() {
         }
         leds.Show();
     }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+// Background animations
+//
+// dither() provides a simple temporal dithering to smooth out the bottom of the brightness range
+
+static const float DITHER[4] = {0.125f, 0.625f, 0.375f, 0.875f};
+
+static inline float dither(float b, int i) {
+    return b + DITHER[(framenum + i) & 3] * (1.0f / 255.0f);
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+#define SWELL_HUE         0.08f   // Warm amber
+#define SWELL_SAT         0.90f
+#define SWELL_BASE        0.06f   // Middle of the brightness range
+#define SWELL_AMP         0.06f   // So the wave runs between 0.0 and 0.12
+#define SWELL_WAVELENGTH  120.0f  // LEDs. Longer than half the strip, so no repeat is visible
+#define SWELL_PERIOD      1540    // Frames for one traverse, about 20 seconds
+#define SWELL_FADEIN      77      // About a second
+
+void Swell::start(int param) {
+    clearLEDs();
+}
+
+void Swell::tick() {
+    float gain = framenum < SWELL_FADEIN ? (float) framenum / (float) SWELL_FADEIN : 1.0f;
+    float phase = (float) TWO_PI * ((float) (framenum % SWELL_PERIOD) / (float) SWELL_PERIOD);
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        float b = SWELL_BASE + SWELL_AMP * sinf((float) TWO_PI * ((float) i / SWELL_WAVELENGTH) - phase);
+        leds.SetPixelColor(ledlookup[i], HsbColor(SWELL_HUE, SWELL_SAT, dither(b * gain, i)));
+    }
+    leds.Show();
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+#define EMBER_HUE         0.06f   // Warm, a touch redder than the swell
+#define EMBER_HUE_SPREAD  0.04f   // Each ember is picked somewhere in HUE..HUE+SPREAD
+#define EMBER_SAT         0.95f
+#define EMBER_PEAK        0.18f
+#define EMBER_SPEED       0.0022f // Per frame, so an ember takes about a second each way
+#define EMBER_EVERY       26      // Frames between new embers, giving roughly six at a time
+
+void Embers::start(int param) {
+    for(int i = 0; i < NUM_LEDS; i++) {
+        target[i] = HsbColor(EMBER_HUE, EMBER_SAT, 0.0);
+        current[i] = HsbColor(EMBER_HUE, EMBER_SAT, 0.0);
+    }
+    //No fade in needed: the strip starts dark and fills as embers light, which is gentle
+    //enough on its own.
+    clearLEDs();
+}
+
+void Embers::tick() {
+    if((framenum % EMBER_EVERY) == 0) {
+        int i = random(NUM_LEDS);
+        //The hue is set on both at once rather than faded to: the LED is dark at this point
+        //so the change cannot be seen, and letting it drift would muddy the colour.
+        float hue = EMBER_HUE + (float) random(1000) * (EMBER_HUE_SPREAD / 1000.0f);
+        current[i].H = target[i].H = hue;
+        current[i].S = target[i].S = EMBER_SAT;
+        target[i].B = EMBER_PEAK;
+    }
+
+    //An ember that has finished rising is released, and fades back down to nothing.
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(target[i].B > 0.0f && current[i].B >= target[i].B - 0.0001f) {
+            target[i].B = 0.0f;
+        }
+    }
+
+    fade_current_to_target(EMBER_SPEED);
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        leds.SetPixelColor(i, HsbColor(current[i].H, current[i].S, dither(current[i].B, i)));
+    }
+    leds.Show();
 }

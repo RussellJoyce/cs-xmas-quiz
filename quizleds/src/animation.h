@@ -15,7 +15,7 @@ public:
 };
 
 typedef enum {
-    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW
+    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS
 } AnimID;
 
 void anim_init();
@@ -46,6 +46,20 @@ public:
 };
 
 class TimerTwinkle : public Animation {
+public:
+	void start(int param);
+	void tick();
+};
+
+//A long, dim brightness wave travelling along the line.
+class Swell : public Animation {
+public:
+	void start(int param);
+	void tick();
+};
+
+//A mostly dark strip with a few slow warm glows rising and fading.
+class Embers : public Animation {
 public:
 	void start(int param);
 	void tick();
