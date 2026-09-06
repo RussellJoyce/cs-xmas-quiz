@@ -1,0 +1,18 @@
+{
+  "name": "quiz-wiki-tools",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Offline build pipeline that turns a Kiwix ZIM into the wikirace corpus",
+  "type": "commonjs",
+  "scripts": {
+    "spike": "node spike.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "@openzim/libzim": "^3.1.0",
+    "node-html-parser": "^9.0.3"
+  },
+  "allowScripts": {
+    "@openzim/libzim@3.4.0": true
+  }
+}

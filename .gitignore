@@ -1,4 +1,4 @@
-# Created by https://www.gitignore.io
+ Created by https://www.gitignore.io
 
 ### OSX ###
 .DS_Store
@@ -37,3 +37,7 @@ nodeserver/static/geography/*
 quizleds/src/credentials.h
 nodeserver/cloudflare.ini
 
+
+# Wikirace
+tools/wiki/corpus/
+nodeserver/static/wiki/
