@@ -95,13 +95,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 <div id="toolbar">
     <label>Host: <input type="text" id="cfg-host"></label>
-    <label>Port: <input type="number" id="cfg-port" value="8093"></label>
-    <label>Protocol:
-        <select id="cfg-proto">
-            <option value="ws://">ws://</option>
-            <option value="wss://">wss://</option>
-        </select>
-    </label>
+    <label>Port: <input type="number" id="cfg-port" value="8090"></label>
     <label>Clients:
         <select id="cfg-count"></select>
     </label>
@@ -129,9 +123,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <script src="test-patterns.js"></script>
 <script>
 // Init config
+// Served by the quiz server, so this is the name the certificate was issued for.
 document.getElementById('cfg-host').value = location.hostname || 'localhost';
-// Default to ws:// — use wss:// only when hostname matches the server cert
-document.getElementById('cfg-proto').value = 'ws://';
 var countSel = document.getElementById('cfg-count');
 for (var i = 1; i <= 16; i++) {
     var opt = document.createElement('option');
@@ -288,7 +281,9 @@ VirtualClient.prototype.toggleConnect = function() {
 
 VirtualClient.prototype.connect = function() {
     if (this.ws) return;
-    var proto = document.getElementById('cfg-proto').value;
+    //wss and nothing else: the server has no plain client port, so these clients run over
+    //exactly the transport the phones do.
+    var proto = 'wss://';
     var host = document.getElementById('cfg-host').value;
     var port = document.getElementById('cfg-port').value;
     var url = proto + host + ':' + port + '/?vcid=test' + this.index;
@@ -321,21 +316,13 @@ VirtualClient.prototype.connect = function() {
             }
         }, 5000);
 
-        // Ask the server which team we are, exactly as game.js does. On a reconnect the
-        // server already knows us and replies 'ok<n>'; if it does not know us it has
-        // already sent 'vipickteam', and the handler for that does the auto-pick.
-        // Sending 'pt' here instead would be answered with silence on a reconnect,
-        // leaving this cell showing the team picker while the server thinks otherwise.
+        // Ask the server which team we are
         self.send('re');
     };
 
     this.ws.onmessage = function(event) {
         var msg = event.data;
-        // The five-second keepalive draws a pong from the server every time, which drowns
-        // everything else in the logs. The ping itself is sent straight down the socket and
-        // was never logged, so this is the only half that needs keeping out. A ping fired
-        // from a test pattern goes through send() and still shows, since that one was asked
-        // for on purpose.
+        // filter pings unless we fired from a pattern
         if (msg.slice(0, 2) !== 'pb' || !document.getElementById('cfg-filterpings').checked) {
             self.log('msg-recv', '< ' + msg);
         }
@@ -399,10 +386,7 @@ VirtualClient.prototype.handleMessage = function(msg) {
             if (payload === 'pickteam') {
                 this.team = null;
                 this.buzzerOn = false;
-                // The server does not recognise us, so claim a team. Only the first
-                // 'vipickteam' of a connection does this: a later one means the quiz
-                // software sent 'di', and immediately re-claiming would make that
-                // look like it had not worked.
+                // The server does not recognise us, so claim a team
                 if (this.autopickPending) {
                     this.autopickPending = false;
                     var self = this;
@@ -426,8 +410,6 @@ VirtualClient.prototype.handleMessage = function(msg) {
             }
             break;
         case 'ms':
-            // Our selection was accepted. The harness has no tiles to light up, and the
-            // echo is already in the log above, so there is nothing to do with it here.
             break;
         case 'hh':
             document.getElementById('btn-a-' + this.index).style.outline = '2px solid #2ecc71';

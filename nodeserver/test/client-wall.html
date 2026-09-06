@@ -55,28 +55,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <label>Clients: <select id="cfg-count"></select></label>
     <label>Scale: <input type="range" id="cfg-scale" min="0.15" max="1" step="0.05" value="0.3"><span id="scale-readout">0.30</span></label>
     <label>Host: <input type="text" id="cfg-host"></label>
-    <label>Protocol:
-        <select id="cfg-proto">
-            <option value="ws://">ws://</option>
-            <option value="wss://">wss://</option>
-        </select>
-    </label>
-    <label>Port: <input type="number" id="cfg-port" value="8093"></label>
+    <label>Port: <input type="number" id="cfg-port" value="8090"></label>
     <button onclick="rebuild()">Rebuild</button>
     <button onclick="reloadAll()">Reload all</button>
     <button class="danger" onclick="powerAll(false)">Kill all</button>
     <button onclick="powerAll(true)">Restore all</button>
 </div>
-
-<div id="note">
-    Each cell is the real client (<code>index.html</code>) in an iframe, told to identify itself
-    with <code>?vcid=phoneN</code>.<br>
-    <b>&#8635;</b> is the team reloading their page, <b>&#9211;</b> is their phone going away and
-    coming back, and both should return them to their team. <b>&#10530;</b> blows one client up to
-    full size for typing.
-    <div id="warning"></div>
-</div>
-
+<div>&nbsp;</div>
 <div id="wall"></div>
 
 <script>
@@ -86,12 +71,11 @@ var MAX_CLIENTS = 14; //Matches numTeams in config.json
 var wall = document.getElementById('wall');
 var countSel = document.getElementById('cfg-count');
 var hostInput = document.getElementById('cfg-host');
-var protoSel = document.getElementById('cfg-proto');
 var portInput = document.getElementById('cfg-port');
 var scaleInput = document.getElementById('cfg-scale');
 
-//Opened straight off the disk there is no hostname to inherit, so guess at the machine we
-//are sitting in front of. Served over http this is whatever served us, as you would expect.
+//Served by the quiz server, so this is the name the certificate was issued for and the name
+//the clients must use as well.
 hostInput.value = location.hostname || 'localhost';
 
 for(var i = 1; i <= MAX_CLIENTS; i++) {
@@ -101,24 +85,19 @@ for(var i = 1; i <= MAX_CLIENTS; i++) {
     countSel.appendChild(opt);
 }
 
-//The server only lets a client name itself on the plain ws port, because a client that picks
-//its own key can take over another one on the same address. That makes this wall an http-only
-//tool: over https the clients can open nothing but wss://, where every cell is keyed on this
-//machine's address and the whole wall is therefore one client. Say so rather than quietly
-//presenting fourteen views of team 1.
-if(location.protocol === 'https:') {
-    protoSel.value = 'wss://';
-    portInput.value = '8090';
+if(location.protocol !== 'https:') {
     document.getElementById('warning').innerHTML =
-        '<b>Served over https:</b> the clients can only open <code>wss://</code>, where the ' +
-        'server ignores <code>vcid</code> and keys every cell on this machine\'s address — ' +
-        'so the wall behaves as a single client. Serve this page over plain http to use it.';
+        '<b>Not served over https.</b> Open this page from the quiz server itself — ' +
+        '<code>https://&lt;host&gt;/test/client-wall.html</code> — with the server started as ' +
+        '<code>node server.js --dev</code>. Opened from the filesystem the clients cannot reach ' +
+        'the wikirace app or the article corpus, and the server will not honour <code>vcid</code>.';
 }
 
+//An absolute path, because the server mounts the client app at the root and this page at
+///test: a relative hop out of /test would miss it.
 function clientURL(index) {
-    return '../static/index.html?vcid=phone' + index +
+    return '/index.html?vcid=phone' + index +
            '&host=' + encodeURIComponent(hostInput.value) +
-           '&proto=' + encodeURIComponent(protoSel.value) +
            '&port=' + encodeURIComponent(portInput.value);
 }
 
@@ -225,7 +204,6 @@ function applyScale() {
 scaleInput.addEventListener('input', applyScale);
 countSel.addEventListener('change', rebuild);
 hostInput.addEventListener('change', rebuild);
-protoSel.addEventListener('change', rebuild);
 portInput.addEventListener('change', rebuild);
 
 applyScale();

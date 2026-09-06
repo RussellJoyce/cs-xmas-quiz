@@ -2,6 +2,10 @@
 
 //Shared fakes for the protocol tests.
 
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { execFileSync } = require('child_process');
 const log = require('../log');
 
 const OPEN = 1;
@@ -61,4 +65,21 @@ function captureLogs(level) {
     return lines;
 }
 
-module.exports = { FakeSocket, recordingTransport, muteLogs, captureLogs, OPEN, CLOSED };
+//Clients only speak wss, so anything that drives a real client socket needs a certificate.
+function testCerts() {
+    if(testCerts.made) return testCerts.made;
+
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'quiz-test-certs-'));
+    const key = path.join(dir, 'key.pem');
+    const cert = path.join(dir, 'cert.pem');
+
+    execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes',
+                             '-keyout', key, '-out', cert,
+                             '-days', '1', '-subj', '/CN=localhost'],
+                 { stdio: 'ignore' });
+
+    testCerts.made = { key, cert };
+    return testCerts.made;
+}
+
+module.exports = { FakeSocket, recordingTransport, muteLogs, captureLogs, testCerts, OPEN, CLOSED };

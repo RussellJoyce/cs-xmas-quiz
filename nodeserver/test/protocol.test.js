@@ -7,6 +7,7 @@ const { QuizState, safeSend, clientKey, clientKeyForConnection, asText, validTea
         DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
         DEFAULT_VIEW, DEFAULT_GEO_IMAGE, DEFAULT_MULTI } = require('../protocol');
 const { FakeSocket, recordingTransport, muteLogs } = require('./helpers');
+const { WikiCorpus } = require('../wikirace');
 
 let unmute;
 beforeEach(() => { unmute = muteLogs(); });
@@ -47,20 +48,21 @@ describe('client identity', () => {
     });
 
     describe('a client naming itself', () => {
-        //The plain ws port is the test port, and is the only one that will listen to a
-        //client about who it is. Everything the wss port is told about a vcid is ignored,
-        //so a phone cannot ask for the key another phone on its address is already using.
-        test('is honoured on the plain ws port', () => {
+        //Development mode is the only thing that will make the server listen to a client
+        //about who it is. Without it a vcid is ignored, so a phone cannot ask for the key
+        //another phone on its address is already using -- nor open fourteen tabs, name
+        //each one differently and claim every team.
+        test('is honoured when the server is in development mode', () => {
             assert.strictEqual(clientKeyForConnection('10.0.0.9', '/?vcid=phone1', true),
                                '10.0.0.9_phone1');
         });
 
-        test('is ignored on the wss port', () => {
+        test('is ignored otherwise', () => {
             assert.strictEqual(clientKeyForConnection('10.0.0.9', '/?vcid=phone1', false),
                                '10.0.0.9');
         });
 
-        test('cannot take over another client on the same address over wss', () => {
+        test('cannot take over another client on the same address', () => {
             const victim = clientKeyForConnection('10.0.0.9', '/', false);
             const thief = clientKeyForConnection('10.0.0.9', '/?vcid=phone1', false);
             //Both are just the address, so the thief gains nothing it did not already have.
@@ -788,5 +790,322 @@ describe('re-picking a team you already hold', () => {
         ['zz1', 'tt1,ptarmigan', 'ii1,42,17'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, ['zz1', 'tt1,ptarmigan', 'ii1,42,17']);
+    });
+});
+
+
+//---------------------------------------------------------------------------------------
+// Wikirace
+//---------------------------------------------------------------------------------------
+
+//   0 Start ──► 1 Middle ──► 2 Target ──► 0
+//   └─────────► 3 Detour ──► 1
+function wikiCorpus() {
+    const links = [[1, 3], [2], [0], [1]];
+    const offsets = new Int32Array(links.length + 1);
+    links.forEach((row, i) => { offsets[i + 1] = offsets[i] + row.length; });
+    return new WikiCorpus({
+        titles: ['Start', 'Middle', 'Washington, D.C.', 'Detour'],
+        slugs: ['Start', 'Middle', 'Washington,_D.C.', 'Detour'],
+        offsets: offsets,
+        targets: Int32Array.from(links.flat())
+    });
+}
+
+//A state with `n` clients holding teams 1..n and a corpus loaded.
+function setupRace(n) {
+    const transport = recordingTransport();
+    const state = new QuizState(transport, { numTeams: n, wikiCorpus: wikiCorpus() });
+    const socks = [];
+    for(let i = 1; i <= n; i++) {
+        const s = new FakeSocket('c' + i);
+        state.addClient('10.0.0.9_test' + i, s);
+        state.handleClientMessage('10.0.0.9_test' + i, s, 'pt' + i);
+        s.drain();
+        socks.push(s);
+    }
+    const key = i => '10.0.0.9_test' + i;
+    return { state, transport, socks, key };
+}
+
+describe('wikirace', () => {
+
+    describe('starting a race', () => {
+        test('tells every client the start and the target', () => {
+            const { state, transport } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            //Ids first, then the two titles, so the client can name the target without
+            //fetching it. "Washington, D.C." has a comma in it, hence the pipe.
+            assert.ok(transport.clients.includes('wr0,2,Start|Washington, D.C.'));
+            assert.strictEqual(state.wikirace.running, true);
+        });
+
+        test('puts everyone on the start article with a wg, not with the wr', () => {
+            //"wg" is the only message that decides which page a client is showing. If "wr"
+            //also rendered, a reconnecting client would fetch two articles at once and
+            //whichever landed last would win.
+            const { state, transport } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            assert.ok(transport.clients.includes('wg0,0'));
+            assert.ok(transport.clients.indexOf('wr0,2,Start|Washington, D.C.') <
+                      transport.clients.indexOf('wg0,0'), 'the race must be set up before the article');
+        });
+
+        test('an article outside the corpus does not start a race', () => {
+            const { state, transport } = setupRace(2);
+            state.handleServerMessage('wr0,99');
+            assert.strictEqual(state.wikirace.running, false);
+            assert.ok(!transport.clients.some(m => m.startsWith('wr')));
+        });
+
+        test('a malformed message does not start a race', () => {
+            const { state } = setupRace(2);
+            state.handleServerMessage('wrbanana');
+            assert.strictEqual(state.wikirace.running, false);
+        });
+
+        test('a server with no corpus refuses rather than crashing', () => {
+            //The normal state of a development machine: the corpus is gitignored.
+            const transport = recordingTransport();
+            const state = new QuizState(transport, { numTeams: 2 });
+            state.handleServerMessage('wr0,2');
+            assert.strictEqual(state.wikirace, null);
+            assert.ok(!transport.clients.some(m => m.startsWith('wr')));
+        });
+    });
+
+    describe('following a link', () => {
+        test('is authorised with the article to render', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            socks.forEach(s => s.drain());
+
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            assert.deepStrictEqual(socks[0].drain(), ['wg1,1']);
+            assert.strictEqual(state.wikirace.positionOf('1'), 1);
+        });
+
+        test('a link that is not on the page is REFUSED and the team does not move', () => {
+            //The rule the whole round rests on. Straight from Start to Target is not a
+            //link that exists, however politely the client asks.
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            socks.forEach(s => s.drain());
+
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+            assert.deepStrictEqual(socks[0].drain(), ['wx']);
+            assert.strictEqual(state.wikirace.positionOf('1'), 0);
+        });
+
+        test('a team cannot move on another team behalf', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            socks.forEach(s => s.drain());
+
+            //Client 1 holds team 1, and claims to be team 2.
+            state.handleClientMessage(key(1), socks[0], 'wl2,1');
+            assert.deepStrictEqual(socks[0].drain(), []);
+            assert.strictEqual(state.wikirace.positionOf('2'), 0);
+        });
+
+        test('a move before the race starts is refused', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            assert.deepStrictEqual(socks[0].drain(), ['wx']);
+        });
+
+        test('the quiz software is told where the team now is', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            //"wp<team>,<hops>,<away>,<title>": Middle is one link from the target.
+            assert.ok(transport.servers.includes('wp1,1,1,Middle'), transport.servers.join(' | '));
+        });
+
+        test('a title containing a comma is still readable, because it comes last', () => {
+            //534 real article titles contain a comma. Putting the title anywhere but last
+            //would make the quiz software split "Washington, D.C." into two fields.
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+
+            const position = transport.servers.filter(m => m.startsWith('wp')).pop();
+            assert.strictEqual(position, 'wp1,2,0,Washington, D.C.');
+            //Split on the first three commas and the rest is the title, intact.
+            const bits = position.slice(2).split(',');
+            assert.strictEqual(bits.slice(3).join(','), 'Washington, D.C.');
+        });
+    });
+
+    describe('arriving', () => {
+        test('tells the client and the quiz software', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            socks[0].drain();
+
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+            assert.deepStrictEqual(socks[0].drain(), ['wg2,2', 'wf']);
+            assert.ok(transport.servers.some(m => m.startsWith('ww1,2,')));
+        });
+
+        test('a team that has arrived cannot carry on', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+            socks[0].drain();
+
+            state.handleClientMessage(key(1), socks[0], 'wl1,0');
+            assert.deepStrictEqual(socks[0].drain(), ['wx']);
+        });
+    });
+
+    describe('going back', () => {
+        test('returns the team to the previous article', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,3');
+            socks[0].drain();
+
+            state.handleClientMessage(key(1), socks[0], 'wb1');
+            //Back is free, so the hop count goes back down with it.
+            assert.deepStrictEqual(socks[0].drain(), ['wg0,0']);
+            assert.strictEqual(state.wikirace.positionOf('1'), 0);
+        });
+
+        test('at the start there is nothing to go back to', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            socks.forEach(s => s.drain());
+            state.handleClientMessage(key(1), socks[0], 'wb1');
+            assert.deepStrictEqual(socks[0].drain(), ['wx']);
+        });
+    });
+
+    describe('ending a race', () => {
+        test('freezes the clients and stops accepting moves', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            socks.forEach(s => s.drain());
+
+            state.handleServerMessage('we');
+            assert.ok(transport.clients.includes('we'));
+
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            assert.deepStrictEqual(socks[0].drain(), ['wx']);
+        });
+
+        test('reports a standing for every team, in rank order', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(2), socks[1], 'wl2,1');
+            state.handleClientMessage(key(2), socks[1], 'wl2,2');   //team 2 arrives
+            state.handleServerMessage('we');
+
+            const standings = transport.servers.filter(m => m.startsWith('wd'));
+            assert.strictEqual(standings.length, 2);
+            //"wd<team>,<rank>,<finished>,<seconds>,<hops>,<away>"
+            assert.match(standings[0], /^wd2,1,1,/);
+            assert.match(standings[1], /^wd1,2,0,/);
+        });
+
+        test('reports each team trail for the reveal, pipe separated', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,3');   //into the detour
+            state.handleClientMessage(key(1), socks[0], 'wb1');     //and back out again
+            state.handleServerMessage('we');
+
+            const trail = transport.servers.find(m => m.startsWith('wt1,'));
+            //The dead end is in the trail even though backing out was free.
+            assert.strictEqual(trail, 'wt1,Start|Detour|Start');
+        });
+
+        test('reports the shortest the race could have been done in', () => {
+            const { state, transport } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleServerMessage('we');
+            //Start -> Middle -> Target is the only two-hop route in the fixture.
+            assert.ok(transport.servers.includes('woStart|Middle|Washington, D.C.'),
+                      transport.servers.join(' | '));
+        });
+
+        test('ending a race that is not running does nothing', () => {
+            const { state, transport } = setupRace(2);
+            state.handleServerMessage('we');
+            assert.ok(!transport.clients.includes('we'));
+            assert.ok(!transport.servers.some(m => m.startsWith('wd')));
+        });
+    });
+
+    describe('resyncing one team', () => {
+        test('resends the race and the article that team is actually on', () => {
+            //The quiz software cannot do this itself: only the server knows where a team is.
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            socks.forEach(s => s.drain());
+
+            state.handleServerMessage('wk1');
+            const sent = socks[0].drain();
+            assert.ok(sent.includes('wr0,2,Start|Washington, D.C.'), sent.join(' | '));
+            assert.ok(sent.includes('wg1,1'), sent.join(' | '));
+            //and nobody else is disturbed
+            assert.deepStrictEqual(socks[1].drain(), []);
+        });
+
+        test('tells a team that has already arrived that it has', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+            socks[0].drain();
+
+            state.handleServerMessage('wk1');
+            assert.ok(socks[0].drain().includes('wf'));
+        });
+
+        test('does nothing when no race is running', () => {
+            const { state, socks } = setupRace(2);
+            socks.forEach(s => s.drain());
+            state.handleServerMessage('wk1');
+            assert.deepStrictEqual(socks[0].drain(), []);
+        });
+    });
+
+    describe('a client that reconnects mid-race', () => {
+        test('is put back on its own article, not the start', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+
+            //The phone sleeps and comes back on a new socket from the same address.
+            const replacement = new FakeSocket('c1-again');
+            state.addClient(key(1), replacement);
+
+            const sent = replacement.drain();
+            assert.ok(sent.includes('wr0,2,Start|Washington, D.C.'), 'told about the race: ' + sent);
+            assert.ok(sent.includes('wg1,1'), 'put back on its own article with its hops: ' + sent);
+        });
+
+        test('is told it has already arrived, so it cannot race again', () => {
+            const { state, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');
+            state.handleClientMessage(key(1), socks[0], 'wl1,2');
+
+            const replacement = new FakeSocket('c1-again');
+            state.addClient(key(1), replacement);
+            assert.ok(replacement.drain().includes('wf'));
+        });
+
+        test('is told nothing about a race when none is running', () => {
+            const { state, key } = setupRace(2);
+            const replacement = new FakeSocket('c1-again');
+            state.addClient(key(1), replacement);
+            assert.ok(!replacement.drain().some(m => m.startsWith('wr')));
+        });
     });
 });

@@ -11,6 +11,7 @@
 
 const WebSocket = require('ws');
 const log = require('./log');
+const { WikiRace } = require('./wikirace');
 
 const DEFAULT_VIEW = "buzzer";
 const DEFAULT_GEO_IMAGE = "start.jpg";
@@ -70,6 +71,8 @@ class QuizState {
     constructor(transport, options) {
         this.transport = transport;
         this.numTeams = (options && options.numTeams) || DEFAULT_NUM_TEAMS;
+        this.wikiCorpus = (options && options.wikiCorpus) || null;
+        this.wikirace = this.wikiCorpus ? new WikiRace(this.wikiCorpus, this.numTeams) : null;
         this.clients = {};
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
@@ -99,6 +102,27 @@ class QuizState {
         return null;
     }
 
+    raceMessage() {
+        const race = this.wikirace;
+        return 'wr' + race.start + ',' + race.target + ',' +
+               this.wikiCorpus.title(race.start) + '|' + this.wikiCorpus.title(race.target);
+    }
+
+    //Everything a freshly connected or reconnected client needs in order to show the current state of play
+    sendCurrentState(sock, team) {
+        safeSend(sock, 'vi' + this.lastView);      //Forward them to the current view
+        safeSend(sock, 'im' + this.lastGeoImage);  //Set the geography image
+        safeSend(sock, 'mo' + this.lastMulti);     //Rebuild the multiple choice grid
+
+        //A team that reconnects mid-race lands back on its own article with its route intact, rather than being sent to the start.
+        if(this.wikirace && this.wikirace.running && team) {
+            safeSend(sock, this.raceMessage());
+            const at = this.wikirace.positionOf(team);
+            if(at >= 0) safeSend(sock, 'wg' + at + ',' + this.wikirace.hopsOf(team));
+            if(this.wikirace.hasFinished(team)) safeSend(sock, 'wf');
+        }
+    }
+
     //NOTE: clients are deliberately never removed. Entries in `clients` outlive their socket
     //so that a team's identity survives a phone sleeping, wifi dropping, or the browser being
     //backgrounded: when the same client reconnects it is recognised here and put straight back
@@ -110,9 +134,7 @@ class QuizState {
             const client = this.clients[key];
             log.info(this.labelOf(client), null, null, 'reconnected as ' + client.handle + ', back to view ' + this.lastView);
             client.sock = sock;
-            safeSend(sock, 'vi' + this.lastView); //Forward them to the current view
-            safeSend(sock, 'im' + this.lastGeoImage); //Set the geography image
-            safeSend(sock, 'mo' + this.lastMulti); //Rebuild the multiple choice grid
+            this.sendCurrentState(sock, client.id);
         } else {
             const known = this.clients[key];
             const handle = (known && known.handle) || ('c' + this.nextHandle++);
@@ -204,6 +226,74 @@ class QuizState {
                         }
                         break;
                     }
+                    case "wr": { //Start a wikirace: "wr<startId>,<targetId>"
+                        const parts = message.slice(2).split(",");
+                        const start = parseInt(parts[0], 10);
+                        const target = parseInt(parts[1], 10);
+                        if(!this.wikirace) {
+                            log.warn('quiz', 'all', 'wr', 'no wiki corpus is loaded, cannot start a race');
+                        } else if(!Number.isInteger(start) || !Number.isInteger(target)) {
+                            log.warn('quiz', 'all', 'wr', "cannot read '" + message + "', ignored");
+                        } else if(!this.wikirace.begin(start, target)) {
+                            log.warn('quiz', 'all', 'wr', 'article ' + start + ' or ' + target +
+                                     ' is not in the corpus, race not started');
+                        } else {
+                            log.info('quiz', 'all', 'wr', 'race from ' + this.wikiCorpus.title(start) +
+                                     ' to ' + this.wikiCorpus.title(target));
+                            this.transport.toClients(this.raceMessage());
+                            //"wr" sets up the race; "wg" puts a team on an article
+                            this.transport.toClients('wg' + start + ',0');
+                        }
+                        break;
+                    }
+                    case "wk": { //Resend one team's wikirace state: "wk<team>"
+                        const team = parseInt(message.slice(2), 10);
+                        const c = team ? this.getClientByID(String(team)) : null;
+                        if(!team) {
+                            log.warn('quiz', 'all', 'wk', "no such team in '" + message + "', ignored");
+                        } else if(!this.wikirace || !this.wikirace.running) {
+                            log.debug('quiz', 'T' + team, 'wk', 'no race running, nothing to resend');
+                        } else if(c) {
+                            log.info('quiz', 'T' + team, 'wk', 'resent the race and their article');
+                            safeSend(c.sock, this.raceMessage());
+                            const at = this.wikirace.positionOf(String(team));
+                            if(at >= 0) safeSend(c.sock, 'wg' + at + ',' + this.wikirace.hopsOf(String(team)));
+                            if(this.wikirace.hasFinished(String(team))) safeSend(c.sock, 'wf');
+                        } else {
+                            log.debug('quiz', 'T' + team, 'wk', 'dropped, team not connected');
+                        }
+                        break;
+                    }
+                    case "we": { //End the wikirace and report the standings
+                        if(!this.wikirace || !this.wikirace.running) {
+                            log.debug('quiz', 'all', 'we', 'no race running, nothing to end');
+                            break;
+                        }
+                        const standings = this.wikirace.standings();
+                        this.wikirace.end();
+                        log.info('quiz', 'all', 'we', 'race over, ' +
+                                 standings.filter(r => r.finished).length + ' of ' +
+                                 standings.length + ' teams arrived');
+                        //Clients freeze where they are so the reveal can show it.
+                        this.transport.toClients('we');
+                        //Numbers only, so the quiz software can split on commas safely.
+                        standings.forEach((row, rank) => {
+                            this.transport.toServers('wd' + row.team + ',' + (rank + 1) + ',' +
+                                                     (row.finished ? 1 : 0) + ',' + row.seconds + ',' +
+                                                     row.hops + ',' + row.away);
+                        });
+                        //Trails are pipe-separated because MediaWiki does not allow one in a title.
+                        standings.forEach(row => {
+                            this.transport.toServers('wt' + row.team + ',' +
+                                                     row.trail.map(id => this.wikiCorpus.title(id)).join('|'));
+                        });
+                        //What the race could have been done in
+                        const best = this.wikirace.bestRouteFrom(this.wikirace.start);
+                        if(best) {
+                            this.transport.toServers('wo' + best.map(id => this.wikiCorpus.title(id)).join('|'));
+                        }
+                        break;
+                    }
                     case "vi": //Set view
                         this.lastView = message.slice(2);
                         log.info('quiz', 'all', 'vi', 'view → ' + this.lastView);
@@ -271,9 +361,7 @@ class QuizState {
                             log.info(who, 'srv', 'pt', 'claims team ' + teampick + ' — granted, now T' + teampick);
                             this.clients[key].id = teampick;
                             safeSend(sock, "ok" + teampick);
-                            safeSend(sock, 'vi' + this.lastView);
-                            safeSend(sock, 'im' + this.lastGeoImage);
-                            safeSend(sock, 'mo' + this.lastMulti);
+                            this.sendCurrentState(sock, teampick);
                         } else {
                             const holder = this.getClientByID(teampick);
                             log.warn(who, 'srv', 'pt', 'claims team ' + teampick + ' — refused, already held by ' + holder.handle);
@@ -305,6 +393,46 @@ class QuizState {
                                          "cannot move to team '" + message.slice(2) + "' while holding team " +
                                          this.clients[key].id + " — refused");
                                 safeSend(sock, "px");
+                            }
+                            break;
+                        }
+                        case "wl":   //Followed a link: "wl<team>,<articleId>"
+                        case "wb": { //Went back one step: "wb<team>"
+                            const code = message.slice(0, 2);
+                            const parts = message.slice(2).split(",");
+                            if(validTeam(parts[0], this.numTeams) !== this.clients[key].id) {
+                                log.warn(who, 'srv', code, "dropped, moved as team '" + parts[0] + "'");
+                                break;
+                            }
+                            if(!this.wikirace) {
+                                log.warn(who, 'srv', code, 'dropped, no wiki corpus is loaded');
+                                safeSend(sock, 'wx');
+                                break;
+                            }
+
+                            const team = this.clients[key].id;
+                            const result = (code === 'wb')
+                                ? this.wikirace.back(team)
+                                : this.wikirace.move(team, parseInt(parts[1], 10));
+
+                            if(!result.ok) {
+                                //A team can only be somewhere the graph says it could have walked to
+                                log.warn(who, 'srv', code, 'refused: ' + result.reason);
+                                safeSend(sock, 'wx');
+                                break;
+                            }
+
+                            const title = this.wikiCorpus.title(result.to);
+                            log.info(who, 'srv', code, (code === 'wb' ? 'back to ' : 'to ') + title + ' (' + result.hops + ' hops)');
+                            safeSend(sock, 'wg' + result.to + ',' + result.hops);
+                            this.transport.toServers('wp' + team + ',' + result.hops + ',' + result.away + ',' + title);
+
+                            if(result.arrived) {
+                                log.info(who, 'quiz', 'ww', 'ARRIVED in ' + result.hops +
+                                         ' hops, ' + result.seconds + 's');
+                                safeSend(sock, 'wf');
+                                this.transport.toServers('ww' + team + ',' + result.hops +
+                                                         ',' + result.seconds);
                             }
                             break;
                         }

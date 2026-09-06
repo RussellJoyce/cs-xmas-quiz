@@ -22,36 +22,11 @@ var lastview = "buzzer";
 
 
 /*
-Connection settings can be overridden from the query string, which is what harness.html uses
-to run a wall of real clients from one browser.
-    vcid    tells the server to key us on IP + this id rather than on IP alone, so that
-            several clients from one machine are several buttons instead of one
-    proto   "ws://" for a local server running without a certificate
-    port    the client websocket port
-    host    the machine running the quiz server, when it is not the one we were served from
-*/
-function queryParam(name) {
-    var pairs = location.search.replace(/^\?/, "").split("&");
-    for(var i = 0; i < pairs.length; i++) {
-        var eq = pairs[i].indexOf("=");
-        if(eq > 0 && decodeURIComponent(pairs[i].slice(0, eq)) === name) {
-            return decodeURIComponent(pairs[i].slice(eq + 1));
-        }
-    }
-    return null;
-}
-
-var vcid = queryParam("vcid");
-var wsproto = (queryParam("proto") === "ws://") ? "ws://" : "wss://";
-var wsport = /^[0-9]{1,5}$/.test(queryParam("port")) ? queryParam("port") : "8090";
-var wshost = queryParam("host") || location.hostname || "localhost";
-
-/*
 When we connect to the server we set up a websocket with the appropriate handlers.
 */
 function connect() {
-    //The server opens the client websocket port on 8090 (wss) and 8093 (plain ws)
-    ws = new WebSocket(wsproto + wshost + ":" + wsport + (vcid ? "/?vcid=" + encodeURIComponent(vcid) : ""));
+    //The server opens the client websocket port on 8090 (wss)
+    ws = new WebSocket(QuizConnection.url());
 
     ws.onopen = function(event) {
         //We we have connected, ask which team we are
@@ -171,6 +146,11 @@ function applyView(view) {
     lastview = view;
     toggleState(true);
 
+    if(view == "wikirace") {
+        QuizConnection.go("/wikirace/");
+        return;
+    }
+
     if(view == "text" || view == "numbers") {
         setView("text");
         textbox.type = (view == "numbers") ? "number" : "text";
@@ -203,12 +183,16 @@ function toggleState(on) {
 
 
 function setView(id) {
+    var view = document.getElementById(id);
+    if(!view) {
+        console.log("No such view '" + id + "' in this page, ignoring");
+        return;
+    }
+
     var elements = document.getElementsByClassName('view')
     for (var i = 0; i < elements.length; i++){
         elements[i].style.display = 'none';
     }
-
-    var view = document.getElementById(id);
     view.style.display = 'flex';
 }
 

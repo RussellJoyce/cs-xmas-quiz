@@ -37,7 +37,17 @@ const CODES = {
     pt: 'pick team',      re: 'resume',        pi: 'ping',
     zz: 'buzz',           hi: 'higher',        lo: 'lower',
     tt: 'text answer',    ii: 'map guess',
-    wv: 'wavelength guess', mc: 'multiple choice'
+    wv: 'wavelength guess', mc: 'multiple choice',
+
+    //Wikirace. wr/we come from the quiz software, wl/wb from a client, wg/wx/wf go back
+    //to a client, and wp/ww/wd/wt go to the quiz software.
+    wr: 'race start',     we: 'race over',
+    wl: 'followed link',  wb: 'went back',
+    wg: 'go to article',  wx: 'move refused',  wf: 'arrived',
+    wp: 'race position',  ww: 'race won',
+    wd: 'race standing',  wt: 'race trail',
+    wo: 'shortest possible route',
+    wk: 'resend race state'
 };
 
 //How wide each column is. Names longer than this push the line out rather than being

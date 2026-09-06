@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Wikirace</title>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+	<link rel="stylesheet" type="text/css" href="wikirace.css">
+</head>
+
+<body oncontextmenu="return false;">
+
+<header id="bar">
+	<div id="goal">
+		<span class="label">GET TO</span>
+		<span id="target">…</span>
+	</div>
+	<div id="counters">
+		<div class="counter"><span id="hops">0</span><span class="label">hops</span></div>
+		<div class="counter"><span id="clock">0:00</span><span class="label">time</span></div>
+	</div>
+</header>
+
+<main id="page">
+	<h1 id="title"></h1>
+	<div id="article"></div>
+</main>
+
+<footer id="controls">
+	<div id="back" class="control">← Back</div>
+	<div id="here" class="control wide"></div>
+</footer>
+
+<!-- Covers the page whenever the team is not racing: connecting, waiting, arrived, over. -->
+<div id="curtain">
+	<div id="curtainInner">
+		<div id="curtainIcon">🌐</div>
+		<div id="curtainText">Connecting…</div>
+		<div id="curtainSub"></div>
+	</div>
+</div>
+
+<div id="toast"></div>
+
+<script src="../wsparams.js"></script>
+<script src="wikirace.js"></script>
+
+</body>
+</html>

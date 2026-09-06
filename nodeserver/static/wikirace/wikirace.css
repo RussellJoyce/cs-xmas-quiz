@@ -1,0 +1,260 @@
+/*
+The wikirace client. Its own page rather than a view inside the buzzer, because the teams
+are reading articles here rather than pressing one big button, and none of the buzzer's
+layout applies.
+
+Phone first, and a phone held in a hand in a dark room: the chrome matches the buzzer's
+dark theme, and the article is set for actual reading rather than for looking pretty in a
+screenshot.
+*/
+
+* { box-sizing: border-box; }
+
+html {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	height: 100vh;
+	overflow: hidden;
+	background: #0d0e15;
+	color: #e9e9f2;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+	display: flex;
+	flex-direction: column;
+}
+
+/*-------------------------------------------------------------------------------------*/
+/* The bar along the top: what we are looking for, and how we are doing */
+
+#bar {
+	flex: 0 0 auto;
+	background: linear-gradient(to bottom, #2c2765, #1b1840);
+	border-bottom: 2px solid #44d7a7;
+	padding: calc(env(safe-area-inset-top) + 8px) 12px 8px 12px;
+
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#goal { flex: 1 1 auto; min-width: 0; }
+
+.label {
+	display: block;
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	color: #9a95c8;
+	text-transform: uppercase;
+}
+
+#target {
+	display: block;
+	font-size: 19px;
+	font-weight: 700;
+	color: #44d7a7;
+	/* Article titles run long. Two lines, then ellipsis, rather than pushing the
+	   article off the screen. */
+	line-height: 1.15;
+	max-height: 2.3em;
+	overflow: hidden;
+}
+
+#counters { flex: 0 0 auto; display: flex; gap: 12px; text-align: center; }
+.counter span:first-child { display: block; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/*-------------------------------------------------------------------------------------*/
+/* The article */
+
+#page {
+	flex: 1 1 auto;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	padding: 14px 16px 24px 16px;
+}
+
+#title {
+	margin: 0 0 12px 0;
+	font-size: 26px;
+	line-height: 1.15;
+	border-bottom: 1px solid #2a2b3d;
+	padding-bottom: 10px;
+}
+
+#article {
+	font-size: 17px;
+	/* Generous, because the links are inline and a fat finger on a tight paragraph hits
+	   the wrong one. This is the difference between a fun round and a frustrating one. */
+	line-height: 1.85;
+	color: #d3d3e0;
+}
+
+#article p { margin: 0 0 1em 0; }
+#article h2, #article h3, #article h4 {
+	margin: 1.4em 0 0.5em 0;
+	line-height: 1.2;
+	color: #ffffff;
+}
+#article h2 { font-size: 21px; border-bottom: 1px solid #2a2b3d; padding-bottom: 6px; }
+#article h3 { font-size: 18px; }
+#article ul, #article ol { margin: 0 0 1em 0; padding-left: 1.4em; }
+#article li { margin-bottom: 0.4em; }
+#article b, #article strong { color: #ffffff; }
+
+/* A link is the only thing on this page that does anything, so it is unmistakable. */
+#article a[data-s] {
+	color: #6fe3ff;
+	text-decoration: none;
+	border-bottom: 1px solid rgba(111, 227, 255, 0.45);
+	padding: 2px 1px;
+	cursor: pointer;
+}
+
+#article a[data-s]:active {
+	background: #6fe3ff;
+	color: #0d0e15;
+	border-radius: 3px;
+}
+
+#article h4, #article h5, #article h6 { font-size: 17px; color: #cfd0e4; }
+#article blockquote {
+	margin: 0 0 1em 0;
+	padding-left: 14px;
+	border-left: 3px solid #3a3d63;
+	color: #b9bad0;
+}
+#article dl { margin: 0 0 1em 0; }
+#article dt { font-weight: 600; color: #ffffff; }
+#article dd { margin: 0 0 0.6em 1.2em; }
+#article hr { border: none; border-top: 1px solid #2a2b3d; margin: 1.4em 0; }
+#article small { font-size: 0.85em; color: #a9abc4; }
+#article sub, #article sup { line-height: 0; }
+
+/* A surprising number of articles carry code: a survey of 600 of them found <pre> and
+   <code> in things like CSS and Computer keyboard. Long lines in a <pre> would push the
+   whole column sideways on a phone, so it scrolls inside itself instead. */
+#article code, #article kbd, #article samp, #article var {
+	font-family: ui-monospace, Menlo, Consolas, monospace;
+	font-size: 0.9em;
+	background: #1c1e2c;
+	border-radius: 4px;
+	padding: 1px 4px;
+}
+#article pre {
+	background: #1c1e2c;
+	padding: 10px 12px;
+	border-radius: 6px;
+	overflow-x: auto;
+	font-size: 14px;
+	line-height: 1.5;
+}
+#article pre code { background: none; padding: 0; }
+
+/* MathML is real content here, not decoration: 932 <math> elements turned up in a 600
+   article sample, on the likes of Wave function and Pythagorean theorem. Browsers that
+   render MathML hide <annotation> themselves, but one that does not would dump the raw
+   LaTeX into the middle of a sentence, so it is hidden explicitly. */
+#article math { max-width: 100%; color: #e9e9f2; }
+#article annotation, #article annotation-xml { display: none; }
+
+/* Nothing may push the column sideways: the page scrolls down, never across. */
+#article { overflow-wrap: break-word; }
+
+/* Anything that survived stripping and would break the column. Tables are removed by the
+   build, so this only matters if that ever changes. */
+#article img, #article table { display: none; }
+
+/*-------------------------------------------------------------------------------------*/
+/* Controls */
+
+#controls {
+	flex: 0 0 auto;
+	display: flex;
+	gap: 8px;
+	padding: 8px 12px calc(env(safe-area-inset-bottom) + 8px) 12px;
+	background: #14151f;
+	border-top: 1px solid #2a2b3d;
+}
+
+.control {
+	flex: 0 0 auto;
+	padding: 12px 18px;
+	border-radius: 10px;
+	background: #262840;
+	color: #e9e9f2;
+	font-size: 16px;
+	font-weight: 600;
+	text-align: center;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.control:active { background: #3a3d63; }
+.control.disabled { opacity: 0.35; }
+
+#here {
+	flex: 1 1 auto;
+	min-width: 0;
+	background: none;
+	color: #8d8fae;
+	font-weight: 400;
+	font-size: 14px;
+	text-align: right;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 4px;
+	line-height: 24px;
+}
+
+/*-------------------------------------------------------------------------------------*/
+/* The curtain: every state that is not "racing" */
+
+#curtain {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	background: radial-gradient(ellipse at bottom, #2c2765 10%, #090a0f 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 24px;
+}
+
+#curtain.hidden { display: none; }
+
+#curtainIcon { font-size: 64px; line-height: 1; margin-bottom: 18px; }
+#curtainText { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+#curtainSub { font-size: 16px; color: #9a95c8; line-height: 1.5; }
+
+#curtain.won { background: radial-gradient(ellipse at bottom, #1c6b46 10%, #090a0f 100%); }
+#curtain.won #curtainText { color: #44d7a7; }
+
+/*-------------------------------------------------------------------------------------*/
+/* Toast, for a refused move */
+
+#toast {
+	position: fixed;
+	left: 50%;
+	bottom: calc(env(safe-area-inset-bottom) + 76px);
+	transform: translateX(-50%);
+	z-index: 60;
+
+	background: #b3403a;
+	color: #fff;
+	font-size: 15px;
+	font-weight: 600;
+	padding: 10px 18px;
+	border-radius: 999px;
+	white-space: nowrap;
+
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	pointer-events: none;
+}
+
+#toast.show { opacity: 1; }

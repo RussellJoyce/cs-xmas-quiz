@@ -9,14 +9,17 @@ const https = require('https');
 const express = require('express');
 const dns = require('native-dns');
 const { QuizState, safeSend, clientKeyForConnection, asText } = require('./protocol');
+const { WikiCorpus } = require('./wikirace');
 const log = require('./log');
 
 //Deployment settings live in config.json
 const CONFIG_FILE = __dirname + '/config.json';
 
-//Every port the server listens on. Named here so a missing one is a startup error naming
-//the key, rather than a server that quietly never listens for something.
-const REQUIRED_PORTS = ['clientWss', 'clientWs', 'server', 'leds', 'http', 'https', 'dns'];
+//Every port the server listens on
+const REQUIRED_PORTS = ['clientWss', 'server', 'leds', 'http', 'https', 'dns'];
+
+//Dev mode allows vcid and serves /test
+const DEV_MODE = process.argv.includes('--dev');
 
 //Checks a parsed config and returns it normalised. Separate from reading the file so the
 //rules can be tested against made-up configs without writing over the real one.
@@ -74,15 +77,17 @@ function defaultConfig(overrides) {
     const cfg = Object.assign({
         dnsHostname: deployment.domain,
         hostAddress: deployment.hostAddress,
-        clientWssPort: deployment.ports.clientWss,  //Buzzer clients over TLS (what the phones use)
-        clientWsPort: deployment.ports.clientWs,    //Buzzer clients over plain ws (local/test clients)
+        clientWssPort: deployment.ports.clientWss,  //Buzzer clients, over TLS. The only client transport.
         serverPort: deployment.ports.server,        //The quiz software
         ledsPort: deployment.ports.leds,            //The LED controllers
         httpPort: deployment.ports.http,            //Probably 80
         httpsPort: deployment.ports.https,          //Probably 443
         dnsPort: deployment.ports.dns,              //Probably 53
         staticDir: __dirname + '/static',
+        testDir: __dirname + '/test',
+        wikiDir: __dirname + '/static/wiki',
         numTeams: deployment.numTeams,
+        dev: DEV_MODE,
 
         //Two bind addresses
         //the https listeners are explicitly IPv4, while the bare WebSocket servers are left
@@ -154,11 +159,28 @@ function logCertStatus(certs) {
     return status;
 }
 
+function loadWikiCorpus(dir) {
+    let corpus = null;
+    try {
+        corpus = WikiCorpus.load(dir);
+    } catch(err) {
+        log.bootError('*** wiki corpus at ' + dir + ' could not be read: ' + err.message);
+        return null;
+    }
+    if(corpus) {
+        log.boot('wiki corpus: ' + corpus.size.toLocaleString() + ' articles');
+    } else {
+        log.boot('wiki corpus: none at ' + dir + ', so the wikirace round is unavailable');
+    }
+    return corpus;
+}
+
 //The four WebSocket servers plus the protocol state they share.
 function startWebsocketServers(overrides) {
     const cfg = defaultConfig(overrides);
+    const wikiCorpus = loadWikiCorpus(cfg.wikiDir);
 
-    //Buzzer clients arrive on two servers: wss for real phones, plain ws for test clients.
+    //Buzzer clients arrive over wss and nowhere else.
     let wclientHttpsServer = null;
     let wclient = null;
     if(cfg.certs) {
@@ -167,11 +189,9 @@ function startWebsocketServers(overrides) {
         wclientHttpsServer.listen(cfg.clientWssPort, cfg.bindAddress);
     }
 
-    const wclientWs = new WebSocketServer({ port: cfg.clientWsPort, host: cfg.wsBindAddress });
     const wserver = new WebSocketServer({ port: cfg.serverPort, host: cfg.wsBindAddress });
     const wleds = new WebSocketServer({ port: cfg.ledsPort, host: cfg.wsBindAddress });
-
-    const clientServers = wclient ? [wclient, wclientWs] : [wclientWs];
+    const clientServers = wclient ? [wclient] : [];
 
     const state = new QuizState({
         toClients: function(message) {
@@ -183,7 +203,7 @@ function startWebsocketServers(overrides) {
         toLeds: function(message) {
             wleds.clients.forEach(c => safeSend(c, message));
         }
-    }, { numTeams: cfg.numTeams });
+    }, { numTeams: cfg.numTeams, wikiCorpus: wikiCorpus });
 
     //Every socket needs an 'error' listener. `who` may be a function, so that a client is
     //named by whatever it is called at the time of the error: it may have claimed a team
@@ -209,17 +229,16 @@ function startWebsocketServers(overrides) {
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 
-    function handleClientConnection(ws, req, allowVcid) {
+    function handleClientConnection(ws, req) {
         const ip = req.connection.remoteAddress;
-        const key = clientKeyForConnection(ip, req.url, allowVcid);
+        const key = clientKeyForConnection(ip, req.url, cfg.dev);
 
         guard(ws, () => state.label(key));
         state.addClient(key, ws);
         ws.on('message', message => state.handleClientMessage(key, ws, message));
     }
-    //Only the plain ws port lets a client name itself; see clientKeyForConnection.
     clientServers.forEach(function(s) {
-        s.on('connection', (ws, req) => handleClientConnection(ws, req, s === wclientWs));
+        s.on('connection', (ws, req) => handleClientConnection(ws, req));
     });
 
     function guardServer(s, what) {
@@ -240,11 +259,9 @@ function startWebsocketServers(overrides) {
         });
     }
     if(wclientHttpsServer) announce(wclientHttpsServer, 'wss', 'clients over TLS');
-    announce(wclientWs, 'ws', 'clients');
     announce(wserver, 'quiz', 'quiz software');
     announce(wleds, 'leds', 'LED controllers');
 
-    guardServer(wclientWs, "plain ws clients");
     guardServer(wserver, "the quiz software");
     guardServer(wleds, "the LEDs");
     if(wclient) guardServer(wclient, "wss clients");
@@ -260,22 +277,21 @@ function startWebsocketServers(overrides) {
 
     return {
         state: state,
-        servers: { wclient, wclientWs, wserver, wleds },
+        servers: { wclient, wserver, wleds },
         ready: function() {
-            const waiting = [wclientWs, wserver, wleds].map(listening);
+            const waiting = [wserver, wleds].map(listening);
             if(wclientHttpsServer) waiting.push(listening(wclientHttpsServer));
             return Promise.all(waiting);
         },
         ports: function() {
             return {
                 clientWss: wclientHttpsServer ? wclientHttpsServer.address().port : null,
-                clientWs: wclientWs.address().port,
                 server: wserver.address().port,
                 leds: wleds.address().port
             };
         },
         close: function(cb) {
-            const closeables = [wclientWs, wserver, wleds];
+            const closeables = [wserver, wleds];
             if(wclient) closeables.push(wclient);
             let remaining = closeables.length + (wclientHttpsServer ? 1 : 0);
             const done = () => { if(--remaining <= 0 && cb) cb(); };
@@ -285,26 +301,49 @@ function startWebsocketServers(overrides) {
     };
 }
 
-//HTTP redirect to HTTPS, and the HTTPS server that serves the client web app.
+//HTTP exists only to send browsers to HTTPS
 function startWebServers(overrides) {
     const cfg = defaultConfig(overrides);
 
-    const http = express();
-    http.get('*', function(req, res) {
+    const redirector = express();
+    redirector.get('*', function(req, res) {
         res.redirect('https://' + req.headers.host + req.url);
     });
-    http.listen(cfg.httpPort, cfg.bindAddress, function() {
+    const http = redirector.listen(cfg.httpPort, cfg.bindAddress, function() {
         log.boot(listenLine('http', cfg.httpPort, 'redirects everything to https'));
     });
+    guardWebServer(http, 'the http redirect');
 
     const app = express();
     app.use(express.static(cfg.staticDir));
+    if(cfg.dev) {
+        app.use('/test', express.static(cfg.testDir));
+    }
     const server = https.createServer(readCerts(cfg.certs), app);
     server.listen(cfg.httpsPort, cfg.bindAddress, function() {
-        log.boot(listenLine('https', cfg.httpsPort, 'the buzzer web app'));
+        log.boot(listenLine('https', cfg.httpsPort,
+                            cfg.dev ? 'the buzzer web app, and /test' : 'the buzzer web app'));
     });
+    guardWebServer(server, 'the https server');
 
     return { http, server };
+}
+
+//a port that cannot be bound should name itself and stop
+function guardWebServer(s, what) {
+    s.on('error', function(err) {
+        if(err.code == 'EADDRINUSE' || err.code == 'EACCES') {
+            log.bootError('FATAL: cannot listen for ' + what + ': ' + err.message);
+            if(err.code == 'EACCES') log.bootError('(ports below 1024 need root)');
+            process.exit(1);
+        }
+        log.error('srv', null, null, what + ': ' + err.message);
+    });
+}
+
+function logDevMode(dev) {
+    if(dev) log.bootError('Server is running in development mode');
+    return dev;
 }
 
 // DNS server because hey why not?
@@ -337,14 +376,15 @@ function startDnsServer(overrides) {
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
                    loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
-                   certStatus, certMessages, logCertStatus, CONFIG_FILE };
+                   certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
     const cfg = defaultConfig();
     log.boot('quiz server starting...');
     log.boot('serving ' + cfg.dnsHostname + ' → ' + cfg.hostAddress + ' for ' + cfg.numTeams + ' teams');
-    if(!cfg.certs) log.boot('no certificates configured, so wss is off');
+    logDevMode(cfg.dev);
+    if(!cfg.certs) log.bootError('*** no certificates configured');
     startWebsocketServers();
     startWebServers();
     startDnsServer();

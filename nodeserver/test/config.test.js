@@ -178,7 +178,7 @@ describe('config validation', () => {
     });
 
     test('several ephemeral ports do not count as a clash', () => {
-        const cfg = spoil(f => { f.ports.server = 0; f.ports.leds = 0; f.ports.clientWs = 0; })();
+        const cfg = spoil(f => { f.ports.server = 0; f.ports.leds = 0; })();
         assert.strictEqual(cfg.ports.leds, 0);
     });
 
@@ -195,7 +195,6 @@ describe('what the ports and team count feed', () => {
         const file = goodConfig();
         const cfg = defaultConfig();
         assert.strictEqual(cfg.clientWssPort, file.ports.clientWss);
-        assert.strictEqual(cfg.clientWsPort, file.ports.clientWs);
         assert.strictEqual(cfg.serverPort, file.ports.server);
         assert.strictEqual(cfg.ledsPort, file.ports.leds);
         assert.strictEqual(cfg.httpPort, file.ports.http);
@@ -215,7 +214,7 @@ describe('what the ports and team count feed', () => {
 
     test('the ports the phones and the quiz software use are all distinct', () => {
         const cfg = defaultConfig();
-        const used = [cfg.clientWssPort, cfg.clientWsPort, cfg.serverPort, cfg.ledsPort,
+        const used = [cfg.clientWssPort, cfg.serverPort, cfg.ledsPort,
                       cfg.httpPort, cfg.httpsPort, cfg.dnsPort];
         assert.strictEqual(new Set(used).size, used.length, 'duplicate port in ' + used);
     });
