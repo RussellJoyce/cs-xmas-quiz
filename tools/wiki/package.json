@@ -9,7 +9,7 @@
     "test": "node --test \"test/*.test.js\""
   },
   "dependencies": {
-    "@openzim/libzim": "^3.1.0",
+    "@openzim/libzim": "^4.6.0",
     "node-html-parser": "^9.0.3"
   },
   "allowScripts": {
