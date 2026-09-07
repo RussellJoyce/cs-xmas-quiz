@@ -628,12 +628,11 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			quizDisplay.wikiRaceScene.teamArrived(team: team.index, hops: hops, seconds: seconds)
 
 		case .wikiStanding(let team, let rank, let finished, let seconds, let hops, let away):
-			//The standings are keyed by the team as the wire numbers it, not as the scenes do
-			quizDisplay.wikiRaceScene.raceStanding(team: team.number, rank: rank, finished: finished,
+			quizDisplay.wikiRaceScene.raceStanding(team: team.index, rank: rank, finished: finished,
 			                                       secs: seconds, hops: hops, away: away)
 
 		case .wikiTrail(let team, let titles):
-			quizDisplay.wikiRaceScene.raceTrails[team.number] = titles
+			quizDisplay.wikiRaceScene.raceTrails[team.index] = titles
 			wikiRefreshPath()
 		}
 	}
@@ -1155,8 +1154,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	private func wikiRefreshPath() {
-		let team = wikiTeamSelector.indexOfSelectedItem + 1
-		guard team >= 1 else { return }
+		let team = wikiTeamSelector.indexOfSelectedItem
+		guard team >= 0 else { return }
 		wikiPathViewText.string = quizDisplay.wikiRaceScene.renderPath(for: team)
 	}
 

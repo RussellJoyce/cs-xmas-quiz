@@ -109,10 +109,10 @@ class WikiRaceScene: QuizScene {
 
 		let trail = raceTrails[team] ?? []
 		if trail.isEmpty {
-			lines.append("Team \(team) has not moved yet.")
+			lines.append("Team \(team + 1) has not moved yet.")
 		} else {
 			let hops = trail.count - 1
-			lines.append("Team \(team) — \(hops) hop\(hops == 1 ? "" : "s")")
+			lines.append("Team \(team + 1) — \(hops) hop\(hops == 1 ? "" : "s")")
 			for (step, title) in trail.enumerated() {
 				lines.append(step == 0 ? "     \(title)" : "  \(step). \(title)")
 			}
@@ -149,8 +149,8 @@ class WikiRaceScene: QuizScene {
 		raceBestRoute.removeAll()
 		
 		//Every team starts on the same article
-		for team in 1...Settings.shared.numTeams {
-			raceTrails[team] = [startTitle]
+		for team in 0..<Settings.shared.numTeams {
+			raceTrails[team] = [start]
 		}
 		
 		startTitle = start
