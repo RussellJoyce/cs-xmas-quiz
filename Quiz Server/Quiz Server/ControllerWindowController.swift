@@ -67,9 +67,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// Loading its nib reads the launch configuration out of `Settings.shared`.
 	static let shared = ControllerWindowController(windowNibName: "ControllerWindow")
 
-	var buzzersEnabled = [Bool]()
-	var buzzersDisabled = false
-	var buzzerButtons = [NSButton]()
+	/// Who is playing. Rebuilt in `windowDidLoad`, once the team count is known.
+	private var roster = TeamRoster(teams: 0)
+	/// The numbered buttons, trimmed to the teams that exist
+	private var buzzerButtons = [NSButton]()
 	let quizDisplay = QuizDisplayController()
 	private var clientListTimer: Timer!
 	
@@ -100,13 +101,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		// Trim number of buttons down to match number of teams
 		// We only handle 15 test buzzers up here
 		let allBuzzerButtons : [NSButton] = [buzzerButton1, buzzerButton2, buzzerButton3, buzzerButton4, buzzerButton5, buzzerButton6, buzzerButton7, buzzerButton8, buzzerButton9, buzzerButton10, buzzerButton11, buzzerButton12, buzzerButton13, buzzerButton14, buzzerButton15]
-		for i in 0..<Settings.shared.numTeams {
-			if i < allBuzzerButtons.count {
-				buzzerButtons.append(allBuzzerButtons[i])
-				buzzerButtons[i].isEnabled = true
-				buzzersEnabled.append(true)
-			}
-		}
+		buzzerButtons = Array(allBuzzerButtons.prefix(Settings.shared.numTeams))
+		roster = TeamRoster(teams: Settings.shared.numTeams)
+		syncBuzzerButtons()
 		
 		quizDisplay.present()
         
@@ -212,7 +209,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		// Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
 		if virtualBuzzersBtn.state == .on {
 			//If we were disabled (which is not actually .disabled because then we couldn't press it)
-			if buzzersEnabled[sender.tag] == false {
+			if !roster.isChosen(sender.tag) {
 				//Leave it disabled
 				sender.state = .on
 			} else {
@@ -224,57 +221,35 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 		}
 		else {
-			//Enabling or disabling the client
-			if (sender.state == NSControl.StateValue.on) {
-				buzzersEnabled[sender.tag] = false
-				socketWriteIfConnected("of" + String(sender.tag + 1))
-			}
-			else {
-				buzzersEnabled[sender.tag] = true
-				socketWriteIfConnected("on" + String(sender.tag + 1))
-			}
-			pushTeamParticipation()
+			//Enabling or disabling the client. A checked button is a team knocked out.
+			rosterChanged(roster.set(sender.tag, playing: sender.state == .off))
 		}
 	}
 	
+	/// Stops everybody at once, without losing the individual choices
 	@IBAction func disableAllBuzzers(_ sender: NSButton) {
-		if (sender.state == NSControl.StateValue.on) {
-			buzzersDisabled = true
-			for i in 0..<Settings.shared.numTeams {
-				if i < buzzerButtons.count {
-					buzzerButtons[i].isEnabled = false
-					buzzersEnabled[i] = false
-					socketWriteIfConnected("of" + String(i + 1))
-				}
-			}
-		}
-		else {
-			buzzersDisabled = false
-			for i in 0..<Settings.shared.numTeams {
-				if i < buzzerButtons.count {
-					buzzerButtons[i].isEnabled = true
-					buzzerButtons[i].state = .off
-					buzzersEnabled[i] = true
-					socketWriteIfConnected("on" + String(i + 1))
-				}
-			}
-		}
-		pushTeamParticipation()
-	}
-	
-	/// Which teams are playing, by zero-based team number
-	var enabledTeams: [Bool] {
-		(0..<Settings.shared.numTeams).map { isTeamEnabled($0) }
+		rosterChanged(roster.setAllDisabled(sender.state == .on))
 	}
 
-	func isTeamEnabled(_ team: Int) -> Bool {
-		guard !buzzersDisabled, team >= 0, team < Settings.shared.numTeams else { return false }
-		return team < buzzersEnabled.count ? buzzersEnabled[team] : true
+	private func rosterChanged(_ changed: [Int]) {
+		for team in changed {
+			socketWriteIfConnected((roster.isPlaying(team) ? "on" : "of") + String(team + 1))
+		}
+		syncBuzzerButtons()
+		pushTeamParticipation()
+	}
+
+	/// Redraws the numbered buttons from the roster
+	private func syncBuzzerButtons() {
+		for (team, button) in buzzerButtons.enumerated() {
+			button.state = roster.isChosen(team) ? .off : .on
+			button.isEnabled = !roster.allDisabled
+		}
 	}
 
 	/// Tells the live round who is playing. Called whenever the enable buttons change and whenever a round starts
 	private func pushTeamParticipation() {
-		quizDisplay.setParticipating(enabledTeams)
+		quizDisplay.setParticipating(roster.flags)
 	}
 
 
@@ -378,7 +353,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		//Is this team enabled?
-		messages.append(isTeamEnabled(idx) ? "on" : "of")
+		messages.append(roster.isPlaying(idx) ? "on" : "of")
 
 		//An answer this team has already given
 		//This is likely to be unnecessary, but it is here for completeness
@@ -586,27 +561,27 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			}
 
 		case .buzz(let team):
-			guard isTeamEnabled(team.index) else { break }
+			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.buzzerPressed(team: team.index, type: .websocket, options: buzzerOptions)
 
 		case .higherLower(let team, let higher):
-			guard isTeamEnabled(team.index) else { break }
+			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher)
 			if quizDisplay.truefalseScene.counting {
 				socketWriteIfConnected((higher ? "hh" : "hl") + String(team.number))
 			}
 
 		case .geographyGuess(let team, let x, let y):
-			guard isTeamEnabled(team.index) else { break }
+			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.geographyScene.teamAnswered(team: team.index, x: x, y: y)
 
 		case .wavelengthGuess(let team, let value):
-			guard isTeamEnabled(team.index) else { break }
+			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.wavelengthScene.teamGuess(team: team.index, value: value)
 			updateWavelengthGuesses()
 
 		case .multiChoiceGuess(let team, let option):
-			guard isTeamEnabled(team.index), quizDisplay.multiChoiceScene.counting else { break }
+			guard roster.isPlaying(team.index), quizDisplay.multiChoiceScene.counting else { break }
 			quizDisplay.multiChoiceScene.teamGuess(teamid: team.index, option: option)
 			if let taken = quizDisplay.multiChoiceScene.teamGuesses[team.index] {
 				//If the round rejected it we wont light the tile on the client
@@ -618,13 +593,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			receiveTextGuess(team: team, text: text)
 
 		case .wikiMoved(let team, let hops, let away, let title):
-			if isTeamEnabled(team.index) {
+			if roster.isPlaying(team.index) {
 				quizDisplay.wikiRaceScene.teamMoved(team: team.index, title: title, hops: hops, away: away)
 			}
 			wikiRefreshPath()
 
 		case .wikiArrived(let team, let hops, let seconds):
-			guard isTeamEnabled(team.index) else { break }
+			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.wikiRaceScene.teamArrived(team: team.index, hops: hops, seconds: seconds)
 
 		case .wikiStanding(let team, let rank, let finished, let seconds, let hops, let away):
@@ -650,7 +625,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 
 		//Ignore teams the host has disabled
-		guard accepting, isTeamEnabled(team.index) else { return }
+		guard accepting, roster.isPlaying(team.index) else { return }
 
 		let guess = String(text.prefix(20)) //TODO Max size of 20 is too low?
 
