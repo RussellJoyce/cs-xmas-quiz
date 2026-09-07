@@ -287,11 +287,9 @@ class QuizState {
                             this.transport.toServers('wt' + row.team + ',' +
                                                      row.trail.map(id => this.wikiCorpus.title(id)).join('|'));
                         });
-                        //What the race could have been done in
-                        const best = this.wikirace.bestRouteFrom(this.wikirace.start);
-                        if(best) {
-                            this.transport.toServers('wo' + best.map(id => this.wikiCorpus.title(id)).join('|'));
-                        }
+                        //Nothing is sent about the ideal line. It depends only on the corpus and the
+                        //two endpoints, never on how a race went, so it is worked out once when the
+                        //corpus is built and recorded in puzzles.json alongside the question.
                         break;
                     }
                     case "vi": //Set view

@@ -1023,13 +1023,13 @@ describe('wikirace', () => {
             assert.strictEqual(trail, 'wt1,Start|Detour|Start');
         });
 
-        test('reports the shortest the race could have been done in', () => {
+        test('says nothing about the ideal line', () => {
+            //It depends only on the corpus and the two endpoints, so it is recorded in
+            //puzzles.json when the corpus is built rather than worked out per race.
             const { state, transport } = setupRace(2);
             state.handleServerMessage('wr0,2');
             state.handleServerMessage('we');
-            //Start -> Middle -> Target is the only two-hop route in the fixture.
-            assert.ok(transport.servers.includes('woStart|Middle|Washington, D.C.'),
-                      transport.servers.join(' | '));
+            assert.ok(!transport.servers.some(m => m.startsWith('wo')), transport.servers.join(' | '));
         });
 
         test('ending a race that is not running does nothing', () => {

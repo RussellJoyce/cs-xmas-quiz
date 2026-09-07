@@ -94,6 +94,7 @@
                 <outlet property="tabitemText" destination="QsW-tO-3AJ" id="mer-ty-Abj"/>
                 <outlet property="tabitemTimer" destination="jWj-s8-V1l" id="SGq-NW-KzQ"/>
                 <outlet property="tabitemWavelength" destination="Wv0-tb-i00" id="Wv0-ou-o01"/>
+                <outlet property="tabitemWikiRace" destination="Jnp-SM-C32" id="TEF-We-dzP"/>
                 <outlet property="tabitemtruefalse" destination="gEv-Hs-Dry" id="30r-AD-6Sb"/>
                 <outlet property="textAllowAnswers" destination="2iq-4I-wHz" id="qnA-YL-CLD"/>
                 <outlet property="textQuestionNumber" destination="j6v-1e-qRO" id="XSp-JZ-4dr"/>
@@ -110,6 +111,16 @@
                 <outlet property="wavelengthNumber" destination="Wv0-tf-n02" id="Wv0-ou-o02"/>
                 <outlet property="wavelengthRollButton" destination="Wv0-bt-r01" id="Wv0-ou-o03"/>
                 <outlet property="wavelengthTeamGuesses" destination="Wv0-tv-g05" id="Wv0-ou-o04"/>
+                <outlet property="wikiBestRouteText" destination="K3w-wP-K2k" id="5dK-Ft-gYo"/>
+                <outlet property="wikiClockLabel" destination="hbd-V7-M4z" id="ND7-8f-cod"/>
+                <outlet property="wikiEndButton" destination="ptw-ex-t7f" id="AbS-Sk-mNo"/>
+                <outlet property="wikiPathView" destination="S35-Ny-qeI" id="IS3-b2-6P5"/>
+                <outlet property="wikiPathViewText" destination="oQn-Zl-Zcb" id="W4L-XQ-NO4"/>
+                <outlet property="wikiQuestionSelector" destination="BuW-xu-Lje" id="WJm-uO-pLV"/>
+                <outlet property="wikiRevealButton" destination="j3q-5u-6Gc" id="FeW-hw-XLW"/>
+                <outlet property="wikiShowDistances" destination="UNX-9x-JQa" id="WPn-az-Grc"/>
+                <outlet property="wikiStartButton" destination="GTB-ij-9cw" id="APl-C8-1Y4"/>
+                <outlet property="wikiTeamSelector" destination="dSz-Yv-4qW" id="Sxv-qQ-vkc"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -118,7 +129,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -2004,6 +2015,172 @@ Answers</string>
                                     </subviews>
                                 </view>
                             </tabViewItem>
+                            <tabViewItem label="Wikirace" identifier="" id="Jnp-SM-C32">
+                                <view key="view" id="nTg-v3-MSF">
+                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GTB-ij-9cw">
+                                            <rect key="frame" x="14" y="192" width="88" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Start Race" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HjH-Gr-qwx">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="wikiStart:" target="-2" id="1hF-Lr-I7J"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UNX-9x-JQa">
+                                            <rect key="frame" x="14" y="156" width="208" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="Show team distance on screen" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Mpk-9Y-uoU">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="wikiShowDistanceChanged:" target="-2" id="Njf-yL-B9Z"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ptw-ex-t7f">
+                                            <rect key="frame" x="114" y="192" width="81" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="End Race" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AH7-LP-gw9">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="wikiEnd:" target="-2" id="nND-Ge-0xb"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j3q-5u-6Gc">
+                                            <rect key="frame" x="207" y="192" width="128" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Reveal Standings" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vog-aw-tXb">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                                <connections>
+                                                    <action selector="wikiReveal:" target="-2" id="U1d-Yl-YKY"/>
+                                                </connections>
+                                            </buttonCell>
+                                        </button>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hbd-V7-M4z">
+                                            <rect key="frame" x="423" y="191" width="63" height="26"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="00:00" id="MKX-2F-zk9">
+                                                <font key="font" textStyle="title1" name=".SFNS-Regular"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="S35-Ny-qeI">
+                                            <rect key="frame" x="555" y="11" width="334" height="225"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="Mg3-5r-8dH">
+                                                <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="oQn-Zl-Zcb">
+                                                        <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="minSize" width="317" height="225"/>
+                                                        <size key="maxSize" width="501" height="10000000"/>
+                                                    </textView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="diN-Cm-r4t">
+                                                <rect key="frame" x="-100" y="-100" width="223" height="17"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="aqf-Ta-lwK">
+                                                <rect key="frame" x="317" y="0.0" width="17" height="225"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BuW-xu-Lje">
+                                            <rect key="frame" x="14" y="245" width="470" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="vKW-iM-ZV2" id="GV4-nE-fqQ">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="message"/>
+                                                <menu key="menu" id="L4x-MC-OJ3">
+                                                    <items>
+                                                        <menuItem title="Item 1" state="on" id="vKW-iM-ZV2"/>
+                                                        <menuItem title="Item 2" id="ioO-bf-Kmy"/>
+                                                        <menuItem title="Item 3" id="vfi-X7-CGa"/>
+                                                    </items>
+                                                </menu>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="wikiQuestionSelectorChanged:" target="-2" id="52Y-HD-Cfx"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wYD-so-DJb">
+                                            <rect key="frame" x="12" y="123" width="71" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Best route:" id="nLq-Eo-xlG">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cv2-ok-szL">
+                                            <rect key="frame" x="14" y="11" width="321" height="104"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="BwY-Hb-Yhi">
+                                                <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="K3w-wP-K2k">
+                                                        <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="minSize" width="304" height="104"/>
+                                                        <size key="maxSize" width="308" height="10000000"/>
+                                                    </textView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="tRb-IX-fIn">
+                                                <rect key="frame" x="-100" y="-100" width="223" height="17"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="RLI-70-Wtp">
+                                                <rect key="frame" x="304" y="0.0" width="17" height="104"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z3c-dr-a09">
+                                            <rect key="frame" x="553" y="249" width="87" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Path taken by" id="aoY-jH-zcR">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSz-Yv-4qW">
+                                            <rect key="frame" x="651" y="245" width="133" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="4Ar-PN-x3s" id="omF-q7-CWF">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="message"/>
+                                                <menu key="menu" id="Jjg-H2-9iV">
+                                                    <items>
+                                                        <menuItem title="Item 1" state="on" id="4Ar-PN-x3s"/>
+                                                        <menuItem title="Item 2" id="AdE-ma-wyZ"/>
+                                                        <menuItem title="Item 3" id="ixc-Y4-ZGG"/>
+                                                    </items>
+                                                </menu>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="wikiTeamSelectorChanged:" target="-2" id="jun-eX-fh9"/>
+                                            </connections>
+                                        </popUpButton>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
                         </tabViewItems>
                         <connections>
                             <outlet property="delegate" destination="-2" id="Rr6-g8-hrf"/>
@@ -2016,14 +2193,5 @@ Answers</string>
             </connections>
             <point key="canvasLocation" x="142" y="408"/>
         </window>
-        <button verticalHuggingPriority="750" id="A5u-f4-RkI">
-            <rect key="frame" x="0.0" y="0.0" width="82" height="32"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="30i-GK-3QU">
-                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                <font key="font" metaFont="system"/>
-            </buttonCell>
-            <point key="canvasLocation" x="-137" y="720"/>
-        </button>
     </objects>
 </document>

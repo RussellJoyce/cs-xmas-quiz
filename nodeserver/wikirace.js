@@ -114,23 +114,6 @@ class WikiCorpus {
         return dist;
     }
 
-    //A shortest route from `from` to wherever `dist` was measured to.
-    routeUsing(dist, from) {
-        if(!this.has(from) || dist[from] < 0) return null;
-        const route = [from];
-        let v = from;
-        while(dist[v] > 0) {
-            let next = -1;
-            for(let p = this.offsets[v]; p < this.offsets[v + 1]; p++) {
-                const w = this.targets[p];
-                if(dist[w] === dist[v] - 1) { next = w; break; }
-            }
-            if(next < 0) return null;
-            route.push(next);
-            v = next;
-        }
-        return route;
-    }
 }
 
 //---------------------------------------------------------------------------------------
@@ -160,11 +143,6 @@ class WikiRace {
     awayFrom(id) {
         if(!this.distances || !this.corpus.has(id)) return -1;
         return this.distances[id];
-    }
-
-    bestRouteFrom(id) {
-        if(!this.distances) return null;
-        return this.corpus.routeUsing(this.distances, id);
     }
 
     //Fresh state for one team. 1-based

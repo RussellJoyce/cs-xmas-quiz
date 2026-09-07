@@ -46,7 +46,6 @@ const CODES = {
     wg: 'go to article',  wx: 'move refused',  wf: 'arrived',
     wp: 'race position',  ww: 'race won',
     wd: 'race standing',  wt: 'race trail',
-    wo: 'shortest possible route',
     wk: 'resend race state'
 };
 

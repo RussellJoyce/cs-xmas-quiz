@@ -69,4 +69,52 @@ console.log('  graph row matches shipped links: ' +
 console.log('  first 12 links: ' + sample.l.slice(0, 12).map(id => index.titles[id]).join(', '));
 console.log('  body opens: ' + sample.h.replace(/<[^>]*>/g, '').slice(0, 180).trim() + '…');
 
-console.log(failures === 0 ? '\nALL PATHS WALKABLE' : '\n' + failures + ' FAILURES');
+//The ideal line recorded with each puzzle has to be walkable too, and has to be as short
+//as the puzzle claims. It is what the host compares a team's effort against, so a wrong
+//one is worse than none at all.
+console.log('\nchecking the routes recorded in puzzles.json');
+let routeProblems = 0;
+for(const puzzle of puzzles) {
+    if(!puzzle.route || !puzzle.routeIds) {
+        console.log('  ' + puzzle.startTitle + ': no route recorded');
+        routeProblems++;
+        continue;
+    }
+    if(puzzle.routeIds.length - 1 !== puzzle.hops) {
+        console.log('  ' + puzzle.startTitle + ': route is ' + (puzzle.routeIds.length - 1) +
+                    ' hops, puzzle says ' + puzzle.hops);
+        routeProblems++;
+    }
+    if(puzzle.routeIds[0] !== puzzle.start ||
+       puzzle.routeIds[puzzle.routeIds.length - 1] !== puzzle.target) {
+        console.log('  ' + puzzle.startTitle + ': route does not run from the start to the target');
+        routeProblems++;
+    }
+    //Every hop must be a link a team could actually have clicked.
+    for(let i = 0; i + 1 < puzzle.routeIds.length; i++) {
+        const here = article(puzzle.routeIds[i]);
+        if(!here.l.includes(puzzle.routeIds[i + 1])) {
+            console.log('  ' + puzzle.startTitle + ': "' + here.t + '" does not link to "' +
+                        puzzle.route[i + 1] + '"');
+            routeProblems++;
+        }
+        if(here.t !== puzzle.route[i]) {
+            console.log('  ' + puzzle.startTitle + ': titles and ids disagree at step ' + i);
+            routeProblems++;
+        }
+    }
+    //And no shorter route may exist, or the "ideal" is not ideal.
+    const best = shortestPath(puzzle.start, puzzle.target);
+    if(best && best.length - 1 < puzzle.hops) {
+        console.log('  ' + puzzle.startTitle + ': a shorter route exists (' +
+                    (best.length - 1) + ' hops)');
+        routeProblems++;
+    }
+}
+console.log(routeProblems === 0
+    ? '  all ' + puzzles.length + ' recorded routes are walkable and genuinely shortest'
+    : '  ' + routeProblems + ' PROBLEMS');
+
+console.log((failures === 0 && routeProblems === 0)
+    ? '\nALL PATHS WALKABLE'
+    : '\n' + (failures + routeProblems) + ' FAILURES');

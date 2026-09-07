@@ -59,6 +59,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemWavelength: NSTabViewItem!
 	@IBOutlet weak var tabitemMultiChoice: NSTabViewItem!
 	@IBOutlet weak var tabitemDisconnect: NSTabViewItem!
+	@IBOutlet weak var tabitemWikiRace: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	var buzzersDisabled = false
 	var buzzerButtons = [NSButton]()
 	let quizDisplay = QuizDisplayController()
-	
+	private var clientListTimer: Timer!
 	
     override func windowDidLoad() {
         super.windowDidLoad()
@@ -172,6 +173,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		
 		updateGeographyPreview()
+		wikiLoadPuzzles()
 		configureSidebar()
 
 		//Default to Idle on load regardless of what we left it on in Interface Builder
@@ -181,102 +183,22 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
 
-		installLEDStrip()
+		installLEDStrip(window: window)
     }
 	
 	func windowWillClose(_ notification: Notification) {
 		clientListTimer?.invalidate()
 		wavelengthRollTimer?.invalidate()
-		ledStripTimer?.invalidate()
 		socket.ledsOff()
 	}
 
-	//MARK: - LED strip
-	//--------------------------------------------------------------------------------------------------------------------------
-	/// Shows what the LED strip is doing, read from the shared frame file that ledsim publishes
-	private var ledStrip: LEDStripView?
-	private var ledStripTimer: Timer?
-	private let ledReader = LEDFrameReader()
-
-	/// The window carries only the status line until a simulator appears, and grows to make
-	/// room for the strip when one does.
-	private var ledStripExpanded = false
-	private var ledAbsentSince: Date?
-
-	/// Height of the strip itself, added below the status line when expanded.
-	private static let ledStripHeight: CGFloat = 28
-	private static let ledStripMargin: CGFloat = 4
-
-	private func installLEDStrip() {
-		guard let window = window, let content = window.contentView else { return }
-
-		//Starts collapsed: just the status line. The poll below expands it if a simulator is already running.
-		growWindow(by: LEDStripView.statusHeight + ControllerWindowController.ledStripMargin * 2)
-
-		let strip = LEDStripView(frame: NSRect(x: 8, y: ControllerWindowController.ledStripMargin,
-		                                       width: content.bounds.width - 16, height: LEDStripView.statusHeight))
-		strip.autoresizingMask = [.width, .maxYMargin]
-		content.addSubview(strip)
-		ledStrip = strip
-
-		ledStripTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
-			self?.pollLEDStrip()
-		}
-	}
-
-	private func pollLEDStrip() {
-		guard let strip = ledStrip else { return }
-		let (state, frame) = ledReader.poll()
-		strip.update(state: state, frame: frame, lookup: ledReader.lookup, fps: ledReader.framesPerSecond)
-		setLEDStripExpanded(shouldExpandLEDStrip(for: state))
-	}
-
-	private func shouldExpandLEDStrip(for state: LEDFrameReader.State) -> Bool {
-		switch state {
-		case .live:
-			ledAbsentSince = nil
-			return true
-		case .absent:
-			let since = ledAbsentSince ?? Date()
-			ledAbsentSince = since
-			return ledStripExpanded && Date().timeIntervalSince(since) < 1.5
-		}
-	}
-
-	private func setLEDStripExpanded(_ expanded: Bool) {
-		guard expanded != ledStripExpanded, let window = window, let content = window.contentView else { return }
-		ledStripExpanded = expanded
-
-		growWindow(by: expanded ? ControllerWindowController.ledStripHeight
-		                        : -ControllerWindowController.ledStripHeight)
-
-		ledStrip?.frame = NSRect(x: 8,
-		                         y: ControllerWindowController.ledStripMargin,
-		                         width: content.bounds.width - 16,
-		                         height: LEDStripView.statusHeight
-		                               + (expanded ? ControllerWindowController.ledStripHeight : 0))
-	}
-
-	/// Grows or shrinks the window downwards, leaving the title bar where the user put it.
-	private func growWindow(by delta: CGFloat) {
-		guard let window = window else { return }
-		var frame = window.frame
-		frame.origin.y -= delta
-		frame.size.height += delta
-		if let screen = window.screen {
-			frame = window.constrainFrameRect(frame, to: screen)
-		}
-		window.setFrame(frame, display: true)
-	}
-
-	private var clientListTimer: Timer!
-	
-    @objc private func clientListTask() {
+	@objc private func clientListTask() {
 		//Periodically check to see what clients are connected. The reply will be "lr" and the handler will parse this to set the indicators
 		socketWriteIfConnected("ls")
-    }
+	}
 	
-
+	//MARK: - General controls
+	//-----------------------------------------------------------------------------------------------------------
 	
 	@IBAction func vitualBuzzersPress(_ sender: NSButton) {
 		if virtualBuzzersBtn.state == .on {
@@ -285,9 +207,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			virtualBuzzersBtn.title = "Disable Buzzers"
 		}
 	}
-    
-    @IBAction func pressedNumber(_ sender: NSButton) {
-        // Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
+	
+	@IBAction func pressedNumber(_ sender: NSButton) {
+		// Can either trigger virtual buzzers, or be toggles to enable and disable certain buzzers, based on virtualBuzzersBtn
 		if virtualBuzzersBtn.state == .on {
 			//If we were disabled (which is not actually .disabled because then we couldn't press it)
 			if buzzersEnabled[sender.tag] == false {
@@ -300,34 +222,34 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					sender.state = NSControl.StateValue.off
 				}
 			}
-        }
-        else {
+		}
+		else {
 			//Enabling or disabling the client
-            if (sender.state == NSControl.StateValue.on) {
-                buzzersEnabled[sender.tag] = false
+			if (sender.state == NSControl.StateValue.on) {
+				buzzersEnabled[sender.tag] = false
 				socketWriteIfConnected("of" + String(sender.tag + 1))
-            }
-            else {
-                buzzersEnabled[sender.tag] = true
+			}
+			else {
+				buzzersEnabled[sender.tag] = true
 				socketWriteIfConnected("on" + String(sender.tag + 1))
-            }
+			}
 			pushTeamParticipation()
-        }
-    }
-    
-    @IBAction func disableAllBuzzers(_ sender: NSButton) {
-        if (sender.state == NSControl.StateValue.on) {
-            buzzersDisabled = true
-            for i in 0..<Settings.shared.numTeams {
+		}
+	}
+	
+	@IBAction func disableAllBuzzers(_ sender: NSButton) {
+		if (sender.state == NSControl.StateValue.on) {
+			buzzersDisabled = true
+			for i in 0..<Settings.shared.numTeams {
 				if i < buzzerButtons.count {
 					buzzerButtons[i].isEnabled = false
 					buzzersEnabled[i] = false
 					socketWriteIfConnected("of" + String(i + 1))
 				}
-            }
-        }
-        else {
-            buzzersDisabled = false
+			}
+		}
+		else {
+			buzzersDisabled = false
 			for i in 0..<Settings.shared.numTeams {
 				if i < buzzerButtons.count {
 					buzzerButtons[i].isEnabled = true
@@ -335,10 +257,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					buzzersEnabled[i] = true
 					socketWriteIfConnected("on" + String(i + 1))
 				}
-            }
-        }
+			}
+		}
 		pushTeamParticipation()
-    }
+	}
 	
 	/// Which teams are playing, by zero-based team number
 	var enabledTeams: [Bool] {
@@ -354,6 +276,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	private func pushTeamParticipation() {
 		quizDisplay.setParticipating(enabledTeams)
 	}
+
 
 	//MARK: - Repairing a client
 	//-----------------------------------------------------------------------------------------------------------
@@ -420,6 +343,10 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		for message in clientState(for: team) {
 			socketWriteIfConnected("to\(team),\(message)")
 		}
+		//ask the node server to resend that team's race state
+		if quizDisplay.currentRound == .wikirace {
+			socketWriteIfConnected("wk\(team)")
+		}
 	}
 
 	/// Everything a client needs in order to show the current state of play
@@ -444,6 +371,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			messages.append("mo" + quizDisplay.multiChoiceScene.optionsMessage)
 		case .trueFalse:
 			messages.append(trueFalseToggle.state == .on ? "h2" : "h1")
+		case .wikirace:
+			break
 		default:
 			break
 		}
@@ -509,6 +438,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .pointless:   resetPointlessControls()
 		case .wavelength:  resetWavelengthControls()
 		case .multichoice: resetMultiChoiceControls(presenting: presenting)
+		case .wikirace:    resetWikiRaceControls(presenting: presenting)
 		default:           break
 		}
 	}
@@ -552,6 +482,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.round(tabitemtruefalse, .trueFalse, "✅ True / False"),
 			.round(tabitemMultiChoice, .multichoice, "🎲 Multiple Choice"),
 			.round(tabitemGeography, .geography, "🌍 Geography"),
+			.round(tabitemWikiRace, .wikirace, "🔗 Wikirace"),
 			.round(tabitemText, .text, "✍️ Text"),
 			.round(tabitemNumbers, .numbers, "🔢 Numbers"),
 			.round(tabitemWavelength, .wavelength, "🌊 Wavelength"),
@@ -728,8 +659,50 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 				} else {
 					print("Invalid multiple choice answer")
 				}
-			case "tt":
+			case "wp":
+				//A team has moved: "wp<team>,<hops>,<away>,<title>"
+				let parts = text.dropFirst(2).components(separatedBy: ",")
+				if parts.count >= 4, let team = Int(parts[0]), let hops = Int(parts[1]), let away = Int(parts[2]) {
+					let title = parts[3...].joined(separator: ",")
+					if isTeamEnabled(team - 1) {
+						quizDisplay.wikiRaceScene.teamMoved(team: team - 1, title: title, hops: hops, away: away)
+					}
+					wikiRefreshPath()
+				} else {
+					print("Invalid wikirace position: " + text)
+				}
+
+			case "ww":
+				//A team has arrived: "ww<team>,<hops>,<seconds>"
+				let parts = text.dropFirst(2).components(separatedBy: ",")
+				if parts.count >= 3, let team = Int(parts[0]), let hops = Int(parts[1]), let seconds = Int(parts[2]) {
+					if isTeamEnabled(team - 1) {
+						quizDisplay.wikiRaceScene.teamArrived(team: team - 1, hops: hops, seconds: seconds)
+					}
+				} else {
+					print("Invalid wikirace arrival: " + text)
+				}
+
+			case "wd":
+				//One team's final standing: "wd<team>,<rank>,<finished>,<secs>,<hops>,<away>"
+				let parts = text.dropFirst(2).components(separatedBy: ",")
+				if parts.count >= 6, let team = Int(parts[0]), let rank = Int(parts[1]),
+						let finished = Int(parts[2]), let secs = Int(parts[3]),
+						let hops = Int(parts[4]), let away = Int(parts[5]) {
+					quizDisplay.wikiRaceScene.raceStanding(team: team, rank: rank, finished: finished == 1, secs: secs, hops: hops, away: away)
+				}
+
+			case "wt":
+				//A team's whole trail, for the host to look back over:
+				//"wt<team>,<title>|<title>|...". Pipe separated because titles hold commas.
+				let payload = text.dropFirst(2)
+				if let comma = payload.firstIndex(of: ","), let team = Int(payload[..<comma]) {
+					let titles = payload[payload.index(after: comma)...].components(separatedBy: "|")
+					quizDisplay.wikiRaceScene.raceTrails[team] = titles
+					wikiRefreshPath()
+				}
 				
+			case "tt":
 				//A team has guessed a textual answer. Parse it and route to appropriate scene
 				if (
 					(quizDisplay.currentRound == .text && textAllowAnswers.state == .on) ||
@@ -1180,10 +1153,110 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		pushMultiChoiceOptions()
 	}
 
-	//MARK: - Test
+	//MARK: - Wikirace
 	//--------------------------------------------------------------------------------------------------------------------------
-	
 
+	@IBOutlet weak var wikiQuestionSelector: NSPopUpButton!
+	@IBOutlet weak var wikiTeamSelector: NSPopUpButton!
+	@IBOutlet weak var wikiClockLabel: NSTextField!
+	@IBOutlet weak var wikiPathView: NSScrollView!
+	@IBOutlet var wikiPathViewText: NSTextView!
+	@IBOutlet weak var wikiShowDistances: NSButton!
+	@IBOutlet weak var wikiStartButton: NSButton!
+	@IBOutlet weak var wikiEndButton: NSButton!
+	@IBOutlet weak var wikiRevealButton: NSButton!
+	@IBOutlet var wikiBestRouteText: NSTextView!
+	private var wikiRaceStarted : Date?
+	private var wikiClockTimer : Timer?
+	
+	@IBAction func wikiStart(_ sender: Any) {
+		let index = wikiQuestionSelector.indexOfSelectedItem
+		guard (index >= 0 && index < quizDisplay.wikiRaceScene.puzzles.count) else { return }
+		let p = quizDisplay.wikiRaceScene.puzzles[index]
+		quizDisplay.wikiRaceScene.setRace(start: p.startTitle, target: p.targetTitle)
+		quizDisplay.wikiRaceScene.showDistance = wikiShowDistances.state == .on
+		
+		wikiBeginClock()
+		pushTeamParticipation()
+		socketWriteIfConnected("wr\(p.start),\(p.target)")
+		wikiRefreshPath()
+		wikiEndButton.isEnabled = true
+		wikiRevealButton.isEnabled = false
+	}
+	
+	@IBAction func wikiEnd(_ sender: Any) {
+		//The server freezes every client, works out the standings and sends them back as "wd" rows, and a "wt" trail per team
+		socketWriteIfConnected("we")
+		wikiClockTimer?.invalidate()
+	}
+	
+	@IBAction func wikiReveal(_ sender: Any) {
+		guard !quizDisplay.wikiRaceScene.raceStandings.isEmpty else { return }
+		quizDisplay.wikiRaceScene.showDistance = true
+	}
+
+	private func resetWikiRaceControls(presenting: Bool) {
+		wikiClockTimer?.invalidate()
+		wikiClockTimer = nil
+		wikiRaceStarted = nil
+		wikiClockLabel.stringValue = "0:00"
+		wikiEndButton.isEnabled = false
+		wikiRevealButton.isEnabled = false
+		wikiStartButton.isEnabled = !quizDisplay.wikiRaceScene.puzzles.isEmpty
+		if presenting {
+			wikiQuestionSelector.selectItem(at: 0)
+		}
+	}
+
+	@IBAction func wikiShowDistanceChanged(_ sender: Any) {
+		quizDisplay.wikiRaceScene.showDistance = wikiShowDistances.state == .on
+	}
+	
+	@IBAction func wikiTeamSelectorChanged(_ sender: Any) {
+		wikiRefreshPath()
+	}
+	
+	@IBAction func wikiQuestionSelectorChanged(_ sender: Any) {
+		let index = wikiQuestionSelector.indexOfSelectedItem
+		guard (index >= 0 && index < quizDisplay.wikiRaceScene.puzzles.count) else { return }
+		wikiBestRouteText.string = quizDisplay.wikiRaceScene.puzzles[index].route.joined(separator: "\n")
+	}
+
+	/// The clock is not tracked by the round, because it is purely decorative for the quizmaster who ends the race manually
+	private func wikiBeginClock() {
+		wikiClockTimer?.invalidate()
+		wikiRaceStarted = Date()
+		wikiClockLabel.stringValue = "0:00"
+		wikiClockTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+			guard let self = self, let started = self.wikiRaceStarted else { return }
+			let seconds = Int(Date().timeIntervalSince(started))
+			self.wikiClockLabel.stringValue = "\(seconds / 60):\(String(format: "%02d", seconds % 60))"
+		}
+	}
+
+	private func wikiRefreshPath() {
+		let team = wikiTeamSelector.indexOfSelectedItem + 1
+		guard team >= 1 else { return }
+		wikiPathViewText.string = quizDisplay.wikiRaceScene.renderPath(for: team)
+	}
+
+	/// Asks the round to load the puzzles, if successful, updates the PopUpButtons with the puzzles and teams
+	func wikiLoadPuzzles() {
+		quizDisplay.wikiRaceScene.loadPuzzles(from: Settings.shared.wikiCorpusPath)
+		
+		wikiQuestionSelector.removeAllItems()
+		quizDisplay.wikiRaceScene.puzzles.forEach { wikiQuestionSelector.addItem(withTitle: $0.menuTitle) }
+		wikiQuestionSelector.selectItem(at: 0)
+		wikiQuestionSelectorChanged(wikiQuestionSelector!)
+		wikiStartButton.isEnabled = true
+		
+		wikiTeamSelector.removeAllItems()
+		for i in 0...Settings.maxTeams {
+			wikiTeamSelector.addItem(withTitle: "Team \(i+1)")
+		}
+	}
+
+	
 	
 	//MARK: - Geography
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -1258,11 +1331,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@IBOutlet weak var wavelengthNumber: NSTextField!
 	@IBOutlet weak var wavelengthRollButton: NSButton!
-	/// The guesses, and then the placings once scoring has run. A text view rather than a
-	/// label so that a long list scrolls instead of being quietly cut off at the bottom.
 	@IBOutlet var wavelengthTeamGuesses: NSTextView!
-
-	/// The number the host has rolled, or nil if the wheel has not been stopped yet
 	private var wavelengthTarget: Int?
 	private var wavelengthRollTimer: Timer?
 
@@ -1294,21 +1363,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	@IBAction func wavelengthScore(_ sender: Any) {
-		//Only the first press needs the number. After that the scene scores against whatever
-		//it actually swept to, so the roll being restarted here cannot change the result.
 		if !quizDisplay.wavelengthScene.swept && wavelengthTarget == nil {
-			print("Wavelength: nothing to score against, the number has not been rolled yet")
 			return
 		}
 		quizDisplay.wavelengthScene.score(target: wavelengthTarget ?? 0)
-		//The second press works out the placings, so pick them up for the host's list
 		updateWavelengthGuesses()
 		updateWavelengthRollEnabled()
 	}
 
-	/// The roll is locked once the sweep has run. The answer is fixed to the number the sweep
-	/// landed on from that point, so reaching for Roll could only spin the label against a
-	/// display that has already moved past it.
 	private func updateWavelengthRollEnabled() {
 		wavelengthRollButton?.isEnabled = !quizDisplay.wavelengthScene.swept
 	}
@@ -1324,9 +1386,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	private func updateWavelengthGuesses() {
-		//Once scoring has run, the list becomes the result: ordered best first and saying in
-		//words where each team came. The main display shows rank by how a marker is dressed,
-		//which a crowded bar can make hard to read, so the host always has it unambiguously.
 		let placings = quizDisplay.wavelengthScene.placings
 		if !placings.isEmpty {
 			wavelengthTeamGuesses?.string = placings.map { placing in

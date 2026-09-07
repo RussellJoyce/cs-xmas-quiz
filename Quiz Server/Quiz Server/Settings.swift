@@ -25,6 +25,12 @@ final class Settings {
 	var musicPath: String = ""
 	var uniquePath: String = ""
 	var pointlessPath: String = ""
+	var wikiCorpusPath: String {
+		if geographyImagesPath.isEmpty {
+			return ""
+		}
+		return (geographyImagesPath as NSString).deletingLastPathComponent + "/wiki"
+	}
 	
 	/// How many teams the controller window can actually drive
 	static let maxTeams = 15
@@ -69,6 +75,7 @@ enum RoundType {
 	case pointless
 	case wavelength
 	case multichoice
+	case wikirace
 
 	/// Which view the teams' phones should show while this round is live.
 	/// Sent as the argument of the "vi" command, so it must match a view name the client knows.
@@ -81,6 +88,7 @@ enum RoundType {
 		case .pointless:   return "text"
 		case .wavelength:  return "wavelength"
 		case .multichoice: return "multi"
+		case .wikirace:    return "wikirace"
 		case .none, .idle, .test, .buzzers, .music, .timer, .scores:
 			return "buzzer"
 		}

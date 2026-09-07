@@ -24,6 +24,15 @@ Turns a Kiwix ZIM into the offline article corpus the wikirace round is played o
 
 `node stage5-emit.js puzzles` regenerates just `puzzles.json`, which is quick.
 
+Each puzzle carries the shortest route from its start to its target, as `route` (titles, so
+the file reads on its own) and `routeIds` (article ids). That line depends only on the corpus
+and the two endpoints — nothing about a race in progress can change it — so it is worked out
+here rather than at run time, and whoever picks a question can see what it should have taken.
+
+Most pairs have many equally short routes; this records the first one the walk finds, so it is
+*a* shortest route rather than *the* one. `verify.js` checks every recorded route is walkable
+through the shipped article files and that nothing shorter exists.
+
 ## Output
 
 `nodeserver/static/wiki/`, around 1.2 GB:
@@ -31,4 +40,4 @@ Turns a Kiwix ZIM into the offline article corpus the wikirace round is played o
     a/<id/1000>/<id>.json    {t: title, h: html, l: [linked id, ...]}
     index.json               titles and slugs by id
     graph.bin                CSR adjacency for the server's move validation
-    puzzles.json             candidate start/target pairs
+    puzzles.json             candidate start/target pairs, each with its ideal line

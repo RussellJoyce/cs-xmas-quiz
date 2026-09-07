@@ -202,6 +202,32 @@ function distancesTo(graph, target) {
     return dist;
 }
 
+//A shortest route from `from` to whatever `dist` was measured to, as article ids.
+//
+//With the distances already in hand this is a walk downhill: from each article take any
+//link that is one closer than where you are. Each step reduces the distance by exactly one,
+//so the result is a shortest route by construction — no search needed.
+//
+//Note "a" rather than "the": most pairs have many equally short routes and this takes the
+//first link it finds at each step. It is the ideal line for the host to compare against,
+//not the only one.
+function shortestRoute(graph, dist, from) {
+    if(dist[from] < 0) return null;
+    const route = [from];
+    let v = from;
+    while(dist[v] > 0) {
+        let next = -1;
+        for(let p = graph.offsets[v]; p < graph.offsets[v + 1]; p++) {
+            const w = graph.targets[p];
+            if(dist[w] === dist[v] - 1) { next = w; break; }
+        }
+        if(next < 0) return null;
+        route.push(next);
+        v = next;
+    }
+    return route;
+}
+
 //Proposes pairs. this needs expanding but works at the moment
 function findPuzzles(graph, corpus) {
     const FAMOUS = 2000;    //the top slice of the corpus by in-degree
@@ -227,12 +253,28 @@ function findPuzzles(graph, corpus) {
             const candidates = buckets.get(hops);
             for(let k = 0; k < PER_BUCKET && candidates.length > 0; k++) {
                 const start = candidates[Math.floor(candidates.length * (k + 1) / (PER_BUCKET + 1))];
+
+                //The ideal line, worked out here rather than at run time. It only depends
+                //on the corpus and the two endpoints, so it belongs in the file with them:
+                //nothing about a race in progress can change it.
+                const route = shortestRoute(graph, dist, start);
+                if(!route) continue;                 //the corpus should make this impossible
+                if(route.length - 1 !== hops) {
+                    throw new Error('route for ' + corpus.titles[start] + ' -> ' +
+                                    corpus.titles[target] + ' is ' + (route.length - 1) +
+                                    ' hops but the distance says ' + hops);
+                }
+
                 out.push({
                     start: start,
                     target: target,
                     startTitle: corpus.titles[start],
                     targetTitle: corpus.titles[target],
-                    hops: hops
+                    hops: hops,
+                    //Titles, so the file is readable on its own and whatever loads it does
+                    //not need the index to make sense of a route.
+                    route: route.map(id => corpus.titles[id]),
+                    routeIds: route
                 });
             }
         }
@@ -253,10 +295,10 @@ function puzzlesOnly() {
     puzzles.forEach(p => { byHops[p.hops] = (byHops[p.hops] || 0) + 1; });
     console.log('  ' + puzzles.length + ' candidates: ' +
                 Object.entries(byHops).map(([h, n]) => n + ' at ' + h + ' hops').join(', '));
-    console.log('\na sample:');
+    console.log('\na sample, with the ideal line each one is scored against:');
     for(const hops of [3, 4, 5]) {
-        puzzles.filter(p => p.hops === hops).slice(0, 4).forEach(p =>
-            console.log('  ' + hops + ' hops   ' + p.startTitle + '  →  ' + p.targetTitle));
+        puzzles.filter(p => p.hops === hops).slice(0, 3).forEach(p =>
+            console.log('  ' + hops + ' hops   ' + p.route.join('  →  ')));
     }
 }
 
