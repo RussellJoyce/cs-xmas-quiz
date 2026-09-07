@@ -85,7 +85,7 @@ class LEDStripView: NSView {
 
 		let width = strip.width / CGFloat(count)
 		for i in 0..<count {
-			let source = (order == .animation && lookup.count > i) ? Int(lookup[i]) : i
+			let source = (order == .animation && lookup.count > i) ? i : Int(lookup[i])
 			guard source < count else { continue }
 			let o = source * 3
 			ctx.setFillColor(red: CGFloat(pixels[o]) / 255.0,

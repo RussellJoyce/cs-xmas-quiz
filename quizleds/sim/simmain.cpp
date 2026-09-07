@@ -229,7 +229,7 @@ void render() {
 		snprintf(buf, sizeof(buf), "\x1b[90m%4d\x1b[0m ", i);
 		std::string row = buf;
 		for(int j = i; j < i + perRow && j < NUM_LEDS; j++) {
-			appendPixel(row, opts.logical ? frame[ledlookup[j]] : frame[j]);
+			appendPixel(row, opts.logical ? frame[j] : frame[ledlookup[j]]);
 		}
 		row += "\x1b[0m";
 		lines.push_back(row);
