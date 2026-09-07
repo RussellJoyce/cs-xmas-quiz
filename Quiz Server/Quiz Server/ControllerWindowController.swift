@@ -572,204 +572,108 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		socket.send(s)
 	}
 	
-	public func websocketDidReceiveMessage(text: String) {
-		if(text.count >= 2) {
-			switch(String(text.prefix(2))) {
-			case "co":
-				break;
-			case "zz":
-				//A team has buzzed
-				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
-					let team = idx - 1 // Make zero-indexed
-					if isTeamEnabled(team) {
-						quizDisplay.buzzerPressed(team: team, type: .websocket, options: buzzerOptions)
-					}
-				}
-			case "lr":
-				//Recived a list of connected clients
-				let trm = text.dropFirst(2) //Drop the "lr"
-				let teamnumbers = trm.split(separator: ",").compactMap { Int($0) }
-				
-				let allStats = [st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13, st14, st15]
-				for i in 0..<allStats.count {
-					if let box = allStats[i] {
-						box.fillColor = teamnumbers.contains(i+1) ? NSColor.green : NSColor.black
-					}
-				}
-			case "ii":
-				//A team has answered in the Geography round
-				let details = text.suffix(text.count - 2)
-				let vals = details.components(separatedBy: ",")
-				if(vals.count >= 3) {
-					if let team = Int(vals[0]), let x = Int(vals[1]), let y = Int(vals[2]),
-					   isTeamEnabled(team - 1) { //make zero indexed
-						quizDisplay.geographyScene.teamAnswered(team: team - 1, x: x, y: y)
-					}
-				} else {
-					print("Invalid Geography guess")
-				}
-			case "wv":
-				//A team has moved their slider in the Wavelength round
-				let details = text.suffix(text.count - 2)
-				let vals = details.components(separatedBy: ",")
-				if vals.count >= 2, let team = Int(vals[0]), let value = Int(vals[1]),
-				   isTeamEnabled(team - 1) { //make zero indexed
-					quizDisplay.wavelengthScene.teamGuess(team: team - 1, value: value)
-					updateWavelengthGuesses()
-				} else {
-					print("Invalid Wavelength guess")
-				}
-			case "hi":
-				//A team has voted "true or higher"
-				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
-					let team = idx - 1 // Make zero-indexed
-					if isTeamEnabled(team) {
-						quizDisplay.truefalseScene.teamGuess(teamid: team, guess: true)
-						
-						if quizDisplay.truefalseScene.counting {
-							socketWriteIfConnected("hh" + String(team+1))
-						}
-					}
-				}
-			case "lo":
-				//A team has voted "false or lower"
-				if let idx = Int(String(text[text.index(text.startIndex, offsetBy: 2)...])) {
-					let team = idx - 1 // Make zero-indexed
-					if isTeamEnabled(team) {
-						quizDisplay.truefalseScene.teamGuess(teamid: team, guess: false)
-						
-						if quizDisplay.truefalseScene.counting {
-							socketWriteIfConnected("hl" + String(team+1))
-						}
-					}
-				}
-			case "mc":
-				//A team has picked one of the multiple choice options
-				let details = text.suffix(text.count - 2)
-				let vals = details.components(separatedBy: ",")
-				if vals.count >= 2, let team = Int(vals[0]), let option = Int(vals[1]) {
-					if isTeamEnabled(team - 1) && quizDisplay.multiChoiceScene.counting {
-						quizDisplay.multiChoiceScene.teamGuess(teamid: team - 1, option: option) //make zero indexed
-						if let taken = quizDisplay.multiChoiceScene.teamGuesses[team - 1] {
-							//If the round rejected it we wont light the tile on the client
-							socketWriteIfConnected("ms\(team),\(taken)")
-						}
-						updateMultiChoiceGuesses()
-					}
-				} else {
-					print("Invalid multiple choice answer")
-				}
-			case "wp":
-				//A team has moved: "wp<team>,<hops>,<away>,<title>"
-				let parts = text.dropFirst(2).components(separatedBy: ",")
-				if parts.count >= 4, let team = Int(parts[0]), let hops = Int(parts[1]), let away = Int(parts[2]) {
-					let title = parts[3...].joined(separator: ",")
-					if isTeamEnabled(team - 1) {
-						quizDisplay.wikiRaceScene.teamMoved(team: team - 1, title: title, hops: hops, away: away)
-					}
-					wikiRefreshPath()
-				} else {
-					print("Invalid wikirace position: " + text)
-				}
+	/// Routes one decoded message to whichever round or control it belongs to.
+	func webSocket(didReceive message: QuizMessage) {
+		switch message {
+		case .connected:
+			break
 
-			case "ww":
-				//A team has arrived: "ww<team>,<hops>,<seconds>"
-				let parts = text.dropFirst(2).components(separatedBy: ",")
-				if parts.count >= 3, let team = Int(parts[0]), let hops = Int(parts[1]), let seconds = Int(parts[2]) {
-					if isTeamEnabled(team - 1) {
-						quizDisplay.wikiRaceScene.teamArrived(team: team - 1, hops: hops, seconds: seconds)
-					}
-				} else {
-					print("Invalid wikirace arrival: " + text)
-				}
-
-			case "wd":
-				//One team's final standing: "wd<team>,<rank>,<finished>,<secs>,<hops>,<away>"
-				let parts = text.dropFirst(2).components(separatedBy: ",")
-				if parts.count >= 6, let team = Int(parts[0]), let rank = Int(parts[1]),
-						let finished = Int(parts[2]), let secs = Int(parts[3]),
-						let hops = Int(parts[4]), let away = Int(parts[5]) {
-					quizDisplay.wikiRaceScene.raceStanding(team: team, rank: rank, finished: finished == 1, secs: secs, hops: hops, away: away)
-				}
-
-			case "wt":
-				//A team's whole trail, for the host to look back over:
-				//"wt<team>,<title>|<title>|...". Pipe separated because titles hold commas.
-				let payload = text.dropFirst(2)
-				if let comma = payload.firstIndex(of: ","), let team = Int(payload[..<comma]) {
-					let titles = payload[payload.index(after: comma)...].components(separatedBy: "|")
-					quizDisplay.wikiRaceScene.raceTrails[team] = titles
-					wikiRefreshPath()
-				}
-				
-			case "tt":
-				//A team has guessed a textual answer. Parse it and route to appropriate scene
-				if (
-					(quizDisplay.currentRound == .text && textAllowAnswers.state == .on) ||
-					(quizDisplay.currentRound == .numbers && numbersAllowAnswers.state == .on) ||
-					(quizDisplay.currentRound == .pointless && pointlessAllowAnswers.state == .on) ) {
-					
-					let details = text.suffix(text.count - 2)
-					let vals = details.components(separatedBy: ",")
-					if(vals.count >= 2) {
-						if let team = Int(vals[0]) {
-							//Ignore teams the host has disabled
-							guard isTeamEnabled(team - 1) else { //make zero indexed
-								break
-							}
-
-							let guessText = String(vals[1].prefix(20)) //TODO Max size of 20 is too low?
-							
-							//Now route the logic according to the current round
-							switch quizDisplay.currentRound {
-							case .text:
-								quizDisplay.textScene.teamGuess(
-									teamid: team - 1, //make zero indexed
-									guess: guessText,
-									roundid: Int(textQuestionNumber.intValue),
-									showroundno: (textShowQuestionNumbers.state == .on) ? true : false
-								)
-								
-								// Update the guesses in the controller window
-								textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-									if let tg = quizDisplay.textScene.teamGuesses[team] {
-										return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
-									}
-									return nil
-								}.joined(separator: "\n")
-							case .numbers:
-								let guess = Int(guessText)
-								if guess != nil {
-									quizDisplay.numbersScene.teamGuess(teamid: team - 1, guess: guess!)
-								}
-								
-								// Update the guesses in the controller window
-								numbersTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-									if let tg = quizDisplay.numbersScene.teamGuesses[team] {
-										return "Team \(team + 1): \(tg)"
-									}
-									return nil
-								}.joined(separator: "\n")
-								
-							case .pointless:
-								quizDisplay.pointlessScene.teamGuess(team: team-1, guess: guessText)
-								
-							default:
-								break
-							}
-						} else {
-							print("Invalid Text guess: Bad Int conversion")
-						}
-					} else {
-						print("Invalid Text guess: Bad comma separation")
-					}
-				}
-			default:
-				print("Unknown message: " + text)
+		case .clientList(let teams):
+			//A green box for every team that currently has a client connected
+			let allStats = [st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13, st14, st15]
+			for (i, box) in allStats.enumerated() {
+				box?.fillColor = teams.contains(i + 1) ? NSColor.green : NSColor.black
 			}
+
+		case .buzz(let team):
+			guard isTeamEnabled(team.index) else { break }
+			quizDisplay.buzzerPressed(team: team.index, type: .websocket, options: buzzerOptions)
+
+		case .higherLower(let team, let higher):
+			guard isTeamEnabled(team.index) else { break }
+			quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher)
+			if quizDisplay.truefalseScene.counting {
+				socketWriteIfConnected((higher ? "hh" : "hl") + String(team.number))
+			}
+
+		case .geographyGuess(let team, let x, let y):
+			guard isTeamEnabled(team.index) else { break }
+			quizDisplay.geographyScene.teamAnswered(team: team.index, x: x, y: y)
+
+		case .wavelengthGuess(let team, let value):
+			guard isTeamEnabled(team.index) else { break }
+			quizDisplay.wavelengthScene.teamGuess(team: team.index, value: value)
+			updateWavelengthGuesses()
+
+		case .multiChoiceGuess(let team, let option):
+			guard isTeamEnabled(team.index), quizDisplay.multiChoiceScene.counting else { break }
+			quizDisplay.multiChoiceScene.teamGuess(teamid: team.index, option: option)
+			if let taken = quizDisplay.multiChoiceScene.teamGuesses[team.index] {
+				//If the round rejected it we wont light the tile on the client
+				socketWriteIfConnected("ms\(team.number),\(taken)")
+			}
+			updateMultiChoiceGuesses()
+
+		case .textGuess(let team, let text):
+			receiveTextGuess(team: team, text: text)
+
+		case .wikiMoved(let team, let hops, let away, let title):
+			if isTeamEnabled(team.index) {
+				quizDisplay.wikiRaceScene.teamMoved(team: team.index, title: title, hops: hops, away: away)
+			}
+			wikiRefreshPath()
+
+		case .wikiArrived(let team, let hops, let seconds):
+			guard isTeamEnabled(team.index) else { break }
+			quizDisplay.wikiRaceScene.teamArrived(team: team.index, hops: hops, seconds: seconds)
+
+		case .wikiStanding(let team, let rank, let finished, let seconds, let hops, let away):
+			//The standings are keyed by the team as the wire numbers it, not as the scenes do
+			quizDisplay.wikiRaceScene.raceStanding(team: team.number, rank: rank, finished: finished,
+			                                       secs: seconds, hops: hops, away: away)
+
+		case .wikiTrail(let team, let titles):
+			quizDisplay.wikiRaceScene.raceTrails[team.number] = titles
+			wikiRefreshPath()
 		}
 	}
-	
+
+	/// A typed answer, which three different rounds accept. Each has its own "allow answers"
+	/// toggle, and an answer arriving while that is off is dropped.
+	private func receiveTextGuess(team: Team, text: String) {
+		let round = quizDisplay.currentRound
+		let accepting: Bool
+		switch round {
+		case .text:      accepting = textAllowAnswers.state == .on
+		case .numbers:   accepting = numbersAllowAnswers.state == .on
+		case .pointless: accepting = pointlessAllowAnswers.state == .on
+		default:         accepting = false
+		}
+
+		//Ignore teams the host has disabled
+		guard accepting, isTeamEnabled(team.index) else { return }
+
+		let guess = String(text.prefix(20)) //TODO Max size of 20 is too low?
+
+		switch round {
+		case .text:
+			quizDisplay.textScene.teamGuess(teamid: team.index,
+			                                guess: guess,
+			                                roundid: Int(textQuestionNumber.intValue),
+			                                showroundno: textShowQuestionNumbers.state == .on)
+			updateTextGuesses()
+		case .numbers:
+			if let value = Int(guess) {
+				quizDisplay.numbersScene.teamGuess(teamid: team.index, guess: value)
+			}
+			updateNumbersGuesses()
+		case .pointless:
+			quizDisplay.pointlessScene.teamGuess(team: team.index, guess: guess)
+		default:
+			break
+		}
+	}
+
 	func webSocketDidConnect() {
 		window?.title = "Quiz Control - connected"
 		// Very first time we connect, activate Megamas
@@ -781,10 +685,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	func webSocketDidDisconnect() {
 		window?.title = "Quiz Control - NOT CONNECTED"
-	}
-
-	func webSocketDidReceiveMessage(_ text: String) {
-		websocketDidReceiveMessage(text: text)
 	}
 	
 	
@@ -928,6 +828,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		textAllowAnswers.state = .on
 	}
 
+	/// Redraws the host's list of what each team has typed this question
+	private func updateTextGuesses() {
+		textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if let tg = quizDisplay.textScene.teamGuesses[team] {
+				return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
+			}
+			return nil
+		}.joined(separator: "\n")
+	}
+
 	@IBAction func textStepperChange(_ sender: Any) {
 		textQuestionNumber.stringValue = textStepper.stringValue
 	}
@@ -962,6 +872,16 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 		numbersAllowAnswers.state = .on
 		numbersTeamGuesses.stringValue = ""
+	}
+
+	/// Redraws the host's list of what each team has guessed
+	private func updateNumbersGuesses() {
+		numbersTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if let tg = quizDisplay.numbersScene.teamGuesses[team] {
+				return "Team \(team + 1): \(tg)"
+			}
+			return nil
+		}.joined(separator: "\n")
 	}
 
 	@IBAction func numbersShowAnswers(_ sender: NSButton) {

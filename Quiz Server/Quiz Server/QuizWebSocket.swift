@@ -10,7 +10,7 @@ import Foundation
 protocol QuizWebSocketDelegate: AnyObject {
 	func webSocketDidConnect()
 	func webSocketDidDisconnect()
-	func webSocketDidReceiveMessage(_ text: String)
+	func webSocket(didReceive message: QuizMessage)
 }
 
 class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
@@ -150,7 +150,12 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 			guard let self = self, self.isCurrent(current) else { return }
 			switch result {
 			case .success(.string(let text)):
-				self.delegate?.webSocketDidReceiveMessage(text)
+				//Decoding happens here
+				if let message = QuizMessage(text) {
+					self.delegate?.webSocket(didReceive: message)
+				} else {
+					print("Unknown message: " + text)
+				}
 				self.listenForMessages()
 			case .success(.data(_)):
 				self.listenForMessages()
