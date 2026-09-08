@@ -244,7 +244,7 @@ class MusicScene: QuizScene {
 		if video != nil {
 			reset()
 		}
-		video = nil
+		discardVideo()
 		
 		let videoUrl = URL(fileURLWithPath: file)
 		video = SKVideoNode(url: videoUrl)
@@ -280,6 +280,11 @@ class MusicScene: QuizScene {
         music?.currentTime = 0
         music?.prepareToPlay()
 		QuizWebSocket.shared?.ledsOff()
+		discardVideo()
+	}
+
+	/// Tears down the current video node.
+	private func discardVideo() {
 		video?.pause()
 		video?.removeFromParent()
 		video = nil

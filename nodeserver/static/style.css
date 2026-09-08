@@ -277,6 +277,15 @@ body {
     animation-duration: 0.4s;
 }
 
+/* A team that is out. Matches the grey the other buttons go to. */
+#textbox:disabled {
+    background-color:#bab1ba;
+    color:#f7f7f7;
+    border:2px solid #bab1ba;
+    -webkit-text-fill-color:#f7f7f7; /* iOS ignores `color` on a disabled input */
+    opacity:1;                       /* ...and fades it, which stacks with the grey */
+}
+
 #text {
     align-items: start;
 }

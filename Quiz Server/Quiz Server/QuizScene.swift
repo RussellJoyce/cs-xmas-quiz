@@ -119,6 +119,7 @@ class QuizScene: SKScene {
 		exfilter?.setValue(initialEV, forKey: "inputEV")
 		effect.filter = exfilter
 		effect.shouldRasterize = shouldRasterize
+		effect.shouldEnableEffects = initialEV != 0
 		effect.addChild(bgImage)
 		self.addChild(effect)
 

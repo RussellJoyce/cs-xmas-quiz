@@ -188,11 +188,22 @@ function toggleState(on) {
         geoimg.className = "";
         higher.className = "higherLowerButton buttonOn";
         lower.className = "higherLowerButton buttonOn";
+
+        //Coming back with an answer already typed keeps the Enter button lit for it.
+        textbox.disabled = false;
+        if(textbox.value !== "") {
+            addTextmodeHandlers();
+        }
     } else {
         buzzer.className = "view theButton buttonOff";
         geoimg.className = "imageDisabled";
         higher.className = "higherLowerButton buttonOff";
         lower.className = "higherLowerButton buttonOff";
+
+        //Greys the box and, on a phone, puts the keyboard away, which is the clearest
+        //signal there is that this team is not answering this one.
+        textbox.disabled = true;
+        removeTextmodeHandlers();
     }
 
     //The multiple choice tiles are built on the fly, and a selected one carries .multiSelected
@@ -251,6 +262,17 @@ lower.addEventListener(eventtouse, function(event) {
 });
 
 
+/*
+The Enter button is the feedback for the text rounds: dark until there is something to
+send, lit once there is. A team that is out gets it taken away again, along with the box.
+*/
+function addTextmodeHandlers() {
+    textenterbutton.addEventListener(eventtouse, textboxhandler);
+    textform.addEventListener("onsubmit", textboxhandler);
+    textform.addEventListener("submit", textboxhandler);
+    textenterbutton.className = "smallButton smallButtonOn";
+}
+
 function removeTextmodeHandlers() {
     textenterbutton.removeEventListener(eventtouse, textboxhandler);
     textform.removeEventListener("onsubmit", textboxhandler);
@@ -278,10 +300,7 @@ function textboxhandler(event) {
 }
 
 textform.addEventListener("input", function() {
-    textenterbutton.addEventListener(eventtouse, textboxhandler);
-    textform.addEventListener("onsubmit", textboxhandler);
-    textform.addEventListener("submit", textboxhandler);
-    textenterbutton.className = "smallButton smallButtonOn";
+    addTextmodeHandlers();
 });
 
 textbox.addEventListener("webkitAnimationEnd", function() {

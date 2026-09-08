@@ -102,6 +102,7 @@ final class Utils {
 	static func createFilterPulse(upTime : TimeInterval, downTime : TimeInterval, filterNode : SKEffectNode, extraAction : SKAction? = nil, filterKey : String = "inputEV") -> SKAction {
 		
 		let exAc : SKAction = (extraAction == nil ? SKAction() : extraAction!)
+		let restingEffects = filterNode.shouldEnableEffects
 		
 		let pulseupaction = SKAction.customAction(withDuration: upTime, actionBlock: {(node, time) -> Void in
 			(node as! SKEffectNode).filter!.setValue((time*3), forKey: filterKey)
@@ -112,11 +113,17 @@ final class Utils {
 		pulseupaction.timingMode = .easeInEaseOut
 		pulsednaction.timingMode = .easeInEaseOut
 		let pulseAction = SKAction.sequence([
-			SKAction.run({ () -> Void in filterNode.shouldRasterize = false }),
+			SKAction.run({ () -> Void in
+				filterNode.shouldEnableEffects = true
+				filterNode.shouldRasterize = false
+			}),
 			pulseupaction,
 			exAc,
 			pulsednaction,
-			SKAction.run({ () -> Void in filterNode.shouldRasterize = true })
+			SKAction.run({ () -> Void in
+				filterNode.shouldEnableEffects = restingEffects
+				filterNode.shouldRasterize = true
+			})
 		])
 		
 		return pulseAction

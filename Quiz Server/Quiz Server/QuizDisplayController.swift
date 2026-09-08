@@ -34,6 +34,9 @@ class QuizDisplayController: NSViewController {
 	private let transitionDuration = 1.0
 	private var transitions = [SKTransition]()
 
+	/// When the transition currently on screen, if any, is due to finish.
+	private var transitionEndsAt = Date.distantPast
+
 
 	/// The window the display lives in
 	private var displayWindow: NSWindow?
@@ -100,16 +103,24 @@ class QuizDisplayController: NSViewController {
 		}
 	}
 	
+	/// Switches the display to `round`, animating the change where that is safe.
 	func setRound(round: RoundType) {
 		currentRound = round
 		
 		let scene : SKScene = rounds[round] ?? rounds[.idle]!
-		if transitions.count > 0 {
-			let randomIndex = Int(arc4random_uniform(UInt32(transitions.count)))
-			let transition = transitions[randomIndex]
+		
+		if skView.scene === scene {
+			//Already showing this round; just put it back to its starting state.
+			reset()
+			return
+		}
+		
+		if let transition = transitions.randomElement(), Date() >= transitionEndsAt {
+			transitionEndsAt = Date().addingTimeInterval(transitionDuration)
 			skView.presentScene(scene, transition: transition)
 		}
 		else {
+			transitionEndsAt = .distantPast
 			skView.presentScene(scene)
 		}
 		
