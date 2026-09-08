@@ -105,7 +105,7 @@ describe('picking a team', () => {
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt3');
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI]);
+            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '3');
     });
 
@@ -139,10 +139,71 @@ describe('reconnection', () => {
         const fresh = new FakeSocket('c1-again');
         state.addClient('10.0.0.9_test1', fresh);
 
-        assert.deepStrictEqual(fresh.sent, ['vigeography', 'imfrance.jpg', 'mo' + DEFAULT_MULTI]);
+        assert.deepStrictEqual(fresh.sent, ['vigeography', 'imfrance.jpg', 'mo' + DEFAULT_MULTI, 'on']);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1');
         assert.strictEqual(state.clients['10.0.0.9_test1'].sock, fresh,
             'messages for team 1 now go to the new socket');
+    });
+
+    test('a team that is out comes back out', () => {
+        //A knocked-out team that sleeps its phone must not wake up with a live buzzer.
+        const { state } = setupTeams(2);
+        state.handleServerMessage('of2');
+
+        const fresh = new FakeSocket('c2-again');
+        state.addClient('10.0.0.9_test2', fresh);
+        assert.strictEqual(fresh.sent[fresh.sent.length - 1], 'of');
+
+        //And the other team is unaffected by its neighbour being out.
+        const other = new FakeSocket('c1-again');
+        state.addClient('10.0.0.9_test1', other);
+        assert.strictEqual(other.sent[other.sent.length - 1], 'on');
+    });
+
+    test('being let back in is remembered too', () => {
+        const { state } = setupTeams(1);
+        state.handleServerMessage('of1');
+        state.handleServerMessage('on1');
+
+        const fresh = new FakeSocket('c1-again');
+        state.addClient('10.0.0.9_test1', fresh);
+        assert.strictEqual(fresh.sent[fresh.sent.length - 1], 'on');
+    });
+
+    test("the quiz software's own resync is noticed on the way past", () => {
+        //Resync All sends 'to<team>,of' rather than a bare 'of', so both paths have to record it.
+        const { state } = setupTeams(1);
+        state.handleServerMessage('to1,of');
+
+        const fresh = new FakeSocket('c1-again');
+        state.addClient('10.0.0.9_test1', fresh);
+        assert.strictEqual(fresh.sent[fresh.sent.length - 1], 'of');
+    });
+
+    test('a team knocked out before anyone claimed it is out when they do', () => {
+        //The 'of' is dropped at the time, with no socket to send it to. It still counts.
+        const { state } = setup(1);
+        state.handleServerMessage('of1');
+
+        const fresh = new FakeSocket('c1');
+        state.addClient('10.0.0.9_test1', fresh);
+        fresh.drain();
+        state.handleClientMessage('10.0.0.9_test1', fresh, 'pt1');
+        assert.strictEqual(fresh.sent[fresh.sent.length - 1], 'of');
+    });
+
+    test('the state follows the team, not the phone that was holding it', () => {
+        //'di' hands the team back; whoever picks it up next inherits being out.
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('of1');
+        state.handleServerMessage('di1');
+
+        const other = new FakeSocket('c9');
+        state.addClient('10.0.0.9_test9', other);
+        other.drain();
+        state.handleClientMessage('10.0.0.9_test9', other, 'pt1');
+        assert.strictEqual(other.sent[other.sent.length - 1], 'of');
+        assert.strictEqual(other.sent[0], 'ok1');
     });
 
     test('a client that never picked a team goes back to the picker on reconnect', () => {
@@ -577,7 +638,7 @@ describe('message framing', () => {
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], buf('pt3'));
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI]);
+            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
     });
 
     test('the quiz software can route with a Buffer', () => {
@@ -737,7 +798,7 @@ describe('re-picking a team you already hold', () => {
         //Reconnect on a new socket, then pick the same team again.
         const fresh = new FakeSocket('c2-again');
         state.addClient('10.0.0.9_test2', fresh);
-        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg', 'mo' + DEFAULT_MULTI],
+        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg', 'mo' + DEFAULT_MULTI, 'on'],
             'reconnect replays the view but does not confirm the team');
         fresh.drain();
 

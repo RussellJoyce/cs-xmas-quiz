@@ -46,7 +46,9 @@ function connect() {
                 myid = event.data.slice(2);
                 buzzer.innerHTML = "TEAM " + myid;
                 console.log("Server gave us ID " + myid);
-                toggleState(true);
+                //Repaint out of the "no connection" grey, but into whatever state we were
+                //last told to be in. Being given our ID back does not re-enable us.
+                toggleState(buttonsOn);
                 break;
             case "px":
                 //The team we reqested wasn't available
@@ -78,7 +80,9 @@ function connect() {
             case "im":
                 //Set the geo image
                 console.log("Setting geo image: " + event.data.slice(2));
-                toggleState(true);
+                //A new image is a new question, so the old guess goes, but a team that is
+                //out stays out.
+                geomark.style.display = "none";
                 geoimg.style.backgroundImage = "url('geography/" + encodeURIComponent(event.data.slice(2)) + "')";
                 break;
             case "mo":
@@ -147,7 +151,9 @@ Move to a new view, resetting everything
 */
 function applyView(view) {
     lastview = view;
-    toggleState(true);
+
+    //Per-question state that a view change always clears, whether or not we can answer.
+    geomark.style.display = "none";
 
     if(view == "wikirace") {
         QuizConnection.go("/wikirace/");
@@ -166,6 +172,11 @@ function applyView(view) {
     } else {
         setView(view);
     }
+
+    //Last, so that it also catches a multiple choice grid built by an 'mo' that arrived
+    //before this view change. Whether we can answer belongs to the team, not to the
+    //question, so it survives moving between views.
+    toggleState(buttonsOn);
 }
 
 
@@ -175,7 +186,6 @@ function toggleState(on) {
     if(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
-        geomark.style.display = "none";
         higher.className = "higherLowerButton buttonOn";
         lower.className = "higherLowerButton buttonOn";
     } else {

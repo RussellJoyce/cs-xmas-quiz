@@ -74,6 +74,8 @@ class QuizState {
         this.wikiCorpus = (options && options.wikiCorpus) || null;
         this.wikirace = this.wikiCorpus ? new WikiRace(this.wikiCorpus, this.numTeams) : null;
         this.clients = {};
+        //Team id → false when the quiz software has knocked that team out. See rememberButtonState.
+        this.buttonOn = {};
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
         this.lastMulti = DEFAULT_MULTI;
@@ -108,11 +110,26 @@ class QuizState {
                this.wikiCorpus.title(race.start) + '|' + this.wikiCorpus.title(race.target);
     }
 
+    //The quiz software's 'on'/'of' is roster state: a knocked-out team stays out across
+    //rounds until it says otherwise. It is remembered here, against the team rather than
+    //the client, because a team that is out is out whichever phone is holding it.
+    rememberButtonState(team, message) {
+        const code = message.slice(0,2);
+        if(team && (code == 'on' || code == 'of')) {
+            this.buttonOn[team] = (code == 'on');
+        }
+    }
+
     //Everything a freshly connected or reconnected client needs in order to show the current state of play
     sendCurrentState(sock, team) {
         safeSend(sock, 'vi' + this.lastView);      //Forward them to the current view
         safeSend(sock, 'im' + this.lastGeoImage);  //Set the geography image
         safeSend(sock, 'mo' + this.lastMulti);     //Rebuild the multiple choice grid
+
+        //After the view, because a client repaints its buttons whenever it changes view,
+        //from its own idea of whether it is playing. This is what settles it. A team the
+        //quiz software has never spoken about is assumed to be in.
+        safeSend(sock, (this.buttonOn[team] === false) ? 'of' : 'on');
 
         //A team that reconnects mid-race lands back on its own article with its route intact, rather than being sent to the start.
         if(this.wikirace && this.wikirace.running && team) {
@@ -161,6 +178,9 @@ class QuizState {
                         const code = message.slice(0,2);
                         const id = parseInt(message.slice(2)); //Teams are 1-based, so 0/NaN are both invalid
                         if(id) {
+                            //Recorded even for a team that is not connected: it is the team
+                            //that is out, and it may well connect later.
+                            this.rememberButtonState(id, code);
                             const c = this.getClientByID(id);
                             if(c) {
                                 log.info('quiz', 'T' + id, code, log.describe(code));
@@ -216,6 +236,8 @@ class QuizState {
                         if(!team || inner.length < 2) {
                             log.warn('quiz', 'all', 'to', "cannot read '" + message + "', ignored");
                         } else {
+                            //The quiz software's own resync sends 'on'/'of' wrapped in a 'to'
+                            this.rememberButtonState(team, inner);
                             const c = this.getClientByID(team);
                             if(c) {
                                 log.info('quiz', 'T' + team, 'to', 'for this team only: ' + log.describe(inner));
