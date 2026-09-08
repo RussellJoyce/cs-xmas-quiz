@@ -16,6 +16,9 @@ var multigrid = document.getElementById("multigrid");
 var ws;
 var myid = 0;
 
+//Whether the buttons are currently live, so that tiles built later start in the right state
+var buttonsOn = true;
+
 //Remembers the last view that we were set to, in the event that we are disconnected
 //This also therefore sets the initial view
 var lastview = "buzzer";
@@ -167,6 +170,8 @@ function applyView(view) {
 
 
 function toggleState(on) {
+    buttonsOn = on;
+
     if(on) {
         buzzer.className = "view theButton buttonOn";
         geoimg.className = "";
@@ -178,6 +183,13 @@ function toggleState(on) {
         geoimg.className = "imageDisabled";
         higher.className = "higherLowerButton buttonOff";
         lower.className = "higherLowerButton buttonOff";
+    }
+
+    //The multiple choice tiles are built on the fly, and a selected one carries .multiSelected
+    //on top of its on/off class, so they are toggled rather than rewritten.
+    for(var i = 0; i < multiButtons.length; i++) {
+        multiButtons[i].classList.toggle("buttonOn", on);
+        multiButtons[i].classList.toggle("buttonOff", !on);
     }
 }
 
@@ -441,7 +453,7 @@ function setMultiOptions(payload) {
 
     for(var i = 1; i <= count; i++) {
         var tile = document.createElement("div");
-        tile.className = "multiButton buttonOn";
+        tile.className = "multiButton " + (buttonsOn ? "buttonOn" : "buttonOff");
         tile.id = "multibutton" + i;
         tile.innerHTML = multiLabel(i, style);
         tile.addEventListener(eventtouse, multiPressHandler(i));

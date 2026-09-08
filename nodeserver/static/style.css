@@ -165,6 +165,14 @@ body {
     background-color:hotpink;
 }
 
+/* A locked-in answer stays visible once the buttons go dead, but muted so that the
+   tile still reads as disabled. */
+.buttonOff.multiSelected {
+    background:linear-gradient(to bottom, #f3dfe6 5%, #c8a3b1 100%);
+    background-color:#f3dfe6;
+    border:2px solid #c8a3b1;
+}
+
 /*-------------------------------------------------------------------------------------------*/
 /* Styles for the team selection dialog */
 
