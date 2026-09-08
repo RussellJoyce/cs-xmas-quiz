@@ -538,6 +538,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		}
 	}
 
+	@IBAction func sidebarLockPressed(_ sender: Any) {
+		sidebarTable.isEnabled = (sender as! NSButton).state == .off
+	}
+	
+	
+	
 	//MARK: - Websockets
 	//--------------------------------------------------------------------------------------------------------------------------
 	
@@ -1090,7 +1096,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	private func resetWikiRaceControls(presenting: Bool) {
-		wikiClockTimer?.invalidate()
+		wikiEnd(self)
 		wikiClockTimer = nil
 		wikiRaceStarted = nil
 		wikiClockLabel.stringValue = "0:00"
