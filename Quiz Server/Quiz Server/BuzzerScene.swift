@@ -26,7 +26,7 @@ class BuzzerScene: QuizScene {
 	var altBuzzNoise = [SKAction]()
 	var lastAltBuzzIndex = 0
 	
-	var snow1 : SKEmitterNode?
+	private var snow1 : SKEmitterNode?
 	
 	fileprivate var time: Int = 30
 	fileprivate var starttime: Int = 30

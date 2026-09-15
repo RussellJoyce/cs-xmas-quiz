@@ -92,12 +92,13 @@ class TeamGuessNode: SKNode {
 		self.setScale(1.0)
 	}
 	
-	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat) {
+	init(team: Int, width: Int, height: Int, position : CGPoint, fontsize : CGFloat, outlineColour : NSColor = .white) {
 		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
 		bgBox.zPosition = 5
 		bgBox.position = CGPoint.zero
 		bgBox.fillColor = TeamGuessNode.bgColour
 		bgBox.lineWidth = 2.0
+		bgBox.strokeColor = outlineColour
 		
 		guessLabel.text = "aaa"
 		guessLabel.fontSize = fontsize

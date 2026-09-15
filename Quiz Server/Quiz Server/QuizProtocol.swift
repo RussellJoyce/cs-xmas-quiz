@@ -5,9 +5,7 @@
 import Foundation
 
 
-/// A team as it travels on the wire, where teams are numbered from one.
-/// The scenes index their teams from zero, so most callers want `index`. Keeping both
-/// here means the conversion is named at every use rather than being a bare `- 1`.
+/// The scenes index their teams from zero, so most callers want `index`.
 struct Team: Equatable {
 	/// 1-based, as the wire and the clients count teams
 	let number: Int
@@ -19,8 +17,6 @@ struct Team: Equatable {
 		self.number = number
 	}
 
-	/// Parses a team number as it appears in a message. Rejects anything below one, since
-	/// a zero would silently become team -1 on the way into a scene.
 	init?(wire: some StringProtocol) {
 		guard let number = Int(wire), number >= 1 else { return nil }
 		self.init(number: number)
@@ -31,8 +27,7 @@ struct Team: Equatable {
 /// A message from the node server to the quiz software.
 enum QuizMessage: Equatable {
 
-	/// "co" — legacy connection acknowledgement. Nothing sends it any more, but it is
-	/// recognised so that it does not log as an unknown message.
+	/// "co" — legacy connection acknowledgement. Nothing sends it any more.
 	case connected
 
 	/// "lr<team>,<team>,..." — which teams currently have a client connected, 1-based.

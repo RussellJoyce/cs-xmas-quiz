@@ -127,7 +127,7 @@ class MultiChoiceScene: QuizScene {
 
 		let layout = teamSquareGridLayout(top: self.size.height - 90, bottom: MultiChoiceScene.barBottom + MultiChoiceScene.barHeight + 60)
 		for team in 0..<Settings.shared.numTeams {
-			let box = TeamGuessNode(team: team, width: layout.boxWidth, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize)
+			let box = TeamGuessNode(team: team, width: layout.boxWidth, height: layout.boxHeight, position: layout.positions[team], fontsize: layout.fontSize, outlineColour: .black)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)

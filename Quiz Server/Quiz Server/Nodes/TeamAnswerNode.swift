@@ -12,10 +12,6 @@ import SpriteKit
 
 /// A team's box in the rounds that show every team's written answer at once: a numbered
 /// panel with room for the answer and, optionally, the clue it was given at.
-///
-/// TextScene and NumbersScene each had their own near-identical copy of this. Both now
-/// take their `fontSize` from `TeamGridLayout`, so the two rounds match; the text round
-/// may shrink individual boxes below that to fit a long answer, but never above it.
 class TeamAnswerNode: SKNode {
 
 	var guessLabel = SKLabelNode(fontNamed: ".AppleSystemUIFontBold")
@@ -41,7 +37,7 @@ class TeamAnswerNode: SKNode {
 	///     from `TeamGridLayout.fontSize` so that every grid round matches.
 	///   - showsRoundLabel: adds the smaller grey line under the answer naming the clue
 	///     the team guessed at. Only the text round uses it.
-	init(team: Int, width: Int, height: Int, position : CGPoint, fontSize: CGFloat, showsRoundLabel: Bool = false) {
+	init(team: Int, width: Int, height: Int, position : CGPoint, fontSize: CGFloat, showsRoundLabel: Bool = false, outlineColour : NSColor = .white) {
 
 		let bigFontSize = fontSize
 		let smallFontSize : CGFloat = height >= 150 ? 38 : 28
@@ -51,7 +47,8 @@ class TeamAnswerNode: SKNode {
 		bgBox.zPosition = 5
 		bgBox.position = CGPoint.zero
 		bgBox.fillColor = TeamAnswerNode.bgColour
-		bgBox.lineWidth = 2.0
+		bgBox.lineWidth = 3.0
+		bgBox.strokeColor = outlineColour
 
 		guessLabel.text = "abcedfghijklmnopqrstuv"
 		guessLabel.fontSize = bigFontSize

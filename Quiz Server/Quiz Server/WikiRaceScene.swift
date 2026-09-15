@@ -39,8 +39,13 @@ class WikiRaceScene: QuizScene {
 	private var targetTitle = ""
 
 
+	private var bg1, bg2, bg3 : SKEmitterNode?
+	
 	override func buildScene() {
-		addBackground(imageNamed: "snowflakes-background")
+		self.backgroundColor = NSColor(calibratedRed: 0.2, green: 0.5, blue: 0.6, alpha: 1.0)
+		bg1 = addBokehBackground(replacing: bg1, textureName: "flare1", zPosition: 1, particleSpeedRange: 30)
+		bg2 = addBokehBackground(replacing: bg2, textureName: "flare2", zPosition: 1, particleSpeedRange: 20)
+		bg3 = addBokehBackground(replacing: bg3, textureName: "spark", zPosition: 1, particleSpeedRange: 20)
 
 		titleLabel.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 62)
 		titleLabel.zPosition = 10
@@ -218,7 +223,7 @@ class WikiRaceScene: QuizScene {
 		for team in 0..<Settings.shared.numTeams {
 			let box = TeamAnswerNode(team: team, width: layout.boxWidth, height: layout.boxHeight,
 									 position: layout.positions[team], fontSize: layout.fontSize,
-									 showsRoundLabel: true)
+									 showsRoundLabel: true, outlineColour: .black)
 			box.zPosition = 1
 			teamBoxes.append(box)
 			self.addChild(box)

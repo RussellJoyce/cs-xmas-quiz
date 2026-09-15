@@ -239,6 +239,7 @@ class QuizScene: SKScene {
 	func addBokehBackground(replacing existing: SKEmitterNode?,
 							textureName: String,
 							zPosition: CGFloat,
+							particleSpeedRange: CGFloat = 10,
 							preSimulate: TimeInterval = 8) -> SKEmitterNode?
 	{
 		existing?.removeFromParent()
@@ -256,7 +257,7 @@ class QuizScene: SKScene {
 		bok.particleScaleSpeed = 0.03
 		bok.particleRotationRange = 2 * .pi
 		bok.particleSpeed = 0
-		bok.particleSpeedRange = 10
+		bok.particleSpeedRange = particleSpeedRange
 		bok.emissionAngleRange = 2 * .pi
 		
 		let fade = SKKeyframeSequence(keyframeValues: [0.0, 0.3, 0.0], times: [0.0, 0.5, 1.0])
