@@ -126,7 +126,7 @@ func installLEDStrip(window : NSWindow?) {
 	guard let window = window, let content = window.contentView else { return }
 
 	//Starts collapsed: just the status line. The poll below expands it if a simulator is already running.
-	growWindow(by: LEDStripView.statusHeight + ledStripMargin * 2)
+	growWindow(window, by: LEDStripView.statusHeight + ledStripMargin * 2)
 
 	let strip = LEDStripView(frame: NSRect(x: 8, y: ledStripMargin, width: content.bounds.width - 16, height: LEDStripView.statusHeight))
 	strip.autoresizingMask = [.width, .maxYMargin]
@@ -157,15 +157,14 @@ private func shouldExpandLEDStrip(for state: LEDFrameReader.State) -> Bool {
 private func setLEDStripExpanded(_ expanded: Bool) {
 	guard expanded != ledStripExpanded, let window = ledStrip?.window, let content = window.contentView else { return }
 	ledStripExpanded = expanded
-	growWindow(by: expanded ? ledStripHeight : -ledStripHeight)
+	growWindow(window, by: expanded ? ledStripHeight : -ledStripHeight)
 	ledStrip?.frame = NSRect(x: 8, y: ledStripMargin,
 							 width: content.bounds.width - 16,
 							 height: LEDStripView.statusHeight + (expanded ? ledStripHeight : 0))
 }
 
 /// Grows or shrinks the window downwards, leaving the title bar where the user put it.
-private func growWindow(by delta: CGFloat) {
-	guard let window = ledStrip?.window else { return }
+private func growWindow(_ window: NSWindow, by delta: CGFloat) {
 	var frame = window.frame
 	frame.origin.y -= delta
 	frame.size.height += delta
