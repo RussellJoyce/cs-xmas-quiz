@@ -50,7 +50,7 @@ void connectWifi() {
 		String wifi_ssid = wifi_ssids[i];
 		String wifi_pass = wifi_passes[i];
 
-		Serial.printf("Attempting SSID: %s\n", wifi_ssid);
+		Serial.printf("Attempting SSID: %s\n", wifi_ssid.c_str());
 		WiFi.begin(wifi_ssid, wifi_pass);
 		unsigned long start = millis();
 
