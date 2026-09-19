@@ -164,3 +164,34 @@ class ScoresScene: QuizScene {
 	}
 	
 }
+
+
+// MARK: - Controller window
+
+class ScoresPanel: NSObject, RoundPanel {
+
+	let round = RoundType.scores
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var output: NSTextField!
+	@IBOutlet weak var scoreText: NSTextView!
+
+	private var scene: ScoresScene { host.quizDisplay.scoresScene }
+
+	func connectControls() {
+		scene.output = output
+	}
+
+	/// Lays out one blank line per team, ready for the host to type the scores in
+	@IBAction func initText(_ sender: Any) {
+		scoreText.string = (1...Settings.shared.numTeams).map { "\($0),\n" }.joined()
+	}
+
+	@IBAction func parseAndReset(_ sender: Any) {
+		scene.parseAndReset(scoreText: scoreText.string)
+	}
+
+	@IBAction func showNext(_ sender: Any) {
+		scene.next()
+	}
+}

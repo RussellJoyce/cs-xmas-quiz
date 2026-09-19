@@ -200,3 +200,51 @@ class NumbersScene: QuizScene {
 	}
 
 }
+
+
+// MARK: - Controller window
+
+class NumbersPanel: NSObject, RoundPanel {
+
+	let round = RoundType.numbers
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var allowAnswers: NSButton!
+	@IBOutlet weak var actualAnswer: NSTextField!
+	@IBOutlet weak var teamGuesses: NSTextField!
+
+	private var scene: NumbersScene { host.quizDisplay.numbersScene }
+
+	func reset(presenting: Bool) {
+		if presenting {
+			actualAnswer.intValue = 0
+		}
+		allowAnswers.state = .on
+		teamGuesses.stringValue = ""
+	}
+
+	var acceptingTextAnswers: Bool { allowAnswers.state == .on }
+
+	/// Anything that is not a number is simply dropped
+	func receive(textGuess: String, from team: Int) {
+		if let value = Int(textGuess) {
+			scene.teamGuess(teamid: team, guess: value)
+		}
+		updateGuesses()
+	}
+
+	/// Redraws the host's list of what each team has guessed
+	private func updateGuesses() {
+		teamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if let tg = scene.teamGuesses[team] {
+				return "Team \(team + 1): \(tg)"
+			}
+			return nil
+		}.joined(separator: "\n")
+	}
+
+	@IBAction func showAnswers(_ sender: NSButton) {
+		allowAnswers.state = .off
+		scene.showGuesses(actualAnswer: Int(actualAnswer.intValue))
+	}
+}

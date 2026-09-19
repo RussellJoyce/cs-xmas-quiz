@@ -8,7 +8,54 @@
 
 import Cocoa
 
-class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate, NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate, QuizWebSocketDelegate {
+/// One round's controls on the controller window.
+protocol RoundPanel: AnyObject {
+	/// The round these controls drive
+	var round: RoundType { get }
+
+	/// The window the controls live in. Set once, as the window loads.
+	var host: ControllerWindowController! { get set }
+
+	/// Hand the round any UI element from this window that it draws into
+	func connectControls()
+
+	/// One-time setup once the scenes exist
+	func setUp()
+
+	/// Stop anything still running. Called as the window closes.
+	func tearDown()
+
+	/// Put the controls back to the round's starting state. `presenting` is true for a
+	/// round change, false for a reset in place
+	func reset(presenting: Bool)
+
+	/// Anything a catching-up client needs that belongs to the round
+	var clientRoundState: [String] { get }
+
+	/// An answer `team` has already given, if the round tracks one. `team` is 0-based
+	func clientTeamState(team: Int) -> [String]
+
+	/// Whether the round is taking typed answers from the phones at the moment
+	var acceptingTextAnswers: Bool { get }
+
+	/// A typed answer from a team that is playing, already trimmed. `team` is 0-based.
+	func receive(textGuess: String, from team: Int)
+}
+
+extension RoundPanel {
+	func connectControls() {}
+	func setUp() {}
+	func tearDown() {}
+	func reset(presenting: Bool) {}
+	var clientRoundState: [String] { [] }
+	func clientTeamState(team: Int) -> [String] { [] }
+	var acceptingTextAnswers: Bool { false }
+	func receive(textGuess: String, from team: Int) {}
+}
+
+
+class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabViewDelegate,
+								  NSTableViewDataSource, NSTableViewDelegate, QuizWebSocketDelegate {
     
 	@IBOutlet weak var virtualBuzzersBtn: NSButton!
 	
@@ -73,26 +120,27 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// The numbered buttons, trimmed to the teams that exist
 	private var buzzerButtons = [NSButton]()
 	let quizDisplay = QuizDisplayController()
-	/// The Ceefax tab's "Hold page" picker, which builds itself into the tab at load
+
+	@IBOutlet var buzzerPanel: BuzzerPanel!
+	@IBOutlet var musicPanel: MusicPanel!
+	@IBOutlet var timerPanel: TimerPanel!
+	@IBOutlet var trueFalsePanel: TrueFalsePanel!
+	@IBOutlet var multiChoicePanel: MultiChoicePanel!
+	@IBOutlet var geographyPanel: GeographyPanel!
+	@IBOutlet var wikiRacePanel: WikiRacePanel!
+	@IBOutlet var textPanel: TextPanel!
+	@IBOutlet var numbersPanel: NumbersPanel!
+	@IBOutlet var wavelengthPanel: WavelengthPanel!
+	@IBOutlet var pointlessPanel: PointlessPanel!
+	@IBOutlet var scoresPanel: ScoresPanel!
+	private var panels = [RoundType: RoundPanel]()
+	
 	private var ceefaxPageControl: CeefaxPageControl?
 	private var clientListTimer: Timer!
 	
     override func windowDidLoad() {
         super.windowDidLoad()
 
-		//Connect any output UI elements
-		quizDisplay.scoresScene.output = scoresOutput
-
-		if let scrollView = pointlessQuestion, let textView = scrollView.documentView as? NSTextView {
-			quizDisplay.pointlessScene.textQuestion = textView
-		} else {
-			print("Warning: Could not set PointlessScene's textQuestion (not found or not NSTextView)")
-		}
-		
-		quizDisplay.pointlessScene.answerTable = pointlessTable
-		quizDisplay.pointlessScene.descending = pointlessDescending
-		quizDisplay.musicScene.useLEDs = musicUseLEDs
-		
 		//Connect to Node server
 		print("Connect to Node server...")
 		window?.title = "Quiz Control - NOT CONNECTED"
@@ -108,38 +156,24 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		roster = TeamRoster(teams: Settings.shared.numTeams)
 		syncBuzzerButtons()
 		
+		let allPanels: [RoundPanel] = [buzzerPanel, musicPanel, timerPanel, trueFalsePanel,
+									   multiChoicePanel, geographyPanel, wikiRacePanel, textPanel,
+									   numbersPanel, wavelengthPanel, pointlessPanel, scoresPanel]
+		for panel in allPanels {
+			panel.host = self
+			panels[panel.round] = panel
+		}
+
+		//The scenes lay these out in buildScene, which present() triggers, so they have to
+		//be handed over first
+		allPanels.forEach { $0.connectControls() }
+
 		quizDisplay.present()
+
 		ceefaxPageControl = CeefaxPageControl(in: tabitemIdleCeefax?.view, scene: quizDisplay.idleCeefaxScene)
 
-		//Fill the question and media pickers from the folders chosen at startup
-		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.audioExtensions) {
-			musicFile.addItem(withTitle: file)
-		}
-		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.videoExtensions) {
-			videoFile.addItem(withTitle: file)
-		}
-		if musicFile.numberOfItems > 0 {
-			musicChooseFile(musicFile)
-		}
-		for file in Utils.questionFiles(in: Settings.shared.uniquePath) {
-			uniqueFile.addItem(withTitle: file)
-		}
-		if uniqueFile.numberOfItems > 0 {
-			uniqueChooseFile(uniqueFile)
-		}
-		for file in Utils.questionFiles(in: Settings.shared.geographyImagesPath, extensions: GeographyScene.imageExtensions)
-				where file != GeographyScene.startImage {
-			geoQuestionSelector.addItem(withTitle: file)
-		}
-		for file in Utils.questionFiles(in: Settings.shared.pointlessPath) {
-			pointlessQuestionSelector.addItem(withTitle: file)
-		}
-		if pointlessQuestionSelector.numberOfItems > 0 {
-			pointlessQuestionSelected(pointlessQuestionSelector!)
-		}
+		allPanels.forEach { $0.setUp() }
 
-		updateGeographyPreview()
-		wikiLoadPuzzles()
 		configureSidebar()
 
 		//Default to Idle on load regardless of what we left it on in Interface Builder
@@ -154,7 +188,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	func windowWillClose(_ notification: Notification) {
 		clientListTimer?.invalidate()
-		wavelengthRollTimer?.invalidate()
+		panels.values.forEach { $0.tearDown() }
 		socket.ledsOff()
 	}
 
@@ -217,7 +251,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	/// Tells the live round who is playing. Called whenever the enable buttons change and whenever a round starts
-	private func pushTeamParticipation() {
+	func pushTeamParticipation() {
 		quizDisplay.setParticipating(roster.flags)
 	}
 
@@ -307,41 +341,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		messages.append("vs" + round.clientView)
 
 		//Decoration belonging to the round rather than to any one team
-		//New rounds might need things adding to this!
-		switch round {
-		case .geography:
-			messages.append("im" + currentGeoImage)
-		case .multichoice:
-			messages.append("mo" + quizDisplay.multiChoiceScene.optionsMessage)
-		case .trueFalse:
-			messages.append(trueFalseToggle.state == .on ? "h2" : "h1")
-		case .wikirace:
-			break
-		default:
-			break
-		}
+		messages += panels[round]?.clientRoundState ?? []
 		
 		//Is this team enabled?
 		messages.append(roster.isPlaying(idx) ? "on" : "of")
 
 		//An answer this team has already given
 		//This is likely to be unnecessary, but it is here for completeness
-		switch round {
-		case .trueFalse:
-			let guesses = quizDisplay.truefalseScene.teamGuesses
-			if idx < guesses.count, let guess = guesses[idx] {
-				messages.append(guess ? "hh" : "hl")
-			} else {
-				messages.append("hn")
-			}
-		case .multichoice:
-			let guesses = quizDisplay.multiChoiceScene.teamGuesses
-			if idx < guesses.count, let option = guesses[idx] {
-				messages.append("ms\(option)")
-			}
-		default:
-			break
-		}
+		messages += panels[round]?.clientTeamState(team: idx) ?? []
 
 		return messages
 	}
@@ -358,7 +365,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	/// Puts `round` into its starting state: the scene, the teams' phones, and the host's controls.
 	/// `presenting` is true for a round change, false for a reset in place.
-	private func enterRound(_ round: RoundType, presenting: Bool) {
+	func enterRound(_ round: RoundType, presenting: Bool) {
 		if presenting {
 			quizDisplay.setRound(round: round) //presents the scene, and resets it on the way in
 		} else {
@@ -375,16 +382,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// Reset re-arms the question the host is on, so it clears answers but keeps their
 	/// place in the round. A round change puts that place back to the start.
 	private func resetControls(for round: RoundType, presenting: Bool) {
-		switch round {
-		case .geography:   resetGeographyControls(presenting: presenting)
-		case .text:        resetTextControls(presenting: presenting)
-		case .numbers:     resetNumbersControls(presenting: presenting)
-		case .pointless:   resetPointlessControls()
-		case .wavelength:  resetWavelengthControls()
-		case .multichoice: resetMultiChoiceControls(presenting: presenting)
-		case .wikirace:    resetWikiRaceControls(presenting: presenting)
-		case .idleCeefax:  ceefaxPageControl?.refresh()
-		default:           break
+		panels[round]?.reset(presenting: presenting)
+		if round == .idleCeefax {
+			ceefaxPageControl?.refresh()
 		}
 	}
 
@@ -555,16 +555,14 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .wavelengthGuess(let team, let value):
 			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.wavelengthScene.teamGuess(team: team.index, value: value)
-			updateWavelengthGuesses()
+			wavelengthPanel.updateGuesses()
 
 		case .multiChoiceGuess(let team, let option):
-			guard roster.isPlaying(team.index), quizDisplay.multiChoiceScene.counting else { break }
-			quizDisplay.multiChoiceScene.teamGuess(teamid: team.index, option: option)
-			if let taken = quizDisplay.multiChoiceScene.teamGuesses[team.index] {
+			guard roster.isPlaying(team.index), multiChoicePanel.counting else { break }
+			if let taken = multiChoicePanel.teamGuessed(team: team.index, option: option) {
 				//If the round rejected it we wont light the tile on the client
 				socketWriteIfConnected("ms\(team.number),\(taken)")
 			}
-			updateMultiChoiceGuesses()
 
 		case .textGuess(let team, let text):
 			receiveTextGuess(team: team, text: text)
@@ -573,7 +571,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			if roster.isPlaying(team.index) {
 				quizDisplay.wikiRaceScene.teamMoved(team: team.index, title: title, hops: hops, away: away)
 			}
-			wikiRefreshPath()
+			wikiRacePanel.refreshPath()
 
 		case .wikiArrived(let team, let hops, let seconds):
 			guard roster.isPlaying(team.index) else { break }
@@ -585,45 +583,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		case .wikiTrail(let team, let titles):
 			quizDisplay.wikiRaceScene.raceTrails[team.index] = titles
-			wikiRefreshPath()
+			wikiRacePanel.refreshPath()
 		}
 	}
 
 	/// A typed answer, which three different rounds accept. Each has its own "allow answers"
 	/// toggle, and an answer arriving while that is off is dropped.
 	private func receiveTextGuess(team: Team, text: String) {
-		let round = quizDisplay.currentRound
-		let accepting: Bool
-		switch round {
-		case .text:      accepting = textAllowAnswers.state == .on
-		case .numbers:   accepting = numbersAllowAnswers.state == .on
-		case .pointless: accepting = pointlessAllowAnswers.state == .on
-		default:         accepting = false
-		}
-
+		guard let panel = panels[quizDisplay.currentRound], panel.acceptingTextAnswers else { return }
 		//Ignore teams the host has disabled
-		guard accepting, roster.isPlaying(team.index) else { return }
+		guard roster.isPlaying(team.index) else { return }
 
-		let guess = String(text.prefix(20)) //TODO Max size of 20 is too low?
-
-		switch round {
-		case .text:
-			quizDisplay.textScene.teamGuess(teamid: team.index,
-			                                guess: guess,
-			                                roundid: Int(textQuestionNumber.intValue),
-			                                showroundno: textShowQuestionNumbers.state == .on)
-			updateTextGuesses()
-		case .numbers:
-			if let value = Int(guess) {
-				quizDisplay.numbersScene.teamGuess(teamid: team.index, guess: value)
-			}
-			updateNumbersGuesses()
-		case .pointless:
-			quizDisplay.pointlessScene.teamGuess(team: team.index, guess: guess)
-		default:
-			break
-		}
+		panel.receive(textGuess: String(text.prefix(20)), from: team.index) //TODO Max size of 20 is too low?
 	}
+
 
 	func webSocketDidConnect() {
 		window?.title = "Quiz Control - connected"
@@ -637,43 +610,18 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	func webSocketDidDisconnect() {
 		window?.title = "Quiz Control - NOT CONNECTED"
 	}
-	
-	
-	
+
+
 	//--------------------------------------------------------------------------------------------------------------------------
-	//MARK: - Round-specific controls and actions
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	//MARK: - Buzzer
+	//MARK: - Buzzer options
 	//--------------------------------------------------------------------------------------------------------------------------
 	
 	@IBOutlet weak var buzzerSounds: NSButton!
 	@IBOutlet weak var quieterBuzzes: NSButton!
-	@IBOutlet weak var buzzerTimerTime: NSTextField!
-
-	@IBAction func buzzersNextTeam(_ sender: AnyObject) {
-		quizDisplay.buzzerScene.nextTeam()
-	}
-	
-	@IBAction func startBuzzerTimer(_ sender: Any) {
-		if let secs = Int(buzzerTimerTime.stringValue) {
-			quizDisplay.buzzerScene.startTimer(secs)
-		}
-	}
-	
-	@IBAction func stopBuzzerTimer(_ sender: Any) {
-		quizDisplay.buzzerScene.stopTimer()
-	}
-	
-	
-	//MARK: - Music/Video
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var buzzerQueueMode: NSButton!
+	@IBOutlet weak var buzzcocksMode: NSButton!
 	@IBOutlet weak var blankVideo: NSButton!
 
-	/// The current state of the buzzer toggles, gathered for whichever round is live.
 	private var buzzerOptions: BuzzerOptions {
 		BuzzerOptions(buzzcocksMode: buzzcocksMode.state == .on,
 					  buzzerQueueMode: buzzerQueueMode.state == .on,
@@ -681,637 +629,4 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 					  buzzerSounds: buzzerSounds.state == .on,
 					  blankVideo: blankVideo.state == .on)
 	}
-	@IBOutlet weak var musicFile: NSPopUpButton!
-	@IBOutlet weak var videoFile: NSPopUpButton!
-	@IBOutlet weak var musicUseLEDs: NSButton!
-	
-	@IBAction func musicNextTeam(_ sender: AnyObject) {
-		quizDisplay.musicScene.nextTeam()
-	}
-	
-	@IBAction func musicPlay(_ sender: AnyObject) {
-		quizDisplay.musicScene.resumeMusic()
-	}
-	
-	@IBAction func musicPause(_ sender: AnyObject) {
-		quizDisplay.musicScene.pauseMusic()
-	}
-	
-	@IBAction func musicStop(_ sender: AnyObject) {
-		quizDisplay.musicScene.stopMusic()
-	}
-
-	@IBAction func musicChooseFile(_ sender: NSPopUpButton) {
-		if Settings.shared.musicPath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path =  Settings.shared.musicPath + "/" + fileName
-				quizDisplay.musicScene.initMusic(file: path)
-			}
-		}
-		else {
-			print("Error choosing music file")
-		}
-	}
-	
-	@IBAction func playVideo(_ sender: Any) {
-		quizDisplay.musicScene.resumeVideo()
-	}
-	
-	@IBAction func prepareVideo(_ sender: NSPopUpButton) {
-		if Settings.shared.musicPath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path = Settings.shared.musicPath + "/" + fileName
-				quizDisplay.musicScene.prepareVideo(file: path)
-			}
-			else {
-				print("Error choosing video file")
-			}
-		}
-	}
-	
-	
-	//MARK: - Timer
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var timerShowCounter: NSButton!
-	
-	@IBAction func startTimer(_ sender: AnyObject) {
-		quizDisplay.timerScene.startTimer(music: false)
-	}
-	
-	@IBAction func stopTimer(_ sender: AnyObject) {
-		quizDisplay.timerScene.stopTimer()
-	}
-	
-	@IBAction func timerIncrement(_ sender: AnyObject) {
-		quizDisplay.timerScene.timerIncrement()
-	}
-	
-	@IBAction func timerDecrement(_ sender: AnyObject) {
-		quizDisplay.timerScene.timerDecrement()
-	}
-	
-	@IBAction func timerStartWithMusic(_ sender: Any) {
-		quizDisplay.timerScene.startTimer(music: true)
-	}
-	
-	@IBAction func timerShowCounterChange(_ sender: NSButton) {
-		quizDisplay.timerScene.showCounter(timerShowCounter.state == .on)
-	}
-	
-	
-	//MARK: - Text and numbers
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var textAllowAnswers: NSButton!
-	@IBOutlet weak var textShowQuestionNumbers: NSButton!
-	@IBOutlet weak var textQuestionNumber: NSTextField!
-	@IBOutlet weak var textStepper: NSStepper!
-	@IBOutlet weak var textTeamGuesses: NSTextField!
-	@IBOutlet weak var uniqueFile: NSPopUpButton!
-
-	private func resetTextControls(presenting: Bool) {
-		if presenting { //If entering this round reset the question controls as well
-			textStepper.intValue = 1
-			textQuestionNumber.stringValue = "1"
-		}
-		textTeamGuesses.stringValue = ""
-		textAllowAnswers.state = .on
-	}
-
-	/// Redraws the host's list of what each team has typed this question
-	private func updateTextGuesses() {
-		textTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-			if let tg = quizDisplay.textScene.teamGuesses[team] {
-				return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
-			}
-			return nil
-		}.joined(separator: "\n")
-	}
-
-	@IBAction func textStepperChange(_ sender: Any) {
-		textQuestionNumber.stringValue = textStepper.stringValue
-	}
-	@IBAction func textShowGuesses(_ sender: Any) {
-		textAllowAnswers.state = .off
-		quizDisplay.textScene.showGuesses(showroundno: (textShowQuestionNumbers.state == .on) ? true : false)
-	}
-	
-	@IBAction func textScoreUnique(_ sender: Any) {
-		quizDisplay.textScene.scoreUnique()
-	}
-
-	@IBAction func uniqueChooseFile(_ sender: NSPopUpButton) {
-		if Settings.shared.uniquePath != "" {
-			if let fileName = sender.selectedItem?.title {
-				let path = Settings.shared.uniquePath + "/" + fileName
-				quizDisplay.textScene.initUnique(file: path)
-			}
-			else {
-				print("Error choosing unique list")
-			}
-		}
-	}
-	
-	@IBOutlet weak var numbersAllowAnswers: NSButton!
-	@IBOutlet weak var numbersActualAnswer: NSTextField!
-	@IBOutlet weak var numbersTeamGuesses: NSTextField!
-	
-	private func resetNumbersControls(presenting: Bool) {
-		if presenting {
-			numbersActualAnswer.intValue = 0
-		}
-		numbersAllowAnswers.state = .on
-		numbersTeamGuesses.stringValue = ""
-	}
-
-	/// Redraws the host's list of what each team has guessed
-	private func updateNumbersGuesses() {
-		numbersTeamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-			if let tg = quizDisplay.numbersScene.teamGuesses[team] {
-				return "Team \(team + 1): \(tg)"
-			}
-			return nil
-		}.joined(separator: "\n")
-	}
-
-	@IBAction func numbersShowAnswers(_ sender: NSButton) {
-		numbersAllowAnswers.state = .off
-		quizDisplay.numbersScene.showGuesses(actualAnswer: Int(numbersActualAnswer!.intValue))
-	}
-	
-	
-	//MARK: - Scores
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var scoresOutput: NSTextField!
-	@IBOutlet weak var scoresText: NSTextView!
-	
-	@IBAction func scoresInitText(_ sender: Any) {
-		var s = ""
-		for x in 1...Settings.shared.numTeams {
-			s = s + "\(x),\n"
-		}
-		scoresText.string = s
-	}
-	
-	@IBAction func scoresParseAndReset(_ sender: Any) {
-		quizDisplay.scoresScene.parseAndReset(scoreText: scoresText.string)
-	}
-	
-	@IBAction func scoresShowNext(_ sender: Any) {
-		quizDisplay.scoresScene.next()
-	}
-	
-
-	//MARK: - True/False
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var trueButton: NSButton!
-	@IBOutlet weak var falseButton: NSButton!
-	@IBOutlet weak var trueFalseToggle: NSButton!
-	@IBOutlet weak var truefalseSounds: NSButton!
-
-	@IBAction func trueFalseStart(_ sender: NSButton) {
-		quizDisplay.truefalseScene.start(sounds: truefalseSounds.state == .on)
-	}
-	
-	@IBAction func trueFalseStartNoTimer(_ sender: NSButton) {
-		quizDisplay.truefalseScene.startNoTimer(sounds: truefalseSounds.state == .on)
-	}
-	
-	@IBAction func trueFalseTrue(_ sender: NSButton) {
-		quizDisplay.truefalseScene.showAnswer(ans: true)
-	}
-	
-	@IBAction func trueFalseFalse(_ sender: NSButton) {
-		quizDisplay.truefalseScene.showAnswer(ans: false)
-	}
-	
-	@IBAction func trueFalseToggled(_ sender: Any) {
-		if trueFalseToggle.state == .on {
-			trueButton.title = "True"
-			falseButton.title = "False"
-			trueFalseToggle.title = "True/False Mode"
-			socketWriteIfConnected("h2")
-		} else {
-			trueButton.title = "Higher"
-			falseButton.title = "Lower"
-			trueFalseToggle.title = "Higher/Lower Mode"
-			socketWriteIfConnected("h1")
-		}
-		quizDisplay.truefalseScene.setMode(self.trueFalseToggle.state == .on)
-	}
-	
-	//MARK: - Multiple choice
-	//--------------------------------------------------------------------------------------------------------------------------
-
-	@IBOutlet weak var multiOptionsStepper: NSStepper!
-	@IBOutlet weak var multiOptionsNumber: NSTextField!
-	@IBOutlet weak var multiStyleToggle: NSButton!
-	@IBOutlet weak var multiSounds: NSButton!
-	@IBOutlet weak var multiStartButton: NSButton!
-	@IBOutlet weak var multiTeamGuesses: NSTextField!
-	@IBOutlet weak var multiTime10: NSButton!
-	@IBOutlet weak var multiTime20: NSButton!
-	@IBOutlet weak var multiTime30: NSButton!
-	@IBOutlet weak var multiAnswer1: NSButton!
-	@IBOutlet weak var multiAnswer2: NSButton!
-	@IBOutlet weak var multiAnswer3: NSButton!
-	@IBOutlet weak var multiAnswer4: NSButton!
-	@IBOutlet weak var multiAnswer5: NSButton!
-	@IBOutlet weak var multiAnswer6: NSButton!
-
-	/// Seconds on the clock, as chosen by the three time buttons.
-	private var multiTimeout = MultiChoiceScene.defaultTimeout
-
-	private var multiAnswerButtons: [NSButton?] {
-		[multiAnswer1, multiAnswer2, multiAnswer3, multiAnswer4, multiAnswer5, multiAnswer6]
-	}
-
-	private var multiStyle: MultiChoiceScene.LabelStyle {
-		(multiStyleToggle?.state ?? .on) == .on ? .letters : .numbers
-	}
-
-	@IBAction func multiOptionsStepperChange(_ sender: Any) {
-		pushMultiChoiceOptions()
-	}
-
-	@IBAction func multiStyleToggled(_ sender: Any) {
-		multiStyleToggle.title = multiStyle == .letters ? "Letters (A B C)" : "Numbers (1 2 3)"
-		pushMultiChoiceOptions()
-	}
-
-	/// The three time buttons carry the time length as their tag
-	@IBAction func multiTimeChange(_ sender: NSButton) {
-		multiTimeout = sender.tag
-		for button in [multiTime10, multiTime20, multiTime30] {
-			button?.state = (button?.tag == multiTimeout) ? .on : .off
-		}
-		pushMultiChoiceOptions()
-	}
-
-	@IBAction func multiStart(_ sender: NSButton) {
-		if quizDisplay.multiChoiceScene.counting {
-			quizDisplay.multiChoiceScene.stop()
-		} else {
-			//The teams' phones still show the last question's selection until they are told
-			//otherwise, and 'mo' is what clears them.
-			socketWriteIfConnected("mo" + quizDisplay.multiChoiceScene.optionsMessage)
-			multiTeamGuesses?.stringValue = ""
-			quizDisplay.multiChoiceScene.start(sounds: multiSounds.state == .on)
-		}
-		updateMultiChoiceStartButton()
-	}
-
-	@IBAction func multiAnswerPressed(_ sender: NSButton) {
-		quizDisplay.multiChoiceScene.showAnswer(option: sender.tag)
-		updateMultiChoiceStartButton()
-		updateMultiChoiceGuesses()
-	}
-
-	private func pushMultiChoiceOptions() {
-		if quizDisplay.multiChoiceScene.counting {
-			print("Multiple choice: ignoring a setup change while the question is running")
-			syncMultiChoiceControls()
-			return
-		}
-
-		let options = Int(multiOptionsStepper?.intValue ?? Int32(MultiChoiceScene.defaultOptions))
-		let payload = quizDisplay.multiChoiceScene.configure(options: options, style: multiStyle, timeout: multiTimeout)
-		socketWriteIfConnected("mo" + payload)
-		multiTeamGuesses?.stringValue = ""
-		syncMultiChoiceControls()
-	}
-
-	/// Puts the controls back in step with whatever the scene actually holds.
-	private func syncMultiChoiceControls() {
-		let scene = quizDisplay.multiChoiceScene
-		multiOptionsStepper?.intValue = Int32(scene.optionCount)
-		multiOptionsNumber?.stringValue = String(scene.optionCount)
-
-		//Only the answers that exist can be the right one
-		for (index, button) in multiAnswerButtons.enumerated() {
-			let option = index + 1
-			button?.title = scene.labelStyle.label(option)
-			button?.isEnabled = option <= scene.optionCount
-		}
-		updateMultiChoiceStartButton()
-	}
-
-	private func updateMultiChoiceStartButton() {
-		multiStartButton?.title = quizDisplay.multiChoiceScene.counting ? "Stop" : "Start"
-	}
-	
-	private func updateMultiChoiceGuesses() {
-		let scene = quizDisplay.multiChoiceScene
-		multiTeamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-			guard team < scene.teamGuesses.count, let guess = scene.teamGuesses[team] else {
-				return nil
-			}
-			return "Team \(team + 1): \(scene.labelStyle.label(guess))"
-		}.joined(separator: "\n")
-	}
-
-	private func resetMultiChoiceControls(presenting: Bool) {
-		if presenting {
-			multiTimeout = MultiChoiceScene.defaultTimeout
-			for button in [multiTime10, multiTime20, multiTime30] {
-				button?.state = (button?.tag == multiTimeout) ? .on : .off
-			}
-		}
-		multiTeamGuesses?.stringValue = ""
-		pushMultiChoiceOptions()
-	}
-
-	//MARK: - Wikirace
-	//--------------------------------------------------------------------------------------------------------------------------
-
-	@IBOutlet weak var wikiQuestionSelector: NSPopUpButton!
-	@IBOutlet weak var wikiTeamSelector: NSPopUpButton!
-	@IBOutlet weak var wikiClockLabel: NSTextField!
-	@IBOutlet weak var wikiPathView: NSScrollView!
-	@IBOutlet var wikiPathViewText: NSTextView!
-	@IBOutlet weak var wikiShowDistances: NSButton!
-	@IBOutlet weak var wikiStartButton: NSButton!
-	@IBOutlet weak var wikiEndButton: NSButton!
-	@IBOutlet weak var wikiRevealButton: NSButton!
-	@IBOutlet var wikiBestRouteText: NSTextView!
-	private var wikiRaceStarted : Date?
-	private var wikiClockTimer : Timer?
-	
-	@IBAction func wikiStart(_ sender: Any) {
-		let index = wikiQuestionSelector.indexOfSelectedItem
-		guard (index >= 0 && index < quizDisplay.wikiRaceScene.puzzles.count) else { return }
-		let p = quizDisplay.wikiRaceScene.puzzles[index]
-		quizDisplay.wikiRaceScene.setRace(start: p.startTitle, target: p.targetTitle)
-		quizDisplay.wikiRaceScene.showDistance = wikiShowDistances.state == .on
-		
-		wikiBeginClock()
-		pushTeamParticipation()
-		socketWriteIfConnected("wr\(p.start),\(p.target)")
-		wikiRefreshPath()
-		wikiEndButton.isEnabled = true
-		wikiRevealButton.isEnabled = false
-	}
-	
-	@IBAction func wikiEnd(_ sender: Any) {
-		//The server freezes every client, works out the standings and sends them back as "wd" rows, and a "wt" trail per team
-		socketWriteIfConnected("we")
-		wikiClockTimer?.invalidate()
-	}
-	
-	@IBAction func wikiReveal(_ sender: Any) {
-		guard !quizDisplay.wikiRaceScene.raceStandings.isEmpty else { return }
-		quizDisplay.wikiRaceScene.showDistance = true
-	}
-
-	private func resetWikiRaceControls(presenting: Bool) {
-		wikiEnd(self)
-		wikiClockTimer = nil
-		wikiRaceStarted = nil
-		wikiClockLabel.stringValue = "0:00"
-		wikiEndButton.isEnabled = false
-		wikiRevealButton.isEnabled = false
-		wikiStartButton.isEnabled = !quizDisplay.wikiRaceScene.puzzles.isEmpty
-		if presenting {
-			wikiQuestionSelector.selectItem(at: 0)
-		}
-	}
-
-	@IBAction func wikiShowDistanceChanged(_ sender: Any) {
-		quizDisplay.wikiRaceScene.showDistance = wikiShowDistances.state == .on
-	}
-	
-	@IBAction func wikiTeamSelectorChanged(_ sender: Any) {
-		wikiRefreshPath()
-	}
-	
-	@IBAction func wikiQuestionSelectorChanged(_ sender: Any) {
-		let index = wikiQuestionSelector.indexOfSelectedItem
-		guard (index >= 0 && index < quizDisplay.wikiRaceScene.puzzles.count) else { return }
-		wikiBestRouteText.string = quizDisplay.wikiRaceScene.puzzles[index].route.joined(separator: "\n")
-	}
-
-	/// The clock is not tracked by the round, because it is purely decorative for the quizmaster who ends the race manually
-	private func wikiBeginClock() {
-		wikiClockTimer?.invalidate()
-		wikiRaceStarted = Date()
-		wikiClockLabel.stringValue = "0:00"
-		wikiClockTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
-			guard let self = self, let started = self.wikiRaceStarted else { return }
-			let seconds = Int(Date().timeIntervalSince(started))
-			self.wikiClockLabel.stringValue = "\(seconds / 60):\(String(format: "%02d", seconds % 60))"
-		}
-	}
-
-	private func wikiRefreshPath() {
-		let team = wikiTeamSelector.indexOfSelectedItem
-		guard team >= 0 else { return }
-		wikiPathViewText.string = quizDisplay.wikiRaceScene.renderPath(for: team)
-	}
-
-	/// Asks the round to load the puzzles, if successful, updates the PopUpButtons with the puzzles and teams
-	func wikiLoadPuzzles() {
-		quizDisplay.wikiRaceScene.loadPuzzles(from: Settings.shared.wikiCorpusPath)
-		
-		wikiQuestionSelector.removeAllItems()
-		quizDisplay.wikiRaceScene.puzzles.forEach { wikiQuestionSelector.addItem(withTitle: $0.menuTitle) }
-		wikiQuestionSelector.selectItem(at: 0)
-		wikiQuestionSelectorChanged(wikiQuestionSelector!)
-		wikiStartButton.isEnabled = true
-		
-		wikiTeamSelector.removeAllItems()
-		for i in 0...Settings.maxTeams {
-			wikiTeamSelector.addItem(withTitle: "Team \(i+1)")
-		}
-	}
-
-	
-	
-	//MARK: - Geography
-	//--------------------------------------------------------------------------------------------------------------------------
-	
-	@IBOutlet weak var geoAnswerX: NSTextField!
-	@IBOutlet weak var geoAnswerY: NSTextField!
-	@IBOutlet weak var geoQuestionSelector: NSPopUpButton!
-	@IBOutlet weak var geoPreview: GeographyPreviewView!
-	
-	/// The image the phones are currently showing, which is not the same as the one selected
-	/// in `geoQuestionSelector`: the host picks a question there long before starting it.
-	/// Only a resync needs this, but it has to be recorded wherever an "im" is sent.
-	private var currentGeoImage = GeographyScene.startImage
-
-	/// `GeographyScene.reset()` always returns the main display to the start image
-	private func resetGeographyControls(presenting: Bool) {
-		if presenting && geoQuestionSelector.numberOfItems > 0 {
-			geoQuestionSelector.selectItem(at: 0)
-		}
-		updateGeographyPreview()
-		currentGeoImage = GeographyScene.startImage
-		socketWriteIfConnected("im" + currentGeoImage)
-	}
-
-	@IBAction func geoQuestionSelected(_ sender: Any) {
-		updateGeographyPreview()
-	}
-
-	/// Reloads the preview from the selected file. The host is picking a question here, not
-	/// starting one, so nothing is sent to the phones or the main display.
-	private func updateGeographyPreview() {
-		if let file = geoQuestionSelector.selectedItem?.title {
-			geoPreview.image = NSImage(contentsOfFile: "\(Settings.shared.geographyImagesPath)/\(file)")
-		} else {
-			geoPreview.image = nil
-		}
-		updateGeographyMarker()
-	}
-
-	/// Moves the preview's marker to the answer position currently typed in.
-	private func updateGeographyMarker() {
-		geoPreview.marker = (x: Int(geoAnswerX.intValue), y: Int(geoAnswerY.intValue))
-	}
-
-	/// The X and Y fields are this window's only text delegates, so the dot tracks live
-	/// rather than waiting for the host to commit the field.
-	func controlTextDidChange(_ obj: Notification) {
-		guard let field = obj.object as? NSTextField else { return }
-		if field === geoAnswerX || field === geoAnswerY {
-			updateGeographyMarker()
-		}
-	}
-	
-	@IBAction func geoStartQuestion(_ sender: Any) {
-		guard let file = geoQuestionSelector.selectedItem?.title else {
-			print("Geography: no image selected")
-			return
-		}
-		enterRound(.geography, presenting: false)
-		currentGeoImage = file
-		socketWriteIfConnected("im" + file)
-		quizDisplay.geographyScene.setQuestion(file: file)
-	}
-	
-	@IBAction func geoShowWinner(_ sender: Any) {
-		quizDisplay.geographyScene.showWinner(answerx: Int(geoAnswerX.intValue), answery: Int(geoAnswerY.intValue))
-	}
-	
-	
-	//MARK: - Wavelength
-	//--------------------------------------------------------------------------------------------------------------------------
-
-	@IBOutlet weak var wavelengthNumber: NSTextField!
-	@IBOutlet weak var wavelengthRollButton: NSButton!
-	@IBOutlet var wavelengthTeamGuesses: NSTextView!
-	private var wavelengthTarget: Int?
-	private var wavelengthRollTimer: Timer?
-
-	private var wavelengthRandomValue: Int {
-		Int.random(in: WavelengthScene.minValue...WavelengthScene.maxValue)
-	}
-
-	/// The roll button starts the numbers spinning and the next press stops them
-	@IBAction func wavelengthRoll(_ sender: NSButton) {
-		if wavelengthRollTimer != nil {
-			wavelengthRollTimer?.invalidate()
-			wavelengthRollTimer = nil
-			wavelengthTarget = wavelengthRandomValue
-			wavelengthNumber.stringValue = String(wavelengthTarget!)
-			wavelengthRollButton.title = "Roll -> 🎲"
-		} else {
-			wavelengthTarget = nil
-			wavelengthRollButton.title = "Stop"
-			wavelengthRollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
-				guard let self = self else { return }
-				self.wavelengthNumber.stringValue = String(self.wavelengthRandomValue)
-			}
-		}
-	}
-
-	@IBAction func wavelengthReveal(_ sender: Any) {
-		quizDisplay.wavelengthScene.reveal()
-		updateWavelengthGuesses()
-	}
-
-	@IBAction func wavelengthScore(_ sender: Any) {
-		if !quizDisplay.wavelengthScene.swept && wavelengthTarget == nil {
-			return
-		}
-		quizDisplay.wavelengthScene.score(target: wavelengthTarget ?? 0)
-		updateWavelengthGuesses()
-		updateWavelengthRollEnabled()
-	}
-
-	private func updateWavelengthRollEnabled() {
-		wavelengthRollButton?.isEnabled = !quizDisplay.wavelengthScene.swept
-	}
-
-	private func resetWavelengthControls() {
-		wavelengthRollTimer?.invalidate()
-		wavelengthRollTimer = nil
-		wavelengthTarget = nil
-		wavelengthNumber?.stringValue = "--"
-		wavelengthRollButton?.title = "Roll -> 🎲"
-		wavelengthTeamGuesses?.string = ""
-		updateWavelengthRollEnabled()
-	}
-
-	private func updateWavelengthGuesses() {
-		let placings = quizDisplay.wavelengthScene.placings
-		if !placings.isEmpty {
-			wavelengthTeamGuesses?.string = placings.map { placing in
-				"\(WavelengthScene.tierName(placing.tier)) — Team \(placing.team + 1): \(placing.guess) (out by \(placing.distance))"
-			}.joined(separator: "\n")
-			return
-		}
-
-		let guesses = quizDisplay.wavelengthScene.teamGuesses
-		wavelengthTeamGuesses?.string = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-			if guesses.indices.contains(team), let guess = guesses[team] {
-				return "Team \(team + 1): \(guess)"
-			}
-			return nil
-		}.joined(separator: "\n")
-	}
-
-
-	//MARK: - Pointless
-	//--------------------------------------------------------------------------------------------------------------------------
-	@IBOutlet weak var pointlessQuestionSelector: NSPopUpButton!
-	@IBOutlet weak var pointlessTextQuestion: NSTextField!
-	@IBOutlet weak var pointlessTextAnswers: NSTextField!
-	@IBOutlet weak var pointlessAllowAnswers: NSButton!
-	@IBOutlet weak var pointlessTable: NSTableView!
-	@IBOutlet weak var pointlessDescending: NSButton!
-	@IBOutlet weak var pointlessQuestion: NSScrollView!
-	
-	private func resetPointlessControls() {
-		pointlessAllowAnswers.state = .on
-	}
-
-	@IBAction func pointlessShowAnswers(_ sender: Any) {
-		quizDisplay.pointlessScene.showAnswers()
-	}
-
-	@IBAction func pointlessRunScoring(_ sender: Any) {
-		quizDisplay.pointlessScene.runScoring()
-	}
-	
-	@IBAction func pointlessQuestionSelected(_ sender: Any) {
-		if Settings.shared.pointlessPath != "" {
-			if let title = pointlessQuestionSelector.selectedItem?.title {
-				let path = Settings.shared.pointlessPath + "/" + title
-				quizDisplay.pointlessScene.changeToQuestion(path: path)
-			}
-		}
-	}
-
-	@IBAction func pointlessTest(_ sender: Any) {
-		quizDisplay.pointlessScene.debugTest()
-	}
-	
-	@IBAction func pointlessTableChange(_ sender: Any) {
-	}
-	
 }
-

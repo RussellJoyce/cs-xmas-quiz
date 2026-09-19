@@ -186,3 +186,30 @@ class BuzzerScene: QuizScene {
 	}
 	
 }
+
+
+// MARK: - Controller window
+
+class BuzzerPanel: NSObject, RoundPanel {
+
+	let round = RoundType.buzzers
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var timerSeconds: NSTextField!
+
+	private var scene: BuzzerScene { host.quizDisplay.buzzerScene }
+
+	@IBAction func nextTeam(_ sender: AnyObject) {
+		scene.nextTeam()
+	}
+
+	@IBAction func startTimer(_ sender: Any) {
+		if let secs = Int(timerSeconds.stringValue) {
+			scene.startTimer(secs)
+		}
+	}
+
+	@IBAction func stopTimer(_ sender: Any) {
+		scene.stopTimer()
+	}
+}

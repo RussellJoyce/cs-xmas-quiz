@@ -214,3 +214,40 @@ class TimerScene: QuizScene {
 	}
 	
 }
+
+
+// MARK: - Controller window
+
+class TimerPanel: NSObject, RoundPanel {
+
+	let round = RoundType.timer
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var showCounter: NSButton!
+
+	private var scene: TimerScene { host.quizDisplay.timerScene }
+
+	@IBAction func start(_ sender: AnyObject) {
+		scene.startTimer(music: false)
+	}
+
+	@IBAction func startWithMusic(_ sender: Any) {
+		scene.startTimer(music: true)
+	}
+
+	@IBAction func stop(_ sender: AnyObject) {
+		scene.stopTimer()
+	}
+
+	@IBAction func increment(_ sender: AnyObject) {
+		scene.timerIncrement()
+	}
+
+	@IBAction func decrement(_ sender: AnyObject) {
+		scene.timerDecrement()
+	}
+
+	@IBAction func showCounterChanged(_ sender: NSButton) {
+		scene.showCounter(showCounter.state == .on)
+	}
+}

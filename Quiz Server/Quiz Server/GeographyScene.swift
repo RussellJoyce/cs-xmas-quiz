@@ -248,3 +248,86 @@ class GeographyScene: QuizScene {
 		mainImage.texture = SKTexture(imageNamed: "geostart")
 	}
 }
+
+
+// MARK: - Controller window
+
+class GeographyPanel: NSObject, RoundPanel, NSTextFieldDelegate {
+
+	let round = RoundType.geography
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var answerX: NSTextField!
+	@IBOutlet weak var answerY: NSTextField!
+	@IBOutlet weak var questionSelector: NSPopUpButton!
+	@IBOutlet weak var preview: GeographyPreviewView!
+
+	/// The image the phones are currently showing (which is not the same as the one selected in `questionSelector`)
+	private var currentImage = GeographyScene.startImage
+
+	private var scene: GeographyScene { host.quizDisplay.geographyScene }
+
+	func setUp() {
+		//The start image is the round's blank state, not a question
+		for file in Utils.questionFiles(in: Settings.shared.geographyImagesPath,
+										extensions: GeographyScene.imageExtensions)
+				where file != GeographyScene.startImage {
+			questionSelector.addItem(withTitle: file)
+		}
+		updatePreview()
+	}
+
+	/// `GeographyScene.reset()` always returns the main display to the start image
+	func reset(presenting: Bool) {
+		if presenting && questionSelector.numberOfItems > 0 {
+			questionSelector.selectItem(at: 0)
+		}
+		updatePreview()
+		currentImage = GeographyScene.startImage
+		host.socketWriteIfConnected("im" + currentImage)
+	}
+
+	var clientRoundState: [String] { ["im" + currentImage] }
+
+	@IBAction func questionSelected(_ sender: Any) {
+		updatePreview()
+	}
+
+	@IBAction func startQuestion(_ sender: Any) {
+		guard let file = questionSelector.selectedItem?.title else {
+			print("Geography: no image selected")
+			return
+		}
+		host.enterRound(.geography, presenting: false)
+		currentImage = file
+		host.socketWriteIfConnected("im" + file)
+		scene.setQuestion(file: file)
+	}
+
+	@IBAction func showWinner(_ sender: Any) {
+		scene.showWinner(answerx: Int(answerX.intValue), answery: Int(answerY.intValue))
+	}
+
+	/// Reloads the preview from the selected file. The host is picking a question here, not
+	/// starting one, so nothing is sent to the phones or the main display.
+	private func updatePreview() {
+		if let file = questionSelector.selectedItem?.title {
+			preview.image = NSImage(contentsOfFile: "\(Settings.shared.geographyImagesPath)/\(file)")
+		} else {
+			preview.image = nil
+		}
+		updateMarker()
+	}
+
+	/// Moves the preview's marker to the answer position currently typed in.
+	private func updateMarker() {
+		preview.marker = (x: Int(answerX.intValue), y: Int(answerY.intValue))
+	}
+
+	func controlTextDidChange(_ obj: Notification) {
+		guard let field = obj.object as? NSTextField else { return }
+		if field === answerX || field === answerY {
+			updateMarker()
+		}
+	}
+}

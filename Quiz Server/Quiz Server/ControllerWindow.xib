@@ -25,45 +25,19 @@
                 <outlet property="buzzerButton7" destination="Rq1-ez-HAM" id="W4G-1T-hRG"/>
                 <outlet property="buzzerButton8" destination="SKv-7z-Uw4" id="Qtd-Gt-Cjd"/>
                 <outlet property="buzzerButton9" destination="W5J-EJ-vK2" id="2AJ-Da-7HL"/>
+                <outlet property="buzzerPanel" destination="Bzp-nl-obj" id="Bzp-nl-ref"/>
                 <outlet property="buzzerQueueMode" destination="zab-jV-I4P" id="QoK-ce-b4E"/>
                 <outlet property="buzzerSounds" destination="dOo-JQ-UKY" id="wZz-UI-pKw"/>
-                <outlet property="buzzerTimerTime" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
                 <outlet property="disconnectAllButton" destination="Dc1-Al-btn" id="Dc1-Al-out"/>
-                <outlet property="falseButton" destination="r3f-F8-eF8" id="c6S-oh-agy"/>
-                <outlet property="geoAnswerX" destination="jQg-0f-joa" id="5Me-JP-lg1"/>
-                <outlet property="geoAnswerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
-                <outlet property="geoPreview" destination="Geo-pv-view" id="Geo-pv-out"/>
-                <outlet property="geoQuestionSelector" destination="Geo-qs-sel" id="Geo-qs-out"/>
-                <outlet property="multiAnswer1" destination="MCh-37-t37" id="MCi-05-u05"/>
-                <outlet property="multiAnswer2" destination="MCh-40-t40" id="MCi-06-u06"/>
-                <outlet property="multiAnswer3" destination="MCh-43-t43" id="MCi-07-u07"/>
-                <outlet property="multiAnswer4" destination="MCh-46-t46" id="MCi-08-u08"/>
-                <outlet property="multiAnswer5" destination="MCh-49-t49" id="MCi-09-u09"/>
-                <outlet property="multiAnswer6" destination="MCh-52-t52" id="MCi-10-u10"/>
-                <outlet property="multiOptionsNumber" destination="MCh-04-t04" id="MCh-56-t56"/>
-                <outlet property="multiOptionsStepper" destination="MCh-06-t06" id="MCh-57-t57"/>
-                <outlet property="multiSounds" destination="MCh-23-t23" id="MCi-02-u02"/>
-                <outlet property="multiStartButton" destination="MCh-28-t28" id="MCi-03-u03"/>
-                <outlet property="multiStyleToggle" destination="MCh-09-t09" id="MCh-58-t58"/>
-                <outlet property="multiTeamGuesses" destination="MCh-33-t33" id="MCi-04-u04"/>
-                <outlet property="multiTime10" destination="MCh-14-t14" id="MCh-59-t59"/>
-                <outlet property="multiTime20" destination="MCh-17-t17" id="MCi-00-u00"/>
-                <outlet property="multiTime30" destination="MCh-20-t20" id="MCi-01-u01"/>
-                <outlet property="musicFile" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
-                <outlet property="musicUseLEDs" destination="b1t-gJ-oOC" id="9eU-V7-rtN"/>
-                <outlet property="numbersActualAnswer" destination="76B-rL-ts0" id="VJi-gM-zIT"/>
-                <outlet property="numbersAllowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
-                <outlet property="numbersTeamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
-                <outlet property="pointlessAllowAnswers" destination="ZpB-EM-4sg" id="37e-bF-O6d"/>
-                <outlet property="pointlessDescending" destination="gDB-6T-enb" id="ejE-Yx-ENo"/>
-                <outlet property="pointlessQuestion" destination="sMk-64-d4W" id="rVK-Qz-mMN"/>
-                <outlet property="pointlessQuestionSelector" destination="1cA-yK-ozS" id="lZ5-8i-WfC"/>
-                <outlet property="pointlessTable" destination="hRn-Hf-fKA" id="8rI-Um-eI8"/>
+                <outlet property="geographyPanel" destination="Gep-nl-obj" id="Gep-nl-ref"/>
+                <outlet property="multiChoicePanel" destination="Mcp-nl-obj" id="Mcp-nl-ref"/>
+                <outlet property="musicPanel" destination="Msp-nl-obj" id="Msp-nl-ref"/>
+                <outlet property="numbersPanel" destination="Nmp-nl-obj" id="Nmp-nl-ref"/>
+                <outlet property="pointlessPanel" destination="Ptp-nl-obj" id="Ptp-nl-ref"/>
                 <outlet property="quieterBuzzes" destination="EOs-rc-2CU" id="OZm-0m-IfW"/>
                 <outlet property="repairWarningLabel" destination="Vsw-nV-o5k" id="Rpr-wn-out"/>
                 <outlet property="resyncModeBtn" destination="Rsy-md-btn" id="Rsy-md-out"/>
-                <outlet property="scoresOutput" destination="mxH-b9-Xel" id="EPU-wf-phZ"/>
-                <outlet property="scoresText" destination="nUs-YF-jmA" id="MjU-mf-Kk6"/>
+                <outlet property="scoresPanel" destination="Scp-nl-obj" id="Scp-nl-ref"/>
                 <outlet property="sidebarTable" destination="SBx-02-s02" id="SBy-03-c03"/>
                 <outlet property="st1" destination="NmD-hN-17Y" id="6cA-sP-BkZ"/>
                 <outlet property="st10" destination="a60-BM-0e3" id="UAX-a2-j9a"/>
@@ -97,35 +71,121 @@
                 <outlet property="tabitemWavelength" destination="Wv0-tb-i00" id="Wv0-ou-o01"/>
                 <outlet property="tabitemWikiRace" destination="Jnp-SM-C32" id="TEF-We-dzP"/>
                 <outlet property="tabitemtruefalse" destination="gEv-Hs-Dry" id="30r-AD-6Sb"/>
-                <outlet property="textAllowAnswers" destination="2iq-4I-wHz" id="qnA-YL-CLD"/>
-                <outlet property="textQuestionNumber" destination="j6v-1e-qRO" id="XSp-JZ-4dr"/>
-                <outlet property="textShowQuestionNumbers" destination="4Xo-nU-iC2" id="QH7-26-ein"/>
-                <outlet property="textStepper" destination="D2n-8d-ddz" id="fHQ-ZJ-RPN"/>
-                <outlet property="textTeamGuesses" destination="Hww-8P-tfO" id="r65-Fr-DNq"/>
-                <outlet property="timerShowCounter" destination="rBB-9P-neg" id="eF9-Yj-gD6"/>
-                <outlet property="trueButton" destination="vDd-FH-Uwt" id="EQs-rz-UBQ"/>
-                <outlet property="trueFalseToggle" destination="eT8-cF-Pab" id="QWx-Vl-7pL"/>
-                <outlet property="truefalseSounds" destination="AhD-s1-pyW" id="ps1-0j-OXZ"/>
-                <outlet property="uniqueFile" destination="rW6-i1-uwe" id="a0F-TS-9qC"/>
-                <outlet property="videoFile" destination="PQ5-v2-RX1" id="FE5-eB-nwX"/>
+                <outlet property="textPanel" destination="Txp-nl-obj" id="Txp-nl-ref"/>
+                <outlet property="timerPanel" destination="Tmp-nl-obj" id="Tmp-nl-ref"/>
+                <outlet property="trueFalsePanel" destination="TFp-nl-obj" id="TFp-nl-ref"/>
                 <outlet property="virtualBuzzersBtn" destination="voE-jL-dD8" id="mDC-D2-86W"/>
-                <outlet property="wavelengthNumber" destination="Wv0-tf-n02" id="Wv0-ou-o02"/>
-                <outlet property="wavelengthRollButton" destination="Wv0-bt-r01" id="Wv0-ou-o03"/>
-                <outlet property="wavelengthTeamGuesses" destination="Wv0-tv-g05" id="Wv0-ou-o04"/>
-                <outlet property="wikiBestRouteText" destination="K3w-wP-K2k" id="5dK-Ft-gYo"/>
-                <outlet property="wikiClockLabel" destination="hbd-V7-M4z" id="ND7-8f-cod"/>
-                <outlet property="wikiEndButton" destination="ptw-ex-t7f" id="AbS-Sk-mNo"/>
-                <outlet property="wikiPathView" destination="S35-Ny-qeI" id="IS3-b2-6P5"/>
-                <outlet property="wikiPathViewText" destination="oQn-Zl-Zcb" id="W4L-XQ-NO4"/>
-                <outlet property="wikiQuestionSelector" destination="BuW-xu-Lje" id="WJm-uO-pLV"/>
-                <outlet property="wikiRevealButton" destination="j3q-5u-6Gc" id="FeW-hw-XLW"/>
-                <outlet property="wikiShowDistances" destination="UNX-9x-JQa" id="WPn-az-Grc"/>
-                <outlet property="wikiStartButton" destination="GTB-ij-9cw" id="APl-C8-1Y4"/>
-                <outlet property="wikiTeamSelector" destination="dSz-Yv-4qW" id="Sxv-qQ-vkc"/>
+                <outlet property="wavelengthPanel" destination="Wvp-nl-obj" id="Wvp-nl-ref"/>
+                <outlet property="wikiRacePanel" destination="Wkp-nl-obj" id="Wkp-nl-ref"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="Bzp-nl-obj" userLabel="Buzzer Panel" customClass="BuzzerPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="timerSeconds" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
+            </connections>
+        </customObject>
+        <customObject id="Msp-nl-obj" userLabel="Music Panel" customClass="MusicPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="audioFile" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
+                <outlet property="useLEDs" destination="b1t-gJ-oOC" id="9eU-V7-rtN"/>
+                <outlet property="videoFile" destination="PQ5-v2-RX1" id="FE5-eB-nwX"/>
+            </connections>
+        </customObject>
+        <customObject id="Tmp-nl-obj" userLabel="Timer Panel" customClass="TimerPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="showCounter" destination="rBB-9P-neg" id="eF9-Yj-gD6"/>
+            </connections>
+        </customObject>
+        <customObject id="Txp-nl-obj" userLabel="Text Panel" customClass="TextPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="allowAnswers" destination="2iq-4I-wHz" id="qnA-YL-CLD"/>
+                <outlet property="questionNumber" destination="j6v-1e-qRO" id="XSp-JZ-4dr"/>
+                <outlet property="showQuestionNumbers" destination="4Xo-nU-iC2" id="QH7-26-ein"/>
+                <outlet property="stepper" destination="D2n-8d-ddz" id="fHQ-ZJ-RPN"/>
+                <outlet property="teamGuesses" destination="Hww-8P-tfO" id="r65-Fr-DNq"/>
+                <outlet property="uniqueFile" destination="rW6-i1-uwe" id="a0F-TS-9qC"/>
+            </connections>
+        </customObject>
+        <customObject id="Nmp-nl-obj" userLabel="Numbers Panel" customClass="NumbersPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="actualAnswer" destination="76B-rL-ts0" id="VJi-gM-zIT"/>
+                <outlet property="allowAnswers" destination="7kj-Da-9HS" id="zaT-Ku-pY6"/>
+                <outlet property="teamGuesses" destination="6GF-Mg-VR7" id="ZiO-7c-liM"/>
+            </connections>
+        </customObject>
+        <customObject id="Scp-nl-obj" userLabel="Scores Panel" customClass="ScoresPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="output" destination="mxH-b9-Xel" id="EPU-wf-phZ"/>
+                <outlet property="scoreText" destination="nUs-YF-jmA" id="MjU-mf-Kk6"/>
+            </connections>
+        </customObject>
+        <customObject id="Mcp-nl-obj" userLabel="Multiple Choice Panel" customClass="MultiChoicePanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="answer1" destination="MCh-37-t37" id="MCi-05-u05"/>
+                <outlet property="answer2" destination="MCh-40-t40" id="MCi-06-u06"/>
+                <outlet property="answer3" destination="MCh-43-t43" id="MCi-07-u07"/>
+                <outlet property="answer4" destination="MCh-46-t46" id="MCi-08-u08"/>
+                <outlet property="answer5" destination="MCh-49-t49" id="MCi-09-u09"/>
+                <outlet property="answer6" destination="MCh-52-t52" id="MCi-10-u10"/>
+                <outlet property="optionsNumber" destination="MCh-04-t04" id="MCh-56-t56"/>
+                <outlet property="optionsStepper" destination="MCh-06-t06" id="MCh-57-t57"/>
+                <outlet property="sounds" destination="MCh-23-t23" id="MCi-02-u02"/>
+                <outlet property="startButton" destination="MCh-28-t28" id="MCi-03-u03"/>
+                <outlet property="styleToggle" destination="MCh-09-t09" id="MCh-58-t58"/>
+                <outlet property="teamGuesses" destination="MCh-33-t33" id="MCi-04-u04"/>
+                <outlet property="time10" destination="MCh-14-t14" id="MCh-59-t59"/>
+                <outlet property="time20" destination="MCh-17-t17" id="MCi-00-u00"/>
+                <outlet property="time30" destination="MCh-20-t20" id="MCi-01-u01"/>
+            </connections>
+        </customObject>
+        <customObject id="Wkp-nl-obj" userLabel="Wikirace Panel" customClass="WikiRacePanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="bestRouteText" destination="K3w-wP-K2k" id="5dK-Ft-gYo"/>
+                <outlet property="clockLabel" destination="hbd-V7-M4z" id="ND7-8f-cod"/>
+                <outlet property="endButton" destination="ptw-ex-t7f" id="AbS-Sk-mNo"/>
+                <outlet property="pathView" destination="S35-Ny-qeI" id="IS3-b2-6P5"/>
+                <outlet property="pathViewText" destination="oQn-Zl-Zcb" id="W4L-XQ-NO4"/>
+                <outlet property="questionSelector" destination="BuW-xu-Lje" id="WJm-uO-pLV"/>
+                <outlet property="revealButton" destination="j3q-5u-6Gc" id="FeW-hw-XLW"/>
+                <outlet property="showDistances" destination="UNX-9x-JQa" id="WPn-az-Grc"/>
+                <outlet property="startButton" destination="GTB-ij-9cw" id="APl-C8-1Y4"/>
+                <outlet property="teamSelector" destination="dSz-Yv-4qW" id="Sxv-qQ-vkc"/>
+            </connections>
+        </customObject>
+        <customObject id="Gep-nl-obj" userLabel="Geography Panel" customClass="GeographyPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="answerX" destination="jQg-0f-joa" id="5Me-JP-lg1"/>
+                <outlet property="answerY" destination="gTQ-57-1kk" id="UCb-Mk-ZRe"/>
+                <outlet property="preview" destination="Geo-pv-view" id="Geo-pv-out"/>
+                <outlet property="questionSelector" destination="Geo-qs-sel" id="Geo-qs-out"/>
+            </connections>
+        </customObject>
+        <customObject id="Wvp-nl-obj" userLabel="Wavelength Panel" customClass="WavelengthPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="number" destination="Wv0-tf-n02" id="Wv0-ou-o02"/>
+                <outlet property="rollButton" destination="Wv0-bt-r01" id="Wv0-ou-o03"/>
+                <outlet property="teamGuesses" destination="Wv0-tv-g05" id="Wv0-ou-o04"/>
+            </connections>
+        </customObject>
+        <customObject id="Ptp-nl-obj" userLabel="Pointless Panel" customClass="PointlessPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="allowAnswers" destination="ZpB-EM-4sg" id="37e-bF-O6d"/>
+                <outlet property="answerTable" destination="hRn-Hf-fKA" id="8rI-Um-eI8"/>
+                <outlet property="descending" destination="gDB-6T-enb" id="ejE-Yx-ENo"/>
+                <outlet property="questionScroller" destination="sMk-64-d4W" id="rVK-Qz-mMN"/>
+                <outlet property="questionSelector" destination="1cA-yK-ozS" id="lZ5-8i-WfC"/>
+            </connections>
+        </customObject>
+        <customObject id="TFp-nl-obj" userLabel="True/False Panel" customClass="TrueFalsePanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="falseButton" destination="r3f-F8-eF8" id="c6S-oh-agy"/>
+                <outlet property="modeToggle" destination="eT8-cF-Pab" id="QWx-Vl-7pL"/>
+                <outlet property="soundsToggle" destination="AhD-s1-pyW" id="ps1-0j-OXZ"/>
+                <outlet property="trueButton" destination="vDd-FH-Uwt" id="EQs-rz-UBQ"/>
+            </connections>
+        </customObject>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
@@ -623,7 +683,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="buzzersNextTeam:" target="-2" id="MdW-0r-nML"/>
+                                                <action selector="nextTeam:" target="Bzp-nl-obj" id="MdW-0r-nML"/>
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j90-Wg-Utz">
@@ -651,7 +711,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="startBuzzerTimer:" target="-2" id="swR-tK-k5E"/>
+                                                <action selector="startTimer:" target="Bzp-nl-obj" id="swR-tK-k5E"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lfv-41-eo5">
@@ -662,7 +722,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="stopBuzzerTimer:" target="-2" id="rPW-LC-Hfv"/>
+                                                <action selector="stopTimer:" target="Bzp-nl-obj" id="rPW-LC-Hfv"/>
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RVn-Ye-icG">
@@ -718,7 +778,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="musicPause:" target="-2" id="dUl-15-tHj"/>
+                                                <action selector="pause:" target="Msp-nl-obj" id="dUl-15-tHj"/>
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YNA-i9-2Xz">
@@ -730,7 +790,7 @@
                                                 <menu key="menu" id="4Os-sN-Ihl"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="musicChooseFile:" target="-2" id="t5L-Kf-36u"/>
+                                                <action selector="chooseAudio:" target="Msp-nl-obj" id="t5L-Kf-36u"/>
                                             </connections>
                                         </popUpButton>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PQ5-v2-RX1">
@@ -742,7 +802,7 @@
                                                 <menu key="menu" id="X0W-3g-Zyc"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="prepareVideo:" target="-2" id="cbh-Nk-w7N"/>
+                                                <action selector="chooseVideo:" target="Msp-nl-obj" id="cbh-Nk-w7N"/>
                                             </connections>
                                         </popUpButton>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96H-lb-nY9">
@@ -755,7 +815,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="musicPlay:" target="-2" id="gcX-oi-4Qw"/>
+                                                <action selector="play:" target="Msp-nl-obj" id="gcX-oi-4Qw"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qu2-6j-adx">
@@ -768,7 +828,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="playVideo:" target="-2" id="9dD-tE-nL7"/>
+                                                <action selector="playVideo:" target="Msp-nl-obj" id="9dD-tE-nL7"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q02-rr-pCd">
@@ -797,7 +857,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="musicNextTeam:" target="-2" id="RSF-J2-DuA"/>
+                                                <action selector="nextTeam:" target="Msp-nl-obj" id="RSF-J2-DuA"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uRd-aY-n3e">
@@ -810,7 +870,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="musicStop:" target="-2" id="puq-IJ-cVZ"/>
+                                                <action selector="stop:" target="Msp-nl-obj" id="puq-IJ-cVZ"/>
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V9x-al-aKK">
@@ -855,7 +915,7 @@
                                                 <font key="font" metaFont="systemBold" size="25"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="trueFalseStart:" target="-2" id="evd-Gl-dPW"/>
+                                                <action selector="startWithTimer:" target="TFp-nl-obj" id="evd-Gl-dPW"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vDd-FH-Uwt">
@@ -866,7 +926,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="trueFalseTrue:" target="-2" id="qxm-mU-Hl0"/>
+                                                <action selector="answerTrue:" target="TFp-nl-obj" id="qxm-mU-Hl0"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="r3f-F8-eF8">
@@ -877,7 +937,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="trueFalseFalse:" target="-2" id="Bp1-bm-dBb"/>
+                                                <action selector="answerFalse:" target="TFp-nl-obj" id="Bp1-bm-dBb"/>
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4gn-4Y-jJZ">
@@ -897,7 +957,7 @@
                                                 <font key="font" metaFont="systemBold" size="25"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="trueFalseStartNoTimer:" target="-2" id="JWW-fN-xuK"/>
+                                                <action selector="startWithoutTimer:" target="TFp-nl-obj" id="JWW-fN-xuK"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eT8-cF-Pab">
@@ -908,7 +968,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="trueFalseToggled:" target="-2" id="s00-2Z-iYO"/>
+                                                <action selector="modeToggled:" target="TFp-nl-obj" id="s00-2Z-iYO"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AhD-s1-pyW">
@@ -950,7 +1010,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <stepperCell key="cell" continuous="YES" alignment="left" minValue="2" maxValue="6" doubleValue="4" id="MCh-07-t07"/>
                                             <connections>
-                                                <action selector="multiOptionsStepperChange:" target="-2" id="MCh-08-t08"/>
+                                                <action selector="optionsStepperChanged:" target="Mcp-nl-obj" id="MCh-08-t08"/>
                                             </connections>
                                         </stepper>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-09-t09">
@@ -961,7 +1021,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiStyleToggled:" target="-2" id="MCh-11-t11"/>
+                                                <action selector="styleToggled:" target="Mcp-nl-obj" id="MCh-11-t11"/>
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-12-t12">
@@ -981,7 +1041,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiTimeChange:" target="-2" id="MCh-16-t16"/>
+                                                <action selector="timeChanged:" target="Mcp-nl-obj" id="MCh-16-t16"/>
                                             </connections>
                                         </button>
                                         <button tag="20" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-17-t17">
@@ -992,7 +1052,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiTimeChange:" target="-2" id="MCh-19-t19"/>
+                                                <action selector="timeChanged:" target="Mcp-nl-obj" id="MCh-19-t19"/>
                                             </connections>
                                         </button>
                                         <button tag="30" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-20-t20">
@@ -1003,7 +1063,7 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiTimeChange:" target="-2" id="MCh-22-t22"/>
+                                                <action selector="timeChanged:" target="Mcp-nl-obj" id="MCh-22-t22"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-23-t23">
@@ -1049,7 +1109,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-39-t39"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-39-t39"/>
                                             </connections>
                                         </button>
                                         <button tag="2" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-40-t40">
@@ -1060,7 +1120,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-42-t42"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-42-t42"/>
                                             </connections>
                                         </button>
                                         <button tag="3" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-43-t43">
@@ -1071,7 +1131,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-45-t45"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-45-t45"/>
                                             </connections>
                                         </button>
                                         <button tag="4" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-46-t46">
@@ -1082,7 +1142,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-48-t48"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-48-t48"/>
                                             </connections>
                                         </button>
                                         <button tag="5" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-49-t49">
@@ -1093,7 +1153,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-51-t51"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-51-t51"/>
                                             </connections>
                                         </button>
                                         <button tag="6" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-52-t52">
@@ -1104,7 +1164,7 @@
                                                 <font key="font" metaFont="systemBold" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiAnswerPressed:" target="-2" id="MCh-54-t54"/>
+                                                <action selector="answerPressed:" target="Mcp-nl-obj" id="MCh-54-t54"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MCh-28-t28">
@@ -1115,7 +1175,7 @@
                                                 <font key="font" metaFont="systemBold" size="30"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="multiStart:" target="-2" id="MCh-30-t30"/>
+                                                <action selector="start:" target="Mcp-nl-obj" id="MCh-30-t30"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1134,7 +1194,7 @@
                                                 <font key="font" metaFont="systemBold" size="19"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="stopTimer:" target="-2" id="Zv2-8h-uHU"/>
+                                                <action selector="stop:" target="Tmp-nl-obj" id="Zv2-8h-uHU"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e8D-X0-Bfb">
@@ -1147,7 +1207,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="timerIncrement:" target="-2" id="AuK-AD-tGo"/>
+                                                <action selector="increment:" target="Tmp-nl-obj" id="AuK-AD-tGo"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqE-tj-dAP">
@@ -1160,7 +1220,7 @@
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="timerDecrement:" target="-2" id="N4c-Y5-TvH"/>
+                                                <action selector="decrement:" target="Tmp-nl-obj" id="N4c-Y5-TvH"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FET-O6-e6A">
@@ -1171,7 +1231,7 @@
                                                 <font key="font" metaFont="systemBold" size="19"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="startTimer:" target="-2" id="IRo-7f-FSj"/>
+                                                <action selector="start:" target="Tmp-nl-obj" id="IRo-7f-FSj"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GZn-pc-Ayw">
@@ -1181,7 +1241,7 @@
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="systemBold" size="19"/>
                                                 <connections>
-                                                    <action selector="timerStartWithMusic:" target="-2" id="Glx-BW-Xnu"/>
+                                                    <action selector="startWithMusic:" target="Tmp-nl-obj" id="Glx-BW-Xnu"/>
                                                 </connections>
                                             </buttonCell>
                                         </button>
@@ -1211,7 +1271,7 @@
                                                 <font key="font" metaFont="system" size="21"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="timerShowCounterChange:" target="-2" id="J6x-f1-1lz"/>
+                                                <action selector="showCounterChanged:" target="Tmp-nl-obj" id="J6x-f1-1lz"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1248,7 +1308,7 @@
                                                 <font key="font" metaFont="system" size="17"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="geoStartQuestion:" target="-2" id="nL3-cg-u44"/>
+                                                <action selector="startQuestion:" target="Gep-nl-obj" id="nL3-cg-u44"/>
                                             </connections>
                                         </button>
                                         <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Geo-pv-view" customClass="GeographyPreviewView" customModule="Quiz_Server" customModuleProvider="target">
@@ -1264,7 +1324,7 @@
                                                 <menu key="menu" id="Geo-qs-mnu"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="geoQuestionSelected:" target="-2" id="Geo-qs-act"/>
+                                                <action selector="questionSelected:" target="Gep-nl-obj" id="Geo-qs-act"/>
                                             </connections>
                                         </popUpButton>
                                         <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jQg-0f-joa">
@@ -1280,7 +1340,7 @@
                                                 </allowedInputSourceLocales>
                                             </textFieldCell>
                                             <connections>
-                                                <outlet property="delegate" destination="-2" id="Geo-ax-dlg"/>
+                                                <outlet property="delegate" destination="Gep-nl-obj" id="Geo-ax-dlg"/>
                                             </connections>
                                         </textField>
                                         <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gTQ-57-1kk">
@@ -1296,7 +1356,7 @@
                                                 </allowedInputSourceLocales>
                                             </textFieldCell>
                                             <connections>
-                                                <outlet property="delegate" destination="-2" id="Geo-ay-dlg"/>
+                                                <outlet property="delegate" destination="Gep-nl-obj" id="Geo-ay-dlg"/>
                                             </connections>
                                         </textField>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gXS-3g-wk6">
@@ -1325,7 +1385,7 @@
                                                 <font key="font" metaFont="system" size="20"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="geoShowWinner:" target="-2" id="4Ev-0O-hPK"/>
+                                                <action selector="showWinner:" target="Gep-nl-obj" id="4Ev-0O-hPK"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1346,7 +1406,7 @@ Guesses</string>
                                                 <font key="font" metaFont="system" size="20"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="textShowGuesses:" target="-2" id="zlJ-b9-W5u"/>
+                                                <action selector="showGuesses:" target="Txp-nl-obj" id="zlJ-b9-W5u"/>
                                             </connections>
                                         </button>
                                         <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D2n-8d-ddz">
@@ -1354,7 +1414,7 @@ Guesses</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="10" doubleValue="1" id="JHg-as-T9W"/>
                                             <connections>
-                                                <action selector="textStepperChange:" target="-2" id="QUO-cz-W9v"/>
+                                                <action selector="stepperChanged:" target="Txp-nl-obj" id="QUO-cz-W9v"/>
                                             </connections>
                                         </stepper>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pXq-Ic-0gs">
@@ -1403,7 +1463,7 @@ as unique</string>
                                                 <font key="font" metaFont="system" size="24"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="textScoreUnique:" target="-2" id="T1E-qF-1ul"/>
+                                                <action selector="scoreUnique:" target="Txp-nl-obj" id="T1E-qF-1ul"/>
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rW6-i1-uwe">
@@ -1415,7 +1475,7 @@ as unique</string>
                                                 <menu key="menu" id="Lto-wK-auI"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="uniqueChooseFile:" target="-2" id="LNQ-hm-3dt"/>
+                                                <action selector="chooseUniqueFile:" target="Txp-nl-obj" id="LNQ-hm-3dt"/>
                                             </connections>
                                         </popUpButton>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Xo-nU-iC2">
@@ -1480,7 +1540,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="numbersShowAnswers:" target="-2" id="EZ9-jM-dYZ"/>
+                                                <action selector="showAnswers:" target="Nmp-nl-obj" id="EZ9-jM-dYZ"/>
                                             </connections>
                                         </button>
                                     </subviews>
@@ -1508,7 +1568,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wavelengthRoll:" target="-2" id="Wv0-ac-r01"/>
+                                                <action selector="roll:" target="Wvp-nl-obj" id="Wv0-ac-r01"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-v03">
@@ -1519,7 +1579,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wavelengthReveal:" target="-2" id="Wv0-ac-v03"/>
+                                                <action selector="reveal:" target="Wvp-nl-obj" id="Wv0-ac-v03"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-s04">
@@ -1530,7 +1590,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="26"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wavelengthScore:" target="-2" id="Wv0-ac-s04"/>
+                                                <action selector="score:" target="Wvp-nl-obj" id="Wv0-ac-s04"/>
                                             </connections>
                                         </button>
                                         <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-sv-g05">
@@ -1575,7 +1635,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="20"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="pointlessShowAnswers:" target="-2" id="o8s-Xj-4RS"/>
+                                                <action selector="showAnswers:" target="Ptp-nl-obj" id="o8s-Xj-4RS"/>
                                             </connections>
                                         </button>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1cA-yK-ozS">
@@ -1587,7 +1647,7 @@ Answers</string>
                                                 <menu key="menu" id="CzZ-e1-ptJ"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="pointlessQuestionSelected:" target="-2" id="OUr-Y3-GvM"/>
+                                                <action selector="questionSelected:" target="Ptp-nl-obj" id="OUr-Y3-GvM"/>
                                             </connections>
                                         </popUpButton>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZpB-EM-4sg">
@@ -1606,7 +1666,7 @@ Answers</string>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="pointlessTest:" target="-2" id="XY4-Ng-gnT"/>
+                                                <action selector="test:" target="Ptp-nl-obj" id="XY4-Ng-gnT"/>
                                             </connections>
                                         </button>
                                         <scrollView autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="Amg-qe-npQ">
@@ -1689,7 +1749,7 @@ Answers</string>
                                                             </tableColumn>
                                                         </tableColumns>
                                                         <connections>
-                                                            <action selector="pointlessTableChange:" target="-2" id="8dH-oT-39t"/>
+                                                            <action selector="tableChanged:" target="Ptp-nl-obj" id="8dH-oT-39t"/>
                                                         </connections>
                                                     </tableView>
                                                 </subviews>
@@ -1715,7 +1775,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="20"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="pointlessRunScoring:" target="-2" id="L7z-PX-nNa"/>
+                                                <action selector="runScoring:" target="Ptp-nl-obj" id="L7z-PX-nNa"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gDB-6T-enb">
@@ -1768,7 +1828,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="16"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="scoresParseAndReset:" target="-2" id="GeP-zw-AbO"/>
+                                                <action selector="parseAndReset:" target="Scp-nl-obj" id="GeP-zw-AbO"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CsS-SV-AdW">
@@ -1779,7 +1839,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="16"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="scoresInitText:" target="-2" id="TAj-Mo-ahw"/>
+                                                <action selector="initText:" target="Scp-nl-obj" id="TAj-Mo-ahw"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="69L-09-a9U">
@@ -1790,7 +1850,7 @@ Answers</string>
                                                 <font key="font" metaFont="system" size="16"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="scoresShowNext:" target="-2" id="1B9-0b-3Mn"/>
+                                                <action selector="showNext:" target="Scp-nl-obj" id="1B9-0b-3Mn"/>
                                             </connections>
                                         </button>
                                         <scrollView fixedFrame="YES" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPM-on-FTo">
@@ -2048,7 +2108,7 @@ Answers</string>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wikiStart:" target="-2" id="1hF-Lr-I7J"/>
+                                                <action selector="start:" target="Wkp-nl-obj" id="1hF-Lr-I7J"/>
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UNX-9x-JQa">
@@ -2059,7 +2119,7 @@ Answers</string>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wikiShowDistanceChanged:" target="-2" id="Njf-yL-B9Z"/>
+                                                <action selector="showDistanceChanged:" target="Wkp-nl-obj" id="Njf-yL-B9Z"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ptw-ex-t7f">
@@ -2070,7 +2130,7 @@ Answers</string>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="wikiEnd:" target="-2" id="nND-Ge-0xb"/>
+                                                <action selector="end:" target="Wkp-nl-obj" id="nND-Ge-0xb"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j3q-5u-6Gc">
@@ -2080,7 +2140,7 @@ Answers</string>
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                                 <connections>
-                                                    <action selector="wikiReveal:" target="-2" id="U1d-Yl-YKY"/>
+                                                    <action selector="reveal:" target="Wkp-nl-obj" id="U1d-Yl-YKY"/>
                                                 </connections>
                                             </buttonCell>
                                         </button>
@@ -2134,7 +2194,7 @@ Answers</string>
                                                 </menu>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="wikiQuestionSelectorChanged:" target="-2" id="52Y-HD-Cfx"/>
+                                                <action selector="questionSelectorChanged:" target="Wkp-nl-obj" id="52Y-HD-Cfx"/>
                                             </connections>
                                         </popUpButton>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wYD-so-DJb">
@@ -2196,7 +2256,7 @@ Answers</string>
                                                 </menu>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="wikiTeamSelectorChanged:" target="-2" id="jun-eX-fh9"/>
+                                                <action selector="teamSelectorChanged:" target="Wkp-nl-obj" id="jun-eX-fh9"/>
                                             </connections>
                                         </popUpButton>
                                     </subviews>

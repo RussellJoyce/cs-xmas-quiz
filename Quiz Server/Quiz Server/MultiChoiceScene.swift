@@ -337,3 +337,156 @@ class MultiChoiceScene: QuizScene {
 		QuizWebSocket.shared?.pulseGreen()
 	}
 }
+
+
+// MARK: - Controller window
+
+class MultiChoicePanel: NSObject, RoundPanel {
+
+	let round = RoundType.multichoice
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var optionsStepper: NSStepper!
+	@IBOutlet weak var optionsNumber: NSTextField!
+	@IBOutlet weak var styleToggle: NSButton!
+	@IBOutlet weak var sounds: NSButton!
+	@IBOutlet weak var startButton: NSButton!
+	@IBOutlet weak var teamGuesses: NSTextField!
+	@IBOutlet weak var time10: NSButton!
+	@IBOutlet weak var time20: NSButton!
+	@IBOutlet weak var time30: NSButton!
+	@IBOutlet weak var answer1: NSButton!
+	@IBOutlet weak var answer2: NSButton!
+	@IBOutlet weak var answer3: NSButton!
+	@IBOutlet weak var answer4: NSButton!
+	@IBOutlet weak var answer5: NSButton!
+	@IBOutlet weak var answer6: NSButton!
+
+	/// Seconds on the clock, as chosen by the three time buttons.
+	private var timeout = MultiChoiceScene.defaultTimeout
+
+	private var scene: MultiChoiceScene { host.quizDisplay.multiChoiceScene }
+
+	private var answerButtons: [NSButton?] {
+		[answer1, answer2, answer3, answer4, answer5, answer6]
+	}
+
+	private var timeButtons: [NSButton?] {
+		[time10, time20, time30]
+	}
+
+	private var style: MultiChoiceScene.LabelStyle {
+		(styleToggle?.state ?? .on) == .on ? .letters : .numbers
+	}
+
+	func reset(presenting: Bool) {
+		if presenting {
+			timeout = MultiChoiceScene.defaultTimeout
+			syncTimeButtons()
+		}
+		teamGuesses?.stringValue = ""
+		pushOptions()
+	}
+
+	var clientRoundState: [String] { ["mo" + scene.optionsMessage] }
+
+	func clientTeamState(team: Int) -> [String] {
+		let guesses = scene.teamGuesses
+		guard team < guesses.count, let option = guesses[team] else {
+			return []
+		}
+		return ["ms\(option)"]
+	}
+
+	@IBAction func optionsStepperChanged(_ sender: Any) {
+		pushOptions()
+	}
+
+	@IBAction func styleToggled(_ sender: Any) {
+		styleToggle.title = style == .letters ? "Letters (A B C)" : "Numbers (1 2 3)"
+		pushOptions()
+	}
+
+	/// The three time buttons carry the time length as their tag
+	@IBAction func timeChanged(_ sender: NSButton) {
+		timeout = sender.tag
+		syncTimeButtons()
+		pushOptions()
+	}
+
+	@IBAction func start(_ sender: NSButton) {
+		if scene.counting {
+			scene.stop()
+		} else {
+			//The teams' phones still show the last question's selection until they are told
+			//otherwise, and 'mo' is what clears them.
+			host.socketWriteIfConnected("mo" + scene.optionsMessage)
+			teamGuesses?.stringValue = ""
+			scene.start(sounds: sounds.state == .on)
+		}
+		updateStartButton()
+	}
+
+	@IBAction func answerPressed(_ sender: NSButton) {
+		scene.showAnswer(option: sender.tag)
+		updateStartButton()
+		updateGuesses()
+	}
+
+	/// A team's answer arriving from their phone. Returns the option the round accepted,
+	/// or nil if it turned the answer down, in which case the tile is left unlit.
+	func teamGuessed(team: Int, option: Int) -> Int? {
+		scene.teamGuess(teamid: team, option: option)
+		updateGuesses()
+		return team < scene.teamGuesses.count ? scene.teamGuesses[team] : nil
+	}
+
+	var counting: Bool { scene.counting }
+
+	private func syncTimeButtons() {
+		for button in timeButtons {
+			button?.state = (button?.tag == timeout) ? .on : .off
+		}
+	}
+
+	private func pushOptions() {
+		if scene.counting {
+			print("Multiple choice: ignoring a setup change while the question is running")
+			syncControls()
+			return
+		}
+
+		let options = Int(optionsStepper?.intValue ?? Int32(MultiChoiceScene.defaultOptions))
+		let payload = scene.configure(options: options, style: style, timeout: timeout)
+		host.socketWriteIfConnected("mo" + payload)
+		teamGuesses?.stringValue = ""
+		syncControls()
+	}
+
+	/// Puts the controls back in step with whatever the scene actually holds.
+	private func syncControls() {
+		optionsStepper?.intValue = Int32(scene.optionCount)
+		optionsNumber?.stringValue = String(scene.optionCount)
+
+		//Only the answers that exist can be the right one
+		for (index, button) in answerButtons.enumerated() {
+			let option = index + 1
+			button?.title = scene.labelStyle.label(option)
+			button?.isEnabled = option <= scene.optionCount
+		}
+		updateStartButton()
+	}
+
+	private func updateStartButton() {
+		startButton?.title = scene.counting ? "Stop" : "Start"
+	}
+
+	private func updateGuesses() {
+		teamGuesses?.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			guard team < scene.teamGuesses.count, let guess = scene.teamGuesses[team] else {
+				return nil
+			}
+			return "Team \(team + 1): \(scene.labelStyle.label(guess))"
+		}.joined(separator: "\n")
+	}
+}

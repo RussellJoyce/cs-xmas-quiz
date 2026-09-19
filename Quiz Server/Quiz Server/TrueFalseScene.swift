@@ -275,3 +275,58 @@ class TrueFalseScene: QuizScene {
 		}
 	}
 }
+
+
+// MARK: - Controller window
+
+class TrueFalsePanel: NSObject, RoundPanel {
+
+	let round = RoundType.trueFalse
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var trueButton: NSButton!
+	@IBOutlet weak var falseButton: NSButton!
+	@IBOutlet weak var modeToggle: NSButton!
+	@IBOutlet weak var soundsToggle: NSButton!
+
+	private var scene: TrueFalseScene { host.quizDisplay.truefalseScene }
+
+	/// True when the round is asking true/false questions rather than higher/lower ones
+	private var trueFalseMode: Bool { modeToggle.state == .on }
+
+	@IBAction func startWithTimer(_ sender: NSButton) {
+		scene.start(sounds: soundsToggle.state == .on)
+	}
+
+	@IBAction func startWithoutTimer(_ sender: NSButton) {
+		scene.startNoTimer(sounds: soundsToggle.state == .on)
+	}
+
+	@IBAction func answerTrue(_ sender: NSButton) {
+		scene.showAnswer(ans: true)
+	}
+
+	@IBAction func answerFalse(_ sender: NSButton) {
+		scene.showAnswer(ans: false)
+	}
+
+	@IBAction func modeToggled(_ sender: Any) {
+		trueButton.title = trueFalseMode ? "True" : "Higher"
+		falseButton.title = trueFalseMode ? "False" : "Lower"
+		modeToggle.title = trueFalseMode ? "True/False Mode" : "Higher/Lower Mode"
+		host.socketWriteIfConnected(trueFalseMode ? "h2" : "h1")
+		scene.setMode(trueFalseMode)
+	}
+
+	var clientRoundState: [String] {
+		[trueFalseMode ? "h2" : "h1"]
+	}
+
+	func clientTeamState(team: Int) -> [String] {
+		let guesses = scene.teamGuesses
+		guard team < guesses.count, let guess = guesses[team] else {
+			return ["hn"]
+		}
+		return [guess ? "hh" : "hl"]
+	}
+}

@@ -370,3 +370,70 @@ class MusicScene: QuizScene {
 	
 }
 
+
+
+// MARK: - Controller window
+
+class MusicPanel: NSObject, RoundPanel {
+
+	let round = RoundType.music
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var audioFile: NSPopUpButton!
+	@IBOutlet weak var videoFile: NSPopUpButton!
+	@IBOutlet weak var useLEDs: NSButton!
+
+	private var scene: MusicScene { host.quizDisplay.musicScene }
+
+	func connectControls() {
+		scene.useLEDs = useLEDs
+	}
+
+	func setUp() {
+		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.audioExtensions) {
+			audioFile.addItem(withTitle: file)
+		}
+		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.videoExtensions) {
+			videoFile.addItem(withTitle: file)
+		}
+		if audioFile.numberOfItems > 0 {
+			chooseAudio(audioFile)
+		}
+	}
+
+	@IBAction func nextTeam(_ sender: AnyObject) {
+		scene.nextTeam()
+	}
+
+	@IBAction func play(_ sender: AnyObject) {
+		scene.resumeMusic()
+	}
+
+	@IBAction func pause(_ sender: AnyObject) {
+		scene.pauseMusic()
+	}
+
+	@IBAction func stop(_ sender: AnyObject) {
+		scene.stopMusic()
+	}
+
+	@IBAction func chooseAudio(_ sender: NSPopUpButton) {
+		guard let file = sender.selectedItem?.title else {
+			print("Error choosing music file")
+			return
+		}
+		scene.initMusic(file: Settings.shared.musicPath + "/" + file)
+	}
+
+	@IBAction func chooseVideo(_ sender: NSPopUpButton) {
+		guard let file = sender.selectedItem?.title else {
+			print("Error choosing video file")
+			return
+		}
+		scene.prepareVideo(file: Settings.shared.musicPath + "/" + file)
+	}
+
+	@IBAction func playVideo(_ sender: Any) {
+		scene.resumeVideo()
+	}
+}

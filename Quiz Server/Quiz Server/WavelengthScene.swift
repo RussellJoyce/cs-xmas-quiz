@@ -811,3 +811,93 @@ class WavelengthScene: QuizScene {
 		return image
 	}
 }
+
+
+// MARK: - Controller window
+
+class WavelengthPanel: NSObject, RoundPanel {
+
+	let round = RoundType.wavelength
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var number: NSTextField!
+	@IBOutlet weak var rollButton: NSButton!
+	@IBOutlet var teamGuesses: NSTextView!
+
+	private var target: Int?
+	private var rollTimer: Timer?
+
+	private var scene: WavelengthScene { host.quizDisplay.wavelengthScene }
+
+	private var randomValue: Int {
+		Int.random(in: WavelengthScene.minValue...WavelengthScene.maxValue)
+	}
+
+	func tearDown() {
+		rollTimer?.invalidate()
+		rollTimer = nil
+	}
+
+	func reset(presenting: Bool) {
+		tearDown()
+		target = nil
+		number?.stringValue = "--"
+		rollButton?.title = "Roll -> 🎲"
+		teamGuesses?.string = ""
+		updateRollEnabled()
+	}
+
+	/// The roll button starts the numbers spinning and the next press stops them
+	@IBAction func roll(_ sender: NSButton) {
+		if rollTimer != nil {
+			tearDown()
+			target = randomValue
+			number.stringValue = String(target!)
+			rollButton.title = "Roll -> 🎲"
+		} else {
+			target = nil
+			rollButton.title = "Stop"
+			rollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+				guard let self = self else { return }
+				self.number.stringValue = String(self.randomValue)
+			}
+		}
+	}
+
+	@IBAction func reveal(_ sender: Any) {
+		scene.reveal()
+		updateGuesses()
+	}
+
+	@IBAction func score(_ sender: Any) {
+		if !scene.swept && target == nil {
+			return
+		}
+		scene.score(target: target ?? 0)
+		updateGuesses()
+		updateRollEnabled()
+	}
+
+	private func updateRollEnabled() {
+		rollButton?.isEnabled = !scene.swept
+	}
+
+	/// Once the round has scored, the placings replace the raw guesses
+	func updateGuesses() {
+		let placings = scene.placings
+		if !placings.isEmpty {
+			teamGuesses?.string = placings.map { placing in
+				"\(WavelengthScene.tierName(placing.tier)) — Team \(placing.team + 1): \(placing.guess) (out by \(placing.distance))"
+			}.joined(separator: "\n")
+			return
+		}
+
+		let guesses = scene.teamGuesses
+		teamGuesses?.string = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if guesses.indices.contains(team), let guess = guesses[team] {
+				return "Team \(team + 1): \(guess)"
+			}
+			return nil
+		}.joined(separator: "\n")
+	}
+}

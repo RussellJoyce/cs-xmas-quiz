@@ -377,3 +377,120 @@ class WikiRaceScene: QuizScene {
 		setParticipating(participating)
 	}
 }
+
+
+// MARK: - Controller window
+
+class WikiRacePanel: NSObject, RoundPanel {
+
+	let round = RoundType.wikirace
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var questionSelector: NSPopUpButton!
+	@IBOutlet weak var teamSelector: NSPopUpButton!
+	@IBOutlet weak var clockLabel: NSTextField!
+	@IBOutlet weak var pathView: NSScrollView!
+	@IBOutlet var pathViewText: NSTextView!
+	@IBOutlet weak var showDistances: NSButton!
+	@IBOutlet weak var startButton: NSButton!
+	@IBOutlet weak var endButton: NSButton!
+	@IBOutlet weak var revealButton: NSButton!
+	@IBOutlet var bestRouteText: NSTextView!
+
+	private var raceStarted: Date?
+	private var clockTimer: Timer?
+
+	private var scene: WikiRaceScene { host.quizDisplay.wikiRaceScene }
+
+	/// Asks the round to load the puzzles, then fills the two pickers from them
+	func setUp() {
+		scene.loadPuzzles(from: Settings.shared.wikiCorpusPath)
+
+		questionSelector.removeAllItems()
+		scene.puzzles.forEach { questionSelector.addItem(withTitle: $0.menuTitle) }
+		questionSelector.selectItem(at: 0)
+		questionSelectorChanged(questionSelector!)
+		startButton.isEnabled = true
+
+		teamSelector.removeAllItems()
+		for i in 0...Settings.maxTeams {
+			teamSelector.addItem(withTitle: "Team \(i+1)")
+		}
+	}
+
+	func tearDown() {
+		clockTimer?.invalidate()
+		clockTimer = nil
+	}
+
+	func reset(presenting: Bool) {
+		end(self)
+		clockTimer = nil
+		raceStarted = nil
+		clockLabel.stringValue = "0:00"
+		endButton.isEnabled = false
+		revealButton.isEnabled = false
+		startButton.isEnabled = !scene.puzzles.isEmpty
+		if presenting {
+			questionSelector.selectItem(at: 0)
+		}
+	}
+
+	@IBAction func start(_ sender: Any) {
+		let index = questionSelector.indexOfSelectedItem
+		guard (index >= 0 && index < scene.puzzles.count) else { return }
+		let p = scene.puzzles[index]
+		scene.setRace(start: p.startTitle, target: p.targetTitle)
+		scene.showDistance = showDistances.state == .on
+
+		beginClock()
+		host.pushTeamParticipation()
+		host.socketWriteIfConnected("wr\(p.start),\(p.target)")
+		refreshPath()
+		endButton.isEnabled = true
+		revealButton.isEnabled = false
+	}
+
+	@IBAction func end(_ sender: Any) {
+		//The server freezes every client, works out the standings and sends them back as "wd" rows, and a "wt" trail per team
+		host.socketWriteIfConnected("we")
+		clockTimer?.invalidate()
+	}
+
+	@IBAction func reveal(_ sender: Any) {
+		guard !scene.raceStandings.isEmpty else { return }
+		scene.showDistance = true
+	}
+
+	@IBAction func showDistanceChanged(_ sender: Any) {
+		scene.showDistance = showDistances.state == .on
+	}
+
+	@IBAction func teamSelectorChanged(_ sender: Any) {
+		refreshPath()
+	}
+
+	@IBAction func questionSelectorChanged(_ sender: Any) {
+		let index = questionSelector.indexOfSelectedItem
+		guard (index >= 0 && index < scene.puzzles.count) else { return }
+		bestRouteText.string = scene.puzzles[index].route.joined(separator: "\n")
+	}
+
+	/// The clock is not tracked by the round, because it is purely decorative for the quizmaster who ends the race manually
+	private func beginClock() {
+		clockTimer?.invalidate()
+		raceStarted = Date()
+		clockLabel.stringValue = "0:00"
+		clockTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+			guard let self = self, let started = self.raceStarted else { return }
+			let seconds = Int(Date().timeIntervalSince(started))
+			self.clockLabel.stringValue = "\(seconds / 60):\(String(format: "%02d", seconds % 60))"
+		}
+	}
+
+	func refreshPath() {
+		let team = teamSelector.indexOfSelectedItem
+		guard team >= 0 else { return }
+		pathViewText.string = scene.renderPath(for: team)
+	}
+}

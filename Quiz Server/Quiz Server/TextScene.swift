@@ -214,3 +214,80 @@ class TextScene: QuizScene {
 	}
 
 }
+
+
+// MARK: - Controller window
+
+class TextPanel: NSObject, RoundPanel {
+
+	let round = RoundType.text
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var allowAnswers: NSButton!
+	@IBOutlet weak var showQuestionNumbers: NSButton!
+	@IBOutlet weak var questionNumber: NSTextField!
+	@IBOutlet weak var stepper: NSStepper!
+	@IBOutlet weak var teamGuesses: NSTextField!
+	@IBOutlet weak var uniqueFile: NSPopUpButton!
+
+	private var scene: TextScene { host.quizDisplay.textScene }
+
+	func setUp() {
+		for file in Utils.questionFiles(in: Settings.shared.uniquePath) {
+			uniqueFile.addItem(withTitle: file)
+		}
+		if uniqueFile.numberOfItems > 0 {
+			chooseUniqueFile(uniqueFile)
+		}
+	}
+
+	func reset(presenting: Bool) {
+		if presenting { //If entering this round reset the question controls as well
+			stepper.intValue = 1
+			questionNumber.stringValue = "1"
+		}
+		teamGuesses.stringValue = ""
+		allowAnswers.state = .on
+	}
+
+	var acceptingTextAnswers: Bool { allowAnswers.state == .on }
+
+	func receive(textGuess: String, from team: Int) {
+		scene.teamGuess(teamid: team,
+						guess: textGuess,
+						roundid: Int(questionNumber.intValue),
+						showroundno: showQuestionNumbers.state == .on)
+		updateGuesses()
+	}
+
+	/// Redraws the host's list of what each team has typed this question
+	private func updateGuesses() {
+		teamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+			if let tg = scene.teamGuesses[team] {
+				return "Team \(team + 1): \(tg.guess) (\(tg.roundid))"
+			}
+			return nil
+		}.joined(separator: "\n")
+	}
+
+	@IBAction func stepperChanged(_ sender: Any) {
+		questionNumber.stringValue = stepper.stringValue
+	}
+
+	@IBAction func showGuesses(_ sender: Any) {
+		allowAnswers.state = .off
+		scene.showGuesses(showroundno: showQuestionNumbers.state == .on)
+	}
+
+	@IBAction func scoreUnique(_ sender: Any) {
+		scene.scoreUnique()
+	}
+
+	@IBAction func chooseUniqueFile(_ sender: NSPopUpButton) {
+		guard let file = sender.selectedItem?.title else {
+			print("Error choosing unique list")
+			return
+		}
+		scene.initUnique(file: Settings.shared.uniquePath + "/" + file)
+	}
+}

@@ -601,3 +601,69 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	
 }
 
+
+
+// MARK: - Controller window
+
+class PointlessPanel: NSObject, RoundPanel {
+
+	let round = RoundType.pointless
+	weak var host: ControllerWindowController!
+
+	@IBOutlet weak var questionSelector: NSPopUpButton!
+	@IBOutlet weak var allowAnswers: NSButton!
+	@IBOutlet weak var answerTable: NSTableView!
+	@IBOutlet weak var descending: NSButton!
+	@IBOutlet weak var questionScroller: NSScrollView!
+
+	private var scene: PointlessScene { host.quizDisplay.pointlessScene }
+
+	func connectControls() {
+		if let textView = questionScroller.documentView as? NSTextView {
+			scene.textQuestion = textView
+		} else {
+			print("Warning: Could not set PointlessScene's textQuestion (not found or not NSTextView)")
+		}
+		scene.answerTable = answerTable
+		scene.descending = descending
+	}
+
+	func setUp() {
+		for file in Utils.questionFiles(in: Settings.shared.pointlessPath) {
+			questionSelector.addItem(withTitle: file)
+		}
+		if questionSelector.numberOfItems > 0 {
+			questionSelected(questionSelector!)
+		}
+	}
+
+	func reset(presenting: Bool) {
+		allowAnswers.state = .on
+	}
+
+	var acceptingTextAnswers: Bool { allowAnswers.state == .on }
+
+	func receive(textGuess: String, from team: Int) {
+		scene.teamGuess(team: team, guess: textGuess)
+	}
+
+	@IBAction func showAnswers(_ sender: Any) {
+		scene.showAnswers()
+	}
+
+	@IBAction func runScoring(_ sender: Any) {
+		scene.runScoring()
+	}
+
+	@IBAction func questionSelected(_ sender: Any) {
+		guard let title = questionSelector.selectedItem?.title else { return }
+		scene.changeToQuestion(path: Settings.shared.pointlessPath + "/" + title)
+	}
+
+	@IBAction func test(_ sender: Any) {
+		scene.debugTest()
+	}
+
+	@IBAction func tableChanged(_ sender: Any) {
+	}
+}
