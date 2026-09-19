@@ -73,6 +73,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// The numbered buttons, trimmed to the teams that exist
 	private var buzzerButtons = [NSButton]()
 	let quizDisplay = QuizDisplayController()
+	/// The Ceefax tab's "Hold page" picker, which builds itself into the tab at load
+	private var ceefaxPageControl: CeefaxPageControl?
 	private var clientListTimer: Timer!
 	
     override func windowDidLoad() {
@@ -107,70 +109,35 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		syncBuzzerButtons()
 		
 		quizDisplay.present()
-		buildCeefaxControls()
-        
-        if Settings.shared.musicPath != "" {
-            do {
-				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.musicPath)
-                for file in files.sorted() {
-					if !file.hasPrefix(".") {
-						if file.hasSuffix(".mp3") || file.hasSuffix(".wav") {
-							musicFile.addItem(withTitle: file)
-						}
-						if file.hasSuffix(".mov") || file.hasSuffix(".mp4") || file.hasSuffix(".mpeg") || file.hasSuffix(".avi") {
-							videoFile.addItem(withTitle: file)
-						}
-					}
-                }
-                musicChooseFile(musicFile)
-            } catch {
-                print("Error while enumerating files \(Settings.shared.musicPath): \(error.localizedDescription)")
-            }
-        }
-		
-		if Settings.shared.uniquePath != "" {
-			do {
-				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.uniquePath)
-				for file in files.sorted() {
-					if (!file.hasPrefix(".")) {
-						uniqueFile.addItem(withTitle: file)
-					}
-				}
-				uniqueChooseFile(uniqueFile)
-			} catch {
-				print("Error while enumerating files \(Settings.shared.uniquePath): \(error.localizedDescription)")
-			}
+		ceefaxPageControl = CeefaxPageControl(in: tabitemIdleCeefax?.view, scene: quizDisplay.idleCeefaxScene)
+
+		//Fill the question and media pickers from the folders chosen at startup
+		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.audioExtensions) {
+			musicFile.addItem(withTitle: file)
 		}
-		
-		if Settings.shared.geographyImagesPath != "" {
-			do {
-				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.geographyImagesPath)
-				for file in files.sorted() {
-					//The start image is the round's blank state, not a question
-					if !file.hasPrefix(".") && file != GeographyScene.startImage
-						&& GeographyScene.imageExtensions.contains((file as NSString).pathExtension.lowercased()) {
-						geoQuestionSelector.addItem(withTitle: file)
-					}
-				}
-			} catch {
-				print("Error while enumerating files \(Settings.shared.geographyImagesPath): \(error.localizedDescription)")
-			}
+		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.videoExtensions) {
+			videoFile.addItem(withTitle: file)
 		}
-		
-		if Settings.shared.pointlessPath != "" {
-			do {
-				let files = try FileManager.default.contentsOfDirectory(atPath: Settings.shared.pointlessPath)
-				for file in files.sorted() {
-					if (!file.hasPrefix(".")) {
-						pointlessQuestionSelector.addItem(withTitle: file)
-					}
-				}
-				pointlessQuestionSelected(pointlessQuestionSelector!)
-			} catch {
-				print("Error while enumerating files \(Settings.shared.pointlessPath): \(error.localizedDescription)")
-			}
+		if musicFile.numberOfItems > 0 {
+			musicChooseFile(musicFile)
 		}
-		
+		for file in Utils.questionFiles(in: Settings.shared.uniquePath) {
+			uniqueFile.addItem(withTitle: file)
+		}
+		if uniqueFile.numberOfItems > 0 {
+			uniqueChooseFile(uniqueFile)
+		}
+		for file in Utils.questionFiles(in: Settings.shared.geographyImagesPath, extensions: GeographyScene.imageExtensions)
+				where file != GeographyScene.startImage {
+			geoQuestionSelector.addItem(withTitle: file)
+		}
+		for file in Utils.questionFiles(in: Settings.shared.pointlessPath) {
+			pointlessQuestionSelector.addItem(withTitle: file)
+		}
+		if pointlessQuestionSelector.numberOfItems > 0 {
+			pointlessQuestionSelected(pointlessQuestionSelector!)
+		}
+
 		updateGeographyPreview()
 		wikiLoadPuzzles()
 		configureSidebar()
@@ -416,7 +383,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .wavelength:  resetWavelengthControls()
 		case .multichoice: resetMultiChoiceControls(presenting: presenting)
 		case .wikirace:    resetWikiRaceControls(presenting: presenting)
-		case .idleCeefax:  refreshCeefaxPagePicker()
+		case .idleCeefax:  ceefaxPageControl?.refresh()
 		default:           break
 		}
 	}
@@ -435,62 +402,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		enterRound(quizDisplay.currentRound, presenting: false)
     }
 	
-	//--------------------------------------------------------------------------------------------------------------------------
-	//MARK: - Ceefax
-	//--------------------------------------------------------------------------------------------------------------------------
-
-	/// A picker for jumping straight to one Ceefax page, for checking a page without waiting for the carousel to come round to it.
-	private var ceefaxPagePicker: NSSegmentedControl?
-	/// The page number behind each segment after the first, which is "Auto".
-	private var ceefaxPageNumbers = [Int]()
-
-	private func buildCeefaxControls() {
-		guard let container = tabitemIdleCeefax?.view else { return }
-
-		let picker = NSSegmentedControl(labels: ["Auto"], trackingMode: .selectOne, target: self, action: #selector(ceefaxPageChanged(_:)))
-		let caption = NSTextField(labelWithString: "Hold page:")
-
-		let stack = NSStackView(views: [caption, picker])
-		stack.orientation = .horizontal
-		stack.spacing = 10
-		stack.translatesAutoresizingMaskIntoConstraints = false
-		container.addSubview(stack)
-		NSLayoutConstraint.activate([
-			stack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-			stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -60)
-		])
-
-		ceefaxPagePicker = picker
-		refreshCeefaxPagePicker()
-	}
-
-	/// Re-reads the carousel and puts the picker back to "Auto", which is where the
-	/// scene itself lands on a reset.
-	private func refreshCeefaxPagePicker() {
-		guard let picker = ceefaxPagePicker else { return }
-
-		ceefaxPageNumbers = quizDisplay.idleCeefaxScene.pageNumbers
-		picker.segmentCount = ceefaxPageNumbers.count + 1
-		picker.setLabel("Auto", forSegment: 0)
-		for (offset, number) in ceefaxPageNumbers.enumerated() {
-			picker.setLabel("\(number)", forSegment: offset + 1)
-		}
-		picker.selectedSegment = 0
-		//Segments added after construction have no width until the control re-measures.
-		picker.sizeToFit()
-	}
-
-	@objc private func ceefaxPageChanged(_ sender: NSSegmentedControl) {
-		let segment = sender.selectedSegment
-		//Segment 0 is "Auto"; the rest line up with ceefaxPageNumbers.
-		guard segment > 0, ceefaxPageNumbers.indices.contains(segment - 1) else {
-			quizDisplay.idleCeefaxScene.holdPage(number: nil)
-			return
-		}
-		quizDisplay.idleCeefaxScene.holdPage(number: ceefaxPageNumbers[segment - 1])
-	}
-
-
 	//--------------------------------------------------------------------------------------------------------------------------
 	//MARK: - Sidebar
 	//--------------------------------------------------------------------------------------------------------------------------

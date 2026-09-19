@@ -224,6 +224,9 @@ class MusicScene: QuizScene {
 		}
 	}
     
+	static let audioExtensions: Set<String> = ["mp3", "wav"]
+	static let videoExtensions: Set<String> = ["mov", "mp4", "mpeg", "avi"]
+
     func initMusic(file: String) {
         if music != nil {
             reset()

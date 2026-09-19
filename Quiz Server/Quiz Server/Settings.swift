@@ -142,6 +142,33 @@ final class Utils {
 	}
 
 
+	/// Lists the files in one of the question folders chosen at startup
+	/// - Parameter extensions: lowercased extensions to keep, or nil to keep every file.
+	static func questionFiles(in path: String, extensions: Set<String>? = nil) -> [String] {
+		guard !path.isEmpty else {
+			return []
+		}
+
+		let files: [String]
+		do {
+			files = try FileManager.default.contentsOfDirectory(atPath: path)
+		} catch {
+			print("Error while enumerating files \(path): \(error.localizedDescription)")
+			return []
+		}
+
+		return files.sorted().filter { file in
+			guard !file.hasPrefix(".") else {
+				return false
+			}
+			guard let extensions else {
+				return true
+			}
+			return extensions.contains((file as NSString).pathExtension.lowercased())
+		}
+	}
+
+
 	/// Reads one of the question files off disk. Use UTF-8 if possible, warn if fallback is required
 	/// - Returns: the file's contents, or nil if it could not be read at all.
 	static func readQuestionFile(_ path: String) -> String? {

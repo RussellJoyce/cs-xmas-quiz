@@ -264,3 +264,63 @@ class IdleCeefaxScene: QuizScene {
 		return SKTexture(cgImage: image)
 	}
 }
+
+
+// MARK: - Controller window
+class CeefaxPageControl: NSObject {
+
+	private let scene: IdleCeefaxScene
+	private let picker: NSSegmentedControl
+	private var pageNumbers = [Int]()
+
+	/// Adds the picker to the bottom of `container`, or gives nil if there is no view to
+	/// add it to (the tab has not been loaded).
+	init?(in container: NSView?, scene: IdleCeefaxScene) {
+		guard let container else {
+			return nil
+		}
+
+		self.scene = scene
+		self.picker = NSSegmentedControl(labels: ["Auto"], trackingMode: .selectOne,
+										 target: nil, action: nil)
+		super.init()
+
+		picker.target = self
+		picker.action = #selector(pageChanged(_:))
+
+		let caption = NSTextField(labelWithString: "Hold page:")
+		let stack = NSStackView(views: [caption, picker])
+		stack.orientation = .horizontal
+		stack.spacing = 10
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		container.addSubview(stack)
+		NSLayoutConstraint.activate([
+			stack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+			stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -60)
+		])
+
+		refresh()
+	}
+
+	/// Re-reads the carousel and puts the picker back to "Auto"
+	func refresh() {
+		pageNumbers = scene.pageNumbers
+		picker.segmentCount = pageNumbers.count + 1
+		picker.setLabel("Auto", forSegment: 0)
+		for (offset, number) in pageNumbers.enumerated() {
+			picker.setLabel("\(number)", forSegment: offset + 1)
+		}
+		picker.selectedSegment = 0
+		picker.sizeToFit()
+	}
+
+	@objc private func pageChanged(_ sender: NSSegmentedControl) {
+		let segment = sender.selectedSegment
+		//Segment 0 is "Auto"; the rest line up with pageNumbers.
+		guard segment > 0, pageNumbers.indices.contains(segment - 1) else {
+			scene.holdPage(number: nil)
+			return
+		}
+		scene.holdPage(number: pageNumbers[segment - 1])
+	}
+}
