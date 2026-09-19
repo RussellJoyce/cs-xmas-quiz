@@ -85,6 +85,7 @@
                 <outlet property="tabitemDisconnect" destination="VmW-2i-xzJ" id="MCj-00-v00"/>
                 <outlet property="tabitemGeography" destination="MCw-dI-hrf" id="bN4-Xw-l7Y"/>
                 <outlet property="tabitemIdle" destination="u2C-EJ-D9s" id="LjV-Is-cRp"/>
+                <outlet property="tabitemIdleCeefax" destination="Cfx-td-100" id="Cfx-ou-100"/>
                 <outlet property="tabitemMultiChoice" destination="MCh-00-t00" id="MCh-55-t55"/>
                 <outlet property="tabitemMusic" destination="mfC-Tl-ocF" id="qEX-r3-nHM"/>
                 <outlet property="tabitemNumbers" destination="CS6-c3-Fen" id="eSy-LI-0LA"/>
@@ -577,6 +578,23 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="by Ian Gray &amp; Russell Joyce, 2014-2026" id="XGM-rO-MLQ">
                                                 <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Idle (Ceefax)" identifier="ceefax" id="Cfx-td-100">
+                                <view key="view" id="Cfx-vw-100">
+                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cfx-tf-100">
+                                            <rect key="frame" x="133" y="120" width="631" height="46"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Ceefax idle screen. Pages cycle on their own." id="Cfx-tc-100">
+                                                <font key="font" metaFont="system" size="18"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>

@@ -48,6 +48,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemtruefalse: NSTabViewItem!
 	@IBOutlet weak var tabitemTimer: NSTabViewItem!
 	@IBOutlet weak var tabitemIdle: NSTabViewItem!
+	@IBOutlet weak var tabitemIdleCeefax: NSTabViewItem!
 	@IBOutlet weak var tabitemTest: NSTabViewItem!
 	@IBOutlet weak var tabitemBuzzers: NSTabViewItem!
 	@IBOutlet weak var tabitemMusic: NSTabViewItem!
@@ -106,6 +107,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		syncBuzzerButtons()
 		
 		quizDisplay.present()
+		buildCeefaxControls()
         
         if Settings.shared.musicPath != "" {
             do {
@@ -414,6 +416,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .wavelength:  resetWavelengthControls()
 		case .multichoice: resetMultiChoiceControls(presenting: presenting)
 		case .wikirace:    resetWikiRaceControls(presenting: presenting)
+		case .idleCeefax:  refreshCeefaxPagePicker()
 		default:           break
 		}
 	}
@@ -433,6 +436,62 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
     }
 	
 	//--------------------------------------------------------------------------------------------------------------------------
+	//MARK: - Ceefax
+	//--------------------------------------------------------------------------------------------------------------------------
+
+	/// A picker for jumping straight to one Ceefax page, for checking a page without waiting for the carousel to come round to it.
+	private var ceefaxPagePicker: NSSegmentedControl?
+	/// The page number behind each segment after the first, which is "Auto".
+	private var ceefaxPageNumbers = [Int]()
+
+	private func buildCeefaxControls() {
+		guard let container = tabitemIdleCeefax?.view else { return }
+
+		let picker = NSSegmentedControl(labels: ["Auto"], trackingMode: .selectOne, target: self, action: #selector(ceefaxPageChanged(_:)))
+		let caption = NSTextField(labelWithString: "Hold page:")
+
+		let stack = NSStackView(views: [caption, picker])
+		stack.orientation = .horizontal
+		stack.spacing = 10
+		stack.translatesAutoresizingMaskIntoConstraints = false
+		container.addSubview(stack)
+		NSLayoutConstraint.activate([
+			stack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+			stack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -60)
+		])
+
+		ceefaxPagePicker = picker
+		refreshCeefaxPagePicker()
+	}
+
+	/// Re-reads the carousel and puts the picker back to "Auto", which is where the
+	/// scene itself lands on a reset.
+	private func refreshCeefaxPagePicker() {
+		guard let picker = ceefaxPagePicker else { return }
+
+		ceefaxPageNumbers = quizDisplay.idleCeefaxScene.pageNumbers
+		picker.segmentCount = ceefaxPageNumbers.count + 1
+		picker.setLabel("Auto", forSegment: 0)
+		for (offset, number) in ceefaxPageNumbers.enumerated() {
+			picker.setLabel("\(number)", forSegment: offset + 1)
+		}
+		picker.selectedSegment = 0
+		//Segments added after construction have no width until the control re-measures.
+		picker.sizeToFit()
+	}
+
+	@objc private func ceefaxPageChanged(_ sender: NSSegmentedControl) {
+		let segment = sender.selectedSegment
+		//Segment 0 is "Auto"; the rest line up with ceefaxPageNumbers.
+		guard segment > 0, ceefaxPageNumbers.indices.contains(segment - 1) else {
+			quizDisplay.idleCeefaxScene.holdPage(number: nil)
+			return
+		}
+		quizDisplay.idleCeefaxScene.holdPage(number: ceefaxPageNumbers[segment - 1])
+	}
+
+
+	//--------------------------------------------------------------------------------------------------------------------------
 	//MARK: - Sidebar
 	//--------------------------------------------------------------------------------------------------------------------------
 
@@ -449,6 +508,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		sidebarRows = [
 			.group("Show"),
 			.round(tabitemIdle, .idle, "🎄 Idle"),
+			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
 			.round(tabitemScores, .scores, "📋 Scores"),
 			
 			.group("Rounds"),

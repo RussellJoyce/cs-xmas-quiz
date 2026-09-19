@@ -14,6 +14,7 @@ class QuizDisplayController: NSViewController {
 	var skView: SKView { view as! SKView }
 
 	let idleScene = Idle2Scene()
+	let idleCeefaxScene = IdleCeefaxScene()
 	let testScene = TestScene()
 	let buzzerScene = BuzzerScene()
 	let musicScene = MusicScene()
@@ -77,7 +78,8 @@ class QuizDisplayController: NSViewController {
 
 		skView.ignoresSiblingOrder = true
 
-		rounds = [.idle : idleScene, .test : testScene, .buzzers : buzzerScene,
+		rounds = [.idle : idleScene, .idleCeefax : idleCeefaxScene,
+			.test : testScene, .buzzers : buzzerScene,
 			.music : musicScene, .timer : timerScene, .trueFalse : truefalseScene,
 			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
 			.scores : scoresScene, .pointless : pointlessScene,

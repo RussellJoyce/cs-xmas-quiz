@@ -63,6 +63,7 @@ struct BuzzerOptions {
 enum RoundType {
 	case none
 	case idle
+	case idleCeefax
 	case test
 	case buzzers
 	case music
@@ -89,7 +90,7 @@ enum RoundType {
 		case .wavelength:  return "wavelength"
 		case .multichoice: return "multi"
 		case .wikirace:    return "wikirace"
-		case .none, .idle, .test, .buzzers, .music, .timer, .scores:
+		case .none, .idle, .idleCeefax, .test, .buzzers, .music, .timer, .scores:
 			return "buzzer"
 		}
 	}

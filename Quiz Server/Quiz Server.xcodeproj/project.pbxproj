@@ -47,6 +47,10 @@
 		46DF9D08239672FF00D019A3 /* MusicScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46DF9D07239672FF00D019A3 /* MusicScene.swift */; };
 		46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F9A1271BFA8D88003E4023 /* IdleScene.swift */; };
 		CE73650D3AFF80B7AC56E091 /* WikiRaceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A83399003A8741D8CF5B35 /* WikiRaceScene.swift */; };
+		CF00000000000000000001 /* IdleCeefaxScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF00000000000000000002 /* IdleCeefaxScene.swift */; };
+		CF00000000000000000003 /* Teletext.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF00000000000000000004 /* Teletext.swift */; };
+		CF00000000000000000005 /* TeletextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF00000000000000000006 /* TeletextNode.swift */; };
+		CF00000000000000000007 /* CeefaxPages.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF00000000000000000008 /* CeefaxPages.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -113,6 +117,10 @@
 		46DF9D07239672FF00D019A3 /* MusicScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicScene.swift; sourceTree = "<group>"; };
 		46EE3979239EA6D8006298D1 /* Anniversary.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Anniversary.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		46F9A1271BFA8D88003E4023 /* IdleScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdleScene.swift; sourceTree = "<group>"; };
+		CF00000000000000000002 /* IdleCeefaxScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleCeefaxScene.swift; sourceTree = "<group>"; };
+		CF00000000000000000004 /* Teletext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Teletext.swift; sourceTree = "<group>"; };
+		CF00000000000000000006 /* TeletextNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeletextNode.swift; sourceTree = "<group>"; };
+		CF00000000000000000008 /* CeefaxPages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeefaxPages.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -143,6 +151,7 @@
 			children = (
 				46A739381BFAB45300E03DE5 /* BuzzerScene.swift */,
 				466B46D41DEC98E400428CDC /* GeographyScene.swift */,
+				CF00000000000000000002 /* IdleCeefaxScene.swift */,
 				3C3012592EAE90AD00F80B71 /* Idle2Scene.swift */,
 				46F9A1271BFA8D88003E4023 /* IdleScene.swift */,
 				3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */,
@@ -170,7 +179,10 @@
 				46A7400A1BFAAD9800E03DE5 /* GeographyPreviewView.swift */,
 				3CA10D032EE9000200A38676 /* TeamAnswerNode.swift */,
 				3CB70E132F0A100200A38676 /* TeamGuessNode.swift */,
+				CF00000000000000000008 /* CeefaxPages.swift */,
 				3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */,
+				CF00000000000000000004 /* Teletext.swift */,
+				CF00000000000000000006 /* TeletextNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -344,6 +356,10 @@
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				46F9A1281BFA8D88003E4023 /* IdleScene.swift in Sources */,
 				3C30125A2EAE90B400F80B71 /* Idle2Scene.swift in Sources */,
+				CF00000000000000000007 /* CeefaxPages.swift in Sources */,
+				CF00000000000000000005 /* TeletextNode.swift in Sources */,
+				CF00000000000000000003 /* Teletext.swift in Sources */,
+				CF00000000000000000001 /* IdleCeefaxScene.swift in Sources */,
 				3C772FEC2CD79AA300F2E6FC /* ScoresScene.swift in Sources */,
 				3CF78EFA23954DB9007FC394 /* NumbersScene.swift in Sources */,
 				3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */,
