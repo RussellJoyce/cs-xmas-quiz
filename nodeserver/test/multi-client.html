@@ -73,6 +73,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .team-row button:hover { background: #1a5276; color: #fff; }
 
 /* Input row */
+.answer-inputs { display: flex; flex-direction: column; gap: 6px; }
 .input-row { display: flex; gap: 4px; }
 .input-row input {
     flex: 1; background: #0f3460; border: 1px solid #444; color: #eee; padding: 4px 6px; border-radius: 3px; font-size: 11px;
@@ -103,6 +104,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     <button class="btn-disconnect" onclick="disconnectAll()">Disconnect All</button>
     <label class="check-label"><input type="checkbox" id="cfg-autopick" checked> Auto-pick teams</label>
     <label class="check-label"><input type="checkbox" id="cfg-filterpings" checked> Filter Pings</label>
+    <label class="check-label"><input type="checkbox" id="cfg-showanswers"> Show Answers</label>
 </div>
 
 <div id="pattern-bar">
@@ -153,6 +155,63 @@ function patternLog(cls, text) {
     logLine('[pattern]', cls, text);
 }
 
+// ---------------------------------------------------------------- the wiki corpus
+// A wikirace client cannot invent a move: the server refuses any article that is not
+// genuinely linked from where the team is standing. So to put a team a known distance from
+// the target, a pattern walks the puzzle's ideal route, which puzzles.json records as
+// `routeIds`. That route is a real shortest path, so stopping k steps from its end leaves
+// the team exactly k links short — which is the number the quiz software ranks the
+// near-miss highlights on.
+//
+// Both files come off the quiz server, so the wiki actions only work when this page is
+// served from it. Opened off the disk, they report that rather than hanging.
+
+var wikiPuzzles = null;
+var wikiShard = 1000;
+var wikiArticles = {};   // article json by id, because a stray walk re-reads pages constantly
+
+function loadWikiCorpus() {
+    fetch('/wiki/meta.json')
+        .then(function(r) { return r.json(); })
+        .then(function(meta) { wikiShard = meta.shard || wikiShard; })
+        .catch(function() { /* reported by the puzzles fetch below, no need to say it twice */ });
+
+    fetch('/wiki/puzzles.json')
+        .then(function(r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+        })
+        .then(function(rows) {
+            wikiPuzzles = rows;
+            patternLog('msg-info', 'wiki: ' + rows.length + ' puzzles loaded, wiki actions are ready');
+        })
+        .catch(function(e) {
+            patternLog('msg-err', 'wiki: cannot read /wiki/puzzles.json (' + e.message +
+                       '), so the wiki actions will not run. Open this page from the quiz ' +
+                       'server rather than off the disk.');
+        });
+}
+
+// One article's outward links, as the ids the server will accept in a 'wl'.
+function wikiArticle(id) {
+    if (wikiArticles[id]) return Promise.resolve(wikiArticles[id]);
+    return fetch('/wiki/a/' + Math.floor(id / wikiShard) + '/' + id + '.json')
+        .then(function(r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+        })
+        .then(function(a) { wikiArticles[id] = a; return a; });
+}
+
+function wikiOutlinks(article) {
+    var ids = [], seen = {}, re = /data-s="([0-9]+)"/g, m;
+    while ((m = re.exec(article.h)) !== null) {
+        var id = parseInt(m[1], 10);
+        if (!seen[id]) { seen[id] = true; ids.push(id); }
+    }
+    return ids;
+}
+
 // VirtualClient class
 function VirtualClient(index) {
     this.index = index;
@@ -163,6 +222,15 @@ function VirtualClient(index) {
     this.hlLabels = 'truefalse'; // 'truefalse' or 'higherlower'
     this.optionCount = 4;        // Multiple choice tiles, as last set by 'mo'
     this.pingInterval = null;
+
+    // Wikirace. `race` is set by 'wr' and holds the race the host has started; `wikiAt` is
+    // the article the server last confirmed us on, which is the only position that counts
+    // — a move is judged against it, not against whatever we think we clicked.
+    this.race = null;
+    this.wikiAt = -1;
+    this.wikiHops = 0;
+    this.wikiDone = false;
+    this.wikiWalk = null;        // a multi-step walk in progress, stepped on by each 'wg'
 
     // Create DOM
     var cell = document.createElement('div');
@@ -179,24 +247,29 @@ function VirtualClient(index) {
             '<button class="btn-sm-blue" id="btn-b-' + index + '" onclick="clients[' + index + '].sendHL(\'lo\')" disabled>FALSE</button>' +
         '</div>' +
         '<div class="team-row" id="teams-' + index + '"></div>' +
-        '<div class="input-row">' +
-            '<input type="text" id="txt-' + index + '" placeholder="Text answer...">' +
-            '<button class="btn-sm-purple" onclick="clients[' + index + '].sendText()" disabled id="txtsend-' + index + '">Send</button>' +
-        '</div>' +
-        '<div class="input-row">' +
-            '<input type="text" id="geo-' + index + '" placeholder="x,y (0-100)">' +
-            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendGeo()" disabled id="geosend-' + index + '">Send</button>' +
-            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomGeo()" disabled id="georand-' + index + '">Rnd</button>' +
-        '</div>' +
-        '<div class="input-row">' +
-            '<input type="text" id="choice-' + index + '" placeholder="choice (1-6)">' +
-            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendChoice()" disabled id="choicesend-' + index + '">Send</button>' +
-            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomChoice()" disabled id="choicerand-' + index + '">Rnd</button>' +
-        '</div>' +
-        '<div class="input-row">' +
-            '<input type="text" id="wave-' + index + '" placeholder="wavelength (1-99)">' +
-            '<button class="btn-sm-teal" onclick="clients[' + index + '].sendWave()" disabled id="wavesend-' + index + '">Send</button>' +
-            '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomWave()" disabled id="waverand-' + index + '">Rnd</button>' +
+        //Hidden by default: a grid of fourteen clients is mostly these boxes, and the
+        //patterns drive every one of these answers without them. They are still here for
+        //when you want to type something by hand.
+        '<div class="answer-inputs" id="answers-' + index + '">' +
+            '<div class="input-row">' +
+                '<input type="text" id="txt-' + index + '" placeholder="Text answer...">' +
+                '<button class="btn-sm-purple" onclick="clients[' + index + '].sendText()" disabled id="txtsend-' + index + '">Send</button>' +
+            '</div>' +
+            '<div class="input-row">' +
+                '<input type="text" id="geo-' + index + '" placeholder="x,y (0-100)">' +
+                '<button class="btn-sm-teal" onclick="clients[' + index + '].sendGeo()" disabled id="geosend-' + index + '">Send</button>' +
+                '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomGeo()" disabled id="georand-' + index + '">Rnd</button>' +
+            '</div>' +
+            '<div class="input-row">' +
+                '<input type="text" id="choice-' + index + '" placeholder="choice (1-6)">' +
+                '<button class="btn-sm-teal" onclick="clients[' + index + '].sendChoice()" disabled id="choicesend-' + index + '">Send</button>' +
+                '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomChoice()" disabled id="choicerand-' + index + '">Rnd</button>' +
+            '</div>' +
+            '<div class="input-row">' +
+                '<input type="text" id="wave-' + index + '" placeholder="wavelength (1-99)">' +
+                '<button class="btn-sm-teal" onclick="clients[' + index + '].sendWave()" disabled id="wavesend-' + index + '">Send</button>' +
+                '<button class="btn-sm-gray" onclick="clients[' + index + '].sendRandomWave()" disabled id="waverand-' + index + '">Rnd</button>' +
+            '</div>' +
         '</div>' +
         '<div class="msg-log" id="log-' + index + '"></div>';
 
@@ -231,6 +304,9 @@ VirtualClient.prototype.updateStatus = function() {
     if (this.team) parts.push('Team ' + this.team);
     parts.push('View: ' + this.view);
     parts.push('Buzzer: ' + (this.buzzerOn ? 'ON' : 'OFF'));
+    if (this.race) {
+        parts.push('Wiki: ' + (this.wikiDone ? 'arrived' : this.wikiHops + ' hops'));
+    }
     document.getElementById('status-' + this.index).textContent = parts.join(' | ');
 
     // Dot color
@@ -436,7 +512,136 @@ VirtualClient.prototype.handleMessage = function(msg) {
         case 'pb':
             // Pong - no action needed
             break;
+
+        case 'wr': {
+            // "wr<start>,<target>,<startTitle>|<targetTitle>". Everyone starts on <start>.
+            var race = payload.split(',');
+            this.race = { start: parseInt(race[0], 10), target: parseInt(race[1], 10) };
+            this.wikiAt = this.race.start;
+            this.wikiHops = 0;
+            this.wikiDone = false;
+            this.wikiWalk = null;
+            this.updateStatus();
+            break;
+        }
+        case 'wg': {
+            // "wg<articleId>,<hops>" — the server confirming where we now are. A walk takes
+            // its next step from here rather than firing its moves back to back, because
+            // each one is judged against the position the server thinks we hold.
+            var at = payload.split(',');
+            this.wikiAt = parseInt(at[0], 10);
+            this.wikiHops = parseInt(at[1], 10);
+            this.updateStatus();
+            this.stepWalk();
+            break;
+        }
+        case 'wf':
+            this.wikiDone = true;
+            this.wikiWalk = null;
+            this.updateStatus();
+            break;
+        case 'wx':
+            // A refused move. Whatever walk was running is now working from a position the
+            // server disagrees with, so it stops rather than flailing at the same article.
+            this.log('msg-err', 'wiki move refused');
+            this.wikiWalk = null;
+            break;
+        case 'we':
+            // The race is over and we are frozen where we stand.
+            this.wikiWalk = null;
+            this.updateStatus();
+            break;
     }
+};
+
+// ---------------------------------------------------------------- wikirace actions
+
+// The ideal route for the race in progress, as article ids.
+VirtualClient.prototype.wikiRoute = function() {
+    if (!this.race || !wikiPuzzles) return null;
+    for (var i = 0; i < wikiPuzzles.length; i++) {
+        var p = wikiPuzzles[i];
+        if (p.start === this.race.start && p.target === this.race.target) {
+            return p.routeIds || null;
+        }
+    }
+    return null;
+};
+
+// Takes the next step of whatever walk is running, or stops if it has arrived where it
+// was sent. Called on every 'wg', so a walk unrolls one confirmed move at a time.
+VirtualClient.prototype.stepWalk = function() {
+    var walk = this.wikiWalk;
+    if (!walk || this.wikiDone) return;
+
+    if (walk.mode === 'route') {
+        var here = walk.route.indexOf(this.wikiAt);
+        if (here < 0 || here >= walk.stopAt) { this.wikiWalk = null; return; }
+        this.send('wl' + this.team + ',' + walk.route[here + 1]);
+        return;
+    }
+
+    if (walk.mode === 'stray') {
+        if (walk.left <= 0) { this.wikiWalk = null; return; }
+        walk.left--;
+        var self = this, from = this.wikiAt;
+        //Anything but the route: the point of a stray is to end up somewhere the pattern
+        //did not choose, so that it tests what the ranking does with an unknown distance.
+        var route = this.wikiRoute() || [];
+        wikiArticle(from)
+            .then(function(article) {
+                if (self.wikiWalk !== walk || self.wikiAt !== from) return;
+                var links = wikiOutlinks(article).filter(function(id) {
+                    return route.indexOf(id) < 0;
+                });
+                if (!links.length) {
+                    self.log('msg-err', 'wiki: nothing to stray to from here');
+                    self.wikiWalk = null;
+                    return;
+                }
+                self.send('wl' + self.team + ',' + links[Math.floor(Math.random() * links.length)]);
+            })
+            .catch(function(e) {
+                self.log('msg-err', 'wiki: cannot read article ' + from + ' (' + e.message + ')');
+                self.wikiWalk = null;
+            });
+    }
+};
+
+// "short <n>": walk the ideal route and stop n links from the target, 0 being the target
+// itself. Reports rather than half-doing it if the race cannot supply that position.
+VirtualClient.prototype.walkShort = function(stopShort) {
+    if (!this.race) return 'wiki: no race is running';
+    if (this.wikiDone) return 'wiki: already arrived';
+    var route = this.wikiRoute();
+    if (!route) {
+        return wikiPuzzles ? 'wiki: no puzzle in puzzles.json matches this race'
+                           : 'wiki: puzzles.json is not loaded';
+    }
+
+    var hops = route.length - 1;
+    if (stopShort > hops) {
+        return 'wiki: this race is only ' + hops + ' hops, cannot stop ' + stopShort + ' short';
+    }
+    var here = route.indexOf(this.wikiAt);
+    if (here < 0) return 'wiki: off the ideal route, so "short" cannot count from here';
+
+    var stopAt = hops - stopShort;
+    if (stopAt < here) return 'wiki: already closer than ' + stopShort + ' short';
+    if (stopAt === here) return null;   //nothing to do, and not an error
+
+    this.wikiWalk = { mode: 'route', route: route, stopAt: stopAt };
+    this.stepWalk();
+    return null;
+};
+
+VirtualClient.prototype.walkStray = function(count) {
+    if (!this.race) return 'wiki: no race is running';
+    if (this.wikiDone) return 'wiki: already arrived';
+    if (count <= 0) return null;
+    this.wikiWalk = { mode: 'stray', left: count };
+    this.stepWalk();
+    return null;
 };
 
 VirtualClient.prototype.pickTeam = function(teamNum) {
@@ -590,6 +795,26 @@ VirtualClient.prototype.runAction = function(verb, args) {
                 this.sendWaveAt(parseInt(args[0], 10));
             }
             return 'wave';
+        case 'wiki': {
+            if (!this.team) return null;
+            //A wiki action that cannot run says exactly why on the client's own log. The
+            //runner's generic complaint ("not connected, or has no team yet") would be
+            //wrong here and would send you looking in the wrong place.
+            var why = null;
+            if (args[0] === 'back') {
+                if (this.race) {
+                    this.send('wb' + this.team);
+                } else {
+                    why = 'wiki: no race is running';
+                }
+            } else if (args[0] === 'stray') {
+                why = this.walkStray(parseInt(args[1], 10));
+            } else {
+                why = this.walkShort(parseInt(args[1], 10));
+            }
+            if (why) this.log('msg-err', why);
+            return 'wiki';
+        }
         case 'pick':
             this.pickTeam(args.length ? args[0] : this.index);
             return 'pick';
@@ -620,6 +845,17 @@ function buildGrid() {
         clients[i] = vc;
         vc.updateStatus();
     }
+    applyShowAnswers();
+}
+
+// The hand-typed answer boxes, shown or hidden across the whole grid at once.
+function applyShowAnswers() {
+    var show = document.getElementById('cfg-showanswers').checked;
+    for (var i = 1; i < clients.length; i++) {
+        if (!clients[i]) continue;
+        var row = document.getElementById('answers-' + i);
+        if (row) row.style.display = show ? 'flex' : 'none';
+    }
 }
 
 function connectAll() {
@@ -639,6 +875,7 @@ function disconnectAll() {
 
 // Rebuild grid when count changes
 document.getElementById('cfg-count').addEventListener('change', buildGrid);
+document.getElementById('cfg-showanswers').addEventListener('change', applyShowAnswers);
 
 // Initial grid
 buildGrid();
@@ -662,7 +899,8 @@ var ACTIONS = {
     raw:        { min: 1, max: Infinity },
     geo:        { min: 1, max: 2 },
     wave:       { min: 1, max: 1 },
-    choice:     { min: 1, max: 1 }
+    choice:     { min: 1, max: 1 },
+    wiki:       { min: 1, max: 2 }
 };
 
 // Names that read better in a pattern than the two-letter protocol codes do.
@@ -751,6 +989,21 @@ function parsePatterns(text) {
         if (verb === 'choice' && args[0] !== 'random' && !/^[1-6]$/.test(args[0])) {
             bad(line, 'choice takes "random" or one number 1-6');
             continue;
+        }
+        if (verb === 'wiki') {
+            var sub = args[0];
+            if (sub !== 'short' && sub !== 'stray' && sub !== 'back') {
+                bad(line, 'wiki takes "short", "stray" or "back"');
+                continue;
+            }
+            if (sub === 'back' && args.length !== 1) {
+                bad(line, 'wiki back takes no further arguments');
+                continue;
+            }
+            if (sub !== 'back' && !/^[0-9]+$/.test(args[1] || '')) {
+                bad(line, 'wiki ' + sub + ' takes one number');
+                continue;
+            }
         }
 
         var target = parseTarget(who);
@@ -896,6 +1149,7 @@ function stepPattern() {
 }
 
 initPatterns();
+loadWikiCorpus();
 </script>
 </body>
 </html>

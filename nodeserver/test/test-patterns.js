@@ -27,6 +27,9 @@
 //  wave,random         a wavelength guess somewhere random      wv<team>,<n>
 //  choice,<n>          a multiple choice option, 1-6            mc<team>,<n>
 //  choice,random       whichever options the grid has           mc<team>,<n>
+//  wiki,short,<n>      walk to n links from the target          wl<team>,<article>...
+//  wiki,stray,<n>      n moves away from the ideal route        wl<team>,<article>...
+//  wiki,back           step back one article                    wb<team>
 //  pick[,<team>]       claim a team, defaulting to the client   pt<team>
 //  ping                the 5s keepalive, sent early            pi
 //  connect             open the socket
@@ -35,6 +38,20 @@
 //
 //Lines with no explicit wait between them are sent back to back in the same tick, which is
 //what makes the buzzer races below a real race rather than a queue.
+//
+//WIKIRACE
+//
+//The wiki actions are the exception to that. A move has to be a link the server agrees is
+//on the page the team is standing on, so a walk sends one move per confirmation rather
+//than all of them at once: always leave a wait after one. They also read the corpus over
+//HTTP, so this page must be served from the quiz server, not opened off the disk.
+//
+//"short" is written as the distance left rather than the distance travelled, because that
+//is the number the quiz software ranks on: it colours the team(s) that stopped closest to
+//the target and then the next closest. So "wiki,short,1" is a team that came within one
+//link of the target and "wiki,short,0" is one that arrived, whichever puzzle is running.
+//The corpus only holds 3- and 4-hop puzzles, so anything beyond "short,3" needs a 4-hop
+//question; a pattern that asks for more than the route holds says so and does nothing.
 
 window.TEST_PATTERNS = String.raw`
 
@@ -279,6 +296,127 @@ wait 500
 3,raw,wv3,-5
 4,raw,wv4,banana
 5,raw,wv5
+
+# ---------------------------------------------------------------- wikirace
+# Run these with a race started from the quiz software. "short,n" leaves a team exactly n
+# links from the target, so each pattern below sets up a known finishing order and the
+# highlights on the display can be read straight off the comments.
+# End the race from the quiz software afterwards: the colours only appear once the
+# standings come back.
+
+:Wiki - Clear podium, a winner and two near misses
+# T1 green, T2 blue (closest), T3 bronze (2nd closest), T4 plain
+1,wiki,short,0
+2,wiki,short,1
+3,wiki,short,2
+4,wiki,short,3
+wait 3000
+
+:Wiki - Two teams tie for closest
+# T2 and T3 both blue; T4 is bronze, not third place
+1,wiki,short,0
+2,wiki,short,1
+3,wiki,short,1
+4,wiki,short,2
+wait 3000
+
+:Wiki - Three teams tie for second closest
+# T1 blue on its own, T2-T4 all bronze
+1,wiki,short,1
+2,wiki,short,2
+3,wiki,short,2
+4,wiki,short,2
+wait 3000
+
+:Wiki - Nobody arrives
+# Highlights with no green anywhere: T1 blue, T2-T3 bronze, T4-T5 plain
+1,wiki,short,1
+2,wiki,short,2
+3,wiki,short,2
+4,wiki,short,3
+5,wiki,short,3
+wait 3000
+
+:Wiki - Everybody arrives
+# No highlights at all, because there is nobody left to be closest
+*,wiki,short,0
+wait 4000
+
+:Wiki - Idle teams are not "closest"
+# Only T2 is highlighted. T3-T8 never moved, so although they are all the same distance
+# from the target as each other, none of them should be coloured in.
+1,wiki,short,0
+2,wiki,short,1
+wait 3000
+
+:Wiki - Moved, then came back to the start
+# T3 wanders off and returns to where it began. It did play, so it stays in the running
+# even though it ends up on the start article alongside the teams that never moved.
+1,wiki,short,0
+2,wiki,short,2
+wait 2000
+3,wiki,stray,1
+wait 1500
+3,wiki,back
+wait 2000
+
+:Wiki - Teams going the wrong way
+# T3-T5 end up an unknown distance out, and should not displace T2 or T1
+1,wiki,short,0
+2,wiki,short,1
+wait 2000
+3,wiki,stray,2
+4,wiki,stray,2
+5,wiki,stray,3
+wait 4000
+
+:Wiki - A near miss beaten at the last moment
+# T2 sits one short while T3 goes all the way, so the closest-loser colour has to move to
+# T4 when the standings arrive rather than staying where it first looked like landing.
+2,wiki,short,1
+3,wiki,short,2
+4,wiki,short,2
+wait 3000
+3,wiki,short,0
+wait 2000
+
+:Wiki - Full grid, every band at once
+# Fourteen teams spread across arrived / 1 short / 2 short / 3 short / never moved, which
+# is also the test that the display copes with fourteen standings arriving in one burst.
+1,wiki,short,0
+2,wiki,short,0
+3,wiki,short,1
+4,wiki,short,1
+5,wiki,short,1
+6,wiki,short,2
+7,wiki,short,2
+8,wiki,short,3
+9,wiki,short,3
+wait 4000
+10,wiki,stray,2
+11,wiki,stray,2
+wait 4000
+
+:Wiki - One team walking the whole way, slowly
+# For watching the per-move blop, the box emphasis and the article titles shrinking to fit
+1,wiki,short,3
+wait 1500
+1,wiki,short,2
+wait 1500
+1,wiki,short,1
+wait 1500
+1,wiki,short,0
+wait 2000
+
+:Wiki - Awkward moves
+# Nonsense the server should refuse without the race or the client falling over
+1,raw,wl1,999999
+2,raw,wl2,-1
+3,raw,wl3,notanumber
+4,raw,wl99,5
+5,raw,wb99
+6,raw,wl6
+wait 1000
 
 # ---------------------------------------------------------------- connection handling
 
