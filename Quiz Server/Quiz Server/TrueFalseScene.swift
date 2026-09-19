@@ -88,9 +88,9 @@ class TrueFalseScene: QuizScene {
 		self.counting = false
 		self.stopFire();
 		QuizWebSocket.shared?.ledsOff()
-		QuizWebSocket.shared?.send(mode ? "h2" : "h1")
+		QuizWebSocket.shared?.send(.trueFalseMode(mode))
 		//"ha" clears a selection already lit on the teams' phones
-		QuizWebSocket.shared?.send("ha")
+		QuizWebSocket.shared?.send(.clearEmphasis)
 	}
 	
 	override func setParticipating(_ teams: [Bool]) {
@@ -132,7 +132,7 @@ class TrueFalseScene: QuizScene {
 	func start(sounds: Bool) {
 		self.time = TrueFalseScene.TIMEOUT
 		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
-		QuizWebSocket.shared?.send("ha") //As startNoTimer: the phones still show the last answer
+		QuizWebSocket.shared?.send(.clearEmphasis) //As startNoTimer: the phones still show the last answer
 		
 		timer?.invalidate()
 		tickSounds = sounds
@@ -153,7 +153,7 @@ class TrueFalseScene: QuizScene {
 			//Starting
 			self.counting = true
 			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
-			QuizWebSocket.shared?.send("ha") //Also clear emphasis just in case
+			QuizWebSocket.shared?.send(.clearEmphasis) //Also clear emphasis just in case
 			QuizWebSocket.shared?.timertwinkle()
 			self.timeLabel.text = "GO!"
 			self.addParticles()
@@ -314,19 +314,17 @@ class TrueFalsePanel: NSObject, RoundPanel {
 		trueButton.title = trueFalseMode ? "True" : "Higher"
 		falseButton.title = trueFalseMode ? "False" : "Lower"
 		modeToggle.title = trueFalseMode ? "True/False Mode" : "Higher/Lower Mode"
-		host.socketWriteIfConnected(trueFalseMode ? "h2" : "h1")
+		host.send(.trueFalseMode(trueFalseMode))
 		scene.setMode(trueFalseMode)
 	}
 
-	var clientRoundState: [String] {
-		[trueFalseMode ? "h2" : "h1"]
+	var clientRoundState: [ClientState] {
+		[.trueFalseMode(trueFalseMode)]
 	}
 
-	func clientTeamState(team: Int) -> [String] {
+	func clientTeamState(team: Int) -> [ClientState] {
 		let guesses = scene.teamGuesses
-		guard team < guesses.count, let guess = guesses[team] else {
-			return ["hn"]
-		}
-		return [guess ? "hh" : "hl"]
+		guard team < guesses.count else { return [.higherLowerAnswer(nil)] }
+		return [.higherLowerAnswer(guesses[team])]
 	}
 }

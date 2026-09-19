@@ -69,7 +69,15 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	}
 
 	/// Send a text message, silently dropping it if not connected.
-	func send(_ text: String) {
+	/// Sends one quiz command. The LED commands below build their own wire strings; every
+	/// other outbound message goes through `QuizCommand` so the vocabulary lives in one file.
+	func send(_ command: QuizCommand) {
+		send(command.wire)
+	}
+
+	/// Private, so every outbound message has to go through `QuizCommand` or one of the
+	/// LED helpers below rather than being spelled out at the call site.
+	private func send(_ text: String) {
 		guard state == .connected, let current = task else { return }
 		current.send(.string(text)) { [weak self] error in
 			guard let self = self, let error = error else { return }

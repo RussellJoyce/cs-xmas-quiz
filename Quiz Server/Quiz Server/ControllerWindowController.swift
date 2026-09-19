@@ -30,10 +30,10 @@ protocol RoundPanel: AnyObject {
 	func reset(presenting: Bool)
 
 	/// Anything a catching-up client needs that belongs to the round
-	var clientRoundState: [String] { get }
+	var clientRoundState: [ClientState] { get }
 
 	/// An answer `team` has already given, if the round tracks one. `team` is 0-based
-	func clientTeamState(team: Int) -> [String]
+	func clientTeamState(team: Int) -> [ClientState]
 
 	/// Whether the round is taking typed answers from the phones at the moment
 	var acceptingTextAnswers: Bool { get }
@@ -47,8 +47,8 @@ extension RoundPanel {
 	func setUp() {}
 	func tearDown() {}
 	func reset(presenting: Bool) {}
-	var clientRoundState: [String] { [] }
-	func clientTeamState(team: Int) -> [String] { [] }
+	var clientRoundState: [ClientState] { [] }
+	func clientTeamState(team: Int) -> [ClientState] { [] }
 	var acceptingTextAnswers: Bool { false }
 	func receive(textGuess: String, from team: Int) {}
 }
@@ -194,7 +194,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@objc private func clientListTask() {
 		//Periodically check to see what clients are connected. The reply will be "lr" and the handler will parse this to set the indicators
-		socketWriteIfConnected("ls")
+		send(.listClients)
 	}
 	
 	//MARK: - General controls
@@ -236,7 +236,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	private func rosterChanged(_ changed: [Int]) {
 		for team in changed {
-			socketWriteIfConnected((roster.isPlaying(team) ? "on" : "of") + String(team + 1))
+			send(.setPlaying(team: team, playing: roster.isPlaying(team)))
 		}
 		syncBuzzerButtons()
 		pushTeamParticipation()
@@ -275,10 +275,12 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	}
 
 	@IBAction func disassociateTeamPress(_ sender: NSButtonCell) {
+		//These buttons are tagged from one, unlike the buzzer buttons, which are tagged from zero
+		let team = sender.tag - 1
 		if resyncMode {
-			resyncTeam(sender.tag)
+			resyncTeam(team)
 		} else {
-			socketWriteIfConnected("di\(sender.tag)")
+			send(.disconnect(team: team))
 		}
 	}
 
@@ -287,7 +289,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	@IBAction func disconnectAllPress(_ sender: NSButton) {
 		if resyncMode {
-			for team in 1...Settings.shared.numTeams {
+			for team in 0..<Settings.shared.numTeams {
 				resyncTeam(team)
 			}
 			return
@@ -295,8 +297,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		if disconnectAllConfirmTimer != nil {
 			resetDisconnectAllButton()
-			for team in 1...Settings.shared.numTeams {
-				socketWriteIfConnected("di\(team)")
+			for team in 0..<Settings.shared.numTeams {
+				send(.disconnect(team: team))
 			}
 			return
 		}
@@ -314,43 +316,32 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		disconnectAllButton?.title = resyncMode ? "Resync All" : "Disconnect All"
 	}
 
-	/// Sends one team everything it needs to show the current state of play.
-	/// `team` is 1-based, as the button tags and the wire protocol both are.
+	/// Sends one team everything it needs to show the current state of play. `team` is 0-based
 	private func resyncTeam(_ team: Int) {
-		guard team >= 1 && team <= Settings.shared.numTeams else { return }
-		for message in clientState(for: team) {
-			socketWriteIfConnected("to\(team),\(message)")
+		guard team >= 0 && team < Settings.shared.numTeams else { return }
+		for state in clientState(for: team) {
+			send(.resync(team: team, state: state))
 		}
 		//ask the node server to resend that team's race state
 		if quizDisplay.currentRound == .wikirace {
-			socketWriteIfConnected("wk\(team)")
+			send(.resendRaceState(team: team))
 		}
 	}
 
-	/// Everything a client needs in order to show the current state of play
-	/// These are messages as a client reads them, which is not always how the quiz software
-	/// writes them: normally the node server strips the team off "on3" or "ms3,4" on the way
-	/// past. `team` is 1-based.
-	private func clientState(for team: Int) -> [String] {
-		let idx = team - 1 //The scenes index their teams from zero
+	private func clientState(for team: Int) -> [ClientState] {
 		let round = quizDisplay.currentRound
-		var messages = [String]()
+		let panel = panels[round]
 
 		//"vs" rather than "vi": a device already on the right view must keep the answer its
 		//team is part way through typing or dragging. "vi" is a reset and would throw it away.
-		messages.append("vs" + round.clientView)
-
-		//Decoration belonging to the round rather than to any one team
-		messages += panels[round]?.clientRoundState ?? []
-		
-		//Is this team enabled?
-		messages.append(roster.isPlaying(idx) ? "on" : "of")
-
-		//An answer this team has already given
-		//This is likely to be unnecessary, but it is here for completeness
-		messages += panels[round]?.clientTeamState(team: idx) ?? []
-
-		return messages
+		return [.view(round)]
+			//Decoration belonging to the round rather than to any one team
+			+ (panel?.clientRoundState ?? [])
+			//Is this team enabled?
+			+ [.playing(roster.isPlaying(team))]
+			//An answer this team has already given.
+			//This is likely to be unnecessary, but it is here for completeness
+			+ (panel?.clientTeamState(team: team) ?? [])
 	}
 
 	/// The round a tab stands for, or nil for a tab that is a control panel rather than a round
@@ -372,7 +363,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			quizDisplay.reset()
 		}
 
-		socketWriteIfConnected("vi" + round.clientView)
+		send(.showView(round))
 		resetControls(for: round, presenting: presenting)
 
 		//Whichever round we are now in needs to know who is playing
@@ -520,8 +511,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	
 	var socket = QuizWebSocket(url: URL(string: "ws://localhost:8091/")!)
 
-	func socketWriteIfConnected(_ s : String) {
-		socket.send(s)
+	/// The panels' route to the node server
+	func send(_ command: QuizCommand) {
+		socket.send(command)
 	}
 	
 	/// Routes one decoded message to whichever round or control it belongs to.
@@ -545,7 +537,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher)
 			if quizDisplay.truefalseScene.counting {
-				socketWriteIfConnected((higher ? "hh" : "hl") + String(team.number))
+				send(.higherLowerAccepted(team: team.index, higher: higher))
 			}
 
 		case .geographyGuess(let team, let x, let y):
@@ -561,7 +553,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			guard roster.isPlaying(team.index), multiChoicePanel.counting else { break }
 			if let taken = multiChoicePanel.teamGuessed(team: team.index, option: option) {
 				//If the round rejected it we wont light the tile on the client
-				socketWriteIfConnected("ms\(team.number),\(taken)")
+				send(.multiChoiceAccepted(team: team.index, option: taken))
 			}
 
 		case .textGuess(let team, let text):

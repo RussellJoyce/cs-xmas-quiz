@@ -284,10 +284,10 @@ class GeographyPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 		}
 		updatePreview()
 		currentImage = GeographyScene.startImage
-		host.socketWriteIfConnected("im" + currentImage)
+		host.send(.geographyImage(currentImage))
 	}
 
-	var clientRoundState: [String] { ["im" + currentImage] }
+	var clientRoundState: [ClientState] { [.geographyImage(currentImage)] }
 
 	@IBAction func questionSelected(_ sender: Any) {
 		updatePreview()
@@ -300,7 +300,7 @@ class GeographyPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 		}
 		host.enterRound(.geography, presenting: false)
 		currentImage = file
-		host.socketWriteIfConnected("im" + file)
+		host.send(.geographyImage(file))
 		scene.setQuestion(file: file)
 	}
 

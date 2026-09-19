@@ -148,3 +148,117 @@ enum QuizMessage: Equatable {
 		}
 	}
 }
+
+
+/// One line of the state a client is sent when it reconnects mid-round.
+/// Sent inside `QuizCommand.resync`.
+enum ClientState: Equatable {
+
+	/// "vs" — go to this round's view *without* resetting it.
+	case view(RoundType)
+
+	/// "on"/"of" — whether this team is still in
+	case playing(Bool)
+
+	/// "im" — the geography image the phones should be showing
+	case geographyImage(String)
+
+	/// "mo" — the multiple choice options, as `MultiChoiceScene` renders them
+	case multiChoiceOptions(String)
+
+	/// "ms" — the option this team has already chosen
+	case multiChoiceAnswer(Int)
+
+	/// "h2"/"h1" — true/false wording rather than higher/lower
+	case trueFalseMode(Bool)
+
+	/// "hh"/"hl"/"hn" — the answer this team has already given, or nil for none
+	case higherLowerAnswer(Bool?)
+
+	var wire: String {
+		switch self {
+		case .view(let round):            return "vs" + round.clientView
+		case .playing(let playing):       return playing ? "on" : "of"
+		case .geographyImage(let file):   return "im" + file
+		case .multiChoiceOptions(let o):  return "mo" + o
+		case .multiChoiceAnswer(let opt): return "ms\(opt)"
+		case .trueFalseMode(let tf):      return tf ? "h2" : "h1"
+		case .higherLowerAnswer(let ans):
+			guard let ans else { return "hn" }
+			return ans ? "hh" : "hl"
+		}
+	}
+}
+
+
+/// A command from the quiz software to the node server, which passes it on to the teams'
+/// phones. The counterpart to `QuizMessage`, which travels the other way.
+///
+/// Every `team` here is 0-based, as the scenes and the host's arrays count teams. The
+/// 1-based numbering the wire uses is applied in `wire` and nowhere else.
+enum QuizCommand: Equatable {
+
+	/// "ls" — ask which clients are connected. The reply arrives as `QuizMessage.clientList`.
+	case listClients
+
+	/// "vi" — put every phone on this round's view, resetting whatever was on it
+	case showView(RoundType)
+
+	/// "on"/"of" — whether a team is still in
+	case setPlaying(team: Int, playing: Bool)
+
+	/// "im" — show this geography image
+	case geographyImage(String)
+
+	/// "mo" — the multiple choice options, which also clears the last question's selection
+	case multiChoiceOptions(String)
+
+	/// "ms" — light this team's tile, the round having accepted their answer
+	case multiChoiceAccepted(team: Int, option: Int)
+
+	/// "hh"/"hl" — acknowledge a team's higher/lower answer
+	case higherLowerAccepted(team: Int, higher: Bool)
+
+	/// "h2"/"h1" — true/false wording rather than higher/lower
+	case trueFalseMode(Bool)
+
+	/// "ha" — clear the emphasis on whatever the phones are showing
+	case clearEmphasis
+
+	/// "di" — disassociate a team's device, which then has to reconnect
+	case disconnect(team: Int)
+
+	/// "wr" — start a race between two Wikipedia page ids
+	case startRace(from: Int, to: Int)
+
+	/// "we" — freeze every client and work out the standings
+	case endRace
+
+	/// "wk" — ask the server to resend one team's race state
+	case resendRaceState(team: Int)
+
+	/// "to" — one line of catch-up state, addressed to a single team
+	case resync(team: Int, state: ClientState)
+
+	var wire: String {
+		//The wire counts teams from one
+		func number(_ team: Int) -> Int { team + 1 }
+
+		switch self {
+		case .listClients:                 return "ls"
+		case .showView(let round):         return "vi" + round.clientView
+		case .setPlaying(let t, let p):    return (p ? "on" : "of") + String(number(t))
+		case .geographyImage(let file):    return "im" + file
+		case .multiChoiceOptions(let o):   return "mo" + o
+		case .multiChoiceAccepted(let t, let opt): return "ms\(number(t)),\(opt)"
+		case .higherLowerAccepted(let t, let h):   return (h ? "hh" : "hl") + String(number(t))
+		case .trueFalseMode(let tf):       return tf ? "h2" : "h1"
+		case .clearEmphasis:               return "ha"
+		case .disconnect(let t):           return "di\(number(t))"
+		case .startRace(let from, let to): return "wr\(from),\(to)"
+		case .endRace:                     return "we"
+		case .resendRaceState(let t):      return "wk\(number(t))"
+		case .resync(let t, let state):    return "to\(number(t)),\(state.wire)"
+		}
+	}
+}

@@ -388,14 +388,14 @@ class MultiChoicePanel: NSObject, RoundPanel {
 		pushOptions()
 	}
 
-	var clientRoundState: [String] { ["mo" + scene.optionsMessage] }
+	var clientRoundState: [ClientState] { [.multiChoiceOptions(scene.optionsMessage)] }
 
-	func clientTeamState(team: Int) -> [String] {
+	func clientTeamState(team: Int) -> [ClientState] {
 		let guesses = scene.teamGuesses
 		guard team < guesses.count, let option = guesses[team] else {
 			return []
 		}
-		return ["ms\(option)"]
+		return [.multiChoiceAnswer(option)]
 	}
 
 	@IBAction func optionsStepperChanged(_ sender: Any) {
@@ -420,7 +420,7 @@ class MultiChoicePanel: NSObject, RoundPanel {
 		} else {
 			//The teams' phones still show the last question's selection until they are told
 			//otherwise, and 'mo' is what clears them.
-			host.socketWriteIfConnected("mo" + scene.optionsMessage)
+			host.send(.multiChoiceOptions(scene.optionsMessage))
 			teamGuesses?.stringValue = ""
 			scene.start(sounds: sounds.state == .on)
 		}
@@ -458,7 +458,7 @@ class MultiChoicePanel: NSObject, RoundPanel {
 
 		let options = Int(optionsStepper?.intValue ?? Int32(MultiChoiceScene.defaultOptions))
 		let payload = scene.configure(options: options, style: style, timeout: timeout)
-		host.socketWriteIfConnected("mo" + payload)
+		host.send(.multiChoiceOptions(payload))
 		teamGuesses?.stringValue = ""
 		syncControls()
 	}

@@ -445,7 +445,7 @@ class WikiRacePanel: NSObject, RoundPanel {
 
 		beginClock()
 		host.pushTeamParticipation()
-		host.socketWriteIfConnected("wr\(p.start),\(p.target)")
+		host.send(.startRace(from: p.start, to: p.target))
 		refreshPath()
 		endButton.isEnabled = true
 		revealButton.isEnabled = false
@@ -453,7 +453,7 @@ class WikiRacePanel: NSObject, RoundPanel {
 
 	@IBAction func end(_ sender: Any) {
 		//The server freezes every client, works out the standings and sends them back as "wd" rows, and a "wt" trail per team
-		host.socketWriteIfConnected("we")
+		host.send(.endRace)
 		clockTimer?.invalidate()
 	}
 
