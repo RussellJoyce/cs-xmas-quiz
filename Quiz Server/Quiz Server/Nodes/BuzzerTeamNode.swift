@@ -127,20 +127,7 @@ class BuzzerTeamNode: SKNode {
 		}
 		
 		if entranceParticles {
-			//Pick a buzzer effect
-			switch(Int.random(in: 0..<4)) {
-			case 0:
-				BuzzerEffects.edgeBurst(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
-			case 1:
-				BuzzerEffects.confettiShower(at: CGPoint(x: 0, y: CGFloat(height) / 2.0), color: particleColour, parent: self)
-			case 2:
-				BuzzerEffects.shockwaveRing(at: .zero, color: particleColour, parent: self)
-			case 3:
-				BuzzerEffects.lightningCrackle(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
-			default:
-				//Default but should not execute
-				BuzzerEffects.risingEmbers(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
-			}
+			BuzzerEffects.randomEntrance(at: .zero, color: particleColour, parent: self, size: CGSize(width: width, height: height))
 		}
 		
 		if(glow != nil) {
