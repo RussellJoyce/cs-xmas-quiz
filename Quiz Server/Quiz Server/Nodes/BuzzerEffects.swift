@@ -304,7 +304,6 @@ enum BuzzerEffects {
 				let scenePoint = parent.convert(position, to: scene)
 				let backingPoint = view.convertToBacking(scene.convertPoint(toView: scenePoint))
 				bump.setValue(CIVector(x: backingPoint.x, y: backingPoint.y), forKey: kCIInputCenterKey)
-				print("bumpShockwave: scene \(scenePoint), backing \(backingPoint), drawable \(view.convertToBacking(view.bounds.size))")
 
 				restingEffects = scene.shouldEnableEffects
 				restingCentring = scene.shouldCenterFilter
@@ -338,8 +337,7 @@ enum BuzzerEffects {
 
 	// MARK: - Crack and Shatter
 
-	/// The face of the box cracks outward from an impact point, then the fragments
-	/// tip away and fall.
+	/// The face of the box cracks outward from an impact point, then the fragments tip away and fall.
 	static func crackAndShatter(
 		at position: CGPoint,
 		color: NSColor,
@@ -463,12 +461,9 @@ enum BuzzerEffects {
 
 	// MARK: - Private Helpers
 
-	/// Built once and reused: regenerating these per buzz uploads a new texture to the
-	/// GPU at exactly the moment the animation needs to be smooth.
+	/// Built once and reused
 	private static let emberTexture: SKTexture = makeEmberTexture()
 	private static let confettiTexture: SKTexture = makeConfettiTexture()
-
-	// MARK: Sparkler geometry
 
 	private static let sparkLifetime: TimeInterval = 0.5
 	private static let sparkLifetimeRange: TimeInterval = 0.3
@@ -514,8 +509,6 @@ enum BuzzerEffects {
 		emitter.particleColorBlendFactor = 1.0
 		return emitter
 	}
-
-	// MARK: Shatter geometry
 
 	private static func normalisedAngle(_ angle: CGFloat) -> CGFloat {
 		let twoPi = 2.0 * CGFloat.pi
