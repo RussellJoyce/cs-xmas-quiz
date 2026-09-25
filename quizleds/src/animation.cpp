@@ -90,7 +90,7 @@ void anim_set_anim(AnimID id, int param) {
         current_anim->start(param);
 }
 
-AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW};
+AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSWEEP2};
 
 
 //Play a buzzer animation. If animtoplay == -1 then cycles animations each buzz

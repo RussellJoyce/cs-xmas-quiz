@@ -6,7 +6,7 @@
 #define LED_PIN 13
 #define NUM_TEAMS 16
 
-//60 FPS
+//~77 FPS
 #define MILLIS_PER_FRAME 13
 
 // If true, take a few seconds on bootup in order to give time to view all boot messages

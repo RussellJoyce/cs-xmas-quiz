@@ -142,7 +142,7 @@ void network_tick() {
 	//   a01 - set animation id 1 (megamas)
 	//   axx - etc.
 	// Buzz for a team
-	//   btt - trigger a random buzzer for team id tt
+	//   btt - trigger a buzzer for team id tt
 	// Set colour
 	//   crrrgggbbb - set the string to the specified rgb colour, components are ints 0-255
 	// Set team colour
