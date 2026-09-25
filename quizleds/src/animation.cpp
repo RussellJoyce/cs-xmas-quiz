@@ -18,6 +18,7 @@ BuzzSweep buzzsweep;
 BuzzFlash buzzflash;
 BuzzCentre buzzcentre;
 BuzzRainbow buzzrainbow;
+BuzzComet buzzcomet;
 Counter counter;
 Swell swell;
 Embers embers;
@@ -78,6 +79,9 @@ void anim_set_anim(AnimID id, int param) {
         case BUZZRAINBOW:
             current_anim = &buzzrainbow;
             break;
+        case BUZZCOMET:
+            current_anim = &buzzcomet;
+            break;
         case SWELL:
             current_anim = &swell;
             break;
@@ -90,7 +94,7 @@ void anim_set_anim(AnimID id, int param) {
         current_anim->start(param);
 }
 
-AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSWEEP2};
+AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSWEEP2, BUZZCOMET};
 
 
 //Play a buzzer animation. If animtoplay == -1 then cycles animations each buzz
@@ -516,6 +520,80 @@ void BuzzRainbow::tick() {
         }
         leds.Show();
     }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+// Worked in animation order (index 0..199 left to right along the line), and only mapped
+// through ledlookup when drawn.
+
+#define COMET_FRAMES       40     // Frames for the comets to reach the centre, about half a second
+#define COMET_TAIL         0.8f   // Brightness each lit LED keeps per frame, which sets the tail length
+#define COMET_HEAD_SAT     0.3f   // The head burns nearly white...
+#define COMET_SAT_RECOVER  0.08f  // ...and regains its colour as it cools
+#define COMET_BURST_SPEED  4.0f   // LEDs per frame for the burst front after impact
+
+static float comet_b[NUM_LEDS];
+static float comet_s[NUM_LEDS];
+
+static void comet_ignite(int i) {
+    comet_b[i] = 1.0f;
+    comet_s[i] = COMET_HEAD_SAT;
+}
+
+void BuzzComet::start(int param) {
+    this->hue = team_col(param).H;
+    this->done = false;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        comet_b[i] = 0.0f;
+        comet_s[i] = 1.0f;
+    }
+    clearLEDs();
+}
+
+void BuzzComet::tick() {
+    if(done) return;
+
+    const float centre = (NUM_LEDS - 1) / 2.0f;
+
+    //Everything already lit cools: it dims, and the white of the head gives way to the team colour
+    for(int i = 0; i < NUM_LEDS; i++) {
+        comet_b[i] *= COMET_TAIL;
+        comet_s[i] += COMET_SAT_RECOVER;
+        if(comet_s[i] > 1.0f) comet_s[i] = 1.0f;
+    }
+
+    if(framenum <= COMET_FRAMES) {
+        //The comets accelerate in from both ends. Every LED passed over this frame is lit, not
+        //just the one the head lands on, so the tail has no gaps once the comets are moving fast.
+        float t0 = framenum > 0 ? (float) (framenum - 1) / COMET_FRAMES : 0.0f;
+        float t1 = (float) framenum / COMET_FRAMES;
+        int from = (int) (centre * t0 * t0);
+        int to = (int) (centre * t1 * t1);
+        for(int i = from; i <= to; i++) {
+            comet_ignite(i);
+            comet_ignite(NUM_LEDS - 1 - i);
+        }
+    } else {
+        //The burst: a white front runs out from the centre and leaves the team colour behind it
+        float r = (framenum - COMET_FRAMES) * COMET_BURST_SPEED;
+        bool settled = r > centre;
+        for(int i = 0; i < NUM_LEDS; i++) {
+            float d = fabsf(i - centre);
+            if(d <= r) {
+                if(d > r - COMET_BURST_SPEED) comet_s[i] = COMET_HEAD_SAT;
+                comet_b[i] = 1.0f;
+            }
+            if(comet_s[i] < 1.0f) settled = false;
+        }
+        //Solid team colour now, so there is nothing left to draw
+        if(settled) done = true;
+    }
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        leds.SetPixelColor(ledlookup[i], HsbColor(this->hue, comet_s[i], comet_b[i]));
+    }
+    leds.Show();
 }
 
 

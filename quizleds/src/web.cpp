@@ -137,26 +137,36 @@ void network_tick() {
 	}
 
 	//Protocol:
+	//All numbers are fixed-width decimal. Team ids tt are 0-based.
 	// Set animation
-	//   a00 - set animation id 0 (off)
-	//   a01 - set animation id 1 (megamas)
-	//   axx - etc.
+	//   a00 - off
+	//   a01 - megamas
+	//   a02 - timer twinkle
+	//   Any other id is logged and ignored.
 	// Buzz for a team
-	//   btt - trigger a buzzer for team id tt
+	//   btt - play the next buzzer animation in the rotation, ending on team tt's colour
 	// Set colour
 	//   crrrgggbbb - set the string to the specified rgb colour, components are ints 0-255
 	// Set team colour
-	//   ttt - set the string to the colour of team tt (0-based)
+	//   ttt - set the string to the colour of team tt
+	// Set animation target to a team
+	//   ett - set the fade target of every LED to team tt's hue, which animations that fade
+	//         towards their target (megamas) then pick up
 	// Colour pulse
 	//   p00 - pulse string white
 	//   p01 - pulse string red
 	//   p02 - pulse string green
+	//   Any other value pulses white.
 	// Team pulse
-	//   qtt - pulse string team colour
+	//   qtt - slow pulse of team tt's colour
+	//   qTT - where TT >= 50, quick pulse of team TT-50's colour
 	// Music levels
-	//   mlllLLLrrrRRR
+	//   mlllLLLrrrRRR - left average, left peak, right average, right peak, in LEDs (0-100).
+	//                   The right channel fills from the left end of the line, and the left
+	//                   channel from the right end.
 	// Counter
-	//   rxxx - Set the strings to the desired timer number (xxx = 0 to NUMLEDS)
+	//   rxxx - light xxx LEDs (0 to NUM_LEDS) white from the left; the rest fade out from
+	//          random colours
 
 	//Check for a command to handle
 	if(command_to_parse[0] != 0) {

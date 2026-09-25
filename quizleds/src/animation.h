@@ -15,7 +15,7 @@ public:
 };
 
 typedef enum {
-    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS
+    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS, BUZZCOMET
 } AnimID;
 
 void anim_init();
@@ -123,6 +123,16 @@ public:
 	void tick();
 private:
     HslColor col;
+};
+
+//Two comets fly in from the ends, collide in the middle, and burst out as the team colour.
+class BuzzComet : public Animation {
+public:
+    void start(int param);
+	void tick();
+private:
+    float hue;
+    bool done;
 };
 
 #endif

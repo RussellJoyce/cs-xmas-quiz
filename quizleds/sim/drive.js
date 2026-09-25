@@ -37,6 +37,8 @@ const DEMO = [
     ['b03', 2500],
     ['b04', 2500],
     ['b05', 2500],
+    ['b06', 2500],
+    ['b07', 2500],
     ['q05', 1500],   //Team pulse
     ['a02', 3000],   //Timer twinkle
     ['r000', 300],   //Counter winding up
