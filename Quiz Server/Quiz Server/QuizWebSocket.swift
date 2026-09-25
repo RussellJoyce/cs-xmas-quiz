@@ -249,6 +249,11 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lea04")
 	}
 
+	/// A string of old coloured incandescent bulbs, a few of them flashing
+	func oldChristmasLights() {
+		send("lea05")
+	}
+
 	/// Trigger a random buzzer animation for team (0-based)
 	func buzz(team: Int) {
 		if team >= 0 && team < 50 {

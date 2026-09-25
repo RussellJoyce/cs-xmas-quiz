@@ -52,6 +52,7 @@ void loop() {
 				case 'm': anim_set_anim(MEGAMAS, 0); break;
 				case 's': anim_set_anim(SWELL, 0); break;
 				case 'e': anim_set_anim(EMBERS, 0); break;
+				case 'l': anim_set_anim(OLDLIGHTS, 0); break;
 				case 'o': setLEDsNoAnim(RgbColor(0,0,0)); break;
 				case 'r': setLEDsNoAnim(RgbColor(255,0,0)); break;
 				case 'g': setLEDsNoAnim(RgbColor(0,255,0)); break;

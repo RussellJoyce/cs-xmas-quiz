@@ -15,7 +15,7 @@ public:
 };
 
 typedef enum {
-    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS, BUZZCOMET
+    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS, BUZZCOMET, OLDLIGHTS
 } AnimID;
 
 void anim_init();
@@ -60,6 +60,13 @@ public:
 
 //A mostly dark strip with a few slow warm glows rising and fading.
 class Embers : public Animation {
+public:
+	void start(int param);
+	void tick();
+};
+
+//A string of old coloured incandescent bulbs, a few of them flashers.
+class OldLights : public Animation {
 public:
 	void start(int param);
 	void tick();

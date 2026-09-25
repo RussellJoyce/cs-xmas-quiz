@@ -54,8 +54,8 @@ The layout adapts to the window: the status line and the strip are always drawn 
 and the serial pane and the footer are dropped when there is not enough height for them,
 so the display never scrolls.
 
-Keystrokes go to the firmware's own debug console in `main.cpp` (`m s e o r g b z c p = -`,
-where `s` and `e` are the two background animations),
+Keystrokes go to the firmware's own debug console in `main.cpp` (`m s e l o r g b z c p = -`,
+where `s`, `e` and `l` are the three background animations),
 because the shim's `Serial` reads the terminal. ctrl-C quits.
 
 ### Animation order vs wiring order

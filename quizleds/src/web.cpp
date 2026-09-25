@@ -144,6 +144,7 @@ void network_tick() {
 	//   a02 - timer twinkle
 	//   a03 - swell
 	//   a04 - embers
+	//   a05 - old christmas lights
 	//   Any other id is logged and ignored.
 	// Buzz for a team
 	//   btt - play the next buzzer animation in the rotation, ending on team tt's colour
@@ -196,6 +197,10 @@ void network_tick() {
 					case 4:
 						Serial.println("Anim: Embers");
 						anim_set_anim(EMBERS, 0);
+						break;
+					case 5:
+						Serial.println("Anim: Old lights");
+						anim_set_anim(OLDLIGHTS, 0);
 						break;
 					default:
 						Serial.printf("Unknown animation %d\n", animnum);

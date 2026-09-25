@@ -22,6 +22,7 @@ BuzzComet buzzcomet;
 Counter counter;
 Swell swell;
 Embers embers;
+OldLights oldlights;
 Animation* current_anim = &noanim;
 
 void anim_init() {
@@ -87,6 +88,9 @@ void anim_set_anim(AnimID id, int param) {
             break;
         case EMBERS:
             current_anim = &embers;
+            break;
+        case OLDLIGHTS:
+            current_anim = &oldlights;
             break;
     }
     framenum = 0;
@@ -674,6 +678,88 @@ void Embers::tick() {
 
     for(int i = 0; i < NUM_LEDS; i++) {
         leds.SetPixelColor(i, HsbColor(current[i].H, current[i].S, dither(current[i].B, i)));
+    }
+    leds.Show();
+}
+
+//-------------------------------------------------------------------------------------------------------
+// A string of old coloured incandescent bulbs. Worked in animation order, one bulb every
+// OLDLIGHTS_SPACING LEDs with its neighbours as a dim halo, so the gaps between bulbs show.
+// Most bulbs burn steadily; a few are flashers on their own irregular timers, and now and
+// then a loose bulb stutters. Filaments warm up quickly and cool more slowly.
+
+#define OLDLIGHTS_SPACING     4
+#define OLDLIGHTS_BULBS       (NUM_LEDS / OLDLIGHTS_SPACING)
+#define OLDLIGHTS_PEAK        0.5f    // Bulb brightness
+#define OLDLIGHTS_HALO        0.12f   // Neighbouring LEDs, as a fraction of the bulb
+#define OLDLIGHTS_SAT         0.85f   // Painted glass, not pure LED colours
+#define OLDLIGHTS_WARM        0.12f   // Brightness gained per frame by a filament switching on
+#define OLDLIGHTS_COOL        0.04f   // ...and lost per frame switching off
+#define OLDLIGHTS_FLASHERS    6       // One bulb in this many is a flasher
+#define OLDLIGHTS_STUTTER     400     // One frame in this many, on average, starts a loose bulb stuttering
+#define OLDLIGHTS_FADEIN      77      // About a second
+
+//Red, amber, green, blue, pink: the usual order on a string
+static const float OLDLIGHTS_HUES[] = {0.0f, 0.08f, 0.33f, 0.62f, 0.9f};
+#define OLDLIGHTS_NUM_HUES    (sizeof(OLDLIGHTS_HUES) / sizeof(OLDLIGHTS_HUES[0]))
+
+static float bulb_level[OLDLIGHTS_BULBS];
+static float bulb_gain[OLDLIGHTS_BULBS];     //No two bulbs are quite the same
+static bool bulb_flasher[OLDLIGHTS_BULBS];
+static bool bulb_on[OLDLIGHTS_BULBS];
+static int bulb_timer[OLDLIGHTS_BULBS];      //Frames until a flasher next switches
+static int bulb_stutter[OLDLIGHTS_BULBS];    //Frames of stuttering left
+
+void OldLights::start(int param) {
+    for(int b = 0; b < OLDLIGHTS_BULBS; b++) {
+        bulb_level[b] = 0.0f;
+        bulb_gain[b] = 0.8f + (float) random(200) / 1000.0f;
+        bulb_flasher[b] = random(OLDLIGHTS_FLASHERS) == 0;
+        bulb_on[b] = true;
+        bulb_timer[b] = random(40, 160);
+        bulb_stutter[b] = 0;
+    }
+    clearLEDs();
+}
+
+void OldLights::tick() {
+    float gain = framenum < OLDLIGHTS_FADEIN ? (float) framenum / (float) OLDLIGHTS_FADEIN : 1.0f;
+
+    if(random(OLDLIGHTS_STUTTER) == 0) {
+        int b = random(OLDLIGHTS_BULBS);
+        if(!bulb_flasher[b]) bulb_stutter[b] = random(15, 45);
+    }
+
+    for(int b = 0; b < OLDLIGHTS_BULBS; b++) {
+        //A bimetallic flasher never keeps quite the same rhythm, so each period is picked afresh
+        if(bulb_flasher[b] && --bulb_timer[b] <= 0) {
+            bulb_on[b] = !bulb_on[b];
+            bulb_timer[b] = bulb_on[b] ? random(60, 160) : random(40, 120);
+        }
+
+        bool lit = bulb_on[b];
+        if(bulb_stutter[b] > 0) {
+            bulb_stutter[b]--;
+            lit = random(3) != 0;
+        }
+
+        if(lit) {
+            bulb_level[b] += OLDLIGHTS_WARM;
+            if(bulb_level[b] > 1.0f) bulb_level[b] = 1.0f;
+        } else {
+            bulb_level[b] -= OLDLIGHTS_COOL;
+            if(bulb_level[b] < 0.0f) bulb_level[b] = 0.0f;
+        }
+    }
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        //Bulbs sit in the middle of their span, with a halo either side and the rest dark
+        int b = i / OLDLIGHTS_SPACING;
+        int offset = i % OLDLIGHTS_SPACING - OLDLIGHTS_SPACING / 2;
+        float scale = offset == 0 ? 1.0f : (offset == 1 || offset == -1) ? OLDLIGHTS_HALO : 0.0f;
+        float bright = OLDLIGHTS_PEAK * bulb_gain[b] * bulb_level[b] * scale * gain;
+        float hue = OLDLIGHTS_HUES[b % OLDLIGHTS_NUM_HUES];
+        leds.SetPixelColor(ledlookup[i], HsbColor(hue, OLDLIGHTS_SAT, dither(bright, i)));
     }
     leds.Show();
 }
