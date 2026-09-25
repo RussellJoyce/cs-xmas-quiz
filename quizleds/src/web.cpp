@@ -142,6 +142,8 @@ void network_tick() {
 	//   a00 - off
 	//   a01 - megamas
 	//   a02 - timer twinkle
+	//   a03 - swell
+	//   a04 - embers
 	//   Any other id is logged and ignored.
 	// Buzz for a team
 	//   btt - play the next buzzer animation in the rotation, ending on team tt's colour
@@ -186,6 +188,14 @@ void network_tick() {
 					case 2:
 						Serial.println("Anim: Timer twinkle");
 						anim_set_anim(TIMERTWINKLE, 0);
+						break;
+					case 3:
+						Serial.println("Anim: Swell");
+						anim_set_anim(SWELL, 0);
+						break;
+					case 4:
+						Serial.println("Anim: Embers");
+						anim_set_anim(EMBERS, 0);
 						break;
 					default:
 						Serial.printf("Unknown animation %d\n", animnum);

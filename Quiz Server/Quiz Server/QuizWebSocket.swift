@@ -239,6 +239,16 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lea02")
 	}
 
+	/// A slow, dim amber wave travelling along the strip
+	func swell() {
+		send("lea03")
+	}
+
+	/// A mostly dark strip with a few warm glows rising and fading
+	func embers() {
+		send("lea04")
+	}
+
 	/// Trigger a random buzzer animation for team (0-based)
 	func buzz(team: Int) {
 		if team >= 0 && team < 50 {
