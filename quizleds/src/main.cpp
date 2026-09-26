@@ -38,31 +38,52 @@ void loop() {
 	}
 
 	//Handle simple debug UART interface
-	static int singleled = 0;
+	static int singleled = 0; 
+	static int serial_mode = 0; //what do the number keys do. 0 = buzz, 1 = animation, 2 = team colour
+	static int target_team = 0; //what team to buzz for
 	if(Serial.available()) {
 		char c = Serial.read();
 		if(c <= '9' && c >= '0') {
-			//Trigger a specific buzz
-			anim_buzz_team(0, c - '0');
+			char num = c - '0';
+			switch (serial_mode) {
+				case 0: //Buzz
+					Serial.printf("Buzz %d\n", num);
+					anim_buzz_team(target_team, num);
+					break;
+				case 1: //Animation
+					Serial.printf("Anim %d\n", num);
+					anim_set_ambient(num);
+					break;
+				case 2: //Team colour
+					Serial.printf("TeamCol %d\n", num);
+					target_team = num;
+					break;
+			}
 		} else {
 			switch(c) {
-				case 'w':
-					print_wifi_details();
+				case 'w': print_wifi_details(); break;
+
+				case 'a': 
+					serial_mode = 1;
+					Serial.println("Mode: animation");
 					break;
+				case 'b':
+					serial_mode = 0;
+					Serial.println("Mode: buzz");
+					break;
+				case 't':
+					serial_mode = 2;
+					Serial.println("Mode: team colour");
+					break;
+
 				case 'm': anim_set_anim(MEGAMAS, 0); break;
-				case 's': anim_set_anim(SWELL, 0); break;
-				case 'e': anim_set_anim(EMBERS, 0); break;
-				case 'l': anim_set_anim(OLDLIGHTS, 0); break;
-				case 'o': setLEDsNoAnim(RgbColor(0,0,0)); break;
-				case 'r': setLEDsNoAnim(RgbColor(255,0,0)); break;
-				case 'g': setLEDsNoAnim(RgbColor(0,255,0)); break;
-				case 'b': setLEDsNoAnim(RgbColor(0,0,255)); break;
-				case 'z': anim_buzz_team(0); break;
-				case 'Z': anim_buzz_team(6); break;
-				case 'c': anim_set_anim(COUNTER, 50); break;
-				case 'C': anim_set_anim(COUNTER, random(NUM_LEDS)); break;
-				case 'p': anim_set_anim(COLOURPULSE, 0); break;
-				case 'P': anim_set_anim(COLOURPULSE, 2); break;
+				case 'z': anim_buzz_team(target_team); break;
+
+				case 'O': setLEDsNoAnim(RgbColor(0,0,0)); break;
+				case 'R': setLEDsNoAnim(RgbColor(255,0,0)); break;
+				case 'G': setLEDsNoAnim(RgbColor(0,255,0)); break;
+				case 'B': setLEDsNoAnim(RgbColor(0,0,255)); break;
+				
 				case '=':
 					singleled++;
 					if (singleled >= NUM_LEDS) singleled = NUM_LEDS - 1;

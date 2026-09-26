@@ -34,11 +34,12 @@ Faked, in `shim/`:
 | `WiFi.h` | the ESP32 WiFi class | permanently connected, so `connectWifi()` succeeds first time |
 | `esp_websocket_client.*` | the ESP-IDF websocket client | a real RFC6455 client over a POSIX socket, on its own thread, auto-reconnecting |
 | `NeoPixelBus.h` | the bus only | keeps the pixel buffer the driver would DMA out; `Show()` hands it to the renderer |
+| `freertos/*.h` | FreeRTOS queues | a thread-safe fixed-size FIFO with the same by-value copy semantics and timeouts |
 | `credentials.h` | `../src/credentials.h` | only reached on a checkout that has never built the firmware |
 
 The websocket runs on its own thread and delivers events from it, as the real client does.
-That is why `web.cpp` copies each command into `command_to_parse` and parses it later from
-`loop()`; the same race is present here, which is the point.
+That is why `web.cpp` hands each command to `loop()` through a FreeRTOS queue, which
+`shim/freertos/` provides on the host with a mutex and condition variables.
 
 ## Options
 

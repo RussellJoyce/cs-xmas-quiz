@@ -99,7 +99,14 @@ void anim_set_anim(AnimID id, int param) {
 }
 
 AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSWEEP2, BUZZCOMET};
+AnimID ambient_anims[] = {MEGAMAS, TIMERTWINKLE, SWELL, EMBERS, OLDLIGHTS};
 
+//Set the ambient animation to play
+void anim_set_ambient(unsigned int id) {
+    if(id >= 0 && id < (sizeof(ambient_anims) / sizeof(AnimID))) {
+        anim_set_anim(ambient_anims[id], 0);
+    }
+}
 
 //Play a buzzer animation. If animtoplay == -1 then cycles animations each buzz
 //If greater than the total number of anims then play one randomly

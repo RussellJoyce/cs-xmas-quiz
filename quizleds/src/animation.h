@@ -25,6 +25,7 @@ void clearLEDs();
 void setLEDs(RgbColor col);
 void setLEDsNoAnim(RgbColor col);
 void anim_buzz_team(int teamid, int animtoplay = -1);
+void anim_set_ambient(unsigned int id);
 void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak);
 void setTargetToTeam(int t);
 void setSingleLed(int num, RgbColor col);

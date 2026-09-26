@@ -9,8 +9,8 @@ so the simulator connects to the node server's LED port exactly as the board doe
 the server cannot tell the difference.
 
 As on the ESP32 the receive loop runs on its own thread, and events are delivered from
-that thread rather than from the one running loop(). That is why web.cpp copies the
-command out into command_to_parse and parses it later; the same race exists here.
+that thread rather than from the one running loop(). That is why web.cpp queues a copy of
+each command and parses it later from loop().
 */
 
 #include <stdint.h>

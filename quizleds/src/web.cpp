@@ -5,7 +5,46 @@
 #include <WebServer.h>
 #include "credentials.h"
 #include "esp_websocket_client.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/queue.h>
 #include <animation.h>
+
+
+//Protocol:
+//All numbers are fixed-width decimal. Team ids tt are 0-based.
+// Set animation
+//   a00 - off
+//   a01 - megamas
+//   a02 - timer twinkle
+//   a03 - swell
+//   a04 - embers
+//   a05 - old christmas lights
+//   Any other id is logged and ignored.
+// Buzz for a team
+//   btt - play the next buzzer animation in the rotation, ending on team tt's colour
+// Set colour
+//   crrrgggbbb - set the string to the specified rgb colour, components are ints 0-255
+// Set team colour
+//   ttt - set the string to the colour of team tt
+// Set animation target to a team
+//   ett - set the fade target of every LED to team tt's hue, which animations that fade
+//         towards their target (megamas) then pick up
+// Colour pulse
+//   p00 - pulse string white
+//   p01 - pulse string red
+//   p02 - pulse string green
+//   Any other value pulses white.
+// Team pulse
+//   qtt - slow pulse of team tt's colour
+//   qTT - where TT >= 50, quick pulse of team TT-50's colour
+// Music levels
+//   mlllLLLrrrRRR - left average, left peak, right average, right peak, in LEDs (0-100).
+//                   The right channel fills from the left end of the line, and the left
+//                   channel from the right end.
+// Counter
+//   rxxx - light xxx LEDs (0 to NUM_LEDS) white from the left; the rest fade out from
+//          random colours
+
 
 #define WIFI_SSID(n) WIFI_SSID_##n
 #define WIFI_PASS(n) WIFI_PASS_##n
@@ -13,8 +52,16 @@
 
 void connect_websocket();
 
-char command_to_parse[20] = {0};
-int command_length = 0;
+//Commands arrive on the websocket client's task and are parsed later from loop()
+#define COMMAND_MAX_LEN 64
+#define COMMAND_QUEUE_LEN 32
+
+typedef struct {
+	char data[COMMAND_MAX_LEN];
+	int length;
+} Command;
+
+static QueueHandle_t command_queue = NULL;
 
 esp_websocket_client_config_t websocket_cfg = {
 	.uri = websocket_uris[0]
@@ -27,23 +74,12 @@ void print_wifi_details() {
 }
 
 void connectWifi() {
+	if(command_queue == NULL) {
+		command_queue = xQueueCreate(COMMAND_QUEUE_LEN, sizeof(Command));
+	}
+
 	WiFi.setHostname(HOSTNAME);
 	Serial.println("Begin wifi...");
-
-	/*String wifi_ssid = "quiz";
-	String wifi_pass = "";
-	WiFi.begin(wifi_ssid, wifi_pass);
-	int connect_timeout = 28; //7 seconds
-	while (WiFi.status() != WL_CONNECTED && connect_timeout > 0) {
-		delay(250);
-		Serial.print(".");
-		connect_timeout--;
-	}
-	
-	if (WiFi.status() == WL_CONNECTED) {
-		print_wifi_details();
-		Serial.println("Wifi started");
-	}*/
 
 	int i = 0;
 	while(1) {
@@ -85,14 +121,17 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
 		//connect_websocket();
         break;
     case WEBSOCKET_EVENT_DATA:
-		//We do a quick sanity check, then copy the command out so that it can be parsed outside of the context of an interrupt
 		switch(data->op_code) {
 			case 1:
 				if(data->data_len >= 3) { //All commands are at least 3 bytes
-					if((unsigned long) data->data_len > sizeof(command_to_parse)) data->data_len = sizeof(command_to_parse);
-					memcpy(command_to_parse, data->data_ptr, data->data_len);
+					Command cmd;
+					cmd.length = data->data_len;
+					if(cmd.length > COMMAND_MAX_LEN) cmd.length = COMMAND_MAX_LEN;
+					memcpy(cmd.data, data->data_ptr, cmd.length);
+					if(xQueueSend(command_queue, &cmd, 0) != pdTRUE) {
+						Serial.printf("Command queue full, dropped %.*s\n", cmd.length, cmd.data);
+					}
 				}
-				command_length = data->data_len;
 				break;
 			case 10:
 				//keep alive ping. ignore.
@@ -136,46 +175,13 @@ void network_tick() {
 		connectWifi();
 	}
 
-	//Protocol:
-	//All numbers are fixed-width decimal. Team ids tt are 0-based.
-	// Set animation
-	//   a00 - off
-	//   a01 - megamas
-	//   a02 - timer twinkle
-	//   a03 - swell
-	//   a04 - embers
-	//   a05 - old christmas lights
-	//   Any other id is logged and ignored.
-	// Buzz for a team
-	//   btt - play the next buzzer animation in the rotation, ending on team tt's colour
-	// Set colour
-	//   crrrgggbbb - set the string to the specified rgb colour, components are ints 0-255
-	// Set team colour
-	//   ttt - set the string to the colour of team tt
-	// Set animation target to a team
-	//   ett - set the fade target of every LED to team tt's hue, which animations that fade
-	//         towards their target (megamas) then pick up
-	// Colour pulse
-	//   p00 - pulse string white
-	//   p01 - pulse string red
-	//   p02 - pulse string green
-	//   Any other value pulses white.
-	// Team pulse
-	//   qtt - slow pulse of team tt's colour
-	//   qTT - where TT >= 50, quick pulse of team TT-50's colour
-	// Music levels
-	//   mlllLLLrrrRRR - left average, left peak, right average, right peak, in LEDs (0-100).
-	//                   The right channel fills from the left end of the line, and the left
-	//                   channel from the right end.
-	// Counter
-	//   rxxx - light xxx LEDs (0 to NUM_LEDS) white from the left; the rest fade out from
-	//          random colours
-
-	//Check for a command to handle
-	if(command_to_parse[0] != 0) {
-		char *dat = (char *) command_to_parse;
+	//Handle every command that has arrived since the last tick
+	Command cmd;
+	while(command_queue != NULL && xQueueReceive(command_queue, &cmd, 0) == pdTRUE) {
+		char *dat = cmd.data;
+		int command_length = cmd.length;
 		switch(dat[0]) {
-			case 'a': {
+			case 'a': { //Set to a canned animation
 				uint8_t animnum = bytesToInt2(&dat[1]);
 				switch(animnum) {
 					case 0:
@@ -208,57 +214,57 @@ void network_tick() {
 				}
 				break;
 			}
-			case 'b': {
+			case 'b': { //A team is buzzing
 				uint8_t teamid = bytesToInt2(&dat[1]);
 				Serial.printf("Buzz %d\n", teamid);
 				anim_buzz_team(teamid);
 				break;
 			}
-			case 'c': {
+			case 'c': { //Set the string to a specific colour
 				if(command_length >= 10) {
-					uint8_t r = bytesToInt(&command_to_parse[1]);
-					uint8_t g = bytesToInt(&command_to_parse[4]);
-					uint8_t b = bytesToInt(&command_to_parse[7]);
+					uint8_t r = bytesToInt(&dat[1]);
+					uint8_t g = bytesToInt(&dat[4]);
+					uint8_t b = bytesToInt(&dat[7]);
 					setLEDsNoAnim(RgbColor(r, g, b));
 				}
 				break;
 			}
-			case 'e': {
+			case 'e': { //Set the fade target of the string to a specific team's colour
 				uint8_t teamid = bytesToInt2(&dat[1]);
 				setTargetToTeam(teamid);
 				break;
 			}
-			case 't': {
+			case 't': { //Set the string to a specific team's colour without animation
 				uint8_t teamid = bytesToInt2(&dat[1]);
 				Serial.printf("TeamCol %d\n", teamid);
 				setLEDsNoAnim(team_col(teamid));
 				break;
 			}
-			case 'p': {
+			case 'p': { //Pulse the string a specific colour
 				uint8_t param = bytesToInt2(&dat[1]);
 				Serial.printf("Pulse col %d\n", param);
 				anim_set_anim(COLOURPULSE, param);
 				break;
 			}
-			case 'q': {
+			case 'q': { //Pulse a specific team's colour
 				uint8_t param = bytesToInt2(&dat[1]);
 				Serial.printf("Pulse team %d\n", param);
 				anim_set_anim(TEAMPULSE, param);
 				break;
 			}
-			case 'm': {
+			case 'm': { //Set music levels for the left and right channels
 				if(command_length >= 13) {
-					uint8_t la = bytesToInt(&command_to_parse[1]);
-					uint8_t lp = bytesToInt(&command_to_parse[4]);
-					uint8_t ra = bytesToInt(&command_to_parse[7]);
-					uint8_t rp = bytesToInt(&command_to_parse[10]);
+					uint8_t la = bytesToInt(&dat[1]);
+					uint8_t lp = bytesToInt(&dat[4]);
+					uint8_t ra = bytesToInt(&dat[7]);
+					uint8_t rp = bytesToInt(&dat[10]);
 					set_music_levels(la, lp, ra, rp);
 				}
 				break;
 			}
-			case 'r': {
+			case 'r': { //Set the string to a counter of LEDs lit
 				if(command_length >= 4) {
-					int c = (int) bytesToInt(&command_to_parse[1]);
+					int c = (int) bytesToInt(&dat[1]);
 					anim_set_anim(COUNTER, c);
 				}
 				break;
@@ -267,9 +273,6 @@ void network_tick() {
 				Serial.printf("LED Command %c\n", dat[0]);
 				break;
 		}
-
-		command_to_parse[0] = 0;
-		command_length = 0;
 	}
 
 }
