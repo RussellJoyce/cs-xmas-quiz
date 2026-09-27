@@ -8,6 +8,7 @@ NeoPixelBus<NeoRgbFeature, NeoWs2811Method> leds(NUM_LEDS, LED_PIN);
 static HsbColor target[NUM_LEDS];
 static HsbColor current[NUM_LEDS];
 static int framenum = 0;
+int team_hue_slices = DEFAULT_TEAM_HUE_SLICES;
 
 Megamas megamas;
 TimerTwinkle timertwinkle;
@@ -152,8 +153,7 @@ void clearLEDs() {
 }
 
 HslColor team_col(int t) {
-    //Each team is 10% of the hue wheel, looping at 10.
-    return HslColor(std::fmod(0.1 * t, 1.0) , 1.0, 0.5);
+    return HslColor(std::fmod((float) t / team_hue_slices, 1.0), 1.0, 0.5);
 }
 
 

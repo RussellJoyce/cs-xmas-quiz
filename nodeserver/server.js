@@ -223,9 +223,10 @@ function startWebsocketServers(overrides) {
     });
 
     wleds.on('connection', function(ws) {
-        log.info('leds', null, null, 'LED controller connected, set to Megamas (a01)');
+        log.info('leds', null, null, 'LED controller connected, set to Megamas (a01)' +
+                 (state.lastLedTeamCount ? ' and ' + state.lastLedTeamCount : ''));
         guard(ws, 'leds');
-        safeSend(ws, 'a01'); //New leds are set to Megamas
+        state.sendLedState(ws);
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 

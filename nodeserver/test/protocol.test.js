@@ -361,6 +361,25 @@ describe('routing from the quiz software', () => {
         assert.deepStrictEqual(transport.clients, [], 'LED traffic does not reach clients');
     });
 
+    test('a new LED controller is set to Megamas with no team count until one is sent', () => {
+        const { state } = setup(0);
+        const leds = new FakeSocket('leds');
+        state.sendLedState(leds);
+        assert.deepStrictEqual(leds.sent, ['a01']);
+    });
+
+    test('the latest team count is replayed to an LED controller that connects later', () => {
+        const { state, transport } = setup(0);
+        state.handleServerMessage('len10');
+        state.handleServerMessage('leb03');
+        state.handleServerMessage('len04');
+        assert.deepStrictEqual(transport.leds, ['n10', 'b03', 'n04'], 'forwarded as normal');
+
+        const leds = new FakeSocket('leds');
+        state.sendLedState(leds);
+        assert.deepStrictEqual(leds.sent, ['a01', 'n04']);
+    });
+
     ['h1', 'h2'].forEach(cmd => {
         test(cmd + ' relabels the buttons on every client', () => {
             const { state, transport } = setup(0);

@@ -2,6 +2,7 @@
 #define SRC_ANIMATION_H_
 
 #include <NeoPixelBus.h>
+#include "settings.h"
 
 /*
 Base animation class.
@@ -29,6 +30,9 @@ void anim_set_ambient(unsigned int id);
 void set_music_levels(uint8_t leftAvg, uint8_t leftPeak, uint8_t rightAvg, uint8_t rightPeak);
 void setTargetToTeam(int t);
 void setSingleLed(int num, RgbColor col);
+
+//How many equal slices the hue wheel is cut into for team colours
+extern int team_hue_slices;
 
 HslColor team_col(int t);
 

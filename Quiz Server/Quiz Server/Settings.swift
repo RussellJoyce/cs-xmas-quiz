@@ -131,9 +131,10 @@ final class Utils {
 	}
 	
 
-	/// Hue identifying a team
+	/// Hue identifying a team: an equal slice of the wheel per team, team 0 red.
 	static func teamHue(_ team: Int) -> CGFloat {
-		return CGFloat(team % 10) / 10.0
+		let n = max(1, Settings.shared.numTeams)
+		return CGFloat(team % n) / CGFloat(n)
 	}
 
 	/// A team's identifying colour. Saturation and brightness vary with the use

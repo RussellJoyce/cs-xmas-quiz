@@ -74,12 +74,11 @@ class QuizState {
         this.wikiCorpus = (options && options.wikiCorpus) || null;
         this.wikirace = this.wikiCorpus ? new WikiRace(this.wikiCorpus, this.numTeams) : null;
         this.clients = {};
-        //Team id → false when the quiz software has knocked that team out. See rememberButtonState.
         this.buttonOn = {};
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
         this.lastMulti = DEFAULT_MULTI;
-        //Short handles for the log. 
+        this.lastLedTeamCount = null;
         this.nextHandle = 1;
     }
 
@@ -110,9 +109,7 @@ class QuizState {
                this.wikiCorpus.title(race.start) + '|' + this.wikiCorpus.title(race.target);
     }
 
-    //The quiz software's 'on'/'of' is roster state: a knocked-out team stays out across
-    //rounds until it says otherwise. It is remembered here, against the team rather than
-    //the client, because a team that is out is out whichever phone is holding it.
+    //The quiz software's 'on'/'of' stays out across rounds until it says otherwise
     rememberButtonState(team, message) {
         const code = message.slice(0,2);
         if(team && (code == 'on' || code == 'of')) {
@@ -120,15 +117,17 @@ class QuizState {
         }
     }
 
+    //What a freshly connected LED controller is sent: Megamas, and the team count if known
+    sendLedState(sock) {
+        safeSend(sock, 'a01');
+        if(this.lastLedTeamCount) safeSend(sock, this.lastLedTeamCount);
+    }
+
     //Everything a freshly connected or reconnected client needs in order to show the current state of play
     sendCurrentState(sock, team) {
         safeSend(sock, 'vi' + this.lastView);      //Forward them to the current view
         safeSend(sock, 'im' + this.lastGeoImage);  //Set the geography image
         safeSend(sock, 'mo' + this.lastMulti);     //Rebuild the multiple choice grid
-
-        //After the view, because a client repaints its buttons whenever it changes view,
-        //from its own idea of whether it is playing. This is what settles it. A team the
-        //quiz software has never spoken about is assumed to be in.
         safeSend(sock, (this.buttonOn[team] === false) ? 'of' : 'on');
 
         //A team that reconnects mid-race lands back on its own article with its route intact, rather than being sent to the start.
@@ -140,10 +139,6 @@ class QuizState {
         }
     }
 
-    //NOTE: clients are deliberately never removed. Entries in `clients` outlive their socket
-    //so that a team's identity survives a phone sleeping, wifi dropping, or the browser being
-    //backgrounded: when the same client reconnects it is recognised here and put straight back
-    //into its team and the current view. 
     //A team stays claimed until the quiz software releases it with 'di'.
     addClient(key, sock) {
         if(this.clients.hasOwnProperty(key) && this.clients[key].id != null) {
@@ -212,6 +207,7 @@ class QuizState {
                     }
                     case "le": //Set LED function
                         log.info('quiz', 'leds', 'le', message.slice(2));
+                        if(message[2] == 'n') this.lastLedTeamCount = message.slice(2);
                         this.transport.toLeds(message.slice(2));
                         break;
                     case "di": { //Disconnect client

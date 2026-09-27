@@ -367,6 +367,43 @@ function certsPresent() {
         .every(p => fs.existsSync(path.resolve(dir, '..', p)));
 }
 
+//Its own server, because the team count it sends is remembered and replayed to every LED
+//controller that connects afterwards, which would leak into the LED tests above.
+describe('the LED team count', () => {
+    let handle, ports, unmute;
+
+    before(async () => {
+        unmute = muteLogs();
+        handle = startWebsocketServers({
+            certs: testCerts(),
+            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
+        });
+        await handle.ready();
+        ports = handle.ports();
+    });
+
+    after(async () => {
+        await new Promise(resolve => handle.close(resolve));
+        unmute();
+    });
+
+    test('an LED controller that connects later is sent the team count', async () => {
+        const quiz = connectPlain(ports.server);
+        await quiz.next();
+        const early = connectPlain(ports.leds);
+        await early.next();  //'a01'
+        quiz.send('len07');
+        assert.strictEqual(await early.next(), 'n07');
+
+        const late = connectPlain(ports.leds);
+        assert.strictEqual(await late.next(), 'a01');
+        assert.strictEqual(await late.next(), 'n07');
+
+        quiz.close(); early.close(); late.close();
+    });
+});
+
 //Everything above runs with dev: true, because those tests name their clients. This block
 //is the other half: what a client can do to a server started the way a real quiz starts it.
 describe('with development mode off', () => {

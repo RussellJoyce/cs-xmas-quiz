@@ -592,6 +592,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 	func webSocketDidConnect() {
 		window?.title = "Quiz Control - connected"
+		socket.setTeamCount(Settings.shared.numTeams)
 		// Very first time we connect, activate Megamas
 		if !Settings.shared.websocketHasPreviouslyConnected {
 			socket.megamas()

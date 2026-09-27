@@ -23,8 +23,8 @@ NeoPixelBus' colour classes are also the library's own sources, compiled from
 `../.pio/libdeps`. That matters more than it looks: `Counter::tick` and
 `BuzzRainbow::tick` both round-trip a colour through the strip
 (`HsbColor c = leds.GetPixelColor(i)`), which quantises float HSB down to 8-bit RGB and
-back. The library truncates rather than rounds, so team 3 is `(50, 255, 0)` and not
-`(51, 255, 0)`; reimplementing that maths would quietly change how those animations look.
+back. The library truncates rather than rounds, so with 14 teams team 2 is `(255, 218, 0)`
+and not `(255, 219, 0)`; reimplementing that maths would quietly change how those animations look.
 
 Faked, in `shim/`:
 

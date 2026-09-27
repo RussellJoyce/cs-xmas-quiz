@@ -40,6 +40,10 @@
 //   mlllLLLrrrRRR - left average, left peak, right average, right peak, in LEDs (0-100).
 //                   The right channel fills from the left end of the line, and the left
 //                   channel from the right end.
+// Number of team colours
+//   ntt - divide the hue wheel into tt equal slices for team colours (default 14), so team t
+//         has hue t/tt and teams wrap after tt. 00 is ignored. Takes effect from the next
+//         animation or command that picks up a team colour.
 // Counter
 //   rxxx - light xxx LEDs (0 to NUM_LEDS) white from the left; the rest fade out from
 //          random colours
@@ -259,6 +263,12 @@ void network_tick() {
 					uint8_t rp = bytesToInt(&dat[10]);
 					set_music_levels(la, lp, ra, rp);
 				}
+				break;
+			}
+			case 'n': { //Set how many teams the hue wheel is shared between
+				uint8_t n = bytesToInt2(&dat[1]);
+				Serial.printf("Team hue slices %d\n", n);
+				if(n > 0) team_hue_slices = n;
 				break;
 			}
 			case 'r': { //Set the string to a counter of LEDs lit

@@ -93,6 +93,20 @@ void loop() {
 					if(singleled > 0) singleled--;
 					single_led(singleled);
 					break;
+
+				case '+':
+					if(team_hue_slices < 49) {
+						team_hue_slices++;
+						Serial.printf("Teams: %d\n", team_hue_slices);
+					}
+					break;
+				case '_':
+					if(team_hue_slices > 1) {
+						team_hue_slices--;
+						Serial.printf("Teams: %d\n", team_hue_slices);
+					}
+					break;
+
 				default:
 					Serial.print('#');
 					break;

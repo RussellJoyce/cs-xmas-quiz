@@ -4,7 +4,9 @@
 #define NUM_LEDS 200
 #define HOSTNAME "quizleds"
 #define LED_PIN 13
-#define NUM_TEAMS 16
+
+// Team colours are this many equal slices of the hue wheel until the server sends an n command
+#define DEFAULT_TEAM_HUE_SLICES 14
 
 //~77 FPS
 #define MILLIS_PER_FRAME 13

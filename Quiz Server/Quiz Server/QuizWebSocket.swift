@@ -266,6 +266,13 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lec" + String(format: "%03d", r) + String(format: "%03d", g) + String(format: "%03d", b))
 	}
 
+	/// Tell the leds how many teams to share the hue wheel between, to match Utils.teamHue
+	func setTeamCount(_ count: Int) {
+		if count >= 1 && count < 100 {
+			send("len" + String(format: "%02d", count))
+		}
+	}
+
 	/// Set leds to the colour of a specified team (0-based)
 	func setTeamColour(_ team: Int) {
 		if team >= 0 && team < 50 {
