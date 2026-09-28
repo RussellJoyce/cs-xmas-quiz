@@ -393,9 +393,16 @@ void Counter::tick() {
 
 //-------------------------------------------------------------------------------------------------------
 
+#define SWEEP_WHITE_FADE  0.03f  // Saturation gained per frame by a random pixel going from white to the team colour
+#define SWEEP_SPARKLE_LEN 10     // LEDs of sparkle running ahead of a left/right sweep
+
 void BuzzSweep::start(int param) {
     clearLEDs();
     this->col = team_col(param);
+    //Only mode 3 draws through current/target: dark in the team hue until each pixel is hit
+    for(int i = 0; i < NUM_LEDS; i++) {
+        target[i] = current[i] = HsbColor(this->col.H, 1.0, 0.0);
+    }
 }
 
 inline int clamp(int i) {
@@ -411,22 +418,48 @@ int ledlookup_clamp(int i, bool random) {
 
 void BuzzSweep::tick() {
     static const int sweep_speed = 3;
-    if(framenum < NUM_LEDS/sweep_speed + sweep_speed) {
+    static const int sweep_frames = NUM_LEDS/sweep_speed + sweep_speed;
+
+    //Random order: each pixel comes in white and fades to the team colour
+    if(mode == 3) {
+        if(framenum >= sweep_frames + (int) (1.0f / SWEEP_WHITE_FADE) + 1) return;
         for(int i = 0; i < sweep_speed; i++) {
-            switch(mode) {
-                case 1: //Sweep from left
-                    leds.SetPixelColor(ledlookup_clamp(framenum*sweep_speed+i, false), this->col);
-                    break;
-                case 2: //Sweep from right
-                    leds.SetPixelColor(ledlookup_clamp((NUM_LEDS-1)-(framenum*sweep_speed+i), false), this->col);
-                    break;
-                case 3: //random 1
-                    leds.SetPixelColor(ledlookup_clamp(framenum*sweep_speed+i, true), this->col);
-                    break;
-                default: //no lookup -> left and then right
-                    leds.SetPixelColor(clamp(framenum*sweep_speed+i), this->col);
-                    break;
+            int n = framenum*sweep_speed+i;
+            if(n < NUM_LEDS) {
+                int p = ledlookup_rand[n];
+                current[p] = HsbColor(this->col.H, 0.0, 1.0);
+                target[p] = HsbColor(this->col.H, 1.0, 1.0);
             }
+        }
+        fade_current_to_target(SWEEP_WHITE_FADE);
+        display_current();
+        return;
+    }
+
+    //Sweep from the left (1) or right (2), with a band of white sparkles running ahead of the colour
+    if(mode == 1 || mode == 2) {
+        if(framenum >= sweep_frames) return;
+        int head = framenum*sweep_speed;
+        for(int n = 0; n < NUM_LEDS; n++) {
+            int p = ledlookup[mode == 1 ? n : (NUM_LEDS-1) - n];
+            int ahead = n - head;
+            if(ahead < 0) {
+                leds.SetPixelColor(p, this->col);
+            } else if(ahead < SWEEP_SPARKLE_LEN && random(SWEEP_SPARKLE_LEN) >= ahead) {
+                //Densest right at the front, thinning out further ahead
+                leds.SetPixelColor(p, HsbColor(0.0, 0.0, 0.3 + (float) random(700) / 1000.0f));
+            } else {
+                leds.SetPixelColor(p, RgbColor(0, 0, 0));
+            }
+        }
+        leds.Show();
+        return;
+    }
+
+    //Mode 0: no lookup
+    if(framenum < sweep_frames) {
+        for(int i = 0; i < sweep_speed; i++) {
+            leds.SetPixelColor(clamp(framenum*sweep_speed+i), this->col);
         }
         leds.Show();
     }
@@ -485,9 +518,12 @@ void BuzzCentre::start(int param) {
 }
 
 void BuzzCentre::tick() {
+	//Two LEDs per frame outwards from the centre in each direction, so both ends are reached together
 	if(framenum < NUM_LEDS/4) {
         for(int i = 0; i < 2; i++) {
-            current[ledlookup_clamp(NUM_LEDS/2-(framenum*2+i), false)] = HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 1.0);
+            int d = framenum*2+i;
+            current[ledlookup_clamp(NUM_LEDS/2-1-d, false)] = HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 1.0);
+            current[ledlookup_clamp(NUM_LEDS/2+d, false)] = HsbColor(((float)rand()) / (float)RAND_MAX, 1.0, 1.0);
         }
     } else if(framenum == (NUM_LEDS/4 + 20)) {
         for(int i = 0; i < NUM_LEDS; i++) {
@@ -519,12 +555,13 @@ void BuzzRainbow::tick() {
         for(int i = 0; i < NUM_LEDS; i++) {
             HslColor cur = leds.GetPixelColor(i);
 
-            if(fabs(cur.H - this->col.H) < 0.02) {
+            float ahead = this->col.H - cur.H;  //How far forwards the target is
+            if(ahead < 0) ahead += 1.0;
+            if(ahead < 0.02 || ahead > 0.99) {
                 cur.H = this->col.H;
-            } else if(cur.H > this->col.H) {
-                cur.H -= 0.02;
             } else {
                 cur.H += 0.02;
+                if(cur.H >= 1.0) cur.H -= 1.0;
             }
 
             leds.SetPixelColor(i, cur);
