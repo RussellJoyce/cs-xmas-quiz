@@ -12,11 +12,14 @@ public:
 	Animation();
 	virtual void tick() = 0;
 	virtual void start(int param) = 0;
+	//True once a buzz animation has finished and is showing solid team colour, at which point
+	//anim_tick() hands over to TeamHold. Other animations never settle.
+	virtual bool settled() { return false; }
 	virtual ~Animation();
 };
 
 typedef enum {
-    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS, BUZZCOMET, OLDLIGHTS
+    NONE, MEGAMAS, TIMERTWINKLE, COLOURPULSE, TEAMPULSE, COUNTER, BUZZSWEEP1, BUZZSWEEP2, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, SWELL, EMBERS, BUZZCOMET, OLDLIGHTS, TEAMHOLD, BUZZSPLAT
 } AnimID;
 
 void anim_init();
@@ -106,6 +109,7 @@ class BuzzSweep : public Animation {
 public:
     void start(int param);
 	void tick();
+	bool settled();
     uint8_t mode;
 private:
     HslColor col;
@@ -115,6 +119,7 @@ class BuzzFlash : public Animation {
 public:
     void start(int param);
 	void tick();
+	bool settled();
 private:
     HslColor col;
 	HsbColor flashcol;
@@ -125,6 +130,7 @@ class BuzzCentre : public Animation {
 public:
     void start(int param);
 	void tick();
+	bool settled();
 private:
     HslColor col;
 };
@@ -133,8 +139,10 @@ class BuzzRainbow : public Animation {
 public:
     void start(int param);
 	void tick();
+	bool settled();
 private:
     HslColor col;
+    bool locked;
 };
 
 //Two comets fly in from the ends, collide in the middle, and burst out as the team colour.
@@ -142,9 +150,29 @@ class BuzzComet : public Animation {
 public:
     void start(int param);
 	void tick();
+	bool settled();
 private:
     float hue;
     bool done;
+};
+
+//Splats of colour land on the dark strip, starting well away from the team hue and converging on it.
+class BuzzSplat : public Animation {
+public:
+    void start(int param);
+	void tick();
+	bool settled();
+private:
+    float hue;
+};
+
+//Solid team colour with a gentle twinkle, which every buzz animation hands over to once settled.
+class TeamHold : public Animation {
+public:
+    void start(int param);
+	void tick();
+private:
+    float hue;
 };
 
 #endif

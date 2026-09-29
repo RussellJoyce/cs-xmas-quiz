@@ -15,6 +15,6 @@
 #define SLOW_BOOT 0
 
 // If true, do not connect to wifi
-#define OFFLINE_MODE 0
+#define OFFLINE_MODE 1
 
 #endif /* SRC_SETTINGS_H_ */

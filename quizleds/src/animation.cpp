@@ -24,13 +24,18 @@ Counter counter;
 Swell swell;
 Embers embers;
 OldLights oldlights;
+TeamHold teamhold;
+BuzzSplat buzzsplat;
 Animation* current_anim = &noanim;
+static int buzzed_team = 0;  //For the TeamHold that follows a buzz animation
 
 void anim_init() {
     leds.Begin();
 }
 
 void anim_tick() {
+    if(current_anim != 0 && current_anim->settled())
+        anim_set_anim(TEAMHOLD, buzzed_team);
     if(current_anim != 0)
         current_anim->tick();
     framenum++;
@@ -93,13 +98,20 @@ void anim_set_anim(AnimID id, int param) {
         case OLDLIGHTS:
             current_anim = &oldlights;
             break;
+        case TEAMHOLD:
+            current_anim = &teamhold;
+            break;
+        case BUZZSPLAT:
+            current_anim = &buzzsplat;
+            break;
     }
     framenum = 0;
     if(current_anim != 0)
         current_anim->start(param);
 }
-
-AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSWEEP2, BUZZCOMET};
+//                     0           1           2           3          4           5            6           7
+AnimID buzz_anims[] = {BUZZSWEEP1, BUZZSWEEP3, BUZZSWEEP4, BUZZFLASH, BUZZCENTRE, BUZZRAINBOW, BUZZSPLAT, BUZZCOMET};
+//                        0       1              2      3       4
 AnimID ambient_anims[] = {MEGAMAS, TIMERTWINKLE, SWELL, EMBERS, OLDLIGHTS};
 
 //Set the ambient animation to play
@@ -124,6 +136,7 @@ void anim_buzz_team(int teamid, int animtoplay) {
         animtoplay = random(numbuzanims);
     }
 
+    buzzed_team = teamid;
     anim_set_anim(buzz_anims[animtoplay], teamid);
 }
 
@@ -395,6 +408,9 @@ void Counter::tick() {
 
 #define SWEEP_WHITE_FADE  0.03f  // Saturation gained per frame by a random pixel going from white to the team colour
 #define SWEEP_SPARKLE_LEN 10     // LEDs of sparkle running ahead of a left/right sweep
+#define SWEEP_SPEED       3      // LEDs per frame
+#define SWEEP_FRAMES      (NUM_LEDS/SWEEP_SPEED + SWEEP_SPEED)
+#define SWEEP_FADE_FRAMES (SWEEP_FRAMES + (int) (1.0f / SWEEP_WHITE_FADE) + 1)  // Mode 3, including the last pixel's fade
 
 void BuzzSweep::start(int param) {
     clearLEDs();
@@ -416,13 +432,17 @@ int ledlookup_clamp(int i, bool random) {
     return random ? ledlookup_rand[clamped_i] : ledlookup[clamped_i];
 }
 
+bool BuzzSweep::settled() {
+    return framenum >= (mode == 3 ? SWEEP_FADE_FRAMES : SWEEP_FRAMES);
+}
+
 void BuzzSweep::tick() {
-    static const int sweep_speed = 3;
-    static const int sweep_frames = NUM_LEDS/sweep_speed + sweep_speed;
+    static const int sweep_speed = SWEEP_SPEED;
+    static const int sweep_frames = SWEEP_FRAMES;
 
     //Random order: each pixel comes in white and fades to the team colour
     if(mode == 3) {
-        if(framenum >= sweep_frames + (int) (1.0f / SWEEP_WHITE_FADE) + 1) return;
+        if(framenum >= SWEEP_FADE_FRAMES) return;
         for(int i = 0; i < sweep_speed; i++) {
             int n = framenum*sweep_speed+i;
             if(n < NUM_LEDS) {
@@ -475,9 +495,16 @@ void BuzzFlash::start(int param) {
     flashhold = 0;
 }
 
+#define FLASH_NUM  3
+#define FLASH_LEN  7
+
+bool BuzzFlash::settled() {
+    return flashnum >= FLASH_NUM && flashcol.B >= 1.0;
+}
+
 void BuzzFlash::tick() {
-    static const int numflashes = 5;
-    static const int flashlen = 7;
+    static const int numflashes = FLASH_NUM;
+    static const int flashlen = FLASH_LEN;
 
     if(flashnum >= numflashes) {
         if(flashcol.B < 1.0) {
@@ -517,6 +544,15 @@ void BuzzCentre::start(int param) {
     clearLEDs();
 }
 
+bool BuzzCentre::settled() {
+    //Settled once the final fade up to the team colour has finished everywhere
+    if(framenum <= NUM_LEDS/4 + 20) return false;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(current[i].B != target[i].B || current[i].H != target[i].H || current[i].S != target[i].S) return false;
+    }
+    return true;
+}
+
 void BuzzCentre::tick() {
 	//Two LEDs per frame outwards from the centre in each direction, so both ends are reached together
 	if(framenum < NUM_LEDS/4) {
@@ -540,6 +576,7 @@ void BuzzCentre::tick() {
 
 void BuzzRainbow::start(int param) {
     this->col = team_col(param);
+    this->locked = false;
 	clearLEDs();
 }
 
@@ -552,6 +589,7 @@ void BuzzRainbow::tick() {
         }
         leds.Show();
     } else {
+        this->locked = true;
         for(int i = 0; i < NUM_LEDS; i++) {
             HslColor cur = leds.GetPixelColor(i);
 
@@ -562,6 +600,7 @@ void BuzzRainbow::tick() {
             } else {
                 cur.H += 0.02;
                 if(cur.H >= 1.0) cur.H -= 1.0;
+                this->locked = false;
             }
 
             leds.SetPixelColor(i, cur);
@@ -570,6 +609,10 @@ void BuzzRainbow::tick() {
     }
 }
 
+
+bool BuzzRainbow::settled() {
+    return this->locked;  //Every pixel reached the team hue on the last frame
+}
 
 //-------------------------------------------------------------------------------------------------------
 // Worked in animation order (index 0..199 left to right along the line), and only mapped
@@ -597,6 +640,10 @@ void BuzzComet::start(int param) {
         comet_s[i] = 1.0f;
     }
     clearLEDs();
+}
+
+bool BuzzComet::settled() {
+    return done;
 }
 
 void BuzzComet::tick() {
@@ -640,6 +687,150 @@ void BuzzComet::tick() {
 
     for(int i = 0; i < NUM_LEDS; i++) {
         leds.SetPixelColor(ledlookup[i], HsbColor(this->hue, comet_s[i], comet_b[i]));
+    }
+    leds.Show();
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+// Splats of colour land on the dark strip until it is covered
+
+#define SPLAT_FRAMES       30      // Frames over which new splats' offsets shrink to nothing, about 0.4 seconds
+#define SPLAT_PER_FRAME    1       // New splats each frame, until the strip is covered
+#define SPLAT_RADIUS_MIN   2       // A splat covers centre +/- a radius picked in MIN..MAX
+#define SPLAT_RADIUS_MAX   7
+#define SPLAT_OFFSET       0.5f   // Largest hue offset
+#define SPLAT_DECAY        0.93f   // Each painted LED keeps this much of its offset per frame
+#define SPLAT_SNAP         0.003f  // Offsets smaller than this are done
+
+static float splat_offset[NUM_LEDS];
+static bool splat_lit[NUM_LEDS];
+
+void BuzzSplat::start(int param) {
+    this->hue = team_col(param).H;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        splat_offset[i] = 0.0f;
+        splat_lit[i] = false;
+    }
+    clearLEDs();
+}
+
+bool BuzzSplat::settled() {
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(!splat_lit[i] || splat_offset[i] != 0.0f) return false;
+    }
+    return true;
+}
+
+void BuzzSplat::tick() {
+    //Converge what is already there
+    for(int i = 0; i < NUM_LEDS; i++) {
+        splat_offset[i] *= SPLAT_DECAY;
+        if(fabsf(splat_offset[i]) < SPLAT_SNAP) splat_offset[i] = 0.0f;
+    }
+
+    bool covered = true;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(!splat_lit[i]) { covered = false; break; }
+    }
+
+    if(!covered) {
+        float spread = framenum < SPLAT_FRAMES ? 1.0f - (float) framenum / (float) SPLAT_FRAMES : 0.0f;
+        for(int s = 0; s < SPLAT_PER_FRAME; s++) {
+            //Prefer somewhere still dark, so the last gaps are not left waiting on a lucky hit
+            int c = random(NUM_LEDS);
+            for(int tries = 0; tries < 8 && splat_lit[c]; tries++) c = random(NUM_LEDS);
+
+            int r = random(SPLAT_RADIUS_MIN, SPLAT_RADIUS_MAX + 1);
+            float offset = SPLAT_OFFSET * spread * (0.7f + (float) random(300) / 1000.0f);
+            if(random(2)) offset = -offset;
+
+            for(int i = c - r; i <= c + r; i++) {
+                if(i < 0 || i >= NUM_LEDS) continue;
+                splat_offset[i] = offset;
+                splat_lit[i] = true;
+            }
+        }
+    }
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        if(!splat_lit[i]) {
+            leds.SetPixelColor(ledlookup[i], RgbColor(0, 0, 0));
+            continue;
+        }
+        float h = this->hue + splat_offset[i];
+        if(h < 0.0f) h += 1.0f;
+        if(h >= 1.0f) h -= 1.0f;
+        leds.SetPixelColor(ledlookup[i], HsbColor(h, 1.0, 1.0));
+    }
+    leds.Show();
+}
+
+//-------------------------------------------------------------------------------------------------------
+// Solid team colour with a gentle twinkle
+
+#define HOLD_FADEIN        77      // About a second to scale the variation in
+#define HOLD_DIP_EVERY     6       // Frames between new dips, giving roughly a dozen at once
+#define HOLD_DIP_MIN       0.35f   // Depth of a dip at its centre, picked in MIN..MAX
+#define HOLD_DIP_MAX       0.60f
+#define HOLD_DIP_ATTACK    0.03f   // Depth gained per frame going down, about 0.2 seconds
+#define HOLD_DIP_RELEASE   0.006f  // ...and lost per frame coming back, about a second
+#define HOLD_GLINT_EVERY   15      // One frame in this many, on average, starts a glint
+#define HOLD_GLINT_SAT     0.35f   // Saturation a glint jumps to
+#define HOLD_GLINT_SPEED   0.02f   // Saturation regained per frame, about 0.4 seconds
+
+//How much of a dip reaches the LEDs either side of its centre
+static const float HOLD_SMEAR[] = {1.0f, 0.75f, 0.4f, 0.15f};
+#define HOLD_SMEAR_RADIUS  ((int) (sizeof(HOLD_SMEAR) / sizeof(HOLD_SMEAR[0])) - 1)
+
+static float hold_dip[NUM_LEDS];         //Current depth of a dip centred here
+static float hold_dip_target[NUM_LEDS];  //Depth it is heading for; 0 once it has bottomed out
+static float hold_sat[NUM_LEDS];
+
+void TeamHold::start(int param) {
+    this->hue = team_col(param).H;
+    for(int i = 0; i < NUM_LEDS; i++) {
+        hold_dip[i] = hold_dip_target[i] = 0.0f;
+        hold_sat[i] = 1.0f;
+    }
+}
+
+void TeamHold::tick() {
+    float gain = framenum < HOLD_FADEIN ? (float) framenum / (float) HOLD_FADEIN : 1.0f;
+
+    if((framenum % HOLD_DIP_EVERY) == 0) {
+        int c = random(NUM_LEDS);
+        if(hold_dip[c] == 0.0f && hold_dip_target[c] == 0.0f) {
+            hold_dip_target[c] = HOLD_DIP_MIN + (float) random(1000) * ((HOLD_DIP_MAX - HOLD_DIP_MIN) / 1000.0f);
+        }
+    }
+    if(random(HOLD_GLINT_EVERY) == 0) {
+        hold_sat[random(NUM_LEDS)] = HOLD_GLINT_SAT;
+    }
+
+    for(int c = 0; c < NUM_LEDS; c++) {
+        if(hold_dip_target[c] > 0.0f) {
+            hold_dip[c] = fade(hold_dip_target[c], hold_dip[c], HOLD_DIP_ATTACK);
+            //Bottomed out, so release it to recover
+            if(hold_dip[c] >= hold_dip_target[c]) hold_dip_target[c] = 0.0f;
+        } else {
+            hold_dip[c] = fade(0.0f, hold_dip[c], HOLD_DIP_RELEASE);
+        }
+        hold_sat[c] = fade(1.0f, hold_sat[c], HOLD_GLINT_SPEED);
+    }
+
+    for(int i = 0; i < NUM_LEDS; i++) {
+        float dip = 0.0f;
+        for(int k = -HOLD_SMEAR_RADIUS; k <= HOLD_SMEAR_RADIUS; k++) {
+            int c = i + k;
+            if(c >= 0 && c < NUM_LEDS) dip += hold_dip[c] * HOLD_SMEAR[k < 0 ? -k : k];
+        }
+        if(dip > 1.0f) dip = 1.0f;
+
+        //Deviations from the solid colour are scaled by gain, so at the start it is exactly solid
+        float b = 1.0f - dip * gain;
+        float sat = 1.0f - (1.0f - hold_sat[i]) * gain;
+        leds.SetPixelColor(ledlookup[i], HsbColor(this->hue, sat, b));
     }
     leds.Show();
 }
