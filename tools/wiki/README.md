@@ -24,6 +24,11 @@ Turns a Kiwix ZIM into the offline article corpus the wikirace round is played o
 
 `node stage5-emit.js puzzles` regenerates just `puzzles.json`, which is quick.
 
+Articles are cut to their first 1000 words, at a paragraph boundary, so nothing in the round is a
+wall of text. The cut happens before links are collected, so the graph only has links a team can
+actually see. Set `QUIZ_MAX_WORDS` to change it (`0` ships whole articles); stages 2 and 5 must
+agree, so rerun from stage 2 after changing it.
+
 Each puzzle carries the shortest route from its start to its target, as `route` (titles, so
 the file reads on its own) and `routeIds` (article ids). That line depends only on the corpus
 and the two endpoints — nothing about a race in progress can change it — so it is worked out
@@ -35,7 +40,7 @@ through the shipped article files and that nothing shorter exists.
 
 ## Output
 
-`nodeserver/static/wiki/`, around 1.2 GB:
+`nodeserver/static/wiki/`, around 260 MB:
 
     a/<id/1000>/<id>.json    {t: title, h: html, l: [linked id, ...]}
     index.json               titles and slugs by id

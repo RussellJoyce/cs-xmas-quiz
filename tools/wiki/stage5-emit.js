@@ -17,6 +17,8 @@ const BUILD = path.join(__dirname, 'corpus', 'build');
 const OUT = path.join(__dirname, '..', '..', 'nodeserver', 'static', 'wiki');
 const WORKERS = parseInt(process.env.QUIZ_WORKERS || String(os.cpus().length), 10);
 const KEEP_INFOBOXES = process.env.QUIZ_INFOBOXES === '1';
+//Articles are cut to this many words, at a paragraph boundary. 0 ships them whole.
+const MAX_WORDS = parseInt(process.env.QUIZ_MAX_WORDS || '1000', 10);
 const SHARD = 1000;
 
 function loadCorpus() {
@@ -72,7 +74,7 @@ function runWorker(index, total) {
             continue;
         }
 
-        const rendered = renderArticle(html, canonical, { keepInfoboxes: KEEP_INFOBOXES });
+        const rendered = renderArticle(html, canonical, { keepInfoboxes: KEEP_INFOBOXES, maxWords: MAX_WORDS });
         if(!rendered) { process.send({ error: slug + ': no body' }); continue; }
 
         const links = rendered.outlinks.filter(t => t !== id);
@@ -97,7 +99,8 @@ function runWorker(index, total) {
 function runParent() {
     const corpus = loadCorpus();
     console.log('emitting ' + corpus.slugs.length.toLocaleString() + ' articles to ' + OUT);
-    console.log('infoboxes: ' + (KEEP_INFOBOXES ? 'KEPT' : 'stripped') + ', ' + WORKERS + ' workers\n');
+    console.log('infoboxes: ' + (KEEP_INFOBOXES ? 'KEPT' : 'stripped') + ', ' +
+                (MAX_WORDS ? 'cut at ' + MAX_WORDS + ' words' : 'not truncated') + ', ' + WORKERS + ' workers\n');
 
     fs.rmSync(path.join(OUT, 'a'), { recursive: true, force: true });
     fs.mkdirSync(OUT, { recursive: true });

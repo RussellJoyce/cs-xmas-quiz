@@ -99,10 +99,32 @@ function stripAttributes(root) {
     }
 }
 
+function isHeading(node) {
+    return node.tagName === 'DIV' && node.classList && node.classList.contains('mw-heading');
+}
+
+//Keeps whole top-level blocks (paragraphs, lists) while the running word count stays within
+//maxWords, so the article never ends mid-sentence. The first block with any text is always
+//kept, however long. Headings count for nothing, and any left dangling at the end go.
+function truncateWords(body, maxWords) {
+    let total = 0, started = false;
+    const keep = [];
+    for(const node of body.childNodes) {
+        const words = isHeading(node) ? 0 : node.text.split(/\s+/).filter(Boolean).length;
+        if(started && total + words > maxWords) break;
+        if(words > 0) started = true;
+        keep.push(node);
+        total += words;
+    }
+    if(keep.length === body.childNodes.length) return;
+    while(keep.length > 0 && (isHeading(keep[keep.length - 1]) || !keep[keep.length - 1].text.trim())) keep.pop();
+    body.set_content(keep);
+}
+
 //html    the article's full HTML from the ZIM
 //canonical(path) -> shipped path, or null if the link leaves the corpus
 //options.keepInfoboxes   include infoboxes (denser graph, easier round)
-//options.maxChars        truncate the body, dropping whole trailing children
+//options.maxWords        truncate the body at a block boundary after this many words
 function renderArticle(html, canonical, options) {
     const opts = options || {};
     const root = parse(html, { blockTextElements: { script: false, noscript: false, style: false } });
@@ -122,18 +144,8 @@ function renderArticle(html, canonical, options) {
 
     dropSections(body, DROP_SECTIONS);
 
-    //Truncation happens before links are collected
-    if(opts.maxChars && body.innerHTML.length > opts.maxChars) {
-        let total = 0;
-        const keep = [];
-        for(const node of body.childNodes) {
-            const len = node.toString().length;
-            if(total + len > opts.maxChars && keep.length > 0) break;
-            keep.push(node);
-            total += len;
-        }
-        body.set_content(keep);
-    }
+    //Truncation happens before links are collected, so the graph only has links a team can see
+    if(opts.maxWords) truncateWords(body, opts.maxWords);
 
     const links = rewriteLinks(body, canonical);
     stripAttributes(body);

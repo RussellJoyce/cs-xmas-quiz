@@ -12,6 +12,8 @@ const { fork } = require('child_process');
 const BUILD = path.join(__dirname, 'corpus', 'build');
 const WORKERS = parseInt(process.env.QUIZ_WORKERS || String(os.cpus().length), 10);
 const KEEP_INFOBOXES = process.env.QUIZ_INFOBOXES === '1';
+//Articles are cut to this many words, at a paragraph boundary. 0 ships them whole.
+const MAX_WORDS = parseInt(process.env.QUIZ_MAX_WORDS || '1000', 10);
 
 //---- Worker ---------------------------------------------------------------------------
 
@@ -77,7 +79,7 @@ function runWorker(index, total) {
 
         let rendered;
         try {
-            rendered = renderArticle(html, canonical, { keepInfoboxes: KEEP_INFOBOXES });
+            rendered = renderArticle(html, canonical, { keepInfoboxes: KEEP_INFOBOXES, maxWords: MAX_WORDS });
         } catch(err) {
             failed++;
             continue;
@@ -109,7 +111,8 @@ function runWorker(index, total) {
 
 function runParent() {
     console.log('rendering every article to find the real link graph');
-    console.log('infoboxes: ' + (KEEP_INFOBOXES ? 'KEPT' : 'stripped') + ', ' + WORKERS + ' workers\n');
+    console.log('infoboxes: ' + (KEEP_INFOBOXES ? 'KEPT' : 'stripped') + ', ' +
+                (MAX_WORDS ? 'cut at ' + MAX_WORDS + ' words' : 'not truncated') + ', ' + WORKERS + ' workers\n');
 
     const started = Date.now();
     const totals = { done: 0, failed: 0, links: 0, bytes: 0, stubs: 0 };
