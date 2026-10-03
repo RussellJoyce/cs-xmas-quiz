@@ -27,7 +27,10 @@ class BuzzerScene: QuizScene {
 	var lastAltBuzzIndex = 0
 	
 	private var snow1 : SKEmitterNode?
-	
+	private var bokeh : SKEmitterNode?
+	private var flare1 : SKEmitterNode?
+	private var flare2 : SKEmitterNode?
+
 	fileprivate var time: Int = 30
 	fileprivate var starttime: Int = 30
 	fileprivate var timer: Timer?
@@ -37,7 +40,22 @@ class BuzzerScene: QuizScene {
 	fileprivate var buzzPulseAction: SKAction?
 
 	override func buildScene() {
-		let filternode = addPulsableBackground(imageNamed: "red2")
+		let filternode = addPulsableBackground(texture: SKTexture(image: backgroundGradientImage(size: self.size)))
+
+		//Kept out of the pulsable background, as the pulse leaves that rasterised and would freeze them.
+		//Just under the team boxes, which also sit at 1, as sibling order is not respected.
+		bokeh = addBokehBackground(replacing: bokeh, textureName: "spark", zPosition: 0.5) {
+			$0.particleBirthRate = 12
+			$0.particleColor = NSColor(calibratedRed: 1.0, green: 0.62, blue: 0.35, alpha: 1)
+			$0.particleColorBlendFactor = 1
+			$0.particleBlendMode = .add
+		}
+		flare1 = addBokehBackground(replacing: flare1, textureName: "flare1", zPosition: 0.5) {
+			BuzzerScene.configureFlare($0)
+		}
+		flare2 = addBokehBackground(replacing: flare2, textureName: "flare2", zPosition: 0.5) {
+			BuzzerScene.configureFlare($0)
+		}
 
 		let mainAction = SKAction.run({ () -> Void in
 			self.time -= 1
@@ -66,6 +84,34 @@ class BuzzerScene: QuizScene {
 		
 	}
 	
+	private func backgroundGradientImage(size: CGSize) -> NSImage {
+		let colours = [
+			NSColor(calibratedRed: 0.96, green: 0.50, blue: 0.32, alpha: 1),
+			NSColor(calibratedRed: 0.78, green: 0.16, blue: 0.18, alpha: 1),
+			NSColor(calibratedRed: 0.32, green: 0.02, blue: 0.08, alpha: 1)
+		]
+		return radialGradientImage(size: size, colors: colours, locations: [0.0, 0.45, 1.0],
+								   centre: CGPoint(x: size.width * 0.55, y: size.height * 0.6),
+								   radius: hypot(size.width, size.height) * 0.6)
+	}
+
+	private static func configureFlare(_ flare: SKEmitterNode) {
+		flare.particleBirthRate = 0.75
+		flare.particleLifetime = 8
+		flare.particleLifetimeRange = 2
+		flare.particleScale = 0.5
+		flare.particleScaleRange = 0.5
+		flare.particleScaleSpeed = 0
+		flare.particleRotationSpeed = 0.05
+		flare.particleColor = NSColor(calibratedRed: 1.0, green: 0.85, blue: 0.75, alpha: 1)
+		flare.particleColorBlendFactor = 1
+		flare.particleBlendMode = .add
+
+		let twinkle = SKKeyframeSequence(keyframeValues: [0.0, 0.6, 0.0], times: [0.0, 0.5, 1.0])
+		twinkle.interpolationMode = .spline
+		flare.particleAlphaSequence = twinkle
+	}
+
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
 		snow1 = addSnow(replacing: snow1, emitterNamed: "SnowBackground", zPosition: 1, xOffset: -300) {

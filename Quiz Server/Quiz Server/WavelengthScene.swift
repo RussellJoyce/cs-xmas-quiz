@@ -774,14 +774,6 @@ class WavelengthScene: QuizScene {
 	//MARK: - Drawing
 	//--------------------------------------------------------------------------------------------------------------------------
 
-	private func verticalGradientImage(size: CGSize, colors: [NSColor]) -> NSImage {
-		return gradientImage(size: size,
-							 colors: colors,
-							 locations: [0.0, 1.0],
-							 start: CGPoint(x: size.width / 2, y: size.height),
-							 end: CGPoint(x: size.width / 2, y: 0))
-	}
-
 	/// The bar itself: red at 1, through orange and yellow, to green at 99. Matches the
 	/// gradient the teams see on their own sliders.
 	private func horizontalGradientImage(size: CGSize) -> NSImage {
@@ -792,23 +784,11 @@ class WavelengthScene: QuizScene {
 			NSColor(calibratedRed: 0.56, green: 0.80, blue: 0.12, alpha: 1),
 			NSColor(calibratedRed: 0.09, green: 0.75, blue: 0.29, alpha: 1)
 		]
-		return gradientImage(size: size,
-							 colors: colours,
-							 locations: [0.0, 0.25, 0.5, 0.75, 1.0],
-							 start: CGPoint(x: 0, y: size.height / 2),
-							 end: CGPoint(x: size.width, y: size.height / 2))
-	}
-
-	private func gradientImage(size: CGSize, colors: [NSColor], locations: [CGFloat], start: CGPoint, end: CGPoint) -> NSImage {
-		let image = NSImage(size: size)
-		image.lockFocus()
-		defer { image.unlockFocus() }
-		guard let context = NSGraphicsContext.current?.cgContext else { return image }
-		let cgColors = colors.map { $0.cgColor } as CFArray
-		if let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: cgColors, locations: locations) {
-			context.drawLinearGradient(gradient, start: start, end: end, options: [])
-		}
-		return image
+		return linearGradientImage(size: size,
+								   colors: colours,
+								   locations: [0.0, 0.25, 0.5, 0.75, 1.0],
+								   start: CGPoint(x: 0, y: size.height / 2),
+								   end: CGPoint(x: size.width, y: size.height / 2))
 	}
 }
 

@@ -70,68 +70,10 @@ class QuizScene: SKScene {
 	}
 
 	
-	/// Adds a full-screen background image at the centre of the scene.
-	/// - Returns: the sprite, so scenes that parent content to it can keep a reference.
-	@discardableResult
-	func addBackground(imageNamed name: String, zPosition: CGFloat = 0) -> SKSpriteNode {
-		return addBackground(SKSpriteNode(imageNamed: name), zPosition: zPosition)
-	}
-
-	/// As `addBackground(imageNamed:)`, but for a background drawn rather than loaded
-	/// (Idle2Scene renders a gradient).
-	@discardableResult
-	func addBackground(texture: SKTexture, zPosition: CGFloat = 0) -> SKSpriteNode {
-		return addBackground(SKSpriteNode(texture: texture), zPosition: zPosition)
-	}
-
-	@discardableResult
-	private func addBackground(_ sprite: SKSpriteNode, zPosition: CGFloat) -> SKSpriteNode {
-		sprite.zPosition = zPosition
-		sprite.position = self.centrePoint
-		sprite.size = self.size
-		self.addChild(sprite)
-		return sprite
-	}
-
-
-	/// Adds a full-screen background image wrapped in an `SKEffectNode` carrying a
-	/// `CIExposureAdjust` filter, so the background can be flashed by animating
-	/// `inputEV` (see `Utils.createFilterPulse`).
-	/// - Parameters:
-	///   - initialEV: starting exposure. 0 leaves the image as-is; TimerScene uses 1
-	///     to brighten its background permanently.
-	///   - shouldRasterize: rasterise the effect node up front. `createFilterPulse`
-	///     toggles this around each pulse regardless.
-	/// - Returns: the effect node, which is what scenes run the pulse action on.
-	@discardableResult
-	func addPulsableBackground(imageNamed name: String,
-							   initialEV: Double = 0,
-							   shouldRasterize: Bool = false,
-							   zPosition: CGFloat = 0) -> SKEffectNode {
-		let bgImage = SKSpriteNode(imageNamed: name)
-		bgImage.zPosition = zPosition
-		bgImage.position = self.centrePoint
-		bgImage.size = self.size
-
-		let effect = SKEffectNode()
-		let exfilter = CIFilter(name: "CIExposureAdjust")
-		exfilter?.setDefaults()
-		exfilter?.setValue(initialEV, forKey: "inputEV")
-		effect.filter = exfilter
-		effect.shouldRasterize = shouldRasterize
-		effect.shouldEnableEffects = initialEV != 0
-		effect.addChild(bgImage)
-		self.addChild(effect)
-
-		backgroundEffect = effect
-		return effect
-	}
-
-
-	/// Works out where the team boxes go for the rounds that show every team at once:
-	/// two columns either side of the centre line, filling the left column from the top
-	/// down and then the right. Boxes shrink once there are more than ten teams.
-	/// - Parameter xOffset: distance of each column from the centre line.
+	
+	// MARK: - Geometry
+	
+	/// Works out where the team boxes go for the rounds that show every team at once
 	func teamGridLayout(xOffset: CGFloat = 500) -> TeamGridLayout {
 		let numTeams = Settings.shared.numTeams
 		let halfway = Int((Double(numTeams) / 2).rounded(.up))
@@ -154,15 +96,6 @@ class QuizScene: SKScene {
 
 
 	/// Works out where the team boxes go for the rounds that give each team a small box
-	/// rather than a wide one: a centred grid of near-square cells, filled left to right
-	/// and top to bottom, sized to whatever space the caller has left over.
-	///
-	/// Unlike `teamGridLayout`, the number of columns follows the number of teams, so
-	/// fourteen teams get 5x3 rather than a pair of long columns.
-	/// - Parameters:
-	///   - top: y of the top edge of the grid.
-	///   - bottom: y of the bottom edge, leaving room for whatever sits below it.
-	///   - sideMargin: space kept clear at each side of the scene.
 	func teamSquareGridLayout(top: CGFloat, bottom: CGFloat, sideMargin: CGFloat = 120) -> TeamGridLayout {
 		let numTeams = max(1, Settings.shared.numTeams)
 
@@ -205,8 +138,79 @@ class QuizScene: SKScene {
 		return TeamGridLayout(boxWidth: boxWidth, boxHeight: boxHeight,
 							  fontSize: fontSize, positions: positions)
 	}
+	
+	
+	// MARK: - Backgrounds
+	
+	/// Adds a full-screen background image at the centre of the scene.
+	/// - Returns: the sprite, so scenes that parent content to it can keep a reference.
+	@discardableResult
+	func addBackground(imageNamed name: String, zPosition: CGFloat = 0) -> SKSpriteNode {
+		return addBackground(SKSpriteNode(imageNamed: name), zPosition: zPosition)
+	}
+
+	/// As `addBackground(imageNamed:)`, but for a background drawn rather than loaded
+	/// (Idle2Scene renders a gradient).
+	@discardableResult
+	func addBackground(texture: SKTexture, zPosition: CGFloat = 0) -> SKSpriteNode {
+		return addBackground(SKSpriteNode(texture: texture), zPosition: zPosition)
+	}
+
+	@discardableResult
+	private func addBackground(_ sprite: SKSpriteNode, zPosition: CGFloat) -> SKSpriteNode {
+		sprite.zPosition = zPosition
+		sprite.position = self.centrePoint
+		sprite.size = self.size
+		self.addChild(sprite)
+		return sprite
+	}
 
 
+	/// Adds a full-screen background image wrapped in an `SKEffectNode` carrying a
+	/// `CIExposureAdjust` filter, so the background can be flashed by animating
+	/// `inputEV` (see `Utils.createFilterPulse`).
+	/// - Parameters:
+	///   - initialEV: starting exposure. 0 leaves the image as-is; TimerScene uses 1 to brighten its background permanently.
+	///   - shouldRasterize: rasterise the effect node up front. `createFilterPulse` toggles this  regardless.
+	/// - Returns: the effect node
+	@discardableResult
+	func addPulsableBackground(imageNamed name: String,
+							   initialEV: Double = 0,
+							   shouldRasterize: Bool = false,
+							   zPosition: CGFloat = 0) -> SKEffectNode {
+		return addPulsableBackground(texture: SKTexture(imageNamed: name), initialEV: initialEV,
+									 shouldRasterize: shouldRasterize, zPosition: zPosition)
+	}
+
+	/// As `addPulsableBackground(imageNamed:)`, but for a texture
+	@discardableResult
+	func addPulsableBackground(texture: SKTexture,
+							   initialEV: Double = 0,
+							   shouldRasterize: Bool = false,
+							   zPosition: CGFloat = 0) -> SKEffectNode {
+		let bgImage = SKSpriteNode(texture: texture)
+		bgImage.zPosition = zPosition
+		bgImage.position = self.centrePoint
+		bgImage.size = self.size
+
+		let effect = SKEffectNode()
+		let exfilter = CIFilter(name: "CIExposureAdjust")
+		exfilter?.setDefaults()
+		exfilter?.setValue(initialEV, forKey: "inputEV")
+		effect.filter = exfilter
+		effect.shouldRasterize = shouldRasterize
+		effect.shouldEnableEffects = initialEV != 0
+		effect.addChild(bgImage)
+		self.addChild(effect)
+
+		backgroundEffect = effect
+		return effect
+	}
+
+
+	// MARK: - Particles and particle accessories
+	
+	
 	/// Adds a wide emitter along the top edge of the scene, pre-simulated so that it is
 	/// already falling across the screen the moment the round appears.
 	///
@@ -240,7 +244,8 @@ class QuizScene: SKScene {
 							textureName: String,
 							zPosition: CGFloat,
 							particleSpeedRange: CGFloat = 10,
-							preSimulate: TimeInterval = 8) -> SKEmitterNode?
+							preSimulate: TimeInterval = 8,
+							configure: ((SKEmitterNode) -> Void)? = nil) -> SKEmitterNode?
 	{
 		existing?.removeFromParent()
 		
@@ -263,10 +268,51 @@ class QuizScene: SKScene {
 		let fade = SKKeyframeSequence(keyframeValues: [0.0, 0.3, 0.0], times: [0.0, 0.5, 1.0])
 		fade.interpolationMode = .spline
 		bok.particleAlphaSequence = fade
-		
+
+		configure?(bok)
 		bok.advanceSimulationTime(preSimulate)
 		self.addChild(bok)
 		return bok
+	}
+
+
+
+	//MARK: - Gradients
+
+	func verticalGradientImage(size: CGSize, colors: [NSColor], locations: [CGFloat]? = nil) -> NSImage {
+		return linearGradientImage(size: size, colors: colors, locations: locations,
+								   start: CGPoint(x: size.width / 2, y: size.height),
+								   end: CGPoint(x: size.width / 2, y: 0))
+	}
+
+	func linearGradientImage(size: CGSize, colors: [NSColor], locations: [CGFloat]? = nil,
+							 start: CGPoint, end: CGPoint) -> NSImage {
+		return drawGradient(size: size, colors: colors, locations: locations) { context, gradient in
+			context.drawLinearGradient(gradient, start: start, end: end, options: [])
+		}
+	}
+
+	func radialGradientImage(size: CGSize, colors: [NSColor], locations: [CGFloat]? = nil,
+							 centre: CGPoint, radius: CGFloat) -> NSImage {
+		return drawGradient(size: size, colors: colors, locations: locations) { context, gradient in
+			context.drawRadialGradient(gradient, startCenter: centre, startRadius: 0, endCenter: centre,
+									   endRadius: radius, options: [.drawsAfterEndLocation])
+		}
+	}
+
+	private func drawGradient(size: CGSize, colors: [NSColor], locations: [CGFloat]?,
+							  draw: (CGContext, CGGradient) -> Void) -> NSImage {
+		let image = NSImage(size: size)
+		image.lockFocus()
+		defer { image.unlockFocus() }
+		guard let context = NSGraphicsContext.current?.cgContext,
+			  let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
+										colors: colors.map { $0.cgColor } as CFArray,
+										locations: locations) else {
+			return image
+		}
+		draw(context, gradient)
+		return image
 	}
 }
 

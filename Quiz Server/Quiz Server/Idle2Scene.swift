@@ -340,23 +340,6 @@ class Idle2Scene: QuizScene {
 		lastUpdateTime = 0
 	}
 	
-	func verticalGradientImage(size: CGSize, colors: [NSColor]) -> NSImage {
-		let image = NSImage(size: size)
-		image.lockFocus()
-		guard let context = NSGraphicsContext.current?.cgContext else { return image }
-		let colorSpace = CGColorSpaceCreateDeviceRGB()
-		let cgColors = colors.map { $0.cgColor } as CFArray
-		let gradient = CGGradient(colorsSpace: colorSpace, colors: cgColors, locations: [0.0, 1.0])!
-		context.drawLinearGradient(
-			gradient,
-			start: CGPoint(x: size.width/2, y: size.height),
-			end: CGPoint(x: size.width/2, y: 0),
-			options: []
-		)
-		image.unlockFocus()
-		return image
-	}
-	
 	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
 		snowmojis[team % snowmojis.count].particleBirthRate = 20
 		QuizWebSocket.shared?.setTargetTeam(team)
