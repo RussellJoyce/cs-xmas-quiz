@@ -11,7 +11,8 @@ import Cocoa
 /// What sort of thing snow is settling on, which decides how the snow behaves on it and
 /// how it is shed.
 enum SnowCatcherKind {
-	case letter, tree, house, floor
+	/// `branch` is a ledge across the front of a tree (see `SnowShape.ledges`)
+	case letter, tree, house, floor, branch
 
 	/// Snow this thin stays put however steep the surface beneath it
 	var stick: CGFloat {
@@ -19,6 +20,7 @@ enum SnowCatcherKind {
 		case .letter, .floor: return 1.2
 		case .tree: return 6
 		case .house: return 9
+		case .branch: return 2
 		}
 	}
 
@@ -29,6 +31,7 @@ enum SnowCatcherKind {
 		case .letter, .floor: return 0
 		case .tree: return 0.9
 		case .house: return 0.7
+		case .branch: return 0.5
 		}
 	}
 
@@ -39,6 +42,7 @@ enum SnowCatcherKind {
 		case .tree: return 16
 		case .house: return 24
 		case .floor: return 30
+		case .branch: return 8
 		}
 	}
 
@@ -59,6 +63,9 @@ struct SnowShape {
 	var smoke: CGPoint? = nil
 	/// Fairy light bulbs, which the scene sets twinkling
 	var lights: [(point: CGPoint, colour: CGColor)] = []
+	/// Branches across the front of the shape, each a line of points left to right. Snow
+	/// can settle on these as well as on the outline, giving a tree depth.
+	var ledges: [[CGPoint]] = []
 }
 
 
@@ -253,13 +260,14 @@ enum SnowScenery {
 			placements.append(Placement(shape: shape, origin: CGPoint(x: cx * w - width * s / 2, y: line), zPosition: 8))
 		}
 
-		for (cx, height) in [(0.200, 175), (0.330, 150), (0.455, 135), (0.590, 185), (0.720, 145), (0.855, 190)] as [(CGFloat, CGFloat)] {
+		for (cx, height) in [(0.200, 175), (0.330, 150), (0.455, 135), (0.590, 185), (0.720, 145)] as [(CGFloat, CGFloat)] {
 			let shape = pine(height: height * s, light: rgb(0.10, 0.30, 0.27), dark: rgb(0.06, 0.21, 0.20))
 			placements.append(Placement(shape: shape, origin: CGPoint(x: cx * w, y: line - 6 * s), zPosition: 9))
 		}
 
 		for (cx, height) in [(0.05, 0.58), (0.955, 0.62)] as [(CGFloat, CGFloat)] {
-			let shape = pine(height: height * h, light: rgb(0.06, 0.20, 0.19), dark: rgb(0.03, 0.13, 0.14))
+			let shape = pine(height: height * h, light: rgb(0.06, 0.20, 0.19), dark: rgb(0.03, 0.13, 0.14),
+							 branches: rgb(0.08, 0.25, 0.23))
 			placements.append(Placement(shape: shape, origin: CGPoint(x: cx * w, y: -0.03 * h), zPosition: 12))
 		}
 		return placements
@@ -465,8 +473,10 @@ enum SnowScenery {
 	}
 
 	/// A pine, its trunk's foot at the origin: four tiers of branches, narrowing upwards,
-	/// each with a curved hem and shaded on its right.
-	static func pine(height h: CGFloat, light: CGColor, dark: CGColor) -> SnowShape {
+	/// each with a curved hem and shaded on its right. Given a `branches` colour, it also has
+	/// branches reaching out of each tier towards us, drawn in that colour, for snow to
+	/// settle on across the front of the tree.
+	static func pine(height h: CGFloat, light: CGColor, dark: CGColor, branches: CGColor? = nil) -> SnowShape {
 		let stem = CGPath(rect: CGRect(x: -0.035 * h, y: 0, width: 0.07 * h, height: 0.16 * h), transform: nil)
 
 		let tiers = 4
@@ -485,11 +495,50 @@ enum SnowScenery {
 			tierPaths.append(tier)
 		}
 
+		//Each tier's branches sit in the band of it left showing below the tier above, clear
+		//of the hem above and below. Two to four to a tier, placed at random but never on
+		//top of one another, and each its own length, droop and tilt, so that no two trees,
+		//or tiers, look alike. Drooping at the ends, each gathers snow in the middle and
+		//thins out towards the tips.
+		var ledgesByTier = [[[CGPoint]]](repeating: [], count: tiers)
+		if branches != nil {
+			var random = SeededRandom(seed: UInt64(h))
+			for i in 0..<tiers {
+				let base = 0.08 * h + CGFloat(i) * step
+				let halfWidth = 0.36 * h * (1 - CGFloat(i) * 0.21)
+				let widthAt = { (y: CGFloat) in halfWidth * (1 - (y - base) / tierH) }
+				let band = (base + 0.055 * h)...(base + step - 0.03 * h)
+				let wanted = Int.random(in: (i == tiers - 1 ? 2...3 : 2...4), using: &random)
+
+				var placed = [(y: CGFloat, from: CGFloat, to: CGFloat)]()
+				for _ in 0..<40 where placed.count < wanted {
+					let y = CGFloat.random(in: band, using: &random)
+					let reach = 0.88 * widthAt(y)
+					let length = widthAt(y) * CGFloat.random(in: 0.45...1.0, using: &random)
+					let slack = max(0, reach - length / 2)
+					let centre = CGFloat.random(in: -slack...slack, using: &random)
+					let from = centre - length / 2, to = centre + length / 2
+					let clashes = placed.contains { other in
+						abs(other.y - y) < 0.045 * h && from < other.to + 6 && to > other.from - 6
+					}
+					if !clashes {
+						placed.append((y, from, to))
+					}
+				}
+				for p in placed {
+					let length = p.to - p.from
+					ledgesByTier[i].append(ledge(from: p.from, to: p.to, at: p.y,
+												 droop: length * CGFloat.random(in: 0.06...0.18, using: &random),
+												 tilt: length * CGFloat.random(in: -0.06...0.06, using: &random)))
+				}
+			}
+		}
+
 		let draw = { (context: CGContext) in
 			context.setFillColor(trunk)
 			context.addPath(stem)
 			context.fillPath()
-			for tier in tierPaths {
+			for (i, tier) in tierPaths.enumerated() {
 				context.saveGState()
 				context.addPath(tier)
 				context.clip()
@@ -500,9 +549,44 @@ enum SnowScenery {
 				shade.origin.x = 0
 				context.fill(shade)
 				context.restoreGState()
+
+				//This tier's branches, before the tier above is drawn over their roots
+				if let branches = branches {
+					context.setFillColor(branches)
+					for line in ledgesByTier[i] {
+						//Longer branches are sturdier
+						let length = line.last!.x - line.first!.x
+						context.addPath(branch(under: line, thickness: min(0.03 * h, 0.01 * h + 0.05 * length)))
+						context.fillPath()
+					}
+				}
 			}
 		}
-		return SnowShape(kind: .tree, parts: [stem] + tierPaths, draw: draw)
+		return SnowShape(kind: .tree, parts: [stem] + tierPaths, draw: draw, ledges: ledgesByTier.flatMap { $0 })
+	}
+
+	/// A drooping line of points from `from` to `to`, at `y` in the middle, falling `droop`
+	/// towards each end, with the right end `tilt` higher than the left
+	private static func ledge(from: CGFloat, to: CGFloat, at y: CGFloat, droop: CGFloat, tilt: CGFloat) -> [CGPoint] {
+		let half = (to - from) / 2
+		let middle = from + half
+		return stride(from: from, through: to, by: 4).map { x in
+			let u = (x - middle) / half
+			return CGPoint(x: x, y: y - droop * u * u + tilt * u / 2)
+		}
+	}
+
+	/// The branch a ledge rests on: a band hanging below the line, thickest in the middle
+	private static func branch(under line: [CGPoint], thickness: CGFloat) -> CGPath {
+		let path = CGMutablePath()
+		path.addLines(between: line)
+		let first = line.first!.x, span = line.last!.x - first
+		for p in line.reversed() {
+			let u = (p.x - first) / span * 2 - 1
+			path.addLine(to: CGPoint(x: p.x, y: p.y - thickness * (1 - u * u * 0.7)))
+		}
+		path.closeSubpath()
+		return path
 	}
 
 

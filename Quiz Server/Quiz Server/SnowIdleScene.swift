@@ -72,6 +72,10 @@ class SnowIdleScene: QuizScene {
 	/// A step down this big within a letter counts as an edge, not a slope
 	fileprivate static let dropThreshold: CGFloat = 6
 
+	/// The chance that a flake crossing a branch across the front of a tree settles on it,
+	/// rather than passing in front of or behind it
+	private static let ledgeCatchChance: CGFloat = 0.3
+
 	/// Above this many live clumps, a cap breaking up makes powder only, to bound the physics
 	private static let maxClumps = 2000
 
@@ -220,6 +224,14 @@ class SnowIdleScene: QuizScene {
 			self.addChild(catcher.node)
 			scenery.append(catcher)
 
+			for line in catcher.ledgeLines {
+				let ledge = SnowCatcher(ledge: line, of: catcher, catchChance: SnowIdleScene.ledgeCatchChance)
+				ledge.node.zPosition = 3
+				catcher.node.addChild(ledge.node)
+				catcher.ledges.append(ledge)
+				scenery.append(ledge)
+			}
+
 			if let chimney = catcher.smokePoint {
 				addSmoke(at: catcher.node.convert(chimney, to: self), zPosition: placement.zPosition - 0.5)
 			}
@@ -277,14 +289,14 @@ class SnowIdleScene: QuizScene {
 		let colW = SnowIdleScene.colW
 		catchersByStrip = [[Int]](repeating: [], count: Int(self.size.width / colW) + 1)
 		for (index, catcher) in catchers.enumerated() {
-			let from = max(0, Int((catcher.node.position.x + catcher.left) / colW))
-			let to = min(catchersByStrip.count - 1, Int((catcher.node.position.x - catcher.left) / colW))
+			let from = max(0, Int((catcher.origin.x + catcher.left) / colW))
+			let to = min(catchersByStrip.count - 1, Int((catcher.origin.x - catcher.left) / colW))
 			guard from <= to else { continue }
 			for strip in from...to {
 				catchersByStrip[strip].append(index)
 			}
 		}
-		let top = catchers.map { $0.node.position.y + $0.topY }.max() ?? 0
+		let top = catchers.map { $0.origin.y + $0.topY }.max() ?? 0
 		//Down to the floor, which flakes can land on anywhere
 		landingBand = -10...(top + 150)
 	}
@@ -465,8 +477,10 @@ class SnowIdleScene: QuizScene {
 		for index in catchersByStrip[strip] {
 			let letter = catchers[index]
 			guard !letter.sloughing, let col = letter.column(atSceneX: to.x) else { continue }
-			let surface = letter.node.position.y + letter.ground[col] + letter.depth[col]
-			if from.y >= surface && to.y <= surface && surface > (best?.surface ?? -.infinity) {
+			let surface = letter.origin.y + letter.ground[col] + letter.depth[col]
+			guard from.y >= surface && to.y <= surface && surface > (best?.surface ?? -.infinity) else { continue }
+			//A branch only catches some of what crosses it; the rest falls past
+			if letter.catchChance >= 1 || CGFloat.random(in: 0..<1) < letter.catchChance {
 				best = (letter, col, surface)
 			}
 		}
@@ -487,6 +501,12 @@ class SnowIdleScene: QuizScene {
 	/// Breaks a letter's cap into physics clumps and moves the letter to shed them: a tilt
 	/// they slide off under their own weight, or a shake that throws them when `kicked`.
 	private func slough(_ letter: SnowCatcher, kicked: Bool) {
+		//A branch too heavy with snow shakes its whole tree
+		if let tree = letter.parentCatcher {
+			letter.sloughPending = false
+			slough(tree, kicked: kicked)
+			return
+		}
 		guard !letter.sloughing else { return }
 		letter.sloughing = true
 		letter.sloughPending = false
@@ -549,9 +569,30 @@ class SnowIdleScene: QuizScene {
 			back.timingMode = .easeInEaseOut
 			motion = SKAction.sequence([tilt, SKAction.wait(forDuration: 0.6), back])
 		}
+		for ledge in letter.ledges {
+			shed(ledge, side: side, kicked: kicked)
+		}
 		letter.node.run(motion) { [weak letter] in
 			letter?.sloughing = false
+			letter?.ledges.forEach { $0.sloughing = false }
 		}
+	}
+
+	/// A branch's snow comes off as falling flakes, not physics clumps: it lies inside its
+	/// tree's outline, where a clump would start out stuck inside a solid body.
+	private func shed(_ ledge: SnowCatcher, side: CGFloat, kicked: Bool) {
+		ledge.sloughing = true
+		ledge.sloughPending = false
+		for (point, volume) in ledge.flakePieces(volume: tuning.flakeVolume, limit: 40) {
+			let velocity = kicked
+				? CGVector(dx: CGFloat.random(in: -60...60), dy: CGFloat.random(in: 20...100))
+				: CGVector(dx: side * CGFloat.random(in: 15...45), dy: -5)
+			addFlake(at: ledge.node.convert(point, to: self), volume: volume, falling: velocity)
+		}
+		let ghost = ledge.capGhost()
+		ledge.node.addChild(ghost)
+		ghost.run(SKAction.sequence([SKAction.fadeOut(withDuration: 0.25), SKAction.removeFromParent()]))
+		ledge.shed()
 	}
 
 	private func addClump(_ piece: SnowCatcher.Piece, at point: CGPoint, velocity: CGVector) {
@@ -672,9 +713,10 @@ class SnowIdleScene: QuizScene {
 
 	private func absorb(_ clump: Clump) -> Bool {
 		let p = clump.node.position
-		for letter in catchers where !letter.sloughing {
+		//Clumps fall in front of the branches, so only come to rest on solid things
+		for letter in catchers where !letter.sloughing && letter.catchChance >= 1 {
 			guard let col = letter.column(atSceneX: p.x) else { continue }
-			let surface = letter.node.position.y + letter.ground[col] + letter.depth[col]
+			let surface = letter.origin.y + letter.ground[col] + letter.depth[col]
 			if abs((p.y - clump.radius) - surface) < clump.radius * 1.5 {
 				letter.deposit(.pi * clump.radius * clump.radius, at: col, spread: Int(clump.radius / SnowIdleScene.colW))
 				return true
@@ -729,6 +771,21 @@ private final class SnowCatcher {
 	let smokePoint: CGPoint?
 	/// Its fairy lights, in node space
 	let lights: [(point: CGPoint, colour: CGColor)]
+	/// Its branches' lines, in node space, from which the scene makes `ledges`
+	let ledgeLines: [[CGPoint]]
+	/// The catchers along its branches, whose nodes are children of this one
+	var ledges = [SnowCatcher]()
+	/// For a branch, the tree it belongs to
+	private(set) weak var parentCatcher: SnowCatcher?
+	/// The chance that a flake crossing its surface settles on it: 1 for anything solid
+	let catchChance: CGFloat
+
+	/// Where the node is in the scene, while it stands upright. A branch's node is its
+	/// tree's child, so it is offset from the tree's.
+	var origin: CGPoint {
+		guard let tree = parentCatcher else { return node.position }
+		return CGPoint(x: tree.node.position.x + node.position.x, y: tree.node.position.y + node.position.y)
+	}
 	/// Where the node rests, so that a shake cut short cannot leave it out of place
 	let home: CGPoint
 	let width: CGFloat
@@ -774,6 +831,8 @@ private final class SnowCatcher {
 		let toNode = CGAffineTransform(translationX: -bounds.midX, y: -(bounds.minY - pad))
 		smokePoint = shape.smoke?.applying(toNode)
 		lights = shape.lights.map { ($0.point.applying(toNode), $0.colour) }
+		ledgeLines = shape.ledges.map { line in line.map { $0.applying(toNode) } }
+		catchChance = 1
 
 		//The shape as it is drawn, and a plain silhouette for the physics outline and the
 		//height map. Both are twice the shape's height with the shape in the top half, so
@@ -835,6 +894,8 @@ private final class SnowCatcher {
 		kind = .floor
 		smokePoint = nil
 		lights = []
+		ledgeLines = []
+		catchChance = 1
 		let cols = Int(ceil(floorWidth / SnowIdleScene.colW))
 		width = CGFloat(cols) * SnowIdleScene.colW
 		left = -width / 2
@@ -848,6 +909,47 @@ private final class SnowCatcher {
 		spill = [CGFloat](repeating: 0, count: cols)
 		//A drift is a much bigger expanse of white than a cap, so it is shaded towards the bottom
 		setUpCap(fill: SKTexture(cgImage: SnowCatcher.driftShading()))
+	}
+
+	/// A branch across the front of `tree`: just a surface, from a line of points in the
+	/// tree's node space, with nothing of its own to draw but its snow. Its node goes in
+	/// the tree's.
+	init(ledge line: [CGPoint], of tree: SnowCatcher, catchChance: CGFloat) {
+		index = -1
+		kind = .branch
+		smokePoint = nil
+		lights = []
+		ledgeLines = []
+		self.catchChance = catchChance
+		parentCatcher = tree
+
+		let colW = SnowIdleScene.colW
+		let minX = line.first!.x, maxX = line.last!.x
+		let cols = max(1, Int(ceil((maxX - minX) / colW)))
+		width = CGFloat(cols) * colW
+		left = -width / 2
+		home = CGPoint(x: minX + width / 2, y: 0)
+		node = SKSpriteNode(color: .clear, size: .zero)
+		node.position = home
+
+		//The line's height at the middle of each column
+		var ground = [CGFloat](repeating: 0, count: cols)
+		var segment = 0
+		for c in 0..<cols {
+			let x = minX + (CGFloat(c) + 0.5) * colW
+			while segment < line.count - 2 && line[segment + 1].x < x {
+				segment += 1
+			}
+			let a = line[segment], b = line[min(segment + 1, line.count - 1)]
+			let t = b.x > a.x ? min(max((x - a.x) / (b.x - a.x), 0), 1) : 0
+			ground[c] = a.y + (b.y - a.y) * t
+		}
+		self.ground = ground
+		hasGround = [Bool](repeating: true, count: cols)
+		edgeSide = SnowCatcher.edgeSides(ground: ground, hasGround: hasGround)
+		depth = [CGFloat](repeating: 0, count: cols)
+		spill = [CGFloat](repeating: 0, count: cols)
+		setUpCap(fill: nil)
 	}
 
 	private func setUpCap(fill: SKTexture?) {
@@ -918,7 +1020,7 @@ private final class SnowCatcher {
 
 	/// The column under scene x, if the letter has a top there and is upright
 	func column(atSceneX sceneX: CGFloat) -> Int? {
-		let local = sceneX - node.position.x - left
+		let local = sceneX - origin.x - left
 		guard local >= 0 else { return nil }
 		let col = Int(local / SnowIdleScene.colW)
 		guard col < cols, hasGround[col] else { return nil }
@@ -1049,6 +1151,29 @@ private final class SnowCatcher {
 		return pieces
 	}
 
+	/// Its snow divided into about `volume`-sized amounts, at most `limit` of them, each at a
+	/// point in the snow spread along the surface in proportion to its depth. Node space.
+	func flakePieces(volume: CGFloat, limit: Int) -> [(CGPoint, CGFloat)] {
+		let colW = SnowIdleScene.colW
+		var total: CGFloat = 0
+		for c in 0..<cols where hasGround[c] {
+			total += depth[c] * colW
+		}
+		guard total > volume / 2 else { return [] }
+		let count = min(limit, max(1, Int(total / volume)))
+		let each = total / CGFloat(count)
+		var pieces = [(CGPoint, CGFloat)]()
+		var gathered: CGFloat = 0
+		for c in 0..<cols where hasGround[c] {
+			gathered += depth[c] * colW
+			while gathered >= each && pieces.count < count {
+				pieces.append((CGPoint(x: x(c), y: ground[c] + depth[c] * CGFloat.random(in: 0.3...1)), each))
+				gathered -= each
+			}
+		}
+		return pieces
+	}
+
 	/// A copy of the cap as it stands, to fade out over the pieces replacing it
 	func capGhost() -> SKShapeNode {
 		let ghost = SKShapeNode(path: cap.path ?? CGMutablePath())
@@ -1061,9 +1186,15 @@ private final class SnowCatcher {
 
 	/// Lays `kind.startingDepth` of snow everywhere and lets it settle to its natural shape,
 	/// throwing away whatever would have spilled over the edges
+	///
+	/// Branches each get their own amount, lumpy along their length, so that they do not
+	/// all start out as the same smooth crescent.
 	func prefill(repose: CGFloat, edgeHold: CGFloat) {
+		let amount = kind.startingDepth * (kind == .branch ? CGFloat.random(in: 0.4...1.5) : 1)
+		let lumps = kind == .branch ? CGFloat(0.45) : 0
+		let frequency = CGFloat.random(in: 0.15...0.35), phase = CGFloat.random(in: 0...(2 * .pi))
 		for c in 0..<cols where hasGround[c] {
-			depth[c] = kind.startingDepth
+			depth[c] = max(0, amount * (1 + lumps * sin(CGFloat(c) * frequency + phase)))
 		}
 		for sweep in 0..<120 {
 			_ = relax(repose: repose, edgeHold: edgeHold, flakeVolume: .infinity, firstSweep: sweep)
