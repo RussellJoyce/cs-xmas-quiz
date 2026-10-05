@@ -178,9 +178,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		configureSidebar()
 
-		//Default to Idle on load regardless of what we left it on in Interface Builder
 		isReady = true
-		enterRound(.idle, presenting: true)
+		enterRound(.idleSnow, presenting: true)
 
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
@@ -411,9 +410,9 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	private func buildSidebarRows() {
 		sidebarRows = [
 			.group("Show"),
-			.round(tabitemIdle, .idle, "🎄 Idle"),
-			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
 			.round(tabitemIdleSnow, .idleSnow, "❄️ Idle (Snow)"),
+			.round(tabitemIdle, .idle, "🎄 Idle (Games)"),
+			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
 			.round(tabitemScores, .scores, "📋 Scores"),
 			
 			.group("Rounds"),
@@ -439,7 +438,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		buildSidebarRows()
 		sidebarTable.style = .sourceList
 		sidebarTable.reloadData()
-		selectSidebarRow(for: tabitemIdle)
+		selectSidebarRow(for: tabitemIdleSnow)
 		sidebarTable.scrollRowToVisible(0)
 	}
 
