@@ -96,6 +96,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemTimer: NSTabViewItem!
 	@IBOutlet weak var tabitemIdle: NSTabViewItem!
 	@IBOutlet weak var tabitemIdleCeefax: NSTabViewItem!
+	@IBOutlet weak var tabitemIdleSnow: NSTabViewItem!
 	@IBOutlet weak var tabitemTest: NSTabViewItem!
 	@IBOutlet weak var tabitemBuzzers: NSTabViewItem!
 	@IBOutlet weak var tabitemMusic: NSTabViewItem!
@@ -128,6 +129,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var multiChoicePanel: MultiChoicePanel!
 	@IBOutlet var geographyPanel: GeographyPanel!
 	@IBOutlet var wikiRacePanel: WikiRacePanel!
+	@IBOutlet var snowIdlePanel: SnowIdlePanel!
 	@IBOutlet var textPanel: TextPanel!
 	@IBOutlet var numbersPanel: NumbersPanel!
 	@IBOutlet var wavelengthPanel: WavelengthPanel!
@@ -157,7 +159,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		syncBuzzerButtons()
 		
 		let allPanels: [RoundPanel] = [buzzerPanel, musicPanel, timerPanel, trueFalsePanel,
-									   multiChoicePanel, geographyPanel, wikiRacePanel, textPanel,
+									   multiChoicePanel, geographyPanel, wikiRacePanel, textPanel, snowIdlePanel,
 									   numbersPanel, wavelengthPanel, pointlessPanel, scoresPanel]
 		for panel in allPanels {
 			panel.host = self
@@ -411,6 +413,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.group("Show"),
 			.round(tabitemIdle, .idle, "🎄 Idle"),
 			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
+			.round(tabitemIdleSnow, .idleSnow, "❄️ Idle (Snow)"),
 			.round(tabitemScores, .scores, "📋 Scores"),
 			
 			.group("Rounds"),
