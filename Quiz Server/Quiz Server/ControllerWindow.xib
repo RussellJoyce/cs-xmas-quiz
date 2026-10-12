@@ -126,6 +126,7 @@
         <customObject id="Snp-nl-obj" userLabel="Snow Idle Panel" customClass="SnowIdlePanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="settingsView" destination="Snw-vw-100" id="Snp-nl-out"/>
+                <outlet property="frameRateCheck" destination="Sn5-11-x11" id="Sn5-o1-x01"/>
                 <outlet property="shakeCheck" destination="Sn4-21-x21" id="Sn4-o2-x02"/>
                 <outlet property="teamStripCheck" destination="Sn4-11-x11" id="Sn4-o1-x01"/>
             </connections>
@@ -972,6 +973,17 @@
                                             </buttonCell>
                                             <connections>
                                                 <action selector="shakeToggled:" target="Snp-nl-obj" id="Sn4-23-x23"/>
+                                            </connections>
+                                        </button>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sn5-11-x11">
+                                            <rect key="frame" x="760" y="17" width="90" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="check" title="60 FPS" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Sn5-12-x12">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="frameRateToggled:" target="Snp-nl-obj" id="Sn5-13-x13"/>
                                             </connections>
                                         </button>
                                     </subviews>

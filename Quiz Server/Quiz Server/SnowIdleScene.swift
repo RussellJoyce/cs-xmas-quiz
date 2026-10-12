@@ -63,6 +63,16 @@ class SnowIdleScene: QuizScene {
 	/// Whether a buzz shakes the snow off the team's letters
 	var shakeLetters = true
 
+	/// Whether to draw at 60 frames per second, rather than 30 to save power. The rate
+	/// belongs to the view, so the scene sets it while it is on screen and puts back
+	/// whatever the view had before when it leaves.
+	var fullFrameRate = true {
+		didSet {
+			applyFrameRate()
+		}
+	}
+	private var outgoingFrameRate: Int?
+
 	private var teamStrip: TeamStripNode!
 
 	/// Width of one height map column, in points
@@ -164,6 +174,8 @@ class SnowIdleScene: QuizScene {
 
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
+		outgoingFrameRate = view.preferredFramesPerSecond
+		applyFrameRate()
 		//Background snow, behind the letters, that never lands
 		atmosphere = addSnow(replacing: atmosphere, emitterNamed: "SnowBackground", zPosition: 1) {
 			$0.particleBirthRate = 10
@@ -313,6 +325,18 @@ class SnowIdleScene: QuizScene {
 		}
 	}
 
+	override func willMove(from view: SKView) {
+		super.willMove(from: view)
+		if let rate = outgoingFrameRate {
+			view.preferredFramesPerSecond = rate
+			outgoingFrameRate = nil
+		}
+	}
+
+	private func applyFrameRate() {
+		view?.preferredFramesPerSecond = fullFrameRate ? 60 : 30
+	}
+
 	override func teardown() {
 		//Force the next update() to re-baseline rather than seeing one huge delta
 		lastUpdateTime = 0
@@ -398,6 +422,11 @@ class SnowIdleScene: QuizScene {
 		}
 
 		updateClumps(dt: TimeInterval(dt))
+
+		//Everything else with a physics body is fixed, so with no clumps falling there is
+		//nothing for the physics to do, but it would still step every frame. This runs after
+		//any slough this frame, so new clumps start moving straight away.
+		physicsWorld.speed = clumps.isEmpty ? 0 : 1
 	}
 
 
@@ -438,32 +467,41 @@ class SnowIdleScene: QuizScene {
 		flakes.append(flake)
 	}
 
+	/// Moves every flake on, and retires the ones that have landed or fallen out of shot.
+	///
+	/// The flakes are changed where they lie in the array: copying each one out and back
+	/// costs a retain and release of its node every frame, which adds up over a thousand
+	/// flakes. Those that are done are removed afterwards, last first, so that swapping each
+	/// with the end of the array cannot move one still waiting to be removed.
 	private func moveFlakes(dt: CGFloat, time: CGFloat) {
-		var i = 0
-		while i < flakes.count {
-			var flake = flakes[i]
-			let from = flake.node.position
+		var finished = [Int]()
+		flakes.withUnsafeMutableBufferPointer { flakes in
+			for i in flakes.indices {
+				let from = flakes[i].node.position
 
-			//Eases from however it came off something into falling like the rest, rather
-			//than carrying that speed and angle all the way down
-			if flake.drift < 1 {
-				let ease = min(1, SnowIdleScene.flakeDrag * dt)
-				flake.vx += (0 - flake.vx) * ease
-				flake.vy += (-flake.fallSpeed - flake.vy) * ease
-				flake.drift = min(1, flake.drift + dt / SnowIdleScene.swayFadeIn)
-			}
-			let to = CGPoint(x: from.x + (flake.vx + flake.drift * flake.sway * sin(time * 1.3 + flake.phase)) * dt,
-							 y: from.y + flake.vy * dt)
+				//Eases from however it came off something into falling like the rest, rather
+				//than carrying that speed and angle all the way down
+				if flakes[i].drift < 1 {
+					let ease = min(1, SnowIdleScene.flakeDrag * dt)
+					flakes[i].vx += (0 - flakes[i].vx) * ease
+					flakes[i].vy += (-flakes[i].fallSpeed - flakes[i].vy) * ease
+					flakes[i].drift = min(1, flakes[i].drift + dt / SnowIdleScene.swayFadeIn)
+				}
+				let flake = flakes[i]
+				let to = CGPoint(x: from.x + (flake.vx + flake.drift * flake.sway * sin(time * 1.3 + flake.phase)) * dt,
+								 y: from.y + flake.vy * dt)
 
-			if land(from: from, to: to, volume: flake.volume) || to.y < -20 {
-				flake.node.removeFromParent()
-				flakes.swapAt(i, flakes.count - 1)
-				flakes.removeLast()
-				continue
+				if land(from: from, to: to, volume: flake.volume) || to.y < -20 {
+					finished.append(i)
+				} else {
+					flake.node.position = to
+				}
 			}
-			flake.node.position = to
-			flakes[i] = flake
-			i += 1
+		}
+		for i in finished.reversed() {
+			flakes[i].node.removeFromParent()
+			flakes.swapAt(i, flakes.count - 1)
+			flakes.removeLast()
 		}
 	}
 
@@ -780,12 +818,10 @@ private final class SnowCatcher {
 	/// The chance that a flake crossing its surface settles on it: 1 for anything solid
 	let catchChance: CGFloat
 
-	/// Where the node is in the scene, while it stands upright. A branch's node is its
-	/// tree's child, so it is offset from the tree's.
-	var origin: CGPoint {
-		guard let tree = parentCatcher else { return node.position }
-		return CGPoint(x: tree.node.position.x + node.position.x, y: tree.node.position.y + node.position.y)
-	}
+	/// Where the node rests in the scene. A branch's node is its tree's child, so it is
+	/// offset from the tree's. Stored rather than worked out from the nodes, as flakes ask
+	/// for it constantly; nothing moves while flakes can land on it, so it never goes stale.
+	let origin: CGPoint
 	/// Where the node rests, so that a shake cut short cannot leave it out of place
 	let home: CGPoint
 	let width: CGFloat
@@ -855,6 +891,7 @@ private final class SnowCatcher {
 		node = SKSpriteNode(texture: SKTexture(cgImage: drawn.image))
 		node.size = CGSize(width: width + 2 * SnowCatcher.shadowMargin, height: 2 * (height + SnowCatcher.shadowMargin))
 		home = CGPoint(x: origin.x + bounds.midX, y: origin.y + bounds.minY - pad)
+		self.origin = home
 		node.position = home
 
 		let body = SKPhysicsBody(texture: SKTexture(cgImage: silhouette.image), alphaThreshold: 0.5,
@@ -900,6 +937,7 @@ private final class SnowCatcher {
 		width = CGFloat(cols) * SnowIdleScene.colW
 		left = -width / 2
 		home = CGPoint(x: width / 2, y: 0)
+		origin = home
 		node = SKSpriteNode(color: .clear, size: .zero)
 		node.position = home
 		ground = [CGFloat](repeating: 0, count: cols)
@@ -929,6 +967,7 @@ private final class SnowCatcher {
 		width = CGFloat(cols) * colW
 		left = -width / 2
 		home = CGPoint(x: minX + width / 2, y: 0)
+		origin = CGPoint(x: tree.home.x + home.x, y: tree.home.y + home.y)
 		node = SKSpriteNode(color: .clear, size: .zero)
 		node.position = home
 
@@ -1329,6 +1368,7 @@ class SnowIdlePanel: NSObject, RoundPanel {
 	@IBOutlet weak var settingsView: NSView!
 	@IBOutlet weak var teamStripCheck: NSButton!
 	@IBOutlet weak var shakeCheck: NSButton!
+	@IBOutlet weak var frameRateCheck: NSButton!
 
 	private var scene: SnowIdleScene { host.quizDisplay.snowIdleScene }
 
@@ -1345,6 +1385,11 @@ class SnowIdlePanel: NSObject, RoundPanel {
 		}
 		teamStripCheck.state = scene.showTeamStrip ? .on : .off
 		shakeCheck.state = scene.shakeLetters ? .on : .off
+		frameRateCheck.state = scene.fullFrameRate ? .on : .off
+	}
+
+	@IBAction func frameRateToggled(_ sender: NSButton) {
+		scene.fullFrameRate = sender.state == .on
 	}
 
 	@IBAction func teamStripToggled(_ sender: NSButton) {
