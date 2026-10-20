@@ -3,7 +3,8 @@
 //The quiz protocol, with no networking in it.
 //Everything here works against a `transport` object supplied by the caller
 //
-//    transport.toClients(message)   broadcast to every connected buzzer client
+//    transport.toClients(message)   broadcast to every buzzer client that holds a team
+//                                   (see teamSockets)
 //    transport.toServers(message)   send to the quiz software
 //    transport.toLeds(message)      send to the LED controllers
 //
@@ -80,6 +81,68 @@ class QuizState {
         this.lastMulti = DEFAULT_MULTI;
         this.lastLedTeamCount = null;
         this.nextHandle = 1;
+
+        //Somewhere to keep the team picks across a restart, or null to hold them in memory only
+        this.store = (options && options.store) || null;
+        this.restorePicks();
+    }
+
+    //Puts back the picks a previous run saved. Each comes back with no socket, exactly as
+    //though the phone had gone to sleep, so its next connection is a reconnection.
+    restorePicks() {
+        if(!this.store) return;
+        let saved;
+        try {
+            saved = this.store.load();
+        } catch(err) {
+            log.bootError('*** team picks could not be restored, so every team must pick again: ' + err.message);
+            return;
+        }
+        if(!saved) {
+            log.boot('team picks: none saved, starting afresh');
+            return;
+        }
+        if(saved.stale) {
+            log.boot('team picks: ignoring those saved at ' + saved.savedAt.toISOString() +
+                     ', which are from another night');
+            return;
+        }
+
+        const restored = [];
+        Object.keys(saved.picks).forEach(key => {
+            const team = validTeam(String(saved.picks[key]), this.numTeams);
+            if(team === null || this.getClientByID(team)) {
+                log.bootError('*** team picks: dropped ' + key + ' → ' + JSON.stringify(saved.picks[key]) +
+                              ', not a team or already held');
+                return;
+            }
+            this.clients[key] = {id: team, sock: null, handle: 'c' + this.nextHandle++};
+            restored.push(team);
+        });
+        log.boot('team picks: restored ' + restored.length + ' saved at ' + saved.savedAt.toISOString() +
+                 (restored.length ? ' (teams ' + restored.sort((a, b) => a - b).join(',') + ')' : ''));
+    }
+
+    //Called whenever a team is claimed or released. A failure is logged and otherwise
+    //ignored: the quiz carries on from memory, it just would not survive a restart.
+    savePicks() {
+        if(!this.store) return;
+        const picks = {};
+        Object.keys(this.clients).forEach(key => {
+            if(this.clients[key].id != null) picks[key] = this.clients[key].id;
+        });
+        try {
+            this.store.save(picks);
+        } catch(err) {
+            log.error('srv', null, null, 'could not save the team picks: ' + err.message);
+        }
+    }
+
+    //Where round broadcasts go. A phone on the team picker is left out, so that a round
+    //change does not pull it off the picker part way through choosing. It is given the
+    //state of play when it picks.
+    teamSockets() {
+        return Object.values(this.clients).filter(c => c.id != null && c.sock).map(c => c.sock);
     }
 
     //What a client is called in the log: its team once it has one, its handle before that.
@@ -220,6 +283,7 @@ class QuizState {
                                      'released ' + c.handle + ', back to the team picker');
                             safeSend(c.sock, "vipickteam");
                             c.id = null;
+                            this.savePicks();
                         } else {
                             log.debug('quiz', 'T' + team, 'di', 'nothing to release, team not held');
                         }
@@ -400,6 +464,7 @@ class QuizState {
                         } else if(this.getClientByID(teampick) == null) {
                             log.info(who, 'srv', 'pt', 'claims team ' + teampick + ' — granted, now T' + teampick);
                             this.clients[key].id = teampick;
+                            this.savePicks();
                             safeSend(sock, "ok" + teampick);
                             this.sendCurrentState(sock, teampick);
                         } else {

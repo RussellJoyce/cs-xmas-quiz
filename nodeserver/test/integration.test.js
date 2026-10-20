@@ -205,16 +205,22 @@ describe('over real sockets', () => {
         quiz.close(); a.close(); b.close();
     });
 
-    test('a view change reaches every connected client', async () => {
+    test('a view change reaches every client holding a team, and not the team picker', async () => {
         const quiz = connectPlain(ports.server);
         await quiz.next();
         const a = connect(ports.clientWss, '/?vcid=v1');
         const b = connect(ports.clientWss, '/?vcid=v2');
+        const picking = connect(ports.clientWss, '/?vcid=v4');
         await a.next(); await b.next();
+        assert.strictEqual(await picking.next(), 'vipickteam');
+        a.send('pt3'); b.send('pt4');
+        await a.nextN(5); await b.nextN(5);
 
         quiz.send('vinumbers');
         assert.strictEqual(await a.next(), 'vinumbers');
         assert.strictEqual(await b.next(), 'vinumbers');
+        //Pulling it onto the round would strand it there with no team.
+        await expectSilence(picking);
 
         //And it becomes the view a later client is dropped into.
         quiz.send('di0');   //no-op, just to order the next assertion after the broadcast
@@ -223,7 +229,7 @@ describe('over real sockets', () => {
         late.send('pt11');
         assert.deepStrictEqual(await late.nextN(5), ['ok11', 'vinumbers', 'imstart.jpg', 'mo4,A', 'on']);
 
-        quiz.close(); a.close(); b.close(); late.close();
+        quiz.close(); a.close(); b.close(); late.close(); picking.close();
         //Put the view back for any later test.
         const reset = connectPlain(ports.server);
         await reset.next();

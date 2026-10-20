@@ -56,3 +56,6 @@ package-lock.json
 ### Ignore certificates, etc. in '/certs/', but keep README
 /certs/*
 !/certs/README.md
+
+# Team picks saved across restarts
+/state/

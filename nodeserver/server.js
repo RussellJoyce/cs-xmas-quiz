@@ -10,6 +10,7 @@ const express = require('express');
 const dns = require('native-dns');
 const { QuizState, safeSend, clientKeyForConnection, asText } = require('./protocol');
 const { WikiCorpus } = require('./wikirace');
+const { PickStore } = require('./picks');
 const log = require('./log');
 
 //Deployment settings live in config.json
@@ -20,6 +21,11 @@ const REQUIRED_PORTS = ['clientWss', 'server', 'leds', 'http', 'https', 'dns'];
 
 //Dev mode allows vcid and serves /test
 const DEV_MODE = process.argv.includes('--dev');
+
+//Team picks are kept here so that a restart does not send every phone back to the picker.
+//--nostorage holds them in memory only, and the file is neither read nor written.
+const PICKS_FILE = __dirname + '/state/picks.json';
+const NO_STORAGE = process.argv.includes('--nostorage');
 
 //Checks a parsed config and returns it normalised. Separate from reading the file so the
 //rules can be tested against made-up configs without writing over the real one.
@@ -88,6 +94,9 @@ function defaultConfig(overrides) {
         wikiDir: __dirname + '/static/wiki',
         numTeams: deployment.numTeams,
         dev: DEV_MODE,
+
+        //Off unless asked for. Only a real run (below) asks, so no test can ever touch the real file.
+        picksFile: null,
 
         //Two bind addresses
         //the https listeners are explicitly IPv4, while the bare WebSocket servers are left
@@ -195,7 +204,7 @@ function startWebsocketServers(overrides) {
 
     const state = new QuizState({
         toClients: function(message) {
-            clientServers.forEach(s => s.clients.forEach(c => safeSend(c, message)));
+            state.teamSockets().forEach(c => safeSend(c, message));
         },
         toServers: function(message) {
             wserver.clients.forEach(c => safeSend(c, message));
@@ -203,7 +212,8 @@ function startWebsocketServers(overrides) {
         toLeds: function(message) {
             wleds.clients.forEach(c => safeSend(c, message));
         }
-    }, { numTeams: cfg.numTeams, wikiCorpus: wikiCorpus });
+    }, { numTeams: cfg.numTeams, wikiCorpus: wikiCorpus,
+         store: cfg.picksFile ? new PickStore(cfg.picksFile) : null });
 
     //Every socket needs an 'error' listener. `who` may be a function, so that a client is
     //named by whatever it is called at the time of the error: it may have claimed a team
@@ -377,7 +387,7 @@ function startDnsServer(overrides) {
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
                    loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
-                   certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE };
+                   certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE, PICKS_FILE };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
@@ -386,7 +396,8 @@ if(require.main === module) {
     log.boot('serving ' + cfg.dnsHostname + ' → ' + cfg.hostAddress + ' for ' + cfg.numTeams + ' teams');
     logDevMode(cfg.dev);
     if(!cfg.certs) log.bootError('*** no certificates configured');
-    startWebsocketServers();
+    if(NO_STORAGE) log.boot('team picks: --nostorage, so held in memory only and lost on restart');
+    startWebsocketServers({ picksFile: NO_STORAGE ? null : PICKS_FILE });
     startWebServers();
     startDnsServer();
     logCertStatus(cfg.certs);
