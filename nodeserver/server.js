@@ -16,6 +16,11 @@ const log = require('./log');
 //Deployment settings live in config.json
 const CONFIG_FILE = __dirname + '/config.json';
 
+//The largest message a phone may send. The longest real one is a typed answer, so this is
+//generous; without it ws accepts up to 100 MiB, and holds it all in memory, from anyone on the wifi.
+//A phone that sends more is disconnected (close code 1009) and reconnects like any other.
+const CLIENT_MAX_PAYLOAD = 8 * 1024;
+
 //Every port the server listens on
 const REQUIRED_PORTS = ['clientWss', 'server', 'leds', 'http', 'https', 'dns'];
 
@@ -194,7 +199,7 @@ function startWebsocketServers(overrides) {
     let wclient = null;
     if(cfg.certs) {
         wclientHttpsServer = https.createServer(readCerts(cfg.certs));
-        wclient = new WebSocketServer({ server: wclientHttpsServer });
+        wclient = new WebSocketServer({ server: wclientHttpsServer, maxPayload: CLIENT_MAX_PAYLOAD });
         wclientHttpsServer.listen(cfg.clientWssPort, cfg.bindAddress);
     }
 
@@ -387,7 +392,8 @@ function startDnsServer(overrides) {
 
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
                    loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
-                   certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE, PICKS_FILE };
+                   certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE, PICKS_FILE,
+                   CLIENT_MAX_PAYLOAD };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {

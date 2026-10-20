@@ -18,7 +18,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const { startWebsocketServers, startWebServers, defaultConfig, logDevMode } = require('../server');
+const { startWebsocketServers, startWebServers, defaultConfig, logDevMode,
+        CLIENT_MAX_PAYLOAD } = require('../server');
 const { muteLogs, captureLogs, testCerts } = require('./helpers');
 const log = require('../log');
 
@@ -309,6 +310,24 @@ describe('over real sockets', () => {
         assert.strictEqual(await after.next(), 'vipickteam');
 
         quiz.close(); c.close(); after.close();
+    });
+
+    test('an oversized message disconnects only the phone that sent it', async () => {
+        const big = connect(ports.clientWss, '/?vcid=oversized');
+        const neighbour = connect(ports.clientWss, '/?vcid=neighbour');
+        await big.next(); await neighbour.next();
+        neighbour.send('pt6');
+        assert.strictEqual(await neighbour.next(), 'ok6');
+        await neighbour.nextN(4);
+
+        const closed = new Promise(resolve => big.on('close', code => resolve(code)));
+        big.send('tt1,' + 'x'.repeat(CLIENT_MAX_PAYLOAD));
+        assert.strictEqual(await closed, 1009, 'closed as "message too big"');
+
+        //A message right up to the limit is still fine
+        neighbour.send('pi' + 'x'.repeat(CLIENT_MAX_PAYLOAD - 2));
+        assert.strictEqual(await neighbour.next(), 'pb');
+        neighbour.close();
     });
 
     //These are the reason every socket needs an 'error' listener: Node throws on an
