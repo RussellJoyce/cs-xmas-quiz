@@ -125,24 +125,27 @@ function connect() {
         }
     }
 
-    ws.onclose = function(event) {
-        setView("buzzer");
-        console.log("Disconnected");
-        buzzer.innerHTML = "🤕 NO CONNECTION 🤒";
-        buzzer.className = "theButton buttonOff view";
-        ws = null;
-
-        /* Attempt to reconnect every second */
-        setTimeout(function() {
-            console.log("Retry...");
-            connect();
-        }, 1000)
-    };
+    ws.onclose = connectionLost;
 
     ws.onerror = function(event) {
         /* If the websocker errors then disconnect, which will fire the ws.onclose handler. */
         ws.close()
     }
+}
+
+//From onclose, or from the keepalive when a connection has died without closing
+function connectionLost() {
+    setView("buzzer");
+    console.log("Disconnected");
+    buzzer.innerHTML = "🤕 NO CONNECTION 🤒";
+    buzzer.className = "theButton buttonOff view";
+    ws = null;
+
+    /* Attempt to reconnect every second */
+    setTimeout(function() {
+        console.log("Retry...");
+        connect();
+    }, 1000)
 }
 
 
@@ -536,13 +539,9 @@ document.addEventListener('touchend', function (event) {
 }, false);
 
 
-//Set up a periodic timer to keep the connection to the client alive
+//Keep the connection alive, and notice when it has died
 //client -> "pi" -> server. server -> "pb" -> client
-setInterval(function() {
-    if(ws && ws.readyState === WebSocket.OPEN) {
-        ws.send("pi");
-    }
-}, 5000) //five seconds
+QuizConnection.keepAlive(function() { return ws; }, connectionLost);
 
 
 connect();

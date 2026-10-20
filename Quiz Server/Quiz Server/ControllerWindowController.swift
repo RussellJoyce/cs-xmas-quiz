@@ -317,6 +317,20 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		disconnectAllButton?.title = resyncMode ? "Resync All" : "Disconnect All"
 	}
 
+	/// Puts the node server and every phone back in step after the connection to it has been
+	/// down, since anything sent meanwhile was dropped. If the server restarted it has forgotten
+	/// the round, so it is told that first, ready for the phones as they pick their teams again.
+	private func resyncEverything() {
+		guard isReady else { return }
+		let round = quizDisplay.currentRound
+		for state in [.view(round)] + (panels[round]?.clientRoundState ?? []) {
+			send(.recordState(state))
+		}
+		for team in 0..<Settings.shared.numTeams {
+			resyncTeam(team)
+		}
+	}
+
 	/// Sends one team everything it needs to show the current state of play. `team` is 0-based
 	private func resyncTeam(_ team: Int) {
 		guard team >= 0 && team < Settings.shared.numTeams else { return }
@@ -595,6 +609,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	func webSocketDidConnect() {
 		window?.title = "Quiz Control - connected"
 		socket.setTeamCount(Settings.shared.numTeams)
+		resyncEverything()
 		// Very first time we connect, activate Megamas
 		if !Settings.shared.websocketHasPreviouslyConnected {
 			socket.megamas()

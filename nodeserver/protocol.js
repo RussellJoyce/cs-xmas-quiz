@@ -310,6 +310,22 @@ class QuizState {
                         //corpus is built and recorded in puzzles.json alongside the question.
                         break;
                     }
+                    case "rs": { //Record the state of play without sending it: "rs<vs|im|mo...>"
+                        //Sent by the quiz software when it (re)connects, so that a server that has
+                        //restarted gives rejoining phones the round in progress rather than its defaults.
+                        //Nothing goes to the phones: those still connected are repaired with 'to'.
+                        const inner = message.slice(2);
+                        const code = inner.slice(0,2);
+                        if(code == 'vs') this.lastView = inner.slice(2);
+                        else if(code == 'im') this.lastGeoImage = inner.slice(2);
+                        else if(code == 'mo') this.lastMulti = inner.slice(2);
+                        else {
+                            log.warn('quiz', 'srv', 'rs', "cannot record '" + inner + "', ignored");
+                            break;
+                        }
+                        log.info('quiz', 'srv', 'rs', 'state of play: ' + log.describe(inner));
+                        break;
+                    }
                     case "vi": //Set view
                         this.lastView = message.slice(2);
                         log.info('quiz', 'all', 'vi', 'view → ' + this.lastView);
@@ -364,6 +380,14 @@ class QuizState {
                 //Maintain client timestamp to track activity
                 this.clients[key].timestamp = Date.now();
 
+                //Answered whether or not the client holds a team: a phone on the team picker
+                //uses the pong to tell that its connection is still alive.
+                if(message.slice(0,2) == "pi") {
+                    log.debug(this.label(key), 'srv', 'pi', 'ping');
+                    safeSend(sock, "pb");
+                    return;
+                }
+
                 //If the client has not yet picked a valid team, we only listen for the 'pt' message
                 if(this.clients[key].id == null) {
                     if(message.slice(0,2) == "pt") {
@@ -393,10 +417,6 @@ class QuizState {
                         case "re": //Client wants an ID
                             log.debug(who, 'srv', 're', 'resume, told team ' + this.clients[key].id);
                             safeSend(sock, 'ok' + this.clients[key].id);
-                            break;
-                        case "pi": //Ping from client
-                            log.debug(who, 'srv', 'pi', 'ping');
-                            safeSend(sock, "pb");
                             break;
                         case "pt": { //A client picking a team it already holds.
                             const teampick = validTeam(message.slice(2), this.numTeams);

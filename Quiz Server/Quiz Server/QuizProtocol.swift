@@ -240,6 +240,10 @@ enum QuizCommand: Equatable {
 	/// "to" — one line of catch-up state, addressed to a single team
 	case resync(team: Int, state: ClientState)
 
+	/// "rs" — tell the node server the state of play without sending it to any phone, so that
+	/// one which has restarted hands it to the phones as they rejoin
+	case recordState(ClientState)
+
 	var wire: String {
 		//The wire counts teams from one
 		func number(_ team: Int) -> Int { team + 1 }
@@ -259,6 +263,7 @@ enum QuizCommand: Equatable {
 		case .endRace:                     return "we"
 		case .resendRaceState(let t):      return "wk\(number(t))"
 		case .resync(let t, let state):    return "to\(number(t)),\(state.wire)"
+		case .recordState(let state):      return "rs" + state.wire
 		}
 	}
 }

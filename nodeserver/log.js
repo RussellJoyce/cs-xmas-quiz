@@ -29,6 +29,7 @@ const CODES = {
 
     //Quiz software to this server
     le: 'led',            ls: 'list teams',
+    rs: 'record state of play',
 
     //This server to the quiz software
     lr: 'team list',

@@ -121,10 +121,19 @@ describe('picking a team', () => {
     test('a client without a team is ignored except for pt', () => {
         const { state, transport, socks } = setup(1);
         socks[0].drain();
-        ['zz1', 're', 'pi', 'tt1,hello', 'ii1,50,50'].forEach(m =>
+        ['zz1', 're', 'tt1,hello', 'ii1,50,50'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(socks[0].sent, [], 'nothing sent back');
         assert.deepStrictEqual(transport.servers, [], 'nothing forwarded to the quiz software');
+    });
+
+    test('a client without a team still has its pings answered', () => {
+        //The keepalive on the team picker relies on this to tell its connection is alive.
+        const { state, transport, socks } = setup(1);
+        socks[0].drain();
+        state.handleClientMessage('10.0.0.9_test1', socks[0], 'pi');
+        assert.deepStrictEqual(socks[0].sent, ['pb']);
+        assert.deepStrictEqual(transport.servers, []);
     });
 });
 
@@ -327,6 +336,35 @@ describe('routing from the quiz software', () => {
         assert.strictEqual(state.lastView, 'buzzer');
         assert.strictEqual(state.lastGeoImage, DEFAULT_GEO_IMAGE);
         assert.strictEqual(state.lastMulti, DEFAULT_MULTI);
+    });
+
+    test('rs records the state of play and sends it to nobody', () => {
+        //What the quiz software sends on (re)connecting, so a restarted server knows the
+        //round in progress before the phones rejoin.
+        const { state, transport, socks } = setupTeams(1);
+        socks[0].drain();
+        ['rsvsgeo', 'rsimspain.jpg', 'rsmo6,1'].forEach(m => state.handleServerMessage(m));
+        assert.deepStrictEqual(socks[0].sent, []);
+        assert.deepStrictEqual(transport.clients, []);
+        assert.strictEqual(state.lastView, 'geo');
+        assert.strictEqual(state.lastGeoImage, 'spain.jpg');
+        assert.strictEqual(state.lastMulti, '6,1');
+    });
+
+    test('a phone that joins after rs is given the recorded state', () => {
+        const { state } = setup(0);
+        ['rsvsmulti', 'rsmo4,A'].forEach(m => state.handleServerMessage(m));
+        const sock = new FakeSocket('late');
+        state.addClient('10.0.0.9_late', sock);
+        state.handleClientMessage('10.0.0.9_late', sock, 'pt3');
+        assert.deepStrictEqual(sock.sent, ['vipickteam', 'ok3', 'vimulti', 'im' + DEFAULT_GEO_IMAGE, 'mo4,A', 'on']);
+    });
+
+    test('rs of anything that is not round state is ignored', () => {
+        const { state, transport } = setup(0);
+        ['rs', 'rson', 'rsvibuzzer', 'rsms3'].forEach(m => state.handleServerMessage(m));
+        assert.strictEqual(state.lastView, DEFAULT_VIEW);
+        assert.deepStrictEqual(transport.clients, []);
     });
 
     test('a to that cannot be read, or is for an absent team, is dropped', () => {

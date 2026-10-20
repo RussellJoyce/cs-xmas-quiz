@@ -129,16 +129,19 @@ function connect() {
         }
     };
 
-    ws.onclose = function() {
-        ws = null;
-        racing = false;
-        curtain("🤒", "Lost the connection", "Trying again…");
-        setTimeout(connect, 1000);
-    };
+    ws.onclose = connectionLost;
 
     ws.onerror = function() {
         if(ws) ws.close();
     };
+}
+
+//From onclose, or from the keepalive when a connection has died without closing
+function connectionLost() {
+    ws = null;
+    racing = false;
+    curtain("🤒", "Lost the connection", "Trying again…");
+    setTimeout(connect, 1000);
 }
 
 function send(message) {
@@ -363,7 +366,5 @@ fetch("/wiki/meta.json")
         curtain("😵", "No corpus", "The quiz server has no wiki corpus built.");
     });
 
-//Same keepalive as the buzzer: the server tracks who is alive by these.
-setInterval(function() {
-    if(ws && ws.readyState === WebSocket.OPEN) ws.send("pi");
-}, 5000);
+//Same keepalive as the buzzer: the server tracks who is alive by these, and we notice a dead connection.
+QuizConnection.keepAlive(function() { return ws; }, connectionLost);

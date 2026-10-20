@@ -115,7 +115,7 @@ describe('decoding the protocol', () => {
         //"unrecognised", which looks like a fault rather than an omission.
         ['on', 'of', 'hh', 'hl', 'hn', 'ha', 'h1', 'h2', 'vi', 'im', 'di', 'le', 'ls', 'lr',
          'pt', 're', 'pi', 'pb', 'ok', 'px', 'zz', 'hi', 'lo', 'tt', 'ii', 'wv',
-         'mo', 'ms', 'mc'].forEach(code => {
+         'mo', 'ms', 'mc', 'rs'].forEach(code => {
             assert.ok(log.CODES[code], 'no translation for ' + code);
         });
     });
