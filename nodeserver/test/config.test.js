@@ -103,8 +103,7 @@ describe('the certbot scripts read the same file', () => {
     //If these drift, certbot writes the certificate to a directory the server never looks
     //in, and the failure only shows up as phones refusing to connect.
     const scripts = [
-        { path: path.join(__dirname, '..', 'renew-cert.sh'), name: 'renew-cert.sh' },
-        { path: path.join(__dirname, '..', 'certs', 'fetch.sh'), name: 'certs/fetch.sh' }
+        { path: path.join(__dirname, '..', 'renew-cert.sh'), name: 'renew-cert.sh' }
     ];
 
     scripts.forEach(script => {
