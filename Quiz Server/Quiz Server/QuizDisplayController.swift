@@ -39,6 +39,8 @@ class QuizDisplayController: NSViewController {
 	/// When the transition currently on screen, if any, is due to finish.
 	private var transitionEndsAt = Date.distantPast
 
+	/// The scene most recently present()ed. During a transition this is the incoming scene but `skView.scene` reports the outgoing one
+	private var targetScene: SKScene?
 
 	/// The window the display lives in
 	private var displayWindow: NSWindow?
@@ -112,7 +114,7 @@ class QuizDisplayController: NSViewController {
 		
 		let scene : SKScene = rounds[round] ?? rounds[.idle]!
 		
-		if skView.scene === scene {
+		if targetScene === scene {
 			//Already showing this round; just put it back to its starting state.
 			reset()
 			return
@@ -123,9 +125,12 @@ class QuizDisplayController: NSViewController {
 			skView.presentScene(scene, transition: transition)
 		}
 		else {
+			//A transition is still running so we have to call willMove(from:) ourselves.
+			targetScene?.willMove(from: skView)
 			transitionEndsAt = .distantPast
 			skView.presentScene(scene)
 		}
+		targetScene = scene
 		
 		reset()
 	}

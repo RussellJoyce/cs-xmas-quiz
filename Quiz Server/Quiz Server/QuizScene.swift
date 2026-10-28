@@ -53,6 +53,7 @@ class QuizScene: SKScene {
 	}
 
 	/// Called when this round is switched away from
+	/// When overriding, ensure that this method is safe to run multiple times in succession
 	func teardown() {
 	}
 
