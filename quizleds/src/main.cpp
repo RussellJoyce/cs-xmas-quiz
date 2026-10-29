@@ -39,7 +39,7 @@ void loop() {
 
 	//Handle simple debug UART interface
 	static int singleled = 0; 
-	static int serial_mode = 0; //what do the number keys do. 0 = buzz, 1 = animation, 2 = team colour
+	static int serial_mode = 0; //what do the number keys do. 0 = buzz, 1 = animation, 2 = team colour, 3 = counter
 	static int target_team = 0; //what team to buzz for
 	if(Serial.available()) {
 		char c = Serial.read();
@@ -58,6 +58,10 @@ void loop() {
 					Serial.printf("TeamCol %d\n", num);
 					target_team = num;
 					break;
+				case 3: //Counter
+					Serial.printf("Counter %d\n", num);
+					anim_set_anim(COUNTER, num*(NUM_LEDS/10));
+					break;
 			}
 		} else {
 			switch(c) {
@@ -74,6 +78,10 @@ void loop() {
 				case 't':
 					serial_mode = 2;
 					Serial.println("Mode: team colour");
+					break;
+				case 'c':
+					serial_mode = 3;
+					Serial.println("Mode: counter");
 					break;
 
 				case 'm': anim_set_anim(MEGAMAS, 0); break;
