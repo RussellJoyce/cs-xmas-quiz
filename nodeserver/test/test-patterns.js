@@ -21,6 +21,9 @@
 //  hi                  higher / true                           hi<team>
 //  lo                  lower / false                           lo<team>
 //  text,<answer>       a written answer (commas are kept)      tt<team>,<answer>
+//  number,<n>          a numbers round guess                    tt<team>,<n>
+//  number,random       a numbers round guess from 1-100         tt<team>,<n>
+//  number,random,<a>,<b>  ...or from anywhere in a-b            tt<team>,<n>
 //  geo,<x>,<y>         a map pin, 0-100 each                    ii<team>,<x>,<y>
 //  geo,random          a map pin somewhere random               ii<team>,<x>,<y>
 //  wave,<n>            a wavelength guess, 1-99                 wv<team>,<n>
@@ -120,6 +123,12 @@ wait 800
 5,text,50
 6,text,50
 7,text,50
+
+:Number - Everyone guesses at random
+*,number,random
+
+:Number - Random guesses at a big answer
+*,number,random,1000,5000
 
 # ---------------------------------------------------------------- higher/lower and true/false
 

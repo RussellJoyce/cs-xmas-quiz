@@ -252,7 +252,7 @@ function VirtualClient(index) {
         //when you want to type something by hand.
         '<div class="answer-inputs" id="answers-' + index + '">' +
             '<div class="input-row">' +
-                '<input type="text" id="txt-' + index + '" placeholder="Text answer...">' +
+                '<input type="text" id="txt-' + index + '" placeholder="Text/Number answer...">' +
                 '<button class="btn-sm-purple" onclick="clients[' + index + '].sendText()" disabled id="txtsend-' + index + '">Send</button>' +
             '</div>' +
             '<div class="input-row">' +
@@ -738,6 +738,12 @@ VirtualClient.prototype.sendRandomWave = function() {
     this.sendWaveAt(1 + Math.floor(Math.random() * 99));
 };
 
+// A numbers round guess anywhere from lo to hi inclusive. It goes out as a text answer,
+// because that is all a numbers round guess is.
+VirtualClient.prototype.sendRandomNumber = function(lo, hi) {
+    this.sendTextValue(String(lo + Math.floor(Math.random() * (hi - lo + 1))));
+};
+
 // One step of a test pattern. Returns a description for the log, or null if the client was
 // in no state to do it (no team yet, or the socket is shut), which the runner reports.
 VirtualClient.prototype.runAction = function(verb, args) {
@@ -771,6 +777,16 @@ VirtualClient.prototype.runAction = function(verb, args) {
             if (!this.team) return null;
             this.sendTextValue(args.join(','));
             return 'text';
+        case 'number':
+            if (!this.team) return null;
+            if (args[0] === 'random') {
+                var lo = args.length === 3 ? parseInt(args[1], 10) : 1;
+                var hi = args.length === 3 ? parseInt(args[2], 10) : 100;
+                this.sendRandomNumber(Math.min(lo, hi), Math.max(lo, hi));
+            } else {
+                this.sendTextValue(args[0]);
+            }
+            return 'number';
         case 'geo':
             if (!this.team) return null;
             if (args[0] === 'random') {
@@ -896,6 +912,7 @@ var ACTIONS = {
     disconnect: { min: 0, max: 0 },
     pick:       { min: 0, max: 1 },
     text:       { min: 1, max: Infinity },
+    number:     { min: 1, max: 3 },
     raw:        { min: 1, max: Infinity },
     geo:        { min: 1, max: 2 },
     wave:       { min: 1, max: 1 },
@@ -980,6 +997,12 @@ function parsePatterns(text) {
         if (verb === 'geo' && args[0] !== 'random' &&
             (args.length !== 2 || !/^[0-9]+$/.test(args[0]) || !/^[0-9]+$/.test(args[1]))) {
             bad(line, 'geo takes "random" or two numbers 0-100');
+            continue;
+        }
+        if (verb === 'number' && !(args.length === 1 && /^-?[0-9]+$/.test(args[0])) &&
+            !(args[0] === 'random' && (args.length === 1 ||
+              (args.length === 3 && /^-?[0-9]+$/.test(args[1]) && /^-?[0-9]+$/.test(args[2]))))) {
+            bad(line, 'number takes one whole number, "random", or "random,<min>,<max>"');
             continue;
         }
         if (verb === 'wave' && args[0] !== 'random' && !/^[0-9]+$/.test(args[0])) {
