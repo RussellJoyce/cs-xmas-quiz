@@ -1000,9 +1000,9 @@ function parsePatterns(text) {
             continue;
         }
         if (verb === 'number' && !(args.length === 1 && /^-?[0-9]+$/.test(args[0])) &&
-            !(args[0] === 'random' && (args.length === 1 ||
+            !((args[0] === 'random' || args[0] === 'shared') && (args.length === 1 ||
               (args.length === 3 && /^-?[0-9]+$/.test(args[1]) && /^-?[0-9]+$/.test(args[2]))))) {
-            bad(line, 'number takes one whole number, "random", or "random,<min>,<max>"');
+            bad(line, 'number takes one whole number, or "random" or "shared" with an optional <min>,<max>');
             continue;
         }
         if (verb === 'wave' && args[0] !== 'random' && !/^[0-9]+$/.test(args[0])) {
@@ -1157,8 +1157,16 @@ function stepPattern() {
             patternLog('msg-err', '"' + step.text + '": no such client on the grid');
             continue;
         }
+        // A shared number is drawn once for the whole line, so every client on it agrees.
+        var args = step.args;
+        if (step.verb === 'number' && args[0] === 'shared') {
+            var lo = args.length === 3 ? parseInt(args[1], 10) : 1;
+            var hi = args.length === 3 ? parseInt(args[2], 10) : 100;
+            args = [String(Math.min(lo, hi) + Math.floor(Math.random() * (Math.abs(hi - lo) + 1)))];
+            patternLog('msg-pattern', '"' + step.text + '": everyone sends ' + args[0]);
+        }
         for (var i = 0; i < targets.length; i++) {
-            if (targets[i].runAction(step.verb, step.args) === null) {
+            if (targets[i].runAction(step.verb, args) === null) {
                 patternLog('msg-err', '"' + step.text + '": client ' + targets[i].index +
                                       ' cannot do that — not connected, or has no team yet');
             }

@@ -301,88 +301,14 @@ class WavelengthScene: QuizScene {
 
 	/// Works out where each disc goes.
 	private func layOutMarkers(_ guesses: [(team: Int, value: Int)]) -> [PlacedMarker] {
-		let minSeparation = (markerRadius * 2) + 8
-		var placed = [PlacedMarker]()
-
-		//The last true position in each row, which is what says whether the next marker can
-		//sit where it belongs without being nudged
-		var lastXInRow = [CGFloat](repeating: -.infinity, count: markerMaxRows)
-		var countInRow = [Int](repeating: 0, count: markerMaxRows)
-
-		for guess in guesses {
-			let anchorX = xFor(value: guess.value)
-
-			var row = (0..<markerMaxRows).first { anchorX - lastXInRow[$0] >= minSeparation }
-			if row == nil {
-				//Fits nowhere cleanly, so it goes where there is most room and gets fanned.
-				//Never wrapped back onto an occupied row, which used to hide a marker entirely.
-				row = (0..<markerMaxRows).min { a, b in
-					countInRow[a] != countInRow[b] ? countInRow[a] < countInRow[b] : lastXInRow[a] < lastXInRow[b]
-				}
-			}
-
-			let chosen = row ?? 0
-			lastXInRow[chosen] = anchorX
-			countInRow[chosen] += 1
-			placed.append(PlacedMarker(team: guess.team, value: guess.value, row: chosen,
-									   x: anchorX, anchorX: anchorX))
+		let anchors = guesses.map { xFor(value: $0.value) }
+		let packed = packMarkers(anchors: anchors, radius: markerRadius, maxRows: markerMaxRows,
+								 low: barLeft + markerRadius + markerEdgeInset,
+								 high: barLeft + barWidth - markerRadius - markerEdgeInset)
+		return zip(guesses, zip(anchors, packed)).map { guess, placed in
+			PlacedMarker(team: guess.team, value: guess.value, row: placed.1.row,
+						 x: placed.1.x, anchorX: placed.0)
 		}
-
-		//Fan each row out so that no two discs overlap
-		let low = barLeft + markerRadius + markerEdgeInset
-		let high = barLeft + barWidth - markerRadius - markerEdgeInset
-		for row in 0..<markerMaxRows {
-			let indices = placed.indices.filter { placed[$0].row == row }
-			guard !indices.isEmpty else { continue }
-
-			let fanned = fan(anchors: indices.map { placed[$0].anchorX },
-							 separation: minSeparation, low: low, high: high)
-			for (n, index) in indices.enumerated() {
-				placed[index].x = fanned[n]
-			}
-		}
-
-		return placed
-	}
-
-	/// Nudges a row of discs apart so that none overlap, moving each as little as it can from
-	/// the guess it belongs to.
-	private func fan(anchors: [CGFloat], separation: CGFloat, low: CGFloat, high: CGFloat) -> [CGFloat] {
-		let n = anchors.count
-		guard n > 1 else {
-			return anchors.map { min(max($0, low), high) }
-		}
-
-		let targets = (0..<n).map { anchors[$0] - (CGFloat($0) * separation) }
-
-		//Pool adjacent violators: while the last two blocks are out of order, merge them and
-		//give the result the weighted average of what they wanted
-		var values = [CGFloat]()
-		var counts = [Int]()
-		for target in targets {
-			values.append(target)
-			counts.append(1)
-			while values.count > 1 && values[values.count - 2] > values[values.count - 1] {
-				let (v1, c1) = (values.removeLast(), counts.removeLast())
-				let (v0, c0) = (values.removeLast(), counts.removeLast())
-				values.append(((v0 * CGFloat(c0)) + (v1 * CGFloat(c1))) / CGFloat(c0 + c1))
-				counts.append(c0 + c1)
-			}
-		}
-
-		var ys = [CGFloat]()
-		for (value, count) in zip(values, counts) {
-			ys.append(contentsOf: repeatElement(value, count: count))
-		}
-
-		//Keep the row on the bar. Clamping a run that never decreases into a range leaves it
-		//still never decreasing, so this cannot reintroduce an overlap.
-		let highestStart = high - (CGFloat(n - 1) * separation)
-		if highestStart >= low {
-			ys = ys.map { min(max($0, low), highestStart) }
-		}
-
-		return (0..<n).map { ys[$0] + (CGFloat($0) * separation) }
 	}
 
 

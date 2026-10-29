@@ -24,6 +24,8 @@
 //  number,<n>          a numbers round guess                    tt<team>,<n>
 //  number,random       a numbers round guess from 1-100         tt<team>,<n>
 //  number,random,<a>,<b>  ...or from anywhere in a-b            tt<team>,<n>
+//  number,shared[,a,b] one random guess that every client on    tt<team>,<n>
+//                      the line sends, rather than one each
 //  geo,<x>,<y>         a map pin, 0-100 each                    ii<team>,<x>,<y>
 //  geo,random          a map pin somewhere random               ii<team>,<x>,<y>
 //  wave,<n>            a wavelength guess, 1-99                 wv<team>,<n>
@@ -129,6 +131,13 @@ wait 800
 
 :Number - Random guesses at a big answer
 *,number,random,1000,5000
+
+:Number - Everyone guesses the same random number
+*,number,shared
+
+:Number - Two camps, each agreeing on its own random number
+1-7,number,shared
+8-14,number,shared
 
 # ---------------------------------------------------------------- higher/lower and true/false
 

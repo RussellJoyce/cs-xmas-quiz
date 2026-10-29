@@ -139,7 +139,96 @@ class QuizScene: SKScene {
 		return TeamGridLayout(boxWidth: boxWidth, boxHeight: boxHeight,
 							  fontSize: fontSize, positions: positions)
 	}
-	
+
+
+	/// Stacks numbered discs above a line so that none overlap, for the rounds that show every
+	/// team's guess along a scale. A disc moves up a row when it would otherwise collide, and a
+	/// row with no room left is fanned out sideways.
+	/// - Parameters:
+	///   - anchors: where each guess sits on the line, in ascending order.
+	///   - low, high: the furthest left and right a disc centre may go.
+	/// - Returns: the row and disc centre for each anchor, in the same order.
+	func packMarkers(anchors: [CGFloat], radius: CGFloat, maxRows: Int, low: CGFloat, high: CGFloat) -> [(row: Int, x: CGFloat)] {
+		let minSeparation = (radius * 2) + 8
+		var rows = [Int]()
+
+		//The last true position in each row, which is what says whether the next marker can
+		//sit where it belongs without being nudged
+		var lastXInRow = [CGFloat](repeating: -.infinity, count: maxRows)
+		var countInRow = [Int](repeating: 0, count: maxRows)
+
+		for anchorX in anchors {
+			var row = (0..<maxRows).first { anchorX - lastXInRow[$0] >= minSeparation }
+			if row == nil {
+				//Fits nowhere cleanly, so it goes where there is most room and gets fanned.
+				//Never wrapped back onto an occupied row, which used to hide a marker entirely.
+				row = (0..<maxRows).min { a, b in
+					countInRow[a] != countInRow[b] ? countInRow[a] < countInRow[b] : lastXInRow[a] < lastXInRow[b]
+				}
+			}
+
+			let chosen = row ?? 0
+			lastXInRow[chosen] = anchorX
+			countInRow[chosen] += 1
+			rows.append(chosen)
+		}
+
+		//Fan each row out so that no two discs overlap
+		var xs = anchors
+		for row in 0..<maxRows {
+			let indices = rows.indices.filter { rows[$0] == row }
+			guard !indices.isEmpty else { continue }
+
+			let fanned = fan(anchors: indices.map { anchors[$0] },
+							 separation: minSeparation, low: low, high: high)
+			for (n, index) in indices.enumerated() {
+				xs[index] = fanned[n]
+			}
+		}
+
+		return zip(rows, xs).map { (row: $0, x: $1) }
+	}
+
+	/// Nudges a row of discs apart so that none overlap, moving each as little as it can from
+	/// the guess it belongs to.
+	private func fan(anchors: [CGFloat], separation: CGFloat, low: CGFloat, high: CGFloat) -> [CGFloat] {
+		let n = anchors.count
+		guard n > 1 else {
+			return anchors.map { min(max($0, low), high) }
+		}
+
+		let targets = (0..<n).map { anchors[$0] - (CGFloat($0) * separation) }
+
+		//Pool adjacent violators: while the last two blocks are out of order, merge them and
+		//give the result the weighted average of what they wanted
+		var values = [CGFloat]()
+		var counts = [Int]()
+		for target in targets {
+			values.append(target)
+			counts.append(1)
+			while values.count > 1 && values[values.count - 2] > values[values.count - 1] {
+				let (v1, c1) = (values.removeLast(), counts.removeLast())
+				let (v0, c0) = (values.removeLast(), counts.removeLast())
+				values.append(((v0 * CGFloat(c0)) + (v1 * CGFloat(c1))) / CGFloat(c0 + c1))
+				counts.append(c0 + c1)
+			}
+		}
+
+		var ys = [CGFloat]()
+		for (value, count) in zip(values, counts) {
+			ys.append(contentsOf: repeatElement(value, count: count))
+		}
+
+		//Keep the row on the line. Clamping a run that never decreases into a range leaves it
+		//still never decreasing, so this cannot reintroduce an overlap.
+		let highestStart = high - (CGFloat(n - 1) * separation)
+		if highestStart >= low {
+			ys = ys.map { min(max($0, low), highestStart) }
+		}
+
+		return (0..<n).map { ys[$0] + (CGFloat($0) * separation) }
+	}
+
 	
 	// MARK: - Backgrounds
 	
