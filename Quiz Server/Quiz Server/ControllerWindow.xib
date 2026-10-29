@@ -125,8 +125,8 @@
         </customObject>
         <customObject id="Snp-nl-obj" userLabel="Snow Idle Panel" customClass="SnowIdlePanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="settingsView" destination="Snw-vw-100" id="Snp-nl-out"/>
                 <outlet property="frameRateCheck" destination="Sn5-11-x11" id="Sn5-o1-x01"/>
+                <outlet property="settingsView" destination="Snw-vw-100" id="Snp-nl-out"/>
                 <outlet property="shakeCheck" destination="Sn4-21-x21" id="Sn4-o2-x02"/>
                 <outlet property="teamStripCheck" destination="Sn4-11-x11" id="Sn4-o1-x01"/>
             </connections>
@@ -200,7 +200,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -680,7 +680,7 @@
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-01-x01">
                                             <rect key="frame" x="20" y="256" width="856" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Prototype tuning. With Shake letters on, a buzz shakes the team&apos;s letters (letter index modulo the number of teams)." id="Sn2-02-x02">
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Prototype tuning. With Shake letters on, a buzz shakes the team's letters (letter index modulo the number of teams)." id="Sn2-02-x02">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -695,10 +695,10 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <slider verticalHuggingPriority="750" fixedFrame="YES" tag="0" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-05-x05">
+                                        <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-05-x05">
                                             <rect key="frame" x="185" y="222" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0" maxValue="400" doubleValue="0" tickMarkPosition="above" sliderType="linear" id="Sn2-06-x06"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="400" tickMarkPosition="above" sliderType="linear" id="Sn2-06-x06"/>
                                             <connections>
                                                 <action selector="sliderMoved:" target="Snp-nl-obj" id="Sn2-07-x07"/>
                                             </connections>
@@ -776,7 +776,7 @@
                                         <slider verticalHuggingPriority="750" fixedFrame="YES" tag="5" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-26-x26">
                                             <rect key="frame" x="185" y="114" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0" maxValue="15" doubleValue="0" tickMarkPosition="above" sliderType="linear" id="Sn2-27-x27"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="15" tickMarkPosition="above" sliderType="linear" id="Sn2-27-x27"/>
                                             <connections>
                                                 <action selector="sliderMoved:" target="Snp-nl-obj" id="Sn2-28-x28"/>
                                             </connections>
@@ -828,7 +828,7 @@
                                         <slider verticalHuggingPriority="750" fixedFrame="YES" tag="3" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-40-x40">
                                             <rect key="frame" x="635" y="222" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.2" maxValue="3" doubleValue="0.2" tickMarkPosition="above" sliderType="linear" id="Sn2-41-x41"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.20000000000000001" maxValue="3" doubleValue="0.20000000000000001" tickMarkPosition="above" sliderType="linear" id="Sn2-41-x41"/>
                                             <connections>
                                                 <action selector="sliderMoved:" target="Snp-nl-obj" id="Sn2-42-x42"/>
                                             </connections>
@@ -854,7 +854,7 @@
                                         <slider verticalHuggingPriority="750" fixedFrame="YES" tag="4" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-47-x47">
                                             <rect key="frame" x="635" y="186" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0" maxValue="20" doubleValue="0" tickMarkPosition="above" sliderType="linear" id="Sn2-48-x48"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="20" tickMarkPosition="above" sliderType="linear" id="Sn2-48-x48"/>
                                             <connections>
                                                 <action selector="sliderMoved:" target="Snp-nl-obj" id="Sn2-49-x49"/>
                                             </connections>
@@ -906,7 +906,7 @@
                                         <slider verticalHuggingPriority="750" fixedFrame="YES" tag="8" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-68-x68">
                                             <rect key="frame" x="635" y="114" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0" maxValue="20" doubleValue="0" tickMarkPosition="above" sliderType="linear" id="Sn2-69-x69"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="20" tickMarkPosition="above" sliderType="linear" id="Sn2-69-x69"/>
                                             <connections>
                                                 <action selector="sliderMoved:" target="Snp-nl-obj" id="Sn2-70-x70"/>
                                             </connections>
@@ -1856,6 +1856,9 @@ as unique</string>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
+                                            <connections>
+                                                <outlet property="delegate" destination="Nmp-nl-obj" id="Nmp-aa-dlg"/>
+                                            </connections>
                                         </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5GN-xC-Oy7">
                                             <rect key="frame" x="62" y="56" width="157" height="71"/>

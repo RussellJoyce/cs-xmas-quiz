@@ -97,71 +97,66 @@ class NumbersScene: QuizScene {
 		}
 		//Second press colours everything to show team scores
 		else {
-			//Work out which is closest to the actual answer
-			var teamDistances = [(team : Int, distance : Int)]()
-			
-			for team in 0..<Settings.shared.numTeams {
-				if let teamGuessText = teamBoxes[team].singleLabel.text {
-					if let teamGuessInt = Int(teamGuessText) {
-						let dist = abs(teamGuessInt - actualAnswer)
-						teamDistances.append((team, dist))
-					}
-				}
-			}
-			
-			teamDistances = teamDistances.sorted(by: {$0.distance < $1.distance})
+			//Scored on what the boxes show, so a guess that arrives after the reveal does not count
+			let revealedGuesses = teamBoxes.map { Int($0.singleLabel.text ?? "") }
 
-			if teamDistances.count == 0 {
-				return
-			}
-			
-			let winColours = [
-				NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.3, alpha: 0.9),
-				NSColor(calibratedRed: 1.0, green: 1.0, blue: 0.1, alpha: 0.9),
-				NSColor(calibratedRed: 0.6, green: 0.6, blue: 1.0, alpha: 0.9),
-			]
-			
-			//We need to handle draws, so it isn't as easy as saying that index 0 is the winner, index 1 is the second etc.
-			var win = 0 //This is the "rank" we are at. 0 is "winner", 1 is "second place", 2 is "top half", higher is "loser"
-			var teNo = 0
-			var lastDist : Int = teamDistances[teNo].distance //Will be 0 if someone guessed correctly
-			while win < winColours.count {
-				if teNo >= teamDistances.count {
-					break
-				}
-				
-				if win == 0 || win == 1 {
-					if teamDistances[teNo].distance > lastDist {
-						win = win + 1
-						lastDist = teamDistances[teNo].distance
-					}
-				} else {
-					if teNo > (teamDistances.count / 2 - 1) && teamDistances[teNo].distance != teamDistances[teNo-1].distance {
-						break
-					}
-				}
-				
+			for entry in NumbersScene.placings(guesses: revealedGuesses, actualAnswer: actualAnswer) {
+				guard let win = entry.place else { continue }
+
 				//Animate the team box to the target colour to indicate "win level"
-				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.colorTransitionAction(fromColor: TeamAnswerNode.bgColour, toColor: winColours[win]))
-				teamBoxes[teamDistances[teNo].team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
-				
+				teamBoxes[entry.team].bgBox.run(SKAction.colorTransitionAction(fromColor: TeamAnswerNode.bgColour, toColor: NumbersScene.winColours[win]))
+				teamBoxes[entry.team].bgBox.run(SKAction.scale(to: 1.1, duration: 0.5))
+
 				//Give winners some stars
 				if win == 0 {
 					for _ in 0...5 {
-						var starpoint : CGPoint = teamBoxes[teamDistances[teNo].team].bgBox.centrePoint
+						var starpoint : CGPoint = teamBoxes[entry.team].bgBox.centrePoint
 						//starpoint.y += CGFloat(Int.random(in: -70...70))
 						starpoint.x -= 310
-						emitters.append(teamBoxes[teamDistances[teNo].team].addEmitter(named: "locationstar", at: starpoint, zPosition: 5.0, autoRemove: false))
+						emitters.append(teamBoxes[entry.team].addEmitter(named: "locationstar", at: starpoint, zPosition: 5.0, autoRemove: false))
 					}
 				}
-				
+
 				if win < 2 {
-					addGlowParticles(team: teamDistances[teNo].team)
+					addGlowParticles(team: entry.team)
 				}
-				
-				teNo = teNo + 1
 			}
 		}
+	}
+
+	/// The box colours for each place in `placings`: winner, second place, top half
+	static let winColours = [
+		NSColor(calibratedRed: 0.1, green: 1.0, blue: 0.3, alpha: 0.9),
+		NSColor(calibratedRed: 1.0, green: 1.0, blue: 0.1, alpha: 0.9),
+		NSColor(calibratedRed: 0.6, green: 0.6, blue: 1.0, alpha: 0.9),
+	]
+
+	/// Ranks the teams that guessed by how close they came, closest first. `place` is 0 for the
+	/// winner(s), 1 for second place, 2 for the rest of roughly the top half, and nil for everyone else.
+	static func placings(guesses: [Int?], actualAnswer: Int) -> [(team: Int, guess: Int, distance: Int, place: Int?)] {
+		let sorted = guesses.enumerated()
+			.compactMap { team, guess in guess.map { (team: team, guess: $0, distance: abs($0 - actualAnswer)) } }
+			.sorted { $0.distance < $1.distance }
+		guard let closest = sorted.first else { return [] }
+
+		var places = [Int?](repeating: nil, count: sorted.count)
+		//We need to handle draws, so it isn't as easy as saying that index 0 is the winner, index 1 is the second etc.
+		var win = 0
+		var lastDist = closest.distance //Will be 0 if someone guessed correctly
+		for (teNo, entry) in sorted.enumerated() {
+			if win == 0 || win == 1 {
+				if entry.distance > lastDist {
+					win = win + 1
+					lastDist = entry.distance
+				}
+			} else {
+				if teNo > (sorted.count / 2 - 1) && entry.distance != sorted[teNo-1].distance {
+					break
+				}
+			}
+			places[teNo] = win
+		}
+		return zip(sorted, places).map { ($0.team, $0.guess, $0.distance, $1) }
 	}
 	
 	func addGlowParticles(team : Int) {
@@ -204,7 +199,7 @@ class NumbersScene: QuizScene {
 
 // MARK: - Controller window
 
-class NumbersPanel: NSObject, RoundPanel {
+class NumbersPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 
 	let round = RoundType.numbers
 	weak var host: ControllerWindowController!
@@ -233,14 +228,37 @@ class NumbersPanel: NSObject, RoundPanel {
 		updateGuesses()
 	}
 
-	/// Redraws the host's list of what each team has guessed
+	/// Redraws the host's list of what each team has guessed, ranked against whatever is in the answer box right now.
 	private func updateGuesses() {
-		teamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-			if let tg = scene.teamGuesses[team] {
-				return "Team \(team + 1): \(tg)"
-			}
-			return nil
+		guard let answer = typedAnswer else {
+			teamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
+				if let tg = scene.teamGuesses[team] {
+					return "Team \(team + 1): \(tg)"
+				}
+				return nil
+			}.joined(separator: "\n")
+			return
+		}
+		let marks = ["🟢", "🟡", "🔵"]
+		teamGuesses.stringValue = NumbersScene.placings(guesses: scene.teamGuesses, actualAnswer: answer).map { entry in
+			let mark = entry.place.map { marks[$0] } ?? "⚪️"
+			return "\(mark) Team \(entry.team + 1): \(entry.guess)  (off by \(entry.distance))"
 		}.joined(separator: "\n")
+	}
+
+	/// The answer as typed so far, or nil if the box does not hold a number
+	private var typedAnswer: Int? {
+		let text = actualAnswer.currentEditor()?.string ?? actualAnswer.stringValue
+		if let number = (actualAnswer.formatter as? NumberFormatter)?.number(from: text) {
+			return number.intValue
+		}
+		return Int(text)
+	}
+
+	func controlTextDidChange(_ obj: Notification) {
+		if (obj.object as? NSTextField) === actualAnswer {
+			updateGuesses()
+		}
 	}
 
 	@IBAction func showAnswers(_ sender: NSButton) {
