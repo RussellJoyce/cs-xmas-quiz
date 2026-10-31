@@ -30,6 +30,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 #pattern-bar { background: #16213e; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 #pattern-bar label { font-size: 13px; color: #aaa; }
 #pattern-bar select { background: #0f3460; border: 1px solid #444; color: #eee; padding: 5px 8px; border-radius: 4px; font-size: 13px; min-width: 280px; }
+#pattern-bar #cfg-category { min-width: 0; margin-right: 4px; }
 #pattern-bar button { padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
 #pattern-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-fire { background: #8e44ad; color: #fff; }
@@ -43,22 +44,45 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 
 .msg-pattern { color: #bb8fce; }
 
+#warning:not(:empty) { margin-bottom: 12px; padding: 8px 10px; border-radius: 4px; background: #3a2416; border: 1px solid #7a4a20; color: #e8c9a0; font-size: 13px; }
+#warning code { color: #f39c12; font-family: monospace; }
+
 /* Grid */
-#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-bottom: 12px; }
+/* --cellw is set by the size slider. The phones scale to fill their cells, so it sets their
+   size too; the floor keeps the controls usable when the phones are small. */
+#grid { --cellw: 280px; display: grid; grid-template-columns: repeat(auto-fill, minmax(max(220px, var(--cellw)), 1fr)); grid-auto-flow: dense; gap: 10px; margin-bottom: 12px; }
 
 /* Client cell */
 .cell { background: #16213e; border-radius: 8px; padding: 10px; border: 1px solid #333; display: flex; flex-direction: column; gap: 6px; }
 .cell-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; }
+.cell-header-right { display: flex; align-items: center; gap: 8px; }
+.cell-header .check-label { display: flex; align-items: center; gap: 3px; font-size: 11px; font-weight: normal; color: #aaa; cursor: pointer; }
+.cell-header .icon-btn { border: none; border-radius: 3px; background: #0f3460; color: #bbb; cursor: pointer; font-size: 11px; line-height: 1; padding: 3px 5px; }
+.cell-header .icon-btn:hover { background: #1a5276; color: #fff; }
+/* An enlarged cell takes the whole row, so its phone can be shown at full size. */
+.cell.big { grid-column: 1 / -1; }
+
+/* The phone. It is rendered at real phone size and scaled to fit the cell, because the
+   client's type is fixed pixels and would not survive being laid out in a small box. --s is
+   set from the cell's width as it changes. */
+.screen { --s: 0.3; --pw: 800px; --ph: 400px; width: calc(var(--pw) * var(--s)); height: calc(var(--ph) * var(--s)); overflow: hidden; background: #060f09; border-radius: 3px; }
+.screen.off { opacity: 0.4; }
+.phone { width: var(--pw); height: var(--ph); border: 0; display: block; transform: scale(var(--s)); transform-origin: top left; }
 .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .dot-red { background: #e74c3c; }
 .dot-yellow { background: #f39c12; }
 .dot-green { background: #2ecc71; }
 .cell-status { font-size: 11px; color: #888; line-height: 1.4; }
+.conn-toggle { cursor: pointer; font-weight: 600; text-decoration: underline dotted; text-underline-offset: 2px; }
+.conn-toggle:hover { text-decoration-style: solid; }
+.conn-on { color: #2ecc71; }
+.conn-pending { color: #f39c12; }
+.conn-off { color: #e74c3c; }
 .cell-buttons { display: flex; flex-wrap: wrap; gap: 4px; }
-.cell-buttons button {
+.cell-buttons button, .input-row button {
     padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: 600;
 }
-.cell-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+.cell-buttons button:disabled, .input-row button:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-sm-green { background: #27ae60; color: #fff; }
 .btn-sm-red { background: #c0392b; color: #fff; }
 .btn-sm-blue { background: #2980b9; color: #fff; }
@@ -102,13 +126,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
     </label>
     <button class="btn-connect" onclick="connectAll()">Connect All</button>
     <button class="btn-disconnect" onclick="disconnectAll()">Disconnect All</button>
+    <button class="btn-disconnect" onclick="disassociateAll()" title="Release every team, as the quiz software's Disconnect All does">Disassociate All</button>
     <label class="check-label"><input type="checkbox" id="cfg-autopick" checked> Auto-pick teams</label>
     <label class="check-label"><input type="checkbox" id="cfg-filterpings" checked> Filter Pings</label>
     <label class="check-label"><input type="checkbox" id="cfg-showanswers"> Show Answers</label>
+    <label class="check-label"><input type="checkbox" id="cfg-displayall"> Show All Phones</label>
+    <label class="check-label">Size: <input type="range" id="cfg-size" min="0.25" max="1" step="0.05" value="0.3"><span id="size-readout"></span></label>
 </div>
+<div id="warning"></div>
 
 <div id="pattern-bar">
     <label>Test pattern:
+        <select id="cfg-category"></select>
         <select id="cfg-pattern"></select>
     </label>
     <button class="btn-fire" id="btn-fire" onclick="firePattern()">Fire</button>
@@ -127,6 +156,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 // Init config
 // Served by the quiz server, so this is the name the certificate was issued for.
 document.getElementById('cfg-host').value = location.hostname || 'localhost';
+
+if (location.protocol !== 'https:') {
+    document.getElementById('warning').innerHTML =
+        '<b>Not served over https.</b> Open this page from the quiz server itself — ' +
+        '<code>https://&lt;host&gt;/test/multi-client.html</code> — with the server started as ' +
+        '<code>node server.js --dev</code>. Opened from the filesystem the phone displays and the ' +
+        'wiki actions cannot work.';
+}
+
 var countSel = document.getElementById('cfg-count');
 for (var i = 1; i <= 16; i++) {
     var opt = document.createElement('option');
@@ -236,25 +274,40 @@ function VirtualClient(index) {
     this.wallWords = [];
     this.wallSolved = {};
 
+    // The phone display, when it is showing. While it is, the phone owns the connection and
+    // we borrow its socket (see adopt), because the server keeps one socket per client and
+    // would stop talking to whichever of the two connected first.
+    this.frame = null;
+    this.borrowed = false;
+
     // Create DOM
     var cell = document.createElement('div');
     cell.className = 'cell';
     cell.id = 'cell-' + index;
+    this.cell = cell;
 
     cell.innerHTML =
-        '<div class="cell-header"><span>Client ' + index + '</span><span class="dot dot-red" id="dot-' + index + '"></span></div>' +
-        '<div class="cell-status" id="status-' + index + '">Disconnected</div>' +
-        '<div class="cell-buttons">' +
-            '<button class="btn-sm-green" id="conn-' + index + '" onclick="clients[' + index + '].toggleConnect()">Connect</button>' +
-            '<button class="btn-sm-orange" id="buzz-' + index + '" onclick="clients[' + index + '].buzz()" disabled>Buzz</button>' +
-            '<button class="btn-sm-blue" id="btn-a-' + index + '" onclick="clients[' + index + '].sendHL(\'hi\')" disabled>TRUE</button>' +
-            '<button class="btn-sm-blue" id="btn-b-' + index + '" onclick="clients[' + index + '].sendHL(\'lo\')" disabled>FALSE</button>' +
-        '</div>' +
+        '<div class="cell-header"><span>Client ' + index + '</span>' +
+            '<span class="cell-header-right">' +
+                '<label class="check-label"><input type="checkbox" id="phone-' + index + '" onchange="clients[' + index + '].setDisplay(this.checked)"> Phone</label>' +
+                '<button class="icon-btn" id="big-' + index + '" title="Enlarge / shrink the phone" onclick="clients[' + index + '].toggleBig()" style="display:none">&#10530;</button>' +
+                '<button class="icon-btn" id="reload-' + index + '" title="Reload the phone, as a team pressing refresh would" onclick="clients[' + index + '].reloadPhone()" style="display:none">&#8635;</button>' +
+                '<span class="dot dot-red" id="dot-' + index + '"></span>' +
+            '</span></div>' +
+        '<div class="screen" id="screen-' + index + '" style="display:none"></div>' +
+        // The connection state doubles as the connect / disconnect switch
+        '<div class="cell-status"><span class="conn-toggle" id="conn-' + index + '" onclick="clients[' + index + '].toggleConnect()">Disconnected</span>' +
+            '<span id="status-' + index + '"></span></div>' +
         '<div class="team-row" id="teams-' + index + '"></div>' +
         //Hidden by default: a grid of fourteen clients is mostly these boxes, and the
         //patterns drive every one of these answers without them. They are still here for
-        //when you want to type something by hand.
+        //when you want to press or type something by hand.
         '<div class="answer-inputs" id="answers-' + index + '">' +
+            '<div class="cell-buttons">' +
+                '<button class="btn-sm-orange" id="buzz-' + index + '" onclick="clients[' + index + '].buzz()" disabled>Buzz</button>' +
+                '<button class="btn-sm-blue" id="btn-a-' + index + '" onclick="clients[' + index + '].sendHL(\'hi\')" disabled>TRUE</button>' +
+                '<button class="btn-sm-blue" id="btn-b-' + index + '" onclick="clients[' + index + '].sendHL(\'lo\')" disabled>FALSE</button>' +
+            '</div>' +
             '<div class="input-row">' +
                 '<input type="text" id="txt-' + index + '" placeholder="Text/Number answer...">' +
                 '<button class="btn-sm-purple" onclick="clients[' + index + '].sendText()" disabled id="txtsend-' + index + '">Send</button>' +
@@ -278,6 +331,7 @@ function VirtualClient(index) {
         '<div class="msg-log" id="log-' + index + '"></div>';
 
     document.getElementById('grid').appendChild(cell);
+    phoneSizer.observe(cell);
 
     // Build team buttons
     var teamRow = document.getElementById('teams-' + index);
@@ -304,7 +358,7 @@ VirtualClient.prototype.log = function(cls, text) {
 
 VirtualClient.prototype.updateStatus = function() {
     var state = this.ws ? (this.ws.readyState === WebSocket.OPEN ? 'Connected' : 'Connecting...') : 'Disconnected';
-    var parts = [state];
+    var parts = [''];   // the connection state, which is shown separately as the switch
     if (this.team) parts.push('Team ' + this.team);
     parts.push('View: ' + this.view);
     parts.push('Buzzer: ' + (this.buzzerOn ? 'ON' : 'OFF'));
@@ -340,26 +394,49 @@ VirtualClient.prototype.updateStatus = function() {
     // Team row visibility
     document.getElementById('teams-' + this.index).style.display = (connected && !hasTeam) ? 'flex' : 'none';
 
-    // Connect button label
-    var connBtn = document.getElementById('conn-' + this.index);
-    if (connected || (this.ws && this.ws.readyState === WebSocket.CONNECTING)) {
-        connBtn.textContent = 'Disconnect';
-        connBtn.className = 'btn-sm-red';
-    } else {
-        connBtn.textContent = 'Connect';
-        connBtn.className = 'btn-sm-green';
-    }
+    // The connect switch. With the phone showing, connecting means switching the phone on,
+    // which may be waiting to retry rather than holding a socket.
+    var conn = document.getElementById('conn-' + this.index);
+    var phoneOn = this.frame && !this.phoneOff;
+    var on = phoneOn || connected || (this.ws && this.ws.readyState === WebSocket.CONNECTING);
+    if (this.frame) state = this.phoneOff ? 'Phone off' : state + ' (via phone)';
+    conn.textContent = state;
+    conn.title = on ? 'Click to disconnect' : 'Click to connect';
+    conn.className = 'conn-toggle ' + (connected ? 'conn-on' : on ? 'conn-pending' : 'conn-off');
 };
 
 VirtualClient.prototype.toggleConnect = function() {
-    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
+    if (this.frame) {
+        this.powerPhone(this.phoneOff);
+    } else if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
         this.disconnect();
     } else {
         this.connect();
     }
 };
 
+// What we know of the server's view of us, forgotten whenever the connection goes. The
+// server tells us all of it again when we come back.
+VirtualClient.prototype.resetState = function() {
+    clearInterval(this.pingInterval);
+    this.pingInterval = null;
+    this.ws = null;
+    this.team = null;
+    this.view = 'pickteam';
+    this.buzzerOn = false;
+    this.updateStatus();
+};
+
+VirtualClient.prototype.receive = function(msg) {
+    // filter pings unless we fired from a pattern
+    if (msg.slice(0, 2) !== 'pb' || !document.getElementById('cfg-filterpings').checked) {
+        this.log('msg-recv', '< ' + msg);
+    }
+    this.handleMessage(msg);
+};
+
 VirtualClient.prototype.connect = function() {
+    if (this.frame) { this.powerPhone(true); return; }
     if (this.ws) return;
     //wss and nothing else: the server has no plain client port, so these clients run over
     //exactly the transport the phones do.
@@ -375,9 +452,9 @@ VirtualClient.prototype.connect = function() {
     // back. Set it before the socket exists so it cannot be missed by an early message.
     this.autopickPending = document.getElementById('cfg-autopick').checked;
 
-    var self = this;
+    var self = this, sock;
     try {
-        this.ws = new WebSocket(url);
+        sock = this.ws = new WebSocket(url);
     } catch(e) {
         this.log('msg-err', 'Error: ' + e.message);
         this.ws = null;
@@ -401,23 +478,14 @@ VirtualClient.prototype.connect = function() {
     };
 
     this.ws.onmessage = function(event) {
-        var msg = event.data;
-        // filter pings unless we fired from a pattern
-        if (msg.slice(0, 2) !== 'pb' || !document.getElementById('cfg-filterpings').checked) {
-            self.log('msg-recv', '< ' + msg);
-        }
-        self.handleMessage(msg);
+        self.receive(event.data);
     };
 
     this.ws.onclose = function() {
+        // A socket we have already handed over to the phone has nothing more to say
+        if (self.ws !== sock) return;
         self.log('msg-info', 'Disconnected');
-        clearInterval(self.pingInterval);
-        self.pingInterval = null;
-        self.ws = null;
-        self.team = null;
-        self.view = 'pickteam';
-        self.buzzerOn = false;
-        self.updateStatus();
+        self.resetState();
     };
 
     this.ws.onerror = function() {
@@ -426,10 +494,137 @@ VirtualClient.prototype.connect = function() {
 };
 
 VirtualClient.prototype.disconnect = function() {
-    if (this.ws) {
+    if (this.frame) {
+        this.powerPhone(false);
+    } else if (this.ws) {
         this.ws.close();
     }
 };
+
+// ---------------------------------------------------------------- the phone display
+
+// The real client app, keyed exactly as we are, so that it is the same team as far as the
+// server is concerned. An absolute path, because the server mounts the client app at the
+// root and this page at /test.
+VirtualClient.prototype.phoneURL = function() {
+    return '/index.html?vcid=test' + this.index +
+           '&host=' + encodeURIComponent(document.getElementById('cfg-host').value) +
+           '&port=' + encodeURIComponent(document.getElementById('cfg-port').value);
+};
+
+// Shows or hides the phone, handing the connection across either way. The client stays as
+// connected (or not) as it was.
+VirtualClient.prototype.setDisplay = function(on) {
+    document.getElementById('phone-' + this.index).checked = on;
+    if (on === !!this.frame) return;
+
+    var screen = document.getElementById('screen-' + this.index);
+    var wasOn;
+
+    if (on) {
+        wasOn = !!this.ws;
+        // Our own socket is let go with its handlers removed, so that its closing cannot
+        // tread on the state the phone's socket is about to build.
+        if (this.ws) {
+            var old = this.ws;
+            old.onopen = old.onmessage = old.onclose = old.onerror = null;
+            old.close();
+        }
+        this.resetState();
+
+        this.frame = document.createElement('iframe');
+        this.frame.className = 'phone';
+        screen.appendChild(this.frame);
+        screen.style.display = '';
+        this.powerPhone(wasOn);
+    } else {
+        wasOn = !this.phoneOff;
+        // Removing the frame takes its socket with it. Its listeners ignore anything it
+        // says on the way out, as it is no longer this.ws.
+        this.resetState();
+        this.frame.remove();
+        this.frame = null;
+        this.borrowed = false;
+        screen.style.display = 'none';
+        screen.classList.remove('off');
+        this.cell.classList.remove('big');
+        if (wasOn) this.connect();
+    }
+
+    document.getElementById('big-' + this.index).style.display = on ? '' : 'none';
+    document.getElementById('reload-' + this.index).style.display = on ? '' : 'none';
+    this.updateStatus();
+};
+
+// Powering off takes the page away entirely, which is the only way to stop the phone: it
+// retries its connection every second for as long as it exists. A page being unloaded may
+// not report its socket closing, so we let go of it ourselves.
+VirtualClient.prototype.powerPhone = function(on) {
+    this.phoneOff = !on;
+    if (this.ws) {
+        this.log('msg-info', on ? 'Phone restarted' : 'Phone switched off');
+        this.resetState();
+    }
+    //Assigning src rather than calling contentWindow.location.reload(), which also reloads
+    //a phone that is already on.
+    this.frame.src = on ? this.phoneURL() : 'about:blank';
+    document.getElementById('screen-' + this.index).classList.toggle('off', !on);
+    this.updateStatus();
+};
+
+// A reload is the team pressing refresh: the socket goes and comes back with the same vcid,
+// so the server should hand them their team straight back.
+VirtualClient.prototype.reloadPhone = function() {
+    this.powerPhone(true);
+};
+
+VirtualClient.prototype.toggleBig = function() {
+    this.cell.classList.toggle('big');
+};
+
+// Called by the phone each time it opens a socket, before it opens, so we hear everything it
+// does. We do not ping or ask who we are on it: the phone already does both.
+VirtualClient.prototype.adopt = function(sock) {
+    var self = this;
+    this.resetState();
+    this.ws = sock;
+    this.borrowed = true;
+    this.autopickPending = document.getElementById('cfg-autopick').checked;
+
+    sock.addEventListener('open', function() {
+        if (self.ws !== sock) return;
+        self.log('msg-info', 'Connected (via phone)');
+        self.updateStatus();
+    });
+    sock.addEventListener('message', function(event) {
+        if (self.ws === sock) self.receive(event.data);
+    });
+    sock.addEventListener('close', function() {
+        if (self.ws !== sock) return;
+        self.log('msg-info', 'Disconnected (phone will retry)');
+        self.resetState();
+    });
+    this.updateStatus();
+};
+
+// The hook game.js calls from inside a phone frame. Matched on the frame's window, which is
+// the only thing a phone knows about itself that we also know.
+window.quizPhoneSocket = function(win, sock) {
+    for (var i = 1; i < clients.length; i++) {
+        if (clients[i] && clients[i].frame && clients[i].frame.contentWindow === win) {
+            clients[i].adopt(sock);
+            return;
+        }
+    }
+};
+
+// Each phone is scaled to fill its cell, and no further than real size.
+var phoneSizer = new ResizeObserver(function(entries) {
+    entries.forEach(function(e) {
+        var screen = e.target.querySelector('.screen');
+        if (screen) screen.style.setProperty('--s', Math.min(1, e.contentRect.width / 800));
+    });
+});
 
 VirtualClient.prototype.send = function(msg) {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -463,7 +658,8 @@ VirtualClient.prototype.handleMessage = function(msg) {
             break;
         case 'vi':
             this.view = payload;
-            if (payload === 'onlyconnect' && this.team) {
+            // A phone asks for the wall itself
+            if (payload === 'onlyconnect' && this.team && !this.borrowed) {
                 this.send('cr' + this.team);
             }
             if (payload === 'pickteam') {
@@ -909,6 +1105,7 @@ function buildGrid() {
     for (var i = 1; i < clients.length; i++) {
         if (clients[i]) clients[i].disconnect();
     }
+    phoneSizer.disconnect();
     document.getElementById('grid').innerHTML = '';
     clients = [null]; // placeholder at index 0
 
@@ -918,6 +1115,14 @@ function buildGrid() {
         vc.updateStatus();
     }
     applyShowAnswers();
+    applyDisplayAll();
+}
+
+function applyDisplayAll() {
+    var show = document.getElementById('cfg-displayall').checked;
+    for (var i = 1; i < clients.length; i++) {
+        if (clients[i]) clients[i].setDisplay(show);
+    }
 }
 
 // The hand-typed answer boxes, shown or hidden across the whole grid at once.
@@ -945,9 +1150,52 @@ function disconnectAll() {
     }
 }
 
+// Releases every team, exactly as the quiz software does: 'di<team>' for each, sent on the
+// quiz software's port: a page served over https may not open that plain ws port, so the
+// server (in --dev only) accepts quiz software messages on the client port when asked
+// with ?quiz.
+function disassociateAll() {
+    var url = 'wss://' + document.getElementById('cfg-host').value + ':' +
+              document.getElementById('cfg-port').value + '/?quiz';
+    var sock;
+    try {
+        sock = new WebSocket(url);
+    } catch (e) {
+        patternLog('msg-err', 'disassociate: cannot open ' + url + ' (' + e.message + ')');
+        return;
+    }
+    sock.onmessage = function(event) {
+        // Anything but the quiz software's greeting means the server took us for a phone,
+        // which is what it does when it was not started with --dev.
+        if (event.data !== 'connected') {
+            patternLog('msg-err', 'disassociate: the server is not in --dev mode, nothing released');
+        } else {
+            for (var t = 1; t <= 14; t++) sock.send('di' + t);   //14 matches numTeams in config.json
+            patternLog('msg-info', 'disassociate: released teams 1-14');
+        }
+        sock.onerror = null;
+        sock.close();
+    };
+    sock.onerror = function() {
+        patternLog('msg-err', 'disassociate: could not connect to ' + url);
+    };
+}
+
 // Rebuild grid when count changes
 document.getElementById('cfg-count').addEventListener('change', buildGrid);
 document.getElementById('cfg-showanswers').addEventListener('change', applyShowAnswers);
+document.getElementById('cfg-displayall').addEventListener('change', applyDisplayAll);
+
+// The slider is the phone's scale: a cell is made wide enough for an 800px phone at that
+// scale, plus its padding and border. The grid still stretches cells to fill each row, so
+// the phones come out at least this size rather than exactly it.
+function applySize() {
+    var s = parseFloat(document.getElementById('cfg-size').value);
+    document.getElementById('grid').style.setProperty('--cellw', (800 * s + 22) + 'px');
+    document.getElementById('size-readout').textContent = s.toFixed(2);
+}
+document.getElementById('cfg-size').addEventListener('input', applySize);
+applySize();
 
 // Initial grid
 buildGrid();
@@ -981,6 +1229,7 @@ var ACTIONS = {
 var ACTION_ALIASES = { higher: 'hi', lower: 'lo', 'true': 'hi', 'false': 'lo', answer: 'text' };
 
 var patterns = [];
+var patternCategories = []; // [{ name, items: [{ index, label }] }], General first
 var patternRun = null; // { pattern, step, timer } while one is firing
 
 // Turns the pattern text into a list of {name, steps, maxClient}. Anything it cannot make
@@ -1138,6 +1387,7 @@ function initPatterns() {
 
     if (typeof window.TEST_PATTERNS !== 'string') {
         sel.innerHTML = '<option>(test-patterns.js not loaded)</option>';
+        document.getElementById('cfg-category').disabled = true;
         sel.disabled = true;
         document.getElementById('btn-fire').disabled = true;
         status.className = 'warn';
@@ -1148,15 +1398,33 @@ function initPatterns() {
     var parsed = parsePatterns(window.TEST_PATTERNS);
     patterns = parsed.patterns;
 
-    sel.innerHTML = '';
+    // A pattern's category is the part of its name before " - ", so "Buzz - 3 Buzzes" is
+    // "3 Buzzes" under Buzz. Anything without one is General, which comes first; the rest
+    // keep the order they appear in the file.
+    var catSel = document.getElementById('cfg-category');
+    patternCategories = [{ name: 'General', items: [] }];
+    var byName = { General: patternCategories[0] };
     for (var i = 0; i < patterns.length; i++) {
         var p = patterns[i];
-        var opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = p.name + '  (' + p.steps.length + ' steps' +
-                          (p.maxClient > 1 ? ', needs ' + p.maxClient + ' clients' : '') + ')';
-        sel.appendChild(opt);
+        var dash = p.name.indexOf(' - ');
+        var cat = dash > 0 ? p.name.slice(0, dash).trim() : 'General';
+        if (!byName[cat]) {
+            byName[cat] = { name: cat, items: [] };
+            patternCategories.push(byName[cat]);
+        }
+        byName[cat].items.push({ index: i, label: dash > 0 ? p.name.slice(dash + 3).trim() : p.name });
     }
+    patternCategories = patternCategories.filter(function(c) { return c.items.length; });
+
+    catSel.innerHTML = '';
+    patternCategories.forEach(function(c, n) {
+        var opt = document.createElement('option');
+        opt.value = n;
+        opt.textContent = c.name + ' (' + c.items.length + ')';
+        catSel.appendChild(opt);
+    });
+    catSel.addEventListener('change', showCategory);
+    showCategory();
 
     if (parsed.errors.length) {
         status.className = 'warn';
@@ -1166,14 +1434,33 @@ function initPatterns() {
     if (!patterns.length) {
         sel.innerHTML = '<option>(no patterns defined)</option>';
         sel.disabled = true;
+        catSel.disabled = true;
         document.getElementById('btn-fire').disabled = true;
     }
+}
+
+// Fills the pattern list with the chosen category. Option values stay indices into
+// `patterns`, so firing does not need to know about categories.
+function showCategory() {
+    var sel = document.getElementById('cfg-pattern');
+    var cat = patternCategories[parseInt(document.getElementById('cfg-category').value, 10)];
+    sel.innerHTML = '';
+    if (!cat) return;
+    cat.items.forEach(function(item) {
+        var p = patterns[item.index];
+        var opt = document.createElement('option');
+        opt.value = item.index;
+        opt.textContent = item.label + '  (' + p.steps.length + ' steps' +
+                          (p.maxClient > 1 ? ', needs ' + p.maxClient + ' clients' : '') + ')';
+        sel.appendChild(opt);
+    });
 }
 
 function setPatternRunning(running) {
     document.getElementById('btn-fire').disabled = running;
     document.getElementById('btn-stop').disabled = !running;
     document.getElementById('cfg-pattern').disabled = running;
+    document.getElementById('cfg-category').disabled = running;
 }
 
 function firePattern() {

@@ -175,6 +175,22 @@ describe('over real sockets', () => {
         b.close();
     });
 
+    test('the test harness can speak as the quiz software over wss', async () => {
+        //The harness page is served over https, so it cannot open the plain ws quiz port.
+        const c = connect(ports.clientWss, '/?vcid=released');
+        await c.next();
+        c.send('pt9');
+        assert.strictEqual((await c.nextN(5))[0], 'ok9');
+
+        const harness = connect(ports.clientWss, '/?quiz');
+        assert.strictEqual(await harness.next(), 'connected');
+        harness.send('di9');
+        assert.strictEqual(await c.next(), 'vipickteam');
+
+        harness.close();
+        c.close();
+    });
+
     test('a buzz travels from a client to the quiz software', async () => {
         const quiz = connectPlain(ports.server);
         await quiz.next();  //'connected'
@@ -459,6 +475,14 @@ describe('with development mode off', () => {
         ws.close();
     });
 
+    test('?quiz is ignored, so a phone cannot pose as the quiz software', async () => {
+        //It is just another connection from this address, and so is treated as the client
+        //the previous test made. The quiz software would have been greeted with 'connected'.
+        const ws = connect(ports.clientWss, '/?quiz');
+        assert.notStrictEqual(await ws.next(), 'connected');
+        ws.close();
+    });
+
     test('vcid is ignored, so one address is one client and therefore one team', async () => {
         //The point of the switch. Without it a single phone could open fourteen tabs,
         //name each one differently and claim every team before anybody else picked.
@@ -534,15 +558,14 @@ describe('what the web server hands out', () => {
     });
 
     test('the test harnesses are NOT served to a real quiz', async () => {
-        //A room full of phones has no business being able to open the client wall.
+        //A room full of phones has no business being able to drive other teams' buttons.
         const s = await serving(false);
-        assert.strictEqual(await get(s.port, '/test/client-wall.html'), 404);
+        assert.strictEqual(await get(s.port, '/test/multi-client.html'), 404);
         s.close();
     });
 
     test('development mode serves them at /test', async () => {
         const s = await serving(true);
-        assert.strictEqual(await get(s.port, '/test/client-wall.html'), 200);
         assert.strictEqual(await get(s.port, '/test/multi-client.html'), 200);
         s.close();
     });

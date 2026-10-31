@@ -245,7 +245,24 @@ function startWebsocketServers(overrides) {
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 
+    //Are we being asked to connect as the quiz software, for testing? The test harness adds ?quiz to the URL.
+    function isQuizHarness(url) {
+        try {
+            return new URL(url || '/', 'http://localhost').searchParams.has('quiz');
+        } catch(err) {
+            return false;
+        }
+    }
+
     function handleClientConnection(ws, req) {
+        if(cfg.dev && isQuizHarness(req.url)) {
+            log.info('quiz', null, null, 'test harness connected as the quiz software');
+            guard(ws, 'quiz');
+            safeSend(ws, 'connected');
+            ws.on('message', message => state.handleServerMessage(message));
+            return;
+        }
+
         const ip = req.connection.remoteAddress;
         const key = clientKeyForConnection(ip, req.url, cfg.dev);
 

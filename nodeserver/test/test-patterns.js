@@ -9,6 +9,8 @@
 //
 //  # a comment, ignored
 //  :Name of the pattern        starts a new pattern; everything after it belongs to it
+//                              "Category - Name" files it under Category in the page;
+//                              a name with no " - " goes under General
 //  <who>,<action>[,args]       one message from one or more clients
 //  wait <ms>                   pause before the next line
 //

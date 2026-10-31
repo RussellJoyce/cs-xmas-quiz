@@ -32,6 +32,13 @@ function connect() {
     //The server opens the client websocket port on 8090 (wss)
     ws = new WebSocket(QuizConnection.url());
 
+    //When the test harness is showing this page, it drives the team through our socket.
+    try {
+        if(window.parent !== window && window.parent.quizPhoneSocket) {
+            window.parent.quizPhoneSocket(window, ws);
+        }
+    } catch(err) {}
+
     ws.onopen = function(event) {
         //We we have connected, ask which team we are
         ws.send('re');
