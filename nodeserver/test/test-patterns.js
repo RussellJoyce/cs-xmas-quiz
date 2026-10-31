@@ -35,6 +35,8 @@
 //  wiki,short,<n>      walk to n links from the target          wl<team>,<article>...
 //  wiki,stray,<n>      n moves away from the ideal route        wl<team>,<article>...
 //  wiki,back           step back one article                    wb<team>
+//  wall,random         four unsolved connecting wall tiles      cg<team>,<p>,<p>,<p>,<p>
+//  wall,<w>,<w>,<w>,<w>  four words off the wall, by name       cg<team>,<p>,<p>,<p>,<p>
 //  pick[,<team>]       claim a team, defaulting to the client   pt<team>
 //  ping                the 5s keepalive, sent early            pi
 //  connect             open the socket
@@ -435,6 +437,60 @@ wait 2000
 5,raw,wb99
 6,raw,wl6
 wait 1000
+
+# ---------------------------------------------------------------- connecting wall
+# The named guesses are written against Questions/OnlyConnect/1-example.txt:
+#   Coffee: Lungo, Espresso, Flat White, Irish
+#   Mr ___: Vain, Brightside, Sandman, Bojangles
+#   Photography: Exposure, Filter, DSLR, Focus
+#   ___ thinking: Wishful, Blue sky, Negative, Lateral
+# Start the wall from the quiz software first.
+
+:Wall - Everyone guesses at random
+*,wall,random
+
+:Wall - T1 solves it cleanly, the fourth group solving itself
+1,wall,Lungo,Espresso,Flat White,Irish
+wait 800
+1,wall,Vain,Brightside,Sandman,Bojangles
+wait 800
+1,wall,Exposure,Filter,DSLR,Focus
+
+:Wall - T2 wrong twice, then solves it
+2,wall,Lungo,Vain,Exposure,Wishful
+wait 1500
+2,wall,Irish,Filter,Focus,Negative
+wait 1500
+2,wall,Lungo,Espresso,Flat White,Irish
+wait 800
+2,wall,Vain,Brightside,Sandman,Bojangles
+wait 800
+2,wall,Wishful,Blue sky,Negative,Lateral
+
+:Wall - A race, finishing in order T3, T4, T5
+3-5,wall,Lungo,Espresso,Flat White,Irish
+wait 500
+3-5,wall,Vain,Brightside,Sandman,Bojangles
+wait 500
+3,wall,Exposure,Filter,DSLR,Focus
+wait 700
+4,wall,Exposure,Filter,DSLR,Focus
+wait 700
+5,wall,Exposure,Filter,DSLR,Focus
+
+:Wall - Everyone finishes, which ends the wall
+*,wall,Lungo,Espresso,Flat White,Irish
+wait 500
+*,wall,Vain,Brightside,Sandman,Bojangles
+wait 500
+*,wall,Exposure,Filter,DSLR,Focus
+
+:Wall - Rubbish guesses, none of which should count as wrong
+1,raw,cg1,1,1,1,1
+1,raw,cg1,0,17,3,4
+1,raw,cg1,1,2,3
+1,raw,cg1,a,b,c,d
+1,raw,cg99,1,2,3,4
 
 # ---------------------------------------------------------------- connection handling
 

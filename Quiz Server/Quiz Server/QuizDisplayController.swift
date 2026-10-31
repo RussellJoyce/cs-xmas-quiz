@@ -29,6 +29,7 @@ class QuizDisplayController: NSViewController {
 	let wavelengthScene = WavelengthScene()
 	let multiChoiceScene = MultiChoiceScene()
 	let wikiRaceScene = WikiRaceScene()
+	let onlyConnectScene = OnlyConnectScene()
 
 	var rounds : [RoundType : QuizScene] = [:]
 	var currentRound = RoundType.none
@@ -87,7 +88,7 @@ class QuizDisplayController: NSViewController {
 			.geography : geographyScene, .text : textScene, .numbers : numbersScene,
 			.scores : scoresScene, .pointless : pointlessScene,
 			.wavelength : wavelengthScene, .multichoice : multiChoiceScene,
-			.wikirace : wikiRaceScene]
+			.wikirace : wikiRaceScene, .onlyConnect : onlyConnectScene]
 
 		rounds.forEach { $1.setUpScene(size: skView.bounds.size) }
 

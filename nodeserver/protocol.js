@@ -543,6 +543,8 @@ class QuizState {
                         case "tt": //Text answer
                         case "wv": //Wavelength slider guess
                         case "mc": //Multiple choice selection
+                        case "cg": //Connecting wall guess
+                        case "cr": //Connecting wall state request
                         case "ii": { //Map guess
                             //Check that the claimed team is actually the one that the client holds
                             const code = message.slice(0,2);

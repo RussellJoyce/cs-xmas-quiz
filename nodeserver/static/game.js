@@ -11,6 +11,7 @@ var wavetrack = document.getElementById("wavetrack");
 var wavehandle = document.getElementById("wavehandle");
 var wavevalue = document.getElementById("wavevalue");
 var multigrid = document.getElementById("multigrid");
+var wallgrid = document.getElementById("wallgrid");
 
 
 var ws;
@@ -119,6 +120,22 @@ function connect() {
                 document.getElementById("higher").innerHTML = "<span>TRUE</span>";
                 document.getElementById("lower").innerHTML = "<span>FALSE</span>";
                 break;
+            case "cw":
+                //The connecting wall, in the order the main screen shows it: "cw<word>|<word>|..."
+                setWall(event.data.slice(2));
+                break;
+            case "cs":
+                //One of our guesses was a group
+                wallResult(event.data.slice(2), true);
+                break;
+            case "cx":
+                //One of our guesses was not a group
+                wallResult(event.data.slice(2), false);
+                break;
+            case "cf":
+                //Time is up on the wall
+                freezeWall();
+                break;
             case "pb":
                 //Pong from the server
                 break;
@@ -160,6 +177,13 @@ function applyView(view) {
 
     if(view == "wikirace") {
         QuizConnection.go("/wikirace/");
+        return;
+    }
+
+    if(view == "onlyconnect") {
+        setView("onlyconnect");
+        requestWall();
+        toggleState(buttonsOn);
         return;
     }
 
@@ -215,6 +239,8 @@ function toggleState(on) {
         multiButtons[i].classList.toggle("buttonOn", on);
         multiButtons[i].classList.toggle("buttonOff", !on);
     }
+
+    renderWall();
 }
 
 
@@ -230,6 +256,10 @@ function setView(id) {
         elements[i].style.display = 'none';
     }
     view.style.display = 'flex';
+
+    if(id == "onlyconnect") {
+        fitWall();
+    }
 }
 
 
@@ -511,6 +541,186 @@ function setMultiSelection(option) {
         }
     }
 }
+
+
+/*
+The connecting wall: sixteen tiles in the same fixed order as the main screen. Pick four and
+they are sent to the quiz software, which answers "cs" (a group, which then stays green) or
+"cx" (not a group, shown as crosses for a moment). Positions are 1-based on the wire.
+*/
+var WALL_SIZE = 16;
+var WALL_WRONG_MS = 1000;   //How long the crosses stay up
+var WALL_PENDING_MS = 4000; //How long to wait for a verdict before asking again
+var WALL_MAX_FONT = 48;
+var WALL_MIN_FONT = 8;
+
+var wallWords = [];         //Empty until the quiz software starts the wall
+var wallTiles = [];
+var wallSolved = {};        //position → true
+var wallSelected = [];      //positions, in the order they were picked
+var wallWrong = {};         //position → true, while the crosses are showing
+var wallPending = false;
+var wallFrozen = false;
+var wallWrongTimer = null;
+var wallPendingTimer = null;
+
+function requestWall() {
+    if(myid > 0 && myid <= 99 && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send("cr" + myid);
+    }
+}
+
+function clearWallTimers() {
+    if(wallWrongTimer) clearTimeout(wallWrongTimer);
+    if(wallPendingTimer) clearTimeout(wallPendingTimer);
+    wallWrongTimer = null;
+    wallPendingTimer = null;
+}
+
+//A new wall, or a blank one if the payload is empty. Either way, everything we had goes.
+function setWall(payload) {
+    clearWallTimers();
+    wallWords = payload === "" ? [] : payload.split("|");
+    wallSolved = {};
+    wallSelected = [];
+    wallWrong = {};
+    wallPending = false;
+    wallFrozen = false;
+
+    wallgrid.innerHTML = "";
+    wallTiles = [];
+    for(var pos = 1; pos <= WALL_SIZE; pos++) {
+        var tile = document.createElement("div");
+        tile.addEventListener(eventtouse, wallPressHandler(pos));
+        wallgrid.appendChild(tile);
+        wallTiles.push(tile);
+    }
+    renderWall();
+    fitWall();
+}
+
+function wallPositions(payload) {
+    return payload.split(",").map(function(p) { return parseInt(p, 10); })
+                  .filter(function(p) { return p >= 1 && p <= WALL_SIZE; });
+}
+
+function wallResult(payload, correct) {
+    var positions = wallPositions(payload);
+    if(correct) {
+        positions.forEach(function(p) { wallSolved[p] = true; });
+        //The quiz software also solves the last group by itself, which may not be the
+        //one we have pending, so only a verdict on what we actually picked clears it.
+        if(wallPending && positions.some(function(p) { return wallSelected.indexOf(p) >= 0; })) {
+            endPending();
+        }
+        wallSelected = wallSelected.filter(function(p) { return !wallSolved[p]; });
+    } else {
+        endPending();
+        positions.forEach(function(p) { wallWrong[p] = true; });
+        if(wallWrongTimer) clearTimeout(wallWrongTimer);
+        wallWrongTimer = setTimeout(function() {
+            wallWrongTimer = null;
+            wallWrong = {};
+            renderWall();
+            fitWall();
+        }, WALL_WRONG_MS);
+    }
+    renderWall();
+    fitWall();
+}
+
+function endPending() {
+    if(wallPendingTimer) clearTimeout(wallPendingTimer);
+    wallPendingTimer = null;
+    wallPending = false;
+    wallSelected = [];
+}
+
+function freezeWall() {
+    endPending();
+    wallFrozen = true;
+    renderWall();
+}
+
+function wallLive() {
+    return buttonsOn && !wallFrozen && wallWords.length === WALL_SIZE;
+}
+
+function wallPressHandler(pos) {
+    return function() {
+        if(!wallLive() || wallPending || wallSolved[pos] || wallWrongTimer) {
+            return;
+        }
+        var at = wallSelected.indexOf(pos);
+        if(at >= 0) {
+            wallSelected.splice(at, 1);
+        } else {
+            wallSelected.push(pos);
+        }
+
+        if(wallSelected.length === 4) {
+            wallPending = true;
+            ws.send("cg" + myid + "," + wallSelected.join(","));
+            //A verdict that never arrives (a dropped connection). give up and ask for the whole wall again.
+            wallPendingTimer = setTimeout(function() {
+                wallPendingTimer = null;
+                endPending();
+                renderWall();
+                requestWall();
+            }, WALL_PENDING_MS);
+        }
+        renderWall();
+    };
+}
+
+function renderWall() {
+    var live = wallLive();
+    for(var i = 0; i < wallTiles.length; i++) {
+        var pos = i + 1;
+        var tile = wallTiles[i];
+        var cls = "wallTile";
+        if(wallSolved[pos]) {
+            cls += " wallSolved";
+        } else if(wallWrong[pos]) {
+            cls += " wallWrong";
+        } else {
+            cls += live ? " buttonOn" : " buttonOff";
+            if(wallSelected.indexOf(pos) >= 0) {
+                cls += " multiSelected" + (wallPending ? " wallPending" : "");
+            }
+        }
+        tile.className = cls;
+        var text = wallWrong[pos] ? "❌" : (wallWords[i] || "");
+        if(tile.textContent !== text) {
+            tile.textContent = text;
+        }
+    }
+}
+
+//Gives every tile the largest font its word fits at. Needs the view on screen, as a hidden tile has no size.
+function fitWall() {
+    if(wallgrid.offsetWidth === 0) {
+        return;
+    }
+    for(var i = 0; i < wallTiles.length; i++) {
+        var tile = wallTiles[i];
+        var lo = WALL_MIN_FONT, hi = WALL_MAX_FONT;
+        while(lo < hi) {
+            var mid = Math.ceil((lo + hi) / 2);
+            tile.style.fontSize = mid + "px";
+            if(tile.scrollWidth > tile.clientWidth || tile.scrollHeight > tile.clientHeight) {
+                hi = mid - 1;
+            } else {
+                lo = mid;
+            }
+        }
+        tile.style.fontSize = lo + "px";
+    }
+}
+
+window.addEventListener("resize", fitWall);
+
+setWall("");
 
 
 //Attach a hander to each team pick handler

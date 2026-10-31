@@ -548,6 +548,23 @@ describe('messages from clients', () => {
         assert.deepStrictEqual(transport.servers, ['mc1,1', 'mc1,3', 'mc1,2']);
     });
 
+    test('connecting wall guesses and requests are forwarded, right or wrong', () => {
+        //Whether a guess is a group is the quiz software's business: this server only
+        //checks who is speaking.
+        const { state, transport, socks } = setupTeams(1);
+        ['cr1', 'cg1,1,2,3,4', 'cg1,1,2,3,4', 'cg1,16,15,banana'].forEach(m =>
+            state.handleClientMessage('10.0.0.9_test1', socks[0], m));
+        assert.deepStrictEqual(transport.servers, ['cr1', 'cg1,1,2,3,4', 'cg1,1,2,3,4', 'cg1,16,15,banana']);
+    });
+
+    test('a wall result reaches one team only', () => {
+        const { state, socks } = setupTeams(2);
+        state.handleServerMessage('to1,cs3,7,9,14');
+        state.handleServerMessage('to2,cwA|B|C');
+        assert.deepStrictEqual(socks[0].sent, ['cs3,7,9,14']);
+        assert.deepStrictEqual(socks[1].sent, ['cwA|B|C']);
+    });
+
     test('higher and lower are forwarded', () => {
         const { state, transport, socks } = setupTeams(1);
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'hi1');
@@ -559,7 +576,7 @@ describe('messages from clients', () => {
         //The team number is the client's own claim, so it is checked against the team this
         //server granted rather than taken at face value.
         const { state, transport, socks } = setupTeams(2);
-        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17', 'wv2,50', 'mc2,1'].forEach(m =>
+        ['zz2', 'hi2', 'lo2', 'tt2,not mine', 'ii2,42,17', 'wv2,50', 'mc2,1', 'cg2,1,2,3,4', 'cr2'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
         assert.deepStrictEqual(socks[1].sent, [], 'the team spoken for hears nothing of it');
@@ -567,7 +584,7 @@ describe('messages from clients', () => {
 
     test('an answer with no team, or a team that does not exist, is dropped', () => {
         const { state, transport, socks } = setupTeams(1);
-        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17', 'wv,50', 'mc,1'].forEach(m =>
+        ['zz', 'zz0', 'zz99', 'zzx', 'tt,orphan', 'ii,42,17', 'wv,50', 'mc,1', 'cg,1,2,3,4', 'cr'].forEach(m =>
             state.handleClientMessage('10.0.0.9_test1', socks[0], m));
         assert.deepStrictEqual(transport.servers, []);
     });

@@ -24,6 +24,7 @@
 		3CA10D0C2EE9200200A38676 /* TeamStripNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */; };
 		3CB70E102F0A100200A38676 /* MultiChoiceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */; };
 		3CB70E122F0A100200A38676 /* TeamGuessNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB70E132F0A100200A38676 /* TeamGuessNode.swift */; };
+		3CB70E162F0A100200A38676 /* OnlyConnectScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB70E172F0A100200A38676 /* OnlyConnectScene.swift */; };
 		3CC339FA2B277C95000D8CCE /* TrueFalseScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */; };
 		3CD1A0022F1B000100A38676 /* QuizProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1A0012F1B000100A38676 /* QuizProtocol.swift */; };
 		3CD1A0042F1B000100A38676 /* TeamRoster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1A0032F1B000100A38676 /* TeamRoster.swift */; };
@@ -94,6 +95,7 @@
 		3CA10D0D2EE9200200A38676 /* TeamStripNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamStripNode.swift; sourceTree = "<group>"; };
 		3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiChoiceScene.swift; sourceTree = "<group>"; };
 		3CB70E132F0A100200A38676 /* TeamGuessNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamGuessNode.swift; sourceTree = "<group>"; };
+		3CB70E172F0A100200A38676 /* OnlyConnectScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyConnectScene.swift; sourceTree = "<group>"; };
 		3CC339F92B277C95000D8CCE /* TrueFalseScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrueFalseScene.swift; sourceTree = "<group>"; };
 		3CD1A0012F1B000100A38676 /* QuizProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizProtocol.swift; sourceTree = "<group>"; };
 		3CD1A0032F1B000100A38676 /* TeamRoster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamRoster.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				3CB70E112F0A100200A38676 /* MultiChoiceScene.swift */,
 				46DF9D07239672FF00D019A3 /* MusicScene.swift */,
 				3CF78EF923954DB9007FC394 /* NumbersScene.swift */,
+				3CB70E172F0A100200A38676 /* OnlyConnectScene.swift */,
 				3C63A13F2EC4E22A0044C951 /* PointlessScene.swift */,
 				3CA10D012EE9000100A38676 /* QuizScene.swift */,
 				3C772FEB2CD79AA000F2E6FC /* ScoresScene.swift */,
@@ -374,6 +377,7 @@
 				3CA10D0A2EE9100200A38676 /* WavelengthScene.swift in Sources */,
 				3CB70E102F0A100200A38676 /* MultiChoiceScene.swift in Sources */,
 				3CB70E122F0A100200A38676 /* TeamGuessNode.swift in Sources */,
+				3CB70E162F0A100200A38676 /* OnlyConnectScene.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,
 				3C872EB01C03C3F000A2B397 /* TimerScene.swift in Sources */,
 				46A739361BFAAD9800E03DE5 /* QuizDisplayController.swift in Sources */,

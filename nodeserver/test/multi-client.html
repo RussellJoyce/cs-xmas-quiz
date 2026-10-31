@@ -232,6 +232,10 @@ function VirtualClient(index) {
     this.wikiDone = false;
     this.wikiWalk = null;        // a multi-step walk in progress, stepped on by each 'wg'
 
+    // Connecting wall, as last sent by the quiz software. Positions are 1-based.
+    this.wallWords = [];
+    this.wallSolved = {};
+
     // Create DOM
     var cell = document.createElement('div');
     cell.className = 'cell';
@@ -459,6 +463,9 @@ VirtualClient.prototype.handleMessage = function(msg) {
             break;
         case 'vi':
             this.view = payload;
+            if (payload === 'onlyconnect' && this.team) {
+                this.send('cr' + this.team);
+            }
             if (payload === 'pickteam') {
                 this.team = null;
                 this.buzzerOn = false;
@@ -476,6 +483,23 @@ VirtualClient.prototype.handleMessage = function(msg) {
             break;
         case 'im':
             // Geo image update - just log it
+            break;
+        case 'cw':
+            // A new wall, or a blank one, which also wipes our progress
+            this.wallWords = payload === '' ? [] : payload.split('|');
+            this.wallSolved = {};
+            break;
+        case 'cs':
+            var self = this;
+            payload.split(',').forEach(function(p) { self.wallSolved[parseInt(p, 10)] = true; });
+            this.log('msg-in', 'wall: group ' + payload.split(',').map(function(p) {
+                return self.wallWords[parseInt(p, 10) - 1];
+            }).join(', '));
+            break;
+        case 'cx':
+            this.log('msg-err', 'wall: not a group');
+            break;
+        case 'cf':
             break;
         case 'mo':
             // The multiple choice grid. Remembered so that a random choice picks an
@@ -744,6 +768,32 @@ VirtualClient.prototype.sendRandomNumber = function(lo, hi) {
     this.sendTextValue(String(lo + Math.floor(Math.random() * (hi - lo + 1))));
 };
 
+// A connecting wall guess: "random" for four unsolved tiles, or four words off the wall,
+// matched without regard to case. Returns why it could not be sent, or null.
+VirtualClient.prototype.wallGuess = function(args) {
+    if (this.wallWords.length !== 16) return 'wall: no wall is running';
+    var self = this;
+    var positions;
+    if (args[0] === 'random') {
+        var open = [];
+        for (var p = 1; p <= 16; p++) if (!this.wallSolved[p]) open.push(p);
+        if (open.length < 4) return 'wall: nothing left to guess';
+        open.sort(function() { return Math.random() - 0.5; });
+        positions = open.slice(0, 4);
+    } else {
+        if (args.length !== 4) return 'wall: needs four words';
+        positions = [];
+        for (var i = 0; i < 4; i++) {
+            var want = args[i].trim().toLowerCase();
+            var at = this.wallWords.findIndex(function(w) { return w.toLowerCase() === want; });
+            if (at < 0) return "wall: '" + args[i] + "' is not on the wall";
+            positions.push(at + 1);
+        }
+    }
+    this.send('cg' + this.team + ',' + positions.join(','));
+    return null;
+};
+
 // One step of a test pattern. Returns a description for the log, or null if the client was
 // in no state to do it (no team yet, or the socket is shut), which the runner reports.
 VirtualClient.prototype.runAction = function(verb, args) {
@@ -831,6 +881,12 @@ VirtualClient.prototype.runAction = function(verb, args) {
             if (why) this.log('msg-err', why);
             return 'wiki';
         }
+        case 'wall': {
+            if (!this.team) return null;
+            var why = this.wallGuess(args);
+            if (why) this.log('msg-err', why);
+            return 'wall';
+        }
         case 'pick':
             this.pickTeam(args.length ? args[0] : this.index);
             return 'pick';
@@ -917,7 +973,8 @@ var ACTIONS = {
     geo:        { min: 1, max: 2 },
     wave:       { min: 1, max: 1 },
     choice:     { min: 1, max: 1 },
-    wiki:       { min: 1, max: 2 }
+    wiki:       { min: 1, max: 2 },
+    wall:       { min: 1, max: 4 }
 };
 
 // Names that read better in a pattern than the two-letter protocol codes do.
@@ -1027,6 +1084,11 @@ function parsePatterns(text) {
                 bad(line, 'wiki ' + sub + ' takes one number');
                 continue;
             }
+        }
+
+        if (verb === 'wall' && !(args.length === 1 && args[0] === 'random') && args.length !== 4) {
+            bad(line, 'wall takes "random" or four words');
+            continue;
         }
 
         var target = parseTarget(who);

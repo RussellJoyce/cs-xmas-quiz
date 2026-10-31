@@ -33,6 +33,7 @@
                 <outlet property="multiChoicePanel" destination="Mcp-nl-obj" id="Mcp-nl-ref"/>
                 <outlet property="musicPanel" destination="Msp-nl-obj" id="Msp-nl-ref"/>
                 <outlet property="numbersPanel" destination="Nmp-nl-obj" id="Nmp-nl-ref"/>
+                <outlet property="onlyConnectPanel" destination="Onp-nl-obj" id="Onp-nl-ref"/>
                 <outlet property="pointlessPanel" destination="Ptp-nl-obj" id="Ptp-nl-ref"/>
                 <outlet property="quieterBuzzes" destination="EOs-rc-2CU" id="OZm-0m-IfW"/>
                 <outlet property="repairWarningLabel" destination="Vsw-nV-o5k" id="Rpr-wn-out"/>
@@ -65,6 +66,7 @@
                 <outlet property="tabitemMultiChoice" destination="MCh-00-t00" id="MCh-55-t55"/>
                 <outlet property="tabitemMusic" destination="mfC-Tl-ocF" id="qEX-r3-nHM"/>
                 <outlet property="tabitemNumbers" destination="CS6-c3-Fen" id="eSy-LI-0LA"/>
+                <outlet property="tabitemOnlyConnect" destination="Onc-tb-i00" id="Onc-ou-t00"/>
                 <outlet property="tabitemPointless" destination="HUz-ZP-yhI" id="N5L-rD-zEy"/>
                 <outlet property="tabitemScores" destination="pOk-mg-25e" id="7Uy-t2-pyy"/>
                 <outlet property="tabitemTest" destination="OV7-s7-eho" id="fAV-tJ-zQL"/>
@@ -179,6 +181,14 @@
                 <outlet property="teamGuesses" destination="Wv0-tv-g05" id="Wv0-ou-o04"/>
             </connections>
         </customObject>
+        <customObject id="Onp-nl-obj" userLabel="Only Connect Panel" customClass="OnlyConnectPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="questionSelector" destination="Onc-qs-sel" id="Onc-ou-o01"/>
+                <outlet property="revealButton" destination="Onc-bt-r03" id="Onc-ou-o03"/>
+                <outlet property="startButton" destination="Onc-bt-s02" id="Onc-ou-o02"/>
+                <outlet property="statusText" destination="Onc-tv-g05" id="Onc-ou-o04"/>
+            </connections>
+        </customObject>
         <customObject id="Ptp-nl-obj" userLabel="Pointless Panel" customClass="PointlessPanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="allowAnswers" destination="ZpB-EM-4sg" id="37e-bF-O6d"/>
@@ -200,7 +210,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -2139,6 +2149,74 @@ Answers</string>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Clf-43-z0u">
                                                 <rect key="frame" x="295" y="0.0" width="17" height="245"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Only Connect" identifier="" id="Onc-tb-i00">
+                                <view key="view" id="Onc-vw-v00">
+                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Onc-qs-sel">
+                                            <rect key="frame" x="27" y="244" width="390" height="25"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Onc-qs-cel">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="message"/>
+                                                <menu key="menu" id="Onc-qs-mnu"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="questionSelected:" target="Onp-nl-obj" id="Onc-ac-a01"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Onc-bt-s02">
+                                            <rect key="frame" x="30" y="132" width="384" height="86"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Start" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Onc-cl-s02">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system" size="26"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="startStop:" target="Onp-nl-obj" id="Onc-ac-a02"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Onc-bt-r03">
+                                            <rect key="frame" x="30" y="30" width="384" height="86"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Reveal" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Onc-cl-r03">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system" size="26"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="reveal:" target="Onp-nl-obj" id="Onc-ac-a03"/>
+                                            </connections>
+                                        </button>
+                                        <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Onc-sv-g05">
+                                            <rect key="frame" x="440" y="20" width="440" height="254"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="Onc-cv-g05">
+                                                <rect key="frame" x="1" y="1" width="421" height="252"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <subviews>
+                                                    <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Onc-tv-g05">
+                                                        <rect key="frame" x="0.0" y="0.0" width="421" height="252"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        <size key="minSize" width="421" height="252"/>
+                                                        <size key="maxSize" width="800" height="10000000"/>
+                                                    </textView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Onc-hs-g05">
+                                                <rect key="frame" x="-100" y="-100" width="225" height="15"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Onc-vs-g05">
+                                                <rect key="frame" x="422" y="1" width="17" height="252"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>

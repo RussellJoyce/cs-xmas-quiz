@@ -47,7 +47,13 @@ const CODES = {
     wg: 'go to article',  wx: 'move refused',  wf: 'arrived',
     wp: 'race position',  ww: 'race won',
     wd: 'race standing',  wt: 'race trail',
-    wk: 'resend race state'
+    wk: 'resend race state',
+
+    //Connecting wall. cg/cr come from a client, and the rest come from the quiz software
+    //wrapped in a 'to', because every team's wall is its own.
+    cg: 'wall guess',     cr: 'wall requested',
+    cw: 'wall',           cs: 'wall group solved', cx: 'wall guess wrong',
+    cf: 'wall frozen'
 };
 
 //How wide each column is. Names longer than this push the line out rather than being

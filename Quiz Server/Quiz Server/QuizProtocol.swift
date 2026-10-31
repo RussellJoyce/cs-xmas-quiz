@@ -69,6 +69,13 @@ enum QuizMessage: Equatable {
 	/// Pipe separated because titles hold commas.
 	case wikiTrail(team: Team, titles: [String])
 
+	/// "cg<team>,<pos>,<pos>,<pos>,<pos>" — four connecting wall tiles a team thinks belong
+	/// together, as 1-based positions on the wall.
+	case wallGuess(team: Team, positions: [Int])
+
+	/// "cr<team>" — a phone has arrived on the wall and wants to know its state
+	case wallRequest(team: Team)
+
 
 	/// Decodes one message, or returns nil
 	init?(_ text: String) {
@@ -143,6 +150,16 @@ enum QuizMessage: Equatable {
 			let titles = payload[payload.index(after: comma)...].components(separatedBy: "|")
 			self = .wikiTrail(team: team, titles: titles)
 
+		case "cg":
+			guard let f = fields(5), let team = Team(wire: f[0]) else { return nil }
+			let positions = f[1...].compactMap { Int($0) }
+			guard positions.count == f.count - 1 else { return nil }
+			self = .wallGuess(team: team, positions: positions)
+
+		case "cr":
+			guard let team = Team(wire: payload) else { return nil }
+			self = .wallRequest(team: team)
+
 		default:
 			return nil
 		}
@@ -175,6 +192,19 @@ enum ClientState: Equatable {
 	/// "hh"/"hl"/"hn" — the answer this team has already given, or nil for none
 	case higherLowerAnswer(Bool?)
 
+	/// "cw" — the connecting wall in display order, which also clears the team's progress.
+	/// Empty for a wall that has not started. Pipe separated, so a word must not hold one.
+	case wall([String])
+
+	/// "cs" — a group this team has found, as 1-based positions
+	case wallSolved([Int])
+
+	/// "cx" — four tiles that were not a group, as 1-based positions
+	case wallWrong([Int])
+
+	/// "cf" — the wall is over and takes no more guesses
+	case wallFrozen
+
 	var wire: String {
 		switch self {
 		case .view(let round):            return "vs" + round.clientView
@@ -186,6 +216,10 @@ enum ClientState: Equatable {
 		case .higherLowerAnswer(let ans):
 			guard let ans else { return "hn" }
 			return ans ? "hh" : "hl"
+		case .wall(let words):            return "cw" + words.joined(separator: "|")
+		case .wallSolved(let positions):  return "cs" + positions.map(String.init).joined(separator: ",")
+		case .wallWrong(let positions):   return "cx" + positions.map(String.init).joined(separator: ",")
+		case .wallFrozen:                 return "cf"
 		}
 	}
 }
@@ -237,7 +271,8 @@ enum QuizCommand: Equatable {
 	/// "wk" — ask the server to resend one team's race state
 	case resendRaceState(team: Int)
 
-	/// "to" — one line of catch-up state, addressed to a single team
+	/// "to" — one line of state addressed to a single team: catch-up after a reconnection, or
+	/// a round's answer to that team alone, such as a connecting wall verdict
 	case resync(team: Int, state: ClientState)
 
 	/// "rs" — tell the node server the state of play without sending it to any phone, so that

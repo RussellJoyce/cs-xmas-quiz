@@ -174,6 +174,86 @@ body {
 }
 
 /*-------------------------------------------------------------------------------------------*/
+/* Styles for the connecting wall */
+
+/* Wider than the other views, because four columns of words is tight on a phone */
+#onlyconnect {
+    width: 96%;
+}
+
+#wallgrid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    gap: 6px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+/* Long words get small in portrait, so suggest turning the phone. The view leaves a 10%
+   margin above it, which is where this sits. */
+#wallhint {
+    position: absolute;
+    bottom: 101%;
+    width: 100%;
+    text-align: center;
+    font-family: Arial;
+    font-size: 14px;
+    color: #aaa;
+    display: none;
+}
+
+@media (orientation: portrait) {
+    #wallhint { display: block; }
+}
+
+.wallTile {
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: Arial;
+    font-weight: bolder;
+    text-shadow: 0px 1px 4px #2f6627;
+    line-height: 1.05;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 2px;
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Words only ever break at a space; a long one shrinks instead */
+    word-break: keep-all;
+    overflow-wrap: normal;
+
+    touch-action: manipulation;
+}
+
+.wallTile.buttonOn:active {
+    transform: translate(0%, 1%);
+}
+
+/* A found group stays where it is, because the team is looking at the big screen */
+.wallSolved {
+    background: linear-gradient(to bottom, #1f7a3a 5%, #0f4d22 100%);
+    background-color: #0f4d22;
+    border: 2px solid #0f4d22;
+    color: #d8ffd8;
+}
+
+.wallWrong {
+    background: linear-gradient(to bottom, #dd3333 5%, #991111 100%);
+    background-color: #991111;
+    border: 2px solid #991111;
+}
+
+/* Sent, and waiting to hear whether it was a group */
+.wallPending {
+    opacity: 0.7;
+}
+
+/*-------------------------------------------------------------------------------------------*/
 /* Styles for the team selection dialog */
 
 .teamgrid-container {

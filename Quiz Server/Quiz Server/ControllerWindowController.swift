@@ -109,6 +109,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemMultiChoice: NSTabViewItem!
 	@IBOutlet weak var tabitemDisconnect: NSTabViewItem!
 	@IBOutlet weak var tabitemWikiRace: NSTabViewItem!
+	@IBOutlet weak var tabitemOnlyConnect: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -135,6 +136,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var wavelengthPanel: WavelengthPanel!
 	@IBOutlet var pointlessPanel: PointlessPanel!
 	@IBOutlet var scoresPanel: ScoresPanel!
+	@IBOutlet var onlyConnectPanel: OnlyConnectPanel!
 	private var panels = [RoundType: RoundPanel]()
 	
 	private var ceefaxPageControl: CeefaxPageControl?
@@ -160,7 +162,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		let allPanels: [RoundPanel] = [buzzerPanel, musicPanel, timerPanel, trueFalsePanel,
 									   multiChoicePanel, geographyPanel, wikiRacePanel, textPanel, snowIdlePanel,
-									   numbersPanel, wavelengthPanel, pointlessPanel, scoresPanel]
+									   numbersPanel, wavelengthPanel, pointlessPanel, onlyConnectPanel, scoresPanel]
 		for panel in allPanels {
 			panel.host = self
 			panels[panel.round] = panel
@@ -440,6 +442,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.round(tabitemNumbers, .numbers, "🔢 Numbers"),
 			.round(tabitemWavelength, .wavelength, "🌊 Wavelength"),
 			.round(tabitemPointless, .pointless, "0️⃣ Pointless"),
+			.round(tabitemOnlyConnect, .onlyConnect, "🧱 Only Connect"),
 			.round(tabitemTimer, .timer, "🕓 Timer"),
 
 			.group("Admin"),
@@ -592,6 +595,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .wikiTrail(let team, let titles):
 			quizDisplay.wikiRaceScene.raceTrails[team.index] = titles
 			wikiRacePanel.refreshPath()
+
+		case .wallGuess(let team, let positions):
+			guard roster.isPlaying(team.index) else { break }
+			onlyConnectPanel.guess(team: team.index, positions: positions)
+
+		case .wallRequest(let team):
+			onlyConnectPanel.sendState(team: team.index)
 		}
 	}
 

@@ -25,6 +25,13 @@ final class Settings {
 	var musicPath: String = ""
 	var uniquePath: String = ""
 	var pointlessPath: String = ""
+	/// Beside the Pointless folder rather than a setting of its own, as the wiki corpus is
+	var onlyConnectPath: String {
+		if pointlessPath.isEmpty {
+			return ""
+		}
+		return (pointlessPath as NSString).deletingLastPathComponent + "/OnlyConnect"
+	}
 	var wikiCorpusPath: String {
 		if geographyImagesPath.isEmpty {
 			return ""
@@ -78,6 +85,7 @@ enum RoundType {
 	case wavelength
 	case multichoice
 	case wikirace
+	case onlyConnect
 
 	/// Which view the teams' phones should show while this round is live.
 	/// Sent as the argument of the "vi" command, so it must match a view name the client knows.
@@ -91,6 +99,7 @@ enum RoundType {
 		case .wavelength:  return "wavelength"
 		case .multichoice: return "multi"
 		case .wikirace:    return "wikirace"
+		case .onlyConnect: return "onlyconnect"
 		case .none, .idle, .idleCeefax, .idleSnow, .test, .buzzers, .music, .timer, .scores:
 			return "buzzer"
 		}
