@@ -331,7 +331,10 @@ function startWebServers(overrides) {
     guardWebServer(http, 'the http redirect');
 
     const app = express();
-    app.use(express.static(cfg.staticDir));
+    //no-cache makes browsers check every load
+    app.use(express.static(cfg.staticDir, {
+        setHeaders: function(res) { res.setHeader('Cache-Control', 'no-cache'); }
+    }));
     if(cfg.dev) {
         app.use('/test', express.static(cfg.testDir));
     }
