@@ -13,10 +13,7 @@ class StartupView: NSViewController {
     @IBOutlet weak var screenSelector: NSPopUpButton!
     @IBOutlet weak var startButton: NSButton!
     @IBOutlet weak var windowedMode: NSButton!
-	@IBOutlet weak var geographyImagesPath: NSTextField!
-    @IBOutlet weak var musicPath: NSTextField!
-	@IBOutlet weak var uniquePath: NSTextField!
-	@IBOutlet weak var pointlessPath: NSTextField!
+	@IBOutlet weak var quizRootPath: NSTextField!
 	@IBOutlet weak var numTeamsInput: NSTextField!
 	@IBOutlet weak var debugMode: NSButton!
 	
@@ -46,10 +43,7 @@ class StartupView: NSViewController {
             print("Error enumerating screens");
         }
 
-		geographyImagesPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/nodeserver/static/geography"
-        musicPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Music"
-		uniquePath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Unique"
-		pointlessPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz/Questions/Pointless"
+		quizRootPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz"
 		
         startButton.isEnabled = true
     }
@@ -63,10 +57,11 @@ class StartupView: NSViewController {
 	}
     
     @IBAction func startQuiz(_ sender: AnyObject) {
-		Settings.shared.geographyImagesPath = geographyImagesPath.stringValue
-		Settings.shared.musicPath = musicPath.stringValue
-		Settings.shared.uniquePath = uniquePath.stringValue
-		Settings.shared.pointlessPath = pointlessPath.stringValue
+		Settings.shared.quizRoot = quizRootPath.stringValue
+		var isDir: ObjCBool = false
+		if !FileManager.default.fileExists(atPath: Settings.shared.questionsPath, isDirectory: &isDir) || !isDir.boolValue {
+			print("No Questions folder in quiz repository '\(Settings.shared.quizRoot)', so the question rounds will be empty")
+		}
 		let requestedTeams = Int(numTeamsInput.intValue)
 		Settings.shared.numTeams = max(1, min(Settings.maxTeams, requestedTeams))
 		if requestedTeams != Settings.shared.numTeams {
@@ -87,24 +82,10 @@ class StartupView: NSViewController {
 		ControllerWindowController.shared.showWindow(self)
     }
 
-	@IBAction func geographyPathBrowse(_ sender: Any) {
-		createDialog(title: "Geography round images folder", textField: geographyImagesPath)
+	@IBAction func quizRootBrowse(_ sender: Any) {
+		createDialog(title: "cs-xmas-quiz repository folder", textField: quizRootPath)
 	}
-    
-    @IBAction func musicPathBrowse(_ sender: Any) {
-		createDialog(title: "Music round music folder", textField: musicPath)
-    }
-	
-	@IBAction func uniquePathBrowse(_ sender: NSButton) {
-		createDialog(title: "Folder of unique lists", textField: uniquePath)
-	}
-	
-	@IBAction func pointlessPathBrowse(_ sender: Any) {
-		createDialog(title: "Folder of pointless questions", textField: pointlessPath)
-	}
-	
-	
-	
+
 	func createDialog(title : String, textField : NSTextField) {
 		let dialog = NSOpenPanel();
 		dialog.title = title

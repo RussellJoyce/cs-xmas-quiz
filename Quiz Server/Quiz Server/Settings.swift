@@ -20,25 +20,24 @@ final class Settings {
 	/// The very first time the websocket connects, this is set to true and left true
 	var websocketHasPreviouslyConnected = false
 	
-	/// Paths for locating questions in different places
-	var geographyImagesPath: String = ""
-	var musicPath: String = ""
-	var uniquePath: String = ""
-	var pointlessPath: String = ""
-	/// Beside the Pointless folder rather than a setting of its own, as the wiki corpus is
-	var onlyConnectPath: String {
-		if pointlessPath.isEmpty {
-			return ""
-		}
-		return (pointlessPath as NSString).deletingLastPathComponent + "/OnlyConnect"
+	/// Root of the cs-xmas-quiz checkout
+	///  From this we read question files, music, video etc.
+	///  and also look into the nodeserver to pull out the wiki corpus, geography files, and whatever other nonsense we put there
+	var quizRoot: String = ""
+
+	var questionsPath: String { path(under: "Questions") }
+	var musicPath: String { path(under: "Questions/Music") }
+	var uniquePath: String { path(under: "Questions/Unique") }
+	var pointlessPath: String { path(under: "Questions/Pointless") }
+	var onlyConnectPath: String { path(under: "Questions/OnlyConnect") }
+	var geographyImagesPath: String { path(under: "nodeserver/static/geography") }
+	var wikiCorpusPath: String { path(under: "nodeserver/static/wiki") }
+
+	/// Empty while no root is set, which the loaders treat as "no questions"
+	private func path(under relative: String) -> String {
+		quizRoot.isEmpty ? "" : (quizRoot as NSString).appendingPathComponent(relative)
 	}
-	var wikiCorpusPath: String {
-		if geographyImagesPath.isEmpty {
-			return ""
-		}
-		return (geographyImagesPath as NSString).deletingLastPathComponent + "/wiki"
-	}
-	
+
 	/// How many teams the controller window can actually drive
 	static let maxTeams = 15
 
@@ -153,7 +152,7 @@ final class Utils {
 	}
 
 
-	/// Lists the files in one of the question folders chosen at startup
+	/// Lists the files in one of the question folders under the quiz repository
 	/// - Parameter extensions: lowercased extensions to keep, or nil to keep every file.
 	static func questionFiles(in path: String, extensions: Set<String>? = nil) -> [String] {
 		guard !path.isEmpty else {
