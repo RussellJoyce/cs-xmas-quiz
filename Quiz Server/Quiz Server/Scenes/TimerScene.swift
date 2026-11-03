@@ -165,31 +165,6 @@ class TimerScene: QuizScene {
 	func timerIncrement() {
 		correct += 1
 		self.run(blopSound)
-		
-		/*let sprayEmitter = SKEmitterNode(fileNamed: "TimerSpray")!
-		sprayEmitter.position = CGPoint(x: 1430, y: self.size.height - 650)
-		sprayEmitter.zPosition = 2
-		self.addChild(sprayEmitter)
-		var rnd: CGFloat?
-		let sprayAction = SKAction.sequence([
-			SKAction.runBlock({ () -> Void in
-				rnd = CGFloat(arc4random_uniform(1000)) / CGFloat(1000)
-			}),
-			SKAction.customActionWithDuration(0.4, actionBlock: {(node, time) -> Void in
-				sprayEmitter.emissionAngle = ((time / 0.4) * 3 * CGFloat(M_PI)) + (rnd! * 2 * CGFloat(M_PI))
-				if(time > 0.3) {
-					sprayEmitter.particleBirthRate = (0.4 - time) * 4000
-				}
-			}),
-			SKAction.runBlock({ () -> Void in
-				sprayEmitter.particleBirthRate = 0
-			}),
-			SKAction.waitForDuration(2),
-			SKAction.removeFromParent()
-		])
-		
-		sprayEmitter.runAction(sprayAction)*/
-		
 		updateAnswers()
 	}
 	

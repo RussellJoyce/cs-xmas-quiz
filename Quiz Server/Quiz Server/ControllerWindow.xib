@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="25098" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="25408" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="25098"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="25408"/>
         <capability name="System colors introduced in macOS 10.14" minToolsVersion="10.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -69,7 +70,6 @@
                 <outlet property="tabitemOnlyConnect" destination="Onc-tb-i00" id="Onc-ou-t00"/>
                 <outlet property="tabitemPointless" destination="HUz-ZP-yhI" id="N5L-rD-zEy"/>
                 <outlet property="tabitemScores" destination="pOk-mg-25e" id="7Uy-t2-pyy"/>
-                <outlet property="tabitemTest" destination="OV7-s7-eho" id="fAV-tJ-zQL"/>
                 <outlet property="tabitemText" destination="QsW-tO-3AJ" id="mer-ty-Abj"/>
                 <outlet property="tabitemTimer" destination="jWj-s8-V1l" id="SGq-NW-KzQ"/>
                 <outlet property="tabitemWavelength" destination="Wv0-tb-i00" id="Wv0-ou-o01"/>
@@ -210,7 +210,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -997,12 +997,6 @@
                                             </connections>
                                         </button>
                                     </subviews>
-                                </view>
-                            </tabViewItem>
-                            <tabViewItem label="Test" identifier="2" id="OV7-s7-eho">
-                                <view key="view" id="6Pa-j9-Bqf">
-                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Buzzers" identifier="" id="zkE-YU-uHw">
@@ -1938,7 +1932,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Wv0-cv-g05">
                                                 <rect key="frame" x="1" y="1" width="381" height="234"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Wv0-tv-g05">
                                                         <rect key="frame" x="0.0" y="0.0" width="381" height="234"/>
@@ -2014,7 +2008,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" id="CI5-ck-Ndt">
                                                 <rect key="frame" x="1" y="1" width="375" height="243"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="i0a-gC-Jde" viewBased="YES" id="hRn-Hf-fKA">
                                                         <rect key="frame" x="0.0" y="0.0" width="375" height="215"/>
@@ -2131,7 +2125,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="XjU-Im-ltz">
                                                 <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="D1j-fk-BWg">
                                                         <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
@@ -2199,7 +2193,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Onc-cv-g05">
                                                 <rect key="frame" x="1" y="1" width="421" height="252"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Onc-tv-g05">
                                                         <rect key="frame" x="0.0" y="0.0" width="421" height="252"/>
@@ -2266,7 +2260,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Fag-Ir-clm">
                                                 <rect key="frame" x="0.0" y="0.0" width="218" height="221"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="nUs-YF-jmA">
                                                         <rect key="frame" x="0.0" y="0.0" width="218" height="221"/>
@@ -2566,7 +2560,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Mg3-5r-8dH">
                                                 <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="oQn-Zl-Zcb">
                                                         <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
@@ -2619,7 +2613,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="BwY-Hb-Yhi">
                                                 <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="K3w-wP-K2k">
                                                         <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>

@@ -97,7 +97,6 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemIdle: NSTabViewItem!
 	@IBOutlet weak var tabitemIdleCeefax: NSTabViewItem!
 	@IBOutlet weak var tabitemIdleSnow: NSTabViewItem!
-	@IBOutlet weak var tabitemTest: NSTabViewItem!
 	@IBOutlet weak var tabitemBuzzers: NSTabViewItem!
 	@IBOutlet weak var tabitemMusic: NSTabViewItem!
 	@IBOutlet weak var tabitemGeography: NSTabViewItem!
@@ -446,8 +445,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.round(tabitemTimer, .timer, "🕓 Timer"),
 
 			.group("Admin"),
-			.round(tabitemTest, .test, "🧪 Test Screen"),
-			.round(tabitemDisconnect, nil, "🔧 Repair Client")
+			.round(tabitemDisconnect, nil, "🔧 Client Admin")
 		]
 	}
 
