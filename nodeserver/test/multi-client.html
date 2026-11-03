@@ -6,7 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; padding: 10px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; height: 100vh; display: flex; flex-direction: column; }
+
+/* Everything but the log scrolls here, so the log panel never covers any of it. */
+#main { flex: 1; min-height: 0; overflow-y: auto; padding: 10px; }
 
 /* Toolbar */
 #toolbar { background: #16213e; padding: 12px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
@@ -111,13 +114,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .msg-err { color: #e74c3c; }
 .msg-info { color: #f39c12; }
 
-/* Global log */
-#global-log { background: #0a0a1a; border-radius: 8px; padding: 10px; height: 180px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.5; }
-#global-log-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+/* Global log: a panel along the bottom of the window */
+#log-panel { flex-shrink: 0; background: #16213e; border-top: 1px solid #333; }
+#log-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; }
+#global-log-title { font-size: 14px; font-weight: 600; }
+#log-toggle { padding: 3px 10px; border: none; border-radius: 3px; background: #0f3460; color: #bbb; cursor: pointer; font-size: 11px; font-weight: 600; }
+#log-toggle:hover { background: #1a5276; color: #fff; }
+#global-log { background: #0a0a1a; padding: 10px; height: 180px; overflow-y: auto; font-family: monospace; font-size: 11px; line-height: 1.5; }
 </style>
 </head>
 <body>
 
+<div id="main">
 <div id="toolbar">
     <label>Host: <input type="text" id="cfg-host"></label>
     <label>Port: <input type="number" id="cfg-port" value="8090"></label>
@@ -147,9 +155,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </div>
 
 <div id="grid"></div>
+</div>
 
-<div id="global-log-title">Global Log</div>
-<div id="global-log"></div>
+<div id="log-panel">
+    <div id="log-panel-header">
+        <span id="global-log-title">Global Log</span>
+        <button id="log-toggle" onclick="toggleLog()" aria-expanded="true" aria-controls="global-log">Hide</button>
+    </div>
+    <div id="global-log"></div>
+</div>
 
 <script src="test-patterns.js"></script>
 <script>
@@ -183,6 +197,15 @@ function logLine(prefix, cls, text) {
     globalLogEl.appendChild(d);
     if (globalLogEl.children.length > 200) globalLogEl.removeChild(globalLogEl.firstChild);
     globalLogEl.scrollTop = globalLogEl.scrollHeight;
+}
+
+function toggleLog() {
+    globalLogEl.hidden = !globalLogEl.hidden;
+    var btn = document.getElementById('log-toggle');
+    btn.textContent = globalLogEl.hidden ? 'Show' : 'Hide';
+    btn.setAttribute('aria-expanded', String(!globalLogEl.hidden));
+    // Lines logged while hidden cannot scroll it, so catch up on being shown.
+    if (!globalLogEl.hidden) globalLogEl.scrollTop = globalLogEl.scrollHeight;
 }
 
 function globalLog(idx, cls, text) {
