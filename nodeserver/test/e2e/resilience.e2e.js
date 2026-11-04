@@ -103,6 +103,28 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         assert.strictEqual(await quiz.phones[1].textbox.inputValue(), 'half an ans');
     });
 
+    scenario('dropped connection: a map pin survives, until the next question', async quiz => {
+        await quiz.round('geography');
+        const one = quiz.phones[1];
+        await quiz.tapped(1, 'ii', one.map);
+        assert.ok(await one.pin.isVisible(), 'the pin goes in');
+
+        const mark = quiz.wire.length;
+        quiz.dropPhone(1);
+        await quiz.phoneBack(1, mark);
+        await onView(quiz, 1, 'geo');
+        assert.ok(await one.pin.isVisible(), 'the pin survives the reconnection');
+
+        quiz.asHost('imnext-question.jpg');
+        await until('a new image to clear the pin', async () => !(await one.pin.isVisible()));
+
+        //The host restarting a question puts up the same image again, and goes through a reset
+        await quiz.tapped(1, 'ii', one.map);
+        assert.ok(await one.pin.isVisible(), 'the pin goes back in');
+        await quiz.host.click('resetRound:');
+        await until('the reset to clear the pin', async () => !(await one.pin.isVisible()));
+    });
+
     scenario('reload: same team, same round, and still out if it was out', async quiz => {
         await quiz.round('buzzers');
         await quiz.setPlaying(3, false);

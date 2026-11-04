@@ -175,6 +175,8 @@ class Phone {
         this.enter = this.frame.locator('#textenterbutton');
         this.higher = this.frame.locator('#higher');
         this.lower = this.frame.locator('#lower');
+        this.map = this.frame.locator('#geoimg');
+        this.pin = this.frame.locator('#geomark');
     }
 
     tile(option) { return this.frame.locator('#multibutton' + option); }
@@ -207,7 +209,8 @@ const ROUNDS = {
     buzzers:     { tab: 'tabitemBuzzers',     scene: 'BuzzerScene',      view: 'buzzer' },
     text:        { tab: 'tabitemText',        scene: 'TextScene',        view: 'text' },
     trueFalse:   { tab: 'tabitemtruefalse',   scene: 'TrueFalseScene',   view: 'higherlower' },
-    multichoice: { tab: 'tabitemMultiChoice', scene: 'MultiChoiceScene', view: 'multi' }
+    multichoice: { tab: 'tabitemMultiChoice', scene: 'MultiChoiceScene', view: 'multi' },
+    geography:   { tab: 'tabitemGeography',   scene: 'GeographyScene',   view: 'geo' }
 };
 
 async function startQuiz(options) {
@@ -401,6 +404,11 @@ async function startQuiz(options) {
             async restartApp() {
                 await killApp();
                 await launchApp();
+            },
+
+            //A message as though from the app, for a round whose questions are not in the fixtures
+            asHost(message) {
+                ws.state.handleServerMessage(message);
             },
 
             //The wifi going: the phone sees its socket die and has to reconnect

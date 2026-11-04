@@ -20,6 +20,9 @@ var myid = 0;
 //Whether the buttons are currently live, so that tiles built later start in the right state
 var buttonsOn = true;
 
+//The geography image we are showing, by the name the server gave it
+var geoimage = null;
+
 //Remembers the last view that we were set to, in the event that we are disconnected
 //This also therefore sets the initial view
 var lastview = "buzzer";
@@ -91,11 +94,15 @@ function connect() {
                 break;
             case "im":
                 //Set the geo image
-                console.log("Setting geo image: " + event.data.slice(2));
-                //A new image is a new question, so the old guess goes, but a team that is
-                //out stays out.
+                var image = event.data.slice(2);
+                if(image === geoimage) {
+                    //Same image so don't clear the guess.
+                    break;
+                }
+                console.log("Setting geo image: " + image);
+                geoimage = image;
                 geomark.style.display = "none";
-                geoimg.style.backgroundImage = "url('geography/" + encodeURIComponent(event.data.slice(2)) + "')";
+                geoimg.style.backgroundImage = "url('geography/" + encodeURIComponent(image) + "')";
                 break;
             case "mo":
                 //Build the multiple choice grid: "mo<options>,<style>"
