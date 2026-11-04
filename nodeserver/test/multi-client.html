@@ -679,6 +679,10 @@ VirtualClient.prototype.handleMessage = function(msg) {
             this.buzzerOn = false;
             this.updateStatus();
             break;
+        case 'vs':
+            // As 'vi', but only if it moves us. Sent on every reconnection.
+            if (payload === this.view) break;
+            // falls through
         case 'vi':
             this.view = payload;
             // A phone asks for the wall itself

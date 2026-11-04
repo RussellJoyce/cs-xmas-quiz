@@ -164,7 +164,7 @@ describe('over real sockets', () => {
         await b.next();
 
         a.send('pt1');
-        assert.deepStrictEqual(await a.nextN(5), ['ok1', 'vibuzzer', 'imstart.jpg', 'mo4,A', 'on']);
+        assert.deepStrictEqual(await a.nextN(5), ['ok1', 'vsbuzzer', 'imstart.jpg', 'mo4,A', 'on']);
 
         //b is a different client, so it can take a different team rather than
         //inheriting a's.
@@ -244,7 +244,7 @@ describe('over real sockets', () => {
         const late = connect(ports.clientWss, '/?vcid=v3');
         assert.strictEqual(await late.next(), 'vipickteam');
         late.send('pt11');
-        assert.deepStrictEqual(await late.nextN(5), ['ok11', 'vinumbers', 'imstart.jpg', 'mo4,A', 'on']);
+        assert.deepStrictEqual(await late.nextN(5), ['ok11', 'vsnumbers', 'imstart.jpg', 'mo4,A', 'on']);
 
         quiz.close(); a.close(); b.close(); late.close(); picking.close();
         //Put the view back for any later test.
@@ -268,7 +268,7 @@ describe('over real sockets', () => {
         const again = connect(ports.clientWss, '/?vcid=sleepy');
         const first = await again.next();
         assert.notStrictEqual(first, 'vipickteam', 'must not be sent back to the picker');
-        assert.ok(first.startsWith('vi'), 'is put back into the current view');
+        assert.ok(first.startsWith('vs'), 'is put back into the current view');
 
         again.send('re');
         await again.nextN(3);  //the 'im', 'mo' and 'on' that follow the view
@@ -471,7 +471,7 @@ describe('with development mode off', () => {
         const ws = connect(ports.clientWss, '/?vcid=ignored');
         assert.strictEqual(await ws.next(), 'vipickteam');
         ws.send('pt1');
-        assert.deepStrictEqual(await ws.nextN(5), ['ok1', 'vibuzzer', 'imstart.jpg', 'mo4,A', 'on']);
+        assert.deepStrictEqual(await ws.nextN(5), ['ok1', 'vsbuzzer', 'imstart.jpg', 'mo4,A', 'on']);
         ws.close();
     });
 
@@ -491,7 +491,7 @@ describe('with development mode off', () => {
         //back to the current view instead of offering it the team picker: a client
         //genuinely keyed on 'someoneelse' would be new, and new clients pick a team.
         const impostor = connect(ports.clientWss, '/?vcid=someoneelse');
-        assert.deepStrictEqual(await impostor.nextN(4), ['vibuzzer', 'imstart.jpg', 'mo4,A', 'on']);
+        assert.deepStrictEqual(await impostor.nextN(4), ['vsbuzzer', 'imstart.jpg', 'mo4,A', 'on']);
         impostor.close();
     });
 

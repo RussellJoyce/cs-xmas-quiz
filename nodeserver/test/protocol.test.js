@@ -105,7 +105,7 @@ describe('picking a team', () => {
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], 'pt3');
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
+            ['ok3', 'vs' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '3');
     });
 
@@ -148,7 +148,7 @@ describe('reconnection', () => {
         const fresh = new FakeSocket('c1-again');
         state.addClient('10.0.0.9_test1', fresh);
 
-        assert.deepStrictEqual(fresh.sent, ['vigeography', 'imfrance.jpg', 'mo' + DEFAULT_MULTI, 'on']);
+        assert.deepStrictEqual(fresh.sent, ['vsgeography', 'imfrance.jpg', 'mo' + DEFAULT_MULTI, 'on']);
         assert.strictEqual(state.clients['10.0.0.9_test1'].id, '1');
         assert.strictEqual(state.clients['10.0.0.9_test1'].sock, fresh,
             'messages for team 1 now go to the new socket');
@@ -227,6 +227,90 @@ describe('reconnection', () => {
         const { state, socks } = setupTeams(1);
         socks[0].close();
         assert.strictEqual(state.getClientByID('1').id, '1');
+    });
+});
+
+
+describe('what a rejoining phone is told', () => {
+    //What team 1's phone receives on a second connection
+    function rejoin(state, socks) {
+        const fresh = new FakeSocket('again');
+        state.addClient('10.0.0.9_test1', fresh);
+        return fresh.sent;
+    }
+
+    test('it does not reset a view it may already be on', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('vitext');
+        const sent = rejoin(state, socks);
+        assert.ok(sent.includes('vstext'), sent.join());
+        assert.ok(!sent.includes('vitext'), sent.join());
+    });
+
+    test('a change of view still reaches everybody as a reset', () => {
+        const { state, transport } = setupTeams(1);
+        state.handleServerMessage('vitext');
+        assert.deepStrictEqual(transport.clients, ['vitext']);
+    });
+
+    test('the true/false wording is only sent once the quiz software has chosen', () => {
+        const { state, socks } = setupTeams(1);
+        assert.ok(!rejoin(state, socks).some(m => m === 'h1' || m === 'h2'));
+    });
+
+    ['h1', 'h2'].forEach(code => {
+        test('the wording ' + code + ' is sent, whether broadcast or recorded', () => {
+            let { state, socks } = setupTeams(1);
+            state.handleServerMessage(code);
+            assert.ok(rejoin(state, socks).includes(code));
+
+            ({ state, socks } = setupTeams(1));
+            state.handleServerMessage('rs' + code);
+            assert.ok(rejoin(state, socks).includes(code));
+        });
+    });
+
+    test('recording the wording does not send it to anybody', () => {
+        const { state, socks, transport } = setupTeams(1);
+        socks[0].drain();
+        state.handleServerMessage('rsh1');
+        assert.deepStrictEqual(socks[0].sent, []);
+        assert.deepStrictEqual(transport.clients, []);
+    });
+
+    test('its accepted tile comes after the grid, which would otherwise clear it', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('ms1,3');
+        const sent = rejoin(state, socks);
+        assert.ok(sent.indexOf('ms3') > sent.findIndex(m => m.startsWith('mo')), sent.join());
+    });
+
+    test('a tile sent as a resync is remembered too', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('to1,ms2');
+        assert.ok(rejoin(state, socks).includes('ms2'));
+    });
+
+    test('another team is not told about this one\'s tile', () => {
+        const { state, socks } = setupTeams(2);
+        state.handleServerMessage('ms2,3');
+        assert.ok(!rejoin(state, socks).includes('ms3'));
+    });
+
+    ['mo4,A', 'vimulti'].forEach(message => {
+        test('the next question (' + message + ') forgets the tile', () => {
+            const { state, socks } = setupTeams(1);
+            state.handleServerMessage('ms1,3');
+            state.handleServerMessage(message);
+            assert.ok(!rejoin(state, socks).includes('ms3'));
+        });
+    });
+
+    test('a repair to one team\'s grid does not forget anybody\'s tile', () => {
+        const { state, socks } = setupTeams(1);
+        state.handleServerMessage('ms1,3');
+        state.handleServerMessage('to1,mo4,A');
+        assert.ok(rejoin(state, socks).includes('ms3'));
     });
 });
 
@@ -357,7 +441,7 @@ describe('routing from the quiz software', () => {
         const sock = new FakeSocket('late');
         state.addClient('10.0.0.9_late', sock);
         state.handleClientMessage('10.0.0.9_late', sock, 'pt3');
-        assert.deepStrictEqual(sock.sent, ['vipickteam', 'ok3', 'vimulti', 'im' + DEFAULT_GEO_IMAGE, 'mo4,A', 'on']);
+        assert.deepStrictEqual(sock.sent, ['vipickteam', 'ok3', 'vsmulti', 'im' + DEFAULT_GEO_IMAGE, 'mo4,A', 'on']);
     });
 
     test('rs of anything that is not round state is ignored', () => {
@@ -712,7 +796,7 @@ describe('message framing', () => {
         socks[0].drain();
         state.handleClientMessage('10.0.0.9_test1', socks[0], buf('pt3'));
         assert.deepStrictEqual(socks[0].sent,
-            ['ok3', 'vi' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
+            ['ok3', 'vs' + DEFAULT_VIEW, 'im' + DEFAULT_GEO_IMAGE, 'mo' + DEFAULT_MULTI, 'on']);
     });
 
     test('the quiz software can route with a Buffer', () => {
@@ -872,7 +956,7 @@ describe('re-picking a team you already hold', () => {
         //Reconnect on a new socket, then pick the same team again.
         const fresh = new FakeSocket('c2-again');
         state.addClient('10.0.0.9_test2', fresh);
-        assert.deepStrictEqual(fresh.sent, ['vibuzzer', 'imstart.jpg', 'mo' + DEFAULT_MULTI, 'on'],
+        assert.deepStrictEqual(fresh.sent, ['vsbuzzer', 'imstart.jpg', 'mo' + DEFAULT_MULTI, 'on'],
             'reconnect replays the view but does not confirm the team');
         fresh.drain();
 

@@ -51,7 +51,7 @@ enum QuizMessage: Equatable {
 	case multiChoiceGuess(team: Team, option: Int)
 
 	/// "tt<team>,<text>" — a typed answer, used by the text, numbers and pointless rounds.
-	/// `text` is the raw field; capping its length is the receiver's business.
+	/// The text is last because it may itself contain commas.
 	case textGuess(team: Team, text: String)
 
 	/// "wp<team>,<hops>,<away>,<title>" — a team has moved to another article.
@@ -122,9 +122,8 @@ enum QuizMessage: Equatable {
 			self = .multiChoiceGuess(team: team, option: option)
 
 		case "tt":
-			//TODO: Only the field up to the next comma is taken, an answer containing a comma is cut short
 			guard let f = fields(2), let team = Team(wire: f[0]) else { return nil }
-			self = .textGuess(team: team, text: String(f[1]))
+			self = .textGuess(team: team, text: f[1...].joined(separator: ","))
 
 		case "wp":
 			guard let f = fields(4), let team = Team(wire: f[0]),

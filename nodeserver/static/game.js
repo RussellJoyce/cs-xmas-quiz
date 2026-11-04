@@ -80,6 +80,10 @@ function connect() {
                 //Put us on a view only if we are not already there
                 if(event.data.slice(2) == lastview) {
                     console.log("Already on view " + lastview + ", ignoring the resync");
+                    //Connecting wall verdicts sent while we were away are gone, so ask again
+                    if(lastview == "onlyconnect") {
+                        requestWall();
+                    }
                 } else {
                     console.log("Resync moves us from " + lastview + " to " + event.data.slice(2));
                     applyView(event.data.slice(2));

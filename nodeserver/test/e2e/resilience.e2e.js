@@ -101,7 +101,7 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
 
         //The server sends its state before it answers the 're', and phoneBack has seen that answer
         assert.strictEqual(await quiz.phones[1].textbox.inputValue(), 'half an ans');
-    }, { todo: 'QuizState.sendCurrentState sends "vi", which is a reset, rather than "vs"' });
+    });
 
     scenario('reload: same team, same round, and still out if it was out', async quiz => {
         await quiz.round('buzzers');
@@ -130,7 +130,7 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         } finally {
             await quiz.host.setToggle('trueFalsePanel.modeToggle', true);
         }
-    }, { todo: 'The server does not remember h1/h2, so sendCurrentState cannot send it' });
+    });
 
     scenario('reload: a multiple choice answer already given is still lit', async quiz => {
         await quiz.round('multichoice');
@@ -149,7 +149,64 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         } finally {
             await quiz.host.click('multiChoicePanel.startButton');
         }
-    }, { todo: 'A rejoining phone is sent "mo", which clears the tile, and only Resync sends "ms"' });
+    });
+
+    scenario('dropped connection: a multiple choice answer already given is still lit', async quiz => {
+        await quiz.round('multichoice');
+        await quiz.host.setToggle('multiChoicePanel.sounds', false);
+        await quiz.host.click('multiChoicePanel.startButton');
+        const one = quiz.phones[1];
+        await quiz.tapped(1, 'mc', one.tile(3));
+        await until('tile 3 lit', () => one.hasClass(one.tile(3), 'multiSelected'));
+
+        const mark = quiz.wire.length;
+        quiz.dropPhone(1);
+        await quiz.phoneBack(1, mark);
+        await until('tile 3 lit again', () => one.hasClass(one.tile(3), 'multiSelected'), 3000);
+
+        await quiz.host.click('multiChoicePanel.startButton');
+    });
+
+    scenario('reload: the next question does not bring back the last answer', async quiz => {
+        await quiz.round('multichoice');
+        await quiz.host.setToggle('multiChoicePanel.sounds', false);
+        await quiz.host.click('multiChoicePanel.startButton');
+        const one = quiz.phones[1];
+        await quiz.tapped(1, 'mc', one.tile(2));
+        await until('tile 2 lit', () => one.hasClass(one.tile(2), 'multiSelected'));
+        await quiz.host.click('multiChoicePanel.startButton'); //Stop
+        await quiz.host.click('multiChoicePanel.startButton'); //The next question
+        await quiz.host.settled();
+
+        const mark = quiz.wire.length;
+        await quiz.reloadPhone(1);
+        await quiz.phoneBack(1, mark);
+        await onView(quiz, 1, 'multi');
+        assert.ok(!(await one.hasClass(one.tile(2), 'multiSelected')), 'the old tile is out');
+
+        await quiz.host.click('multiChoicePanel.startButton');
+    });
+
+    scenario('reload after a server restart: the phone still says higher and lower', async quiz => {
+        await quiz.round('trueFalse');
+        const one = quiz.phones[1];
+        await quiz.host.setToggle('trueFalsePanel.modeToggle', false);
+        await until('the phone to say HIGHER', async () => (await one.higher.textContent()) === 'HIGHER');
+
+        try {
+            const restart = quiz.wire.length;
+            await quiz.restartServer();
+            await quiz.phoneBack(1, restart);
+            await quiz.appResynced(restart);
+
+            const mark = quiz.wire.length;
+            await quiz.reloadPhone(1);
+            await quiz.phoneBack(1, mark);
+            await until('the reloaded phone to say HIGHER', async () => (await one.higher.textContent()) === 'HIGHER', 3000);
+        } finally {
+            await quiz.host.setToggle('trueFalsePanel.modeToggle', true);
+        }
+    });
 
     scenario("the host's Resync All puts a reloaded phone right", async quiz => {
         await quiz.round('trueFalse');

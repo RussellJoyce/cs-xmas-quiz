@@ -254,7 +254,7 @@ describe('a real server restarting under a phone', () => {
 
         server = await start(file);
         p = phone(server.ports().clientWss);
-        await p.until(m => m.startsWith('vi'));
+        await p.until(m => m.startsWith('vs'));
         assert.ok(!p.received.includes('vipickteam'), 'back at the picker: ' + p.received);
         p.send('re');
         await p.until(m => m === 'ok9');

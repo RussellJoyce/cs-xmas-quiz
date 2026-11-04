@@ -42,7 +42,10 @@ quizScenarios('answer rounds', { teams: 3 }, scenario => {
         await quiz.tapped(1, 'tt', quiz.phones[1].enter);
 
         assert.match(await panelText(quiz, 'textPanel.teamGuesses'), /Team 1: york, england/);
-    }, { todo: 'QuizMessage cuts a "tt" at the first comma, see QuizProtocol.swift' });
+
+        await quiz.host.click('textPanel.showGuesses:');
+        await seen(quiz, 'york, england');
+    });
 
     scenario('text: a team that is out loses the box', async quiz => {
         await quiz.round('text');

@@ -79,6 +79,8 @@ class QuizState {
         this.lastView = DEFAULT_VIEW;
         this.lastGeoImage = DEFAULT_GEO_IMAGE;
         this.lastMulti = DEFAULT_MULTI;
+        this.lastHigherLower = null;   //'h1' or 'h2', once the quiz software has said which
+        this.multiAnswers = {};        //The tile each team has had accepted this question
         this.lastLedTeamCount = null;
         this.nextHandle = 1;
 
@@ -172,11 +174,16 @@ class QuizState {
                this.wikiCorpus.title(race.start) + '|' + this.wikiCorpus.title(race.target);
     }
 
-    //The quiz software's 'on'/'of' stays out across rounds until it says otherwise
-    rememberButtonState(team, message) {
+    //What belongs to one team and has to survive its phone going away. The quiz software's
+    //'on'/'of' stays out across rounds until it says otherwise, while a tile stands until
+    //the next question.
+    rememberTeamState(team, message) {
         const code = message.slice(0,2);
         if(team && (code == 'on' || code == 'of')) {
             this.buttonOn[team] = (code == 'on');
+        }
+        if(team && code == 'ms') {
+            this.multiAnswers[team] = message.slice(2);
         }
     }
 
@@ -188,10 +195,12 @@ class QuizState {
 
     //Everything a freshly connected or reconnected client needs in order to show the current state of play
     sendCurrentState(sock, team) {
-        safeSend(sock, 'vi' + this.lastView);      //Forward them to the current view
+        safeSend(sock, 'vs' + this.lastView);      //'vs' rather than 'vi': a phone already on this view has only lost its connection. 'vi' is a full reset.
         safeSend(sock, 'im' + this.lastGeoImage);  //Set the geography image
-        safeSend(sock, 'mo' + this.lastMulti);     //Rebuild the multiple choice grid
+        safeSend(sock, 'mo' + this.lastMulti);     //Rebuild the multiple choice grid, which clears its selection...
+        if(this.multiAnswers[team]) safeSend(sock, 'ms' + this.multiAnswers[team]); //...so put that back
         safeSend(sock, (this.buttonOn[team] === false) ? 'of' : 'on');
+        if(this.lastHigherLower) safeSend(sock, this.lastHigherLower); //A reloaded page has its default labels
 
         //A team that reconnects mid-race lands back on its own article with its route intact, rather than being sent to the start.
         if(this.wikirace && this.wikirace.running && team) {
@@ -236,9 +245,8 @@ class QuizState {
                         const code = message.slice(0,2);
                         const id = parseInt(message.slice(2)); //Teams are 1-based, so 0/NaN are both invalid
                         if(id) {
-                            //Recorded even for a team that is not connected: it is the team
-                            //that is out, and it may well connect later.
-                            this.rememberButtonState(id, code);
+                            //Recorded even for a team that is not connected: it may connect later.
+                            this.rememberTeamState(id, code);
                             const c = this.getClientByID(id);
                             if(c) {
                                 log.info('quiz', 'T' + id, code, log.describe(code));
@@ -256,6 +264,7 @@ class QuizState {
                         const id = parseInt(parts[0]); //Teams are 1-based, so 0/NaN are both invalid
                         const option = parts[1];
                         if(id && option) {
+                            this.rememberTeamState(id, 'ms' + option);
                             const c = this.getClientByID(id);
                             if(c) {
                                 log.info('quiz', 'T' + id, 'ms', 'option ' + option + ' accepted');
@@ -297,7 +306,7 @@ class QuizState {
                             log.warn('quiz', 'all', 'to', "cannot read '" + message + "', ignored");
                         } else {
                             //The quiz software's own resync sends 'on'/'of' wrapped in a 'to'
-                            this.rememberButtonState(team, inner);
+                            this.rememberTeamState(team, inner);
                             const c = this.getClientByID(team);
                             if(c) {
                                 log.info('quiz', 'T' + team, 'to', 'for this team only: ' + log.describe(inner));
@@ -374,7 +383,7 @@ class QuizState {
                         //corpus is built and recorded in puzzles.json alongside the question.
                         break;
                     }
-                    case "rs": { //Record the state of play without sending it: "rs<vs|im|mo...>"
+                    case "rs": { //Record the state of play without sending it: "rs<vs|im|mo|h1|h2...>"
                         //Sent by the quiz software when it (re)connects, so that a server that has
                         //restarted gives rejoining phones the round in progress rather than its defaults.
                         //Nothing goes to the phones: those still connected are repaired with 'to'.
@@ -383,6 +392,7 @@ class QuizState {
                         if(code == 'vs') this.lastView = inner.slice(2);
                         else if(code == 'im') this.lastGeoImage = inner.slice(2);
                         else if(code == 'mo') this.lastMulti = inner.slice(2);
+                        else if(code == 'h1' || code == 'h2') this.lastHigherLower = code;
                         else {
                             log.warn('quiz', 'srv', 'rs', "cannot record '" + inner + "', ignored");
                             break;
@@ -392,11 +402,13 @@ class QuizState {
                     }
                     case "vi": //Set view
                         this.lastView = message.slice(2);
+                        this.multiAnswers = {}; //Entering or resetting a round starts its question again
                         log.info('quiz', 'all', 'vi', 'view → ' + this.lastView);
                         this.transport.toClients(message);
                         break;
                     case "mo": //Set up the multiple choice grid
                         this.lastMulti = message.slice(2);
+                        this.multiAnswers = {}; //This is also what clears them from the phones
                         log.info('quiz', 'all', 'mo', 'options → ' + this.lastMulti);
                         this.transport.toClients(message);
                         break;
@@ -417,6 +429,7 @@ class QuizState {
                     }
                     case "h1": //Label higher/lower
                     case "h2": //Label true/false
+                        this.lastHigherLower = message.slice(0,2);
                         log.info('quiz', 'all', message.slice(0,2), log.describe(message.slice(0,2)));
                         this.transport.toClients(message.slice(0,2));
                         break;
