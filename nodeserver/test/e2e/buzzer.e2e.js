@@ -67,4 +67,42 @@ quizScenarios('buzzers', {
         await buzz(quiz, 1);
         assert.deepStrictEqual(await buzzes(quiz), [0]);
     });
+
+    scenario('next team moves the LEDs down the queue', async quiz => {
+        await quiz.host.click('resetRound:');
+        await quiz.host.setToggle('buzzerQueueMode', true);
+        await buzz(quiz, 3);
+        await buzz(quiz, 1);
+
+        const before = quiz.leds.length;
+        await quiz.host.click('buzzerPanel.nextTeam:');
+        await until('the LEDs to show team 1', () => quiz.leds.slice(before).includes('t00'));
+
+        await quiz.host.click('resetRound:');
+        await quiz.host.setToggle('buzzerQueueMode', false);
+    });
+
+    scenario('a buzz during a countdown leaves the LEDs alone, and the clock runs', async quiz => {
+        await quiz.host.click('resetRound:');
+        await quiz.host.set('buzzerPanel.timerSeconds', '30');
+        await quiz.host.click('buzzerPanel.startTimer:');
+
+        const before = quiz.leds.length;
+        await buzz(quiz, 2);
+        assert.deepStrictEqual(await buzzes(quiz), [1]);
+        await until('the clock to run', async () => (await quiz.host.read('quizDisplay.buzzerScene.time')) < 30);
+        await quiz.host.settled();
+        assert.ok(!quiz.leds.slice(before).some(m => m.startsWith('b')), 'LEDs got: ' + quiz.leds.slice(before));
+
+        await quiz.host.click('buzzerPanel.stopTimer:');
+        await quiz.host.click('resetRound:');
+    });
+
+    scenario("the host's virtual buzzers work without a phone", async quiz => {
+        await quiz.host.click('resetRound:');
+        await quiz.host.setToggle('virtualBuzzersBtn', true);
+        await quiz.host.click('buzzerButton3');
+        assert.deepStrictEqual(await buzzes(quiz), [2]);
+        await quiz.host.click('resetRound:');
+    });
 });

@@ -125,6 +125,37 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         await until('the reset to clear the pin', async () => !(await one.pin.isVisible()));
     });
 
+    scenario('dropped connection: a wavelength guess stays where it was', async quiz => {
+        await quiz.round('wavelength');
+        const one = quiz.phones[1];
+        await one.tapAt(one.waveTrack, 0.75, 0.5);
+        const value = await one.waveValue.textContent();
+
+        const mark = quiz.wire.length;
+        quiz.dropPhone(1);
+        await quiz.phoneBack(1, mark);
+        await onView(quiz, 1, 'wavelength');
+        assert.strictEqual(await one.waveValue.textContent(), value);
+    });
+
+    scenario('dropped connection: a harness client off its phone display follows the round', async quiz => {
+        await quiz.round('buzzers');
+        await quiz.page.evaluate(() => clients[3].setDisplay(false));
+        const held = () => quiz.page.evaluate(() => ({ view: clients[3].view, team: clients[3].team }));
+        await until('the virtual client to take over', async () => (await held()).team == 3);
+
+        const mark = quiz.wire.length;
+        quiz.dropPhone(3);
+        await quiz.host.click('tabitemText');
+        await until('the round to change', () => quiz.wire.has('host→srv', 'vitext', mark));
+        await quiz.page.evaluate(() => clients[3].connect());
+
+        await until('the virtual client to be told the round', async () => (await held()).view === 'text');
+        const back = quiz.wire.length;
+        await quiz.page.evaluate(() => clients[3].setDisplay(true));
+        await quiz.phoneBack(3, back);
+    });
+
     scenario('reload: same team, same round, and still out if it was out', async quiz => {
         await quiz.round('buzzers');
         await quiz.setPlaying(3, false);
@@ -248,6 +279,39 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         await quiz.host.setToggle('resyncModeBtn', false);
         await quiz.host.click('tabitemtruefalse');
         await quiz.host.setToggle('trueFalsePanel.modeToggle', true);
+    });
+
+
+    //--- The host doing it on purpose
+
+    scenario('disconnect all: every phone returns to the picker, and a team can only be held once', async quiz => {
+        await quiz.round('buzzers');
+        //The box is only read as a phone connects, so its say on these has already been had
+        await quiz.page.uncheck('#cfg-autopick');
+        await quiz.page.evaluate(() => clients.forEach(c => { if(c) c.autopickPending = false; }));
+        await quiz.host.click('tabitemDisconnect');
+
+        await quiz.host.click('disconnectAllButton');
+        assert.strictEqual((await quiz.host.read('disconnectAllButton')).title, 'Sure?');
+        await quiz.host.click('disconnectAllButton');
+
+        for(const n of [1, 2, 3]) await onView(quiz, n, 'pickteam');
+
+        const [, one, two, three] = quiz.phones;
+        await one.teamButton(1).click();
+        await onView(quiz, 1, 'buzzer');
+        await two.teamButton(1).click();
+        await until('phone 2 to be refused', async () =>
+            (await two.frame.locator('#teamtitle').textContent()).includes('already taken'));
+        assert.strictEqual(await two.view(), 'pickteam');
+
+        await two.teamButton(2).click();
+        await three.teamButton(3).click();
+        await onView(quiz, 2, 'buzzer');
+        await onView(quiz, 3, 'buzzer');
+
+        await quiz.page.check('#cfg-autopick');
+        await quiz.host.click('tabitemBuzzers');
     });
 
 

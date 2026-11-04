@@ -10,6 +10,12 @@ const seen = (quiz, what) => until('"' + what + '" on screen', async () =>
 
 const panelText = async (quiz, path) => (await quiz.host.read(path)).value;
 
+const reachedHost = (quiz, n, code) => until('team ' + n + "'s " + code + ' to reach the app', async () => {
+    if(!quiz.wire.some(w => w.dir === 'T' + n + '→srv' && w.msg.startsWith(code))) return false;
+    await quiz.host.settled();
+    return true;
+});
+
 quizScenarios('answer rounds', { teams: 3 }, scenario => {
 
     //--- Text
@@ -136,5 +142,160 @@ quizScenarios('answer rounds', { teams: 3 }, scenario => {
         await seen(quiz, '1: C');
         await seen(quiz, '2: C');
         await seen(quiz, '3: –');
+    });
+
+
+    //--- Numbers
+
+    scenario('numbers: guesses are ranked against the answer, and shown in two steps', async quiz => {
+        await quiz.round('numbers');
+        const [, one, two, three] = quiz.phones;
+        await quiz.host.set('numbersPanel.actualAnswer', '50');
+
+        await one.answerText('40');
+        await two.answerText('60');
+        await three.answerText('90');
+        await until('the ranking on the host', async () => {
+            const text = await panelText(quiz, 'numbersPanel.teamGuesses');
+            return /🟢 Team 1: 40 +\(off by 10\)/.test(text) && /🟢 Team 2: 60/.test(text) && /Team 3: 90 +\(off by 40\)/.test(text);
+        });
+        for(const n of [40, 60, 90]) {
+            assert.ok(!(await quiz.host.visibleText()).includes(String(n)), n + ' is still hidden');
+        }
+
+        await quiz.host.click('numbersPanel.showAnswers:');
+        await seen(quiz, '40');
+        await seen(quiz, '90');
+        assert.strictEqual(await quiz.host.read('quizDisplay.numbersScene.scored'), false);
+
+        await quiz.host.click('numbersPanel.showAnswers:');
+        await until('the round to be scored', () => quiz.host.read('quizDisplay.numbersScene.scored'));
+    });
+
+    scenario('numbers: a late guess is turned away', async quiz => {
+        await quiz.round('numbers');
+        await quiz.host.click('numbersPanel.showAnswers:');
+        await quiz.phones[1].textbox.fill('7');
+        await quiz.tapped(1, 'tt', quiz.phones[1].enter);
+        assert.strictEqual(await panelText(quiz, 'numbersPanel.teamGuesses'), '');
+    });
+
+
+    //--- Pointless
+
+    scenario('pointless: answers are scored however they were typed, and revealed by the host', async quiz => {
+        await quiz.round('pointless');
+        const [, one, two, three] = quiz.phones;
+
+        await one.answerText('KIWI ');
+        await two.answerText('apple');
+        await three.answerText('banana');
+        await until('all three to be in', async () =>
+            (await quiz.host.read('quizDisplay.pointlessScene.teamGuesses')).every(g => g !== null));
+
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.pointlessScene.teamScores'), [3, 40, null]);
+        assert.ok(!(await quiz.host.visibleText()).includes('banana'), 'still hidden');
+
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await seen(quiz, 'banana');
+
+        //Too late now
+        await one.textbox.fill('quince');
+        await quiz.tapped(1, 'tt', one.enter);
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.pointlessScene.teamScores'), [3, 40, null]);
+
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await quiz.host.read('quizDisplay.pointlessScene.lowestScoreThisRound'), 3);
+    });
+
+
+    //--- Wavelength
+
+    scenario('wavelength: guesses from the bar are scored against the roll, closest first', async quiz => {
+        await quiz.round('wavelength');
+        const [, one, two, three] = quiz.phones;
+
+        await one.tapAt(one.waveTrack, 0.25, 0.5);
+        await two.tapAt(two.waveTrack, 0.5, 0.5);
+        await three.tapAt(three.waveTrack, 0.75, 0.5);
+
+        const shown = [Number(await one.waveValue.textContent()), Number(await two.waveValue.textContent()),
+                       Number(await three.waveValue.textContent())];
+        assert.ok(Math.abs(shown[0] - 25) <= 2 && Math.abs(shown[2] - 75) <= 2, 'the taps landed: ' + shown);
+
+        await until('the host to have all three', async () => {
+            const text = await panelText(quiz, 'wavelengthPanel.teamGuesses');
+            return shown.every((v, i) => text.includes('Team ' + (i + 1) + ': ' + v));
+        });
+
+        await quiz.host.click('wavelengthPanel.rollButton');
+        await quiz.host.click('wavelengthPanel.rollButton');
+        const target = Number(await panelText(quiz, 'wavelengthPanel.number'));
+        assert.ok(target >= 1 && target <= 99, 'rolled ' + target);
+
+        await quiz.host.click('wavelengthPanel.reveal:');
+
+        //Too late to move now. The sweep needs the guesses to hold still.
+        await one.tapAt(one.waveTrack, 0.9, 0.5);
+        await reachedHost(quiz, 1, 'wv');
+        const guesses = await quiz.host.read('quizDisplay.wavelengthScene.teamGuesses');
+        assert.deepStrictEqual(guesses, shown, 'a guess moved after the reveal');
+
+        //The first press runs the sweep, which takes as long as the roll is high, and a press
+        //during it is ignored. It is the one after that which scores.
+        await quiz.host.click('wavelengthPanel.score:');
+        const text = await until('the placings', async () => {
+            await quiz.host.click('wavelengthPanel.score:');
+            const t = await panelText(quiz, 'wavelengthPanel.teamGuesses');
+            return t.includes('out by') ? t : false;
+        }, 15000);
+
+        const outBy = [...text.matchAll(/out by (\d+)/g)].map(m => Number(m[1]));
+        assert.strictEqual(outBy.length, 3, text);
+        assert.deepStrictEqual(outBy, [...outBy].sort((a, b) => a - b), 'closest first: ' + text);
+        assert.strictEqual(outBy[0], Math.min(...shown.map(v => Math.abs(v - target))), text);
+    });
+
+
+    //--- Geography
+
+    scenario('geography: a tap lands where it was tapped, and the closest team wins', async quiz => {
+        await quiz.round('geography');
+        const [, one, two] = quiz.phones;
+
+        await quiz.host.set('geographyPanel.questionSelector', 'geo1.jpg');
+        await quiz.host.click('geographyPanel.startQuestion:');
+        await until('the phone to show the image', async () =>
+            (await one.map.evaluate(el => el.style.backgroundImage)).includes('geo1.jpg'));
+
+        await one.tapAt(one.map, 0.25, 0.5);
+        await two.tapAt(two.map, 0.8, 0.8);
+        await reachedHost(quiz, 2, 'ii');
+
+        const sent = n => quiz.wire.filter(w => w.dir === 'T' + n + '→srv' && w.msg.startsWith('ii')).pop().msg;
+        const [, x, y] = sent(1).split(',').map(Number);
+        assert.ok(Math.abs(x - 25) <= 1 && Math.abs(y - 50) <= 1, 'team 1 sent ' + sent(1));
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.geographyScene.teamguesses.0'), { x, y });
+
+        //The pin is what tells a team that it has answered, and where
+        const map = await one.map.boundingBox();
+        const pin = await one.pin.boundingBox();
+        const pinX = (pin.x + pin.width / 2 - map.x) / map.width;
+        const pinY = (pin.y + pin.height / 2 - map.y) / map.height;
+        assert.ok(Math.abs(pinX - 0.25) < 0.03 && Math.abs(pinY - 0.5) < 0.03,
+                  'the pin is at ' + pinX.toFixed(2) + ',' + pinY.toFixed(2) + ', not 0.25,0.50');
+
+        await quiz.host.set('geographyPanel.answerX', '30');
+        await quiz.host.set('geographyPanel.answerY', '50');
+        await quiz.host.click('geographyPanel.showWinner:');
+        await seen(quiz, 'The answer is...');
+
+        //Worst first, for the suspense
+        await quiz.host.click('geographyPanel.showWinner:');
+        await quiz.host.click('geographyPanel.showWinner:');
+        await until('the standings', async () => {
+            const text = (await quiz.host.visibleText()).join('\n');
+            return /Team 2\n.*Team 1 ⭐️/.test(text);
+        }, 3000);
     });
 });

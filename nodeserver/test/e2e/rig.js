@@ -18,6 +18,7 @@ const { firefox } = require('playwright');
 
 const { startWebsocketServers, startWebServers } = require('../../server');
 const { muteLogs, testCerts } = require('../helpers');
+const { writeFixtures } = require('./fixtures');
 
 const REPO = path.resolve(__dirname, '../../..');
 const DERIVED = path.join(REPO, 'nodeserver/.e2e-build');
@@ -60,7 +61,12 @@ async function until(what, check, timeoutMs) {
     let last;
     for(;;) {
         try {
-            last = await check();
+            //A Playwright call on a page part way through navigating can wait for ever
+            let stuck;
+            last = await Promise.race([check(), new Promise((_, reject) => {
+                stuck = setTimeout(() => reject(new Error('the check itself got stuck')), Math.max(deadline - Date.now(), 1000));
+            })]);
+            clearTimeout(stuck);
             if(last) return last;
         } catch(err) {
             last = err.message;
@@ -116,7 +122,15 @@ class Host {
     command(op, path, value) {
         const id = this.nextId++;
         return new Promise((resolve, reject) => {
-            this.waiting.set(id, { resolve, reject });
+            //The app dying, or a command it cannot answer, should fail the scenario and not hang it
+            const timer = setTimeout(() => {
+                this.waiting.delete(id);
+                reject(new Error('probe: no answer to ' + op + ' ' + (path || '')));
+            }, 10000);
+            this.waiting.set(id, {
+                resolve: result => { clearTimeout(timer); resolve(result); },
+                reject: err => { clearTimeout(timer); reject(err); }
+            });
             this.socket.send(JSON.stringify({ id, op, path, value }));
         });
     }
@@ -168,6 +182,7 @@ class Host {
 //One team's phone: the real game.js, in one of the harness's iframes
 class Phone {
     constructor(page, number) {
+        this.page = page;
         this.number = number;
         this.frame = page.frameLocator('#screen-' + number + ' iframe');
         this.buzzer = this.frame.locator('#buzzer');
@@ -177,11 +192,27 @@ class Phone {
         this.lower = this.frame.locator('#lower');
         this.map = this.frame.locator('#geoimg');
         this.pin = this.frame.locator('#geomark');
+        this.waveTrack = this.frame.locator('#wavetrack');
+        this.waveValue = this.frame.locator('#wavevalue');
+        this.article = this.frame.locator('#article');
+        this.articleTitle = this.frame.locator('#title');
+        this.hops = this.frame.locator('#hops');
+        this.back = this.frame.locator('#back');
     }
 
     tile(option) { return this.frame.locator('#multibutton' + option); }
     teamButton(team) { return this.frame.locator('#teambutton' + team); }
     tiles() { return this.frame.locator('.multiButton').count(); }
+    wallTile(word) { return this.frame.locator('.wallTile').filter({ hasText: new RegExp('^' + word + '$') }); }
+    wallTileCount(cls) { return this.frame.locator('.wallTile.' + cls).count(); }
+    link(title) { return this.article.locator('a').filter({ hasText: title }); }
+
+    //A tap at a fraction of the way across and down an element. In page coordinates, as the
+    //harness scales its phones and a locator's click position does not allow for that.
+    async tapAt(locator, fx, fy) {
+        const box = await locator.boundingBox();
+        await this.page.mouse.click(box.x + box.width * fx, box.y + box.height * fy);
+    }
 
     async isOn() {
         return /buttonOn/.test(await this.buzzer.getAttribute('class'));
@@ -203,14 +234,21 @@ class Phone {
     }
 }
 
-//Everything the rounds need in order to be entered and recognised
+//Everything the rounds need in order to be entered and recognised, named as RoundType is
 const ROUNDS = {
-    idle:        { tab: 'tabitemIdleSnow',    scene: 'SnowIdleScene',    view: 'buzzer' },
+    idleSnow:    { tab: 'tabitemIdleSnow',    scene: 'SnowIdleScene',    view: 'buzzer' },
     buzzers:     { tab: 'tabitemBuzzers',     scene: 'BuzzerScene',      view: 'buzzer' },
     text:        { tab: 'tabitemText',        scene: 'TextScene',        view: 'text' },
     trueFalse:   { tab: 'tabitemtruefalse',   scene: 'TrueFalseScene',   view: 'higherlower' },
     multichoice: { tab: 'tabitemMultiChoice', scene: 'MultiChoiceScene', view: 'multi' },
-    geography:   { tab: 'tabitemGeography',   scene: 'GeographyScene',   view: 'geo' }
+    geography:   { tab: 'tabitemGeography',   scene: 'GeographyScene',   view: 'geo' },
+    numbers:     { tab: 'tabitemNumbers',     scene: 'NumbersScene',     view: 'text' },
+    pointless:   { tab: 'tabitemPointless',   scene: 'PointlessScene',   view: 'text' },
+    wavelength:  { tab: 'tabitemWavelength',  scene: 'WavelengthScene',  view: 'wavelength' },
+    onlyConnect: { tab: 'tabitemOnlyConnect', scene: 'OnlyConnectScene', view: 'onlyconnect' },
+    timer:       { tab: 'tabitemTimer',       scene: 'TimerScene',       view: 'buzzer' },
+    scores:      { tab: 'tabitemScores',      scene: 'ScoresScene',      view: 'buzzer' },
+    wikirace:    { tab: 'tabitemWikiRace',    scene: 'WikiRaceScene',    view: null } //A page of its own
 };
 
 async function startQuiz(options) {
@@ -228,9 +266,10 @@ async function startQuiz(options) {
         const wire = newWire();
         const leds = [];
 
-        //An empty root, and no corpus: the real questions are neither in git nor stable
+        //The real questions are neither in git nor stable
         const root = fs.mkdtempSync(path.join(os.tmpdir(), 'quiz-e2e-root-'));
         cleanups.push(() => fs.rmSync(root, { recursive: true, force: true }));
+        const { staticDir, wikiDir } = writeFixtures(root);
         const picksFile = path.join(root, 'picks.json');
 
 
@@ -244,7 +283,7 @@ async function startQuiz(options) {
             ws = startWebsocketServers({
                 certs, dev: true, numTeams: teams, picksFile,
                 clientWssPort: ports.clientWss, serverPort: ports.server, ledsPort: ports.leds,
-                bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1', wikiDir: root
+                bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1', wikiDir
             });
             await ws.ready();
             ports = ws.ports();
@@ -269,7 +308,7 @@ async function startQuiz(options) {
         cleanups.push(() => stopServer());
 
         const web = startWebServers({
-            certs, dev: true, httpPort: 0, httpsPort: 0, bindAddress: '127.0.0.1'
+            certs, dev: true, httpPort: 0, httpsPort: 0, bindAddress: '127.0.0.1', staticDir
         });
         cleanups.push(() => {
             web.server.close();
@@ -335,6 +374,8 @@ async function startQuiz(options) {
             ignoreHTTPSErrors: true,
             viewport: { width: 1300, height: 800 }
         });
+        //A locator that will never resolve should say so soon, as a scenario has many of them
+        context.setDefaultTimeout(8000);
         const page = await context.newPage();
         const pageErrors = [];
         page.on('pageerror', err => pageErrors.push(err.message));
@@ -363,12 +404,17 @@ async function startQuiz(options) {
             //Entering the round already on show would do nothing, so that is a reset instead.
             async round(name, phonesToCheck) {
                 const round = ROUNDS[name];
-                if((await host.scene()).scene === round.scene) await host.click('resetRound:');
+                //Not by scene, as the old one is still on show during the transition
+                if((await host.scene()).round === name) await host.click('resetRound:');
                 else await host.click(round.tab);
                 await until('the ' + round.scene, async () => (await host.scene()).scene === round.scene);
                 for(const n of phonesToCheck || phones.keys()) {
                     if(!phones[n]) continue;
-                    await until('phone ' + n + ' on view ' + round.view, async () => (await phones[n].view()) === round.view);
+                    if(round.view) {
+                        await until('phone ' + n + ' on view ' + round.view, async () => (await phones[n].view()) === round.view);
+                    } else {
+                        await until('phone ' + n + ' on its page', async () => (await phones[n].article.count()) === 1);
+                    }
                 }
             },
 
@@ -423,6 +469,11 @@ async function startQuiz(options) {
             async phoneBack(n, since) {
                 await until('phone ' + n + ' to reconnect', () => wire.has('T' + n + '→srv', 're', since));
                 await phoneHoldsTeam(n);
+            },
+
+            //The same, for a page without a buzzer to show the team
+            async phoneReconnected(n, since) {
+                await until('phone ' + n + ' to reconnect', () => wire.has('T' + n + '→srv', 're', since));
             },
 
             //Waits until the app has reconnected to the server and told it the state of play

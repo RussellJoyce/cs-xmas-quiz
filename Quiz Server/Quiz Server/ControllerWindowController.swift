@@ -591,6 +591,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		case .wikiStanding(let team, let rank, let finished, let seconds, let hops, let away):
 			quizDisplay.wikiRaceScene.raceStanding(team: team.index, rank: rank, finished: finished,
 			                                       secs: seconds, hops: hops, away: away)
+			wikiRacePanel.standingsArrived()
 
 		case .wikiTrail(let team, let titles):
 			quizDisplay.wikiRaceScene.raceTrails[team.index] = titles

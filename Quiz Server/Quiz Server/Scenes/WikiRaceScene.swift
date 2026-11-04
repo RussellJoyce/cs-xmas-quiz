@@ -538,6 +538,10 @@ class WikiRacePanel: NSObject, RoundPanel {
 		clockTimer?.invalidate()
 	}
 
+	func standingsArrived() {
+		revealButton.isEnabled = raceStarted != nil
+	}
+
 	@IBAction func reveal(_ sender: Any) {
 		guard !scene.raceStandings.isEmpty else { return }
 		scene.showDistance = true

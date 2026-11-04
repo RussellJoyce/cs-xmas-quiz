@@ -60,6 +60,12 @@ function connect() {
                 //Repaint out of the "no connection" grey, but into whatever state we were
                 //last told to be in. Being given our ID back does not re-enable us.
                 toggleState(buttonsOn);
+                //We have just (re)connected. The server puts a phone on its view before it
+                //tells it its team, and a wall cannot be asked for until then. Any verdicts
+                //sent while we were away are gone too, so a phone that never left asks as well.
+                if(lastview == "onlyconnect") {
+                    requestWall();
+                }
                 break;
             case "px":
                 //The team we reqested wasn't available
@@ -83,10 +89,6 @@ function connect() {
                 //Put us on a view only if we are not already there
                 if(event.data.slice(2) == lastview) {
                     console.log("Already on view " + lastview + ", ignoring the resync");
-                    //Connecting wall verdicts sent while we were away are gone, so ask again
-                    if(lastview == "onlyconnect") {
-                        requestWall();
-                    }
                 } else {
                     console.log("Resync moves us from " + lastview + " to " + event.data.slice(2));
                     applyView(event.data.slice(2));

@@ -249,10 +249,20 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 
 	private func set(_ path: String, to value: Any) throws {
 		let target: Any = path.contains(":") ? try control(forAction: path) : try resolve(path)
+		if let textView = target as? NSTextView, let text = value as? String {
+			textView.string = text
+			return
+		}
 		guard let control = target as? NSControl else {
 			throw ProbeError(message: "'\(path)' is a \(type(of: target)), which cannot be set")
 		}
 		switch value {
+		case let title as String where control is NSPopUpButton:
+			let popUp = control as! NSPopUpButton
+			guard popUp.itemTitles.contains(title) else {
+				throw ProbeError(message: "'\(path)' has no item '\(title)'. It has: " + popUp.itemTitles.joined(separator: ", "))
+			}
+			popUp.selectItem(withTitle: title)
 		case let text as String: control.stringValue = text
 		case let number as NSNumber: control.doubleValue = number.doubleValue
 		default: throw ProbeError(message: "'\(path)': cannot set to \(value)")
@@ -279,6 +289,8 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			return ["title": v.title, "on": v.state == .on, "enabled": v.isEnabled, "hidden": v.isHidden]
 		case let v as NSControl:
 			return ["value": v.stringValue, "enabled": v.isEnabled, "hidden": v.isHidden]
+		case let v as NSTextView:
+			return ["value": v.string]
 		default: break
 		}
 
@@ -288,6 +300,13 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			return mirror.children.map { encode($0.value) }
 		case .enum:
 			return String(describing: value)
+		case .tuple:
+			//By label, or by position for a tuple that has none
+			var out = [String: Any]()
+			for (index, child) in mirror.children.enumerated() {
+				out[child.label.flatMap { $0.hasPrefix(".") ? nil : $0 } ?? String(index)] = encode(child.value)
+			}
+			return out
 		default:
 			return String(describing: type(of: value))
 		}
