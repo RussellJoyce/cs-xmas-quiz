@@ -186,10 +186,12 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 		var found = [NSControl]()
 		func walk(_ view: NSView) {
 			if let control = view as? NSControl { found.append(control) }
+			//Its subviews are only the tab showing, which is also one of its items
 			if let tabs = view as? NSTabView {
 				tabs.tabViewItems.compactMap { $0.view }.forEach(walk)
+			} else {
+				view.subviews.forEach(walk)
 			}
-			view.subviews.forEach(walk)
 		}
 		if let root = controller.window?.contentView { walk(root) }
 		return found

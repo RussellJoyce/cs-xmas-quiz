@@ -1,0 +1,190 @@
+'use strict';
+
+//Things going wrong during the show: the server, the app or a phone falling over mid-round.
+//This is what the end-to-end rig is really for, as no one component can test it alone.
+
+const assert = require('node:assert');
+const { quizScenarios, until } = require('./rig');
+
+const onView = (quiz, n, view) => until('phone ' + n + ' on view ' + view, async () =>
+    (await quiz.phones[n].view()) === view);
+
+quizScenarios('when things go wrong', { teams: 3 }, scenario => {
+
+    //--- The node server restarting
+
+    scenario('server restart: phones come back to the round with their teams', async quiz => {
+        await quiz.round('text');
+        const mark = quiz.wire.length;
+        await quiz.restartServer();
+
+        for(const n of [1, 2, 3]) {
+            await quiz.phoneBack(n, mark);
+            await onView(quiz, n, 'text');
+        }
+        await quiz.appResynced(mark);
+
+        //And it is all still connected up
+        await quiz.phones[1].answerText('still here');
+        await until('the host to see the answer', async () =>
+            (await quiz.host.read('textPanel.teamGuesses')).value.includes('still here'));
+    });
+
+    scenario('server restart: a team that was out stays out', async quiz => {
+        await quiz.round('buzzers');
+        await quiz.setPlaying(2, false);
+
+        const mark = quiz.wire.length;
+        await quiz.restartServer();
+        await quiz.phoneBack(2, mark);
+        await quiz.appResynced(mark);
+        await until('phone 2 to be told it is out', async () => !(await quiz.phones[2].isOn()));
+
+        await quiz.setPlaying(2, true);
+    });
+
+    scenario('server restart: a phone slower to return than the app still gets the round', async quiz => {
+        await quiz.round('text');
+        await quiz.powerPhone(2, false);
+
+        const mark = quiz.wire.length;
+        await quiz.restartServer();
+        await quiz.appResynced(mark);
+
+        const back = quiz.wire.length;
+        await quiz.powerPhone(2, true);
+        await quiz.phoneBack(2, back);
+        await onView(quiz, 2, 'text');
+    });
+
+    scenario('server restart with the picks lost: a phone picks again and lands in the round', async quiz => {
+        await quiz.round('text');
+        await quiz.page.uncheck('#cfg-autopick');
+
+        const mark = quiz.wire.length;
+        await quiz.restartServer({ losePicks: true });
+        await quiz.appResynced(mark);
+
+        const one = quiz.phones[1];
+        await onView(quiz, 1, 'pickteam');
+        await one.teamButton(1).click();
+        await onView(quiz, 1, 'text');
+
+        //Leave the others as they were found
+        for(const n of [2, 3]) {
+            await onView(quiz, n, 'pickteam');
+            await quiz.phones[n].teamButton(n).click();
+            await onView(quiz, n, 'text');
+        }
+        await quiz.page.check('#cfg-autopick');
+    });
+
+
+    //--- A phone having trouble
+
+    scenario('dropped connection: the phone comes back with its team, on the round', async quiz => {
+        await quiz.round('multichoice');
+        const mark = quiz.wire.length;
+        quiz.dropPhone(1);
+        await quiz.phoneBack(1, mark);
+        await onView(quiz, 1, 'multi');
+    });
+
+    scenario('dropped connection: a half-typed answer survives', async quiz => {
+        await quiz.round('text');
+        await quiz.phones[1].textbox.fill('half an ans');
+
+        const mark = quiz.wire.length;
+        quiz.dropPhone(1);
+        await quiz.phoneBack(1, mark);
+        await onView(quiz, 1, 'text');
+
+        //The server sends its state before it answers the 're', and phoneBack has seen that answer
+        assert.strictEqual(await quiz.phones[1].textbox.inputValue(), 'half an ans');
+    }, { todo: 'QuizState.sendCurrentState sends "vi", which is a reset, rather than "vs"' });
+
+    scenario('reload: same team, same round, and still out if it was out', async quiz => {
+        await quiz.round('buzzers');
+        await quiz.setPlaying(3, false);
+
+        const mark = quiz.wire.length;
+        await quiz.reloadPhone(3);
+        await quiz.phoneBack(3, mark);
+        await until('phone 3 to still be out', async () => !(await quiz.phones[3].isOn()));
+
+        await quiz.setPlaying(3, true);
+    });
+
+    scenario('reload: a phone in a higher/lower round says higher and lower', async quiz => {
+        await quiz.round('trueFalse');
+        const one = quiz.phones[1];
+        await quiz.host.setToggle('trueFalsePanel.modeToggle', false);
+        await until('the phone to say HIGHER', async () => (await one.higher.textContent()) === 'HIGHER');
+
+        try {
+            const mark = quiz.wire.length;
+            await quiz.reloadPhone(1);
+            await quiz.phoneBack(1, mark);
+            await onView(quiz, 1, 'higherlower');
+            await until('the reloaded phone to say HIGHER', async () => (await one.higher.textContent()) === 'HIGHER', 3000);
+        } finally {
+            await quiz.host.setToggle('trueFalsePanel.modeToggle', true);
+        }
+    }, { todo: 'The server does not remember h1/h2, so sendCurrentState cannot send it' });
+
+    scenario('reload: a multiple choice answer already given is still lit', async quiz => {
+        await quiz.round('multichoice');
+        await quiz.host.setToggle('multiChoicePanel.sounds', false);
+        await quiz.host.click('multiChoicePanel.startButton');
+        const one = quiz.phones[1];
+        await quiz.tapped(1, 'mc', one.tile(2));
+        await until('tile 2 lit', () => one.hasClass(one.tile(2), 'multiSelected'));
+
+        try {
+            const mark = quiz.wire.length;
+            await quiz.reloadPhone(1);
+            await quiz.phoneBack(1, mark);
+            await onView(quiz, 1, 'multi');
+            await until('tile 2 lit again', () => one.hasClass(one.tile(2), 'multiSelected'), 3000);
+        } finally {
+            await quiz.host.click('multiChoicePanel.startButton');
+        }
+    }, { todo: 'A rejoining phone is sent "mo", which clears the tile, and only Resync sends "ms"' });
+
+    scenario("the host's Resync All puts a reloaded phone right", async quiz => {
+        await quiz.round('trueFalse');
+        const one = quiz.phones[1];
+        await quiz.host.setToggle('trueFalsePanel.modeToggle', false);
+        await until('the phone to say HIGHER', async () => (await one.higher.textContent()) === 'HIGHER');
+
+        const mark = quiz.wire.length;
+        await quiz.reloadPhone(1);
+        await quiz.phoneBack(1, mark);
+
+        await quiz.host.click('tabitemDisconnect');
+        await quiz.host.setToggle('resyncModeBtn', true);
+        await quiz.host.click('disconnectAllButton');
+        await until('the phone to say HIGHER again', async () => (await one.higher.textContent()) === 'HIGHER');
+
+        await quiz.host.setToggle('resyncModeBtn', false);
+        await quiz.host.click('tabitemtruefalse');
+        await quiz.host.setToggle('trueFalsePanel.modeToggle', true);
+    });
+
+
+    //--- The app crashing
+
+    scenario('app restart: phones follow it back to the start, and buzzing works', async quiz => {
+        await quiz.round('text');
+        const mark = quiz.wire.length;
+        await quiz.restartApp();
+        await quiz.appResynced(mark);
+
+        for(const n of [1, 2, 3]) await onView(quiz, n, 'buzzer');
+
+        await quiz.round('buzzers');
+        await quiz.host.setToggle('buzzerSounds', false);
+        await quiz.tapped(2, 'zz', quiz.phones[2].buzzer);
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.buzzerScene.buzzes'), [1]);
+    });
+});
