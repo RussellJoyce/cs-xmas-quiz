@@ -4,7 +4,8 @@
   "description": "Quiz server",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test \"test/*.test.js\""
+    "test": "node --test \"test/*.test.js\"",
+    "test:e2e": "node --test --test-concurrency=1 \"test/e2e/*.e2e.js\""
   },
   "dependencies": {
     "connect": "^3.6.6",
@@ -12,5 +13,8 @@
     "native-dns": "^0.7.0",
     "serve-static": "^1.13.2",
     "ws": "^7.5.13"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
   }
 }

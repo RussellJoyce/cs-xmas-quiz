@@ -57,3 +57,6 @@ jspm_packages
 
 # Team picks saved across restarts
 /state/
+
+# End-to-end test build of the Quiz Server app
+/.e2e-build/

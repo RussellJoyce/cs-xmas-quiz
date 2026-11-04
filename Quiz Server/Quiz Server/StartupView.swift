@@ -43,8 +43,13 @@ class StartupView: NSViewController {
             print("Error enumerating screens");
         }
 
-		quizRootPath.stringValue = "\(NSHomeDirectory())/Documents/cs-xmas-quiz"
-		
+		let environment = ProcessInfo.processInfo.environment
+		quizRootPath.stringValue = environment["QUIZ_ROOT"] ?? "\(NSHomeDirectory())/Documents/cs-xmas-quiz"
+		if let teams = environment["QUIZ_TEAMS"] {
+			numTeamsInput.stringValue = teams
+		}
+
+
         startButton.isEnabled = true
     }
 	

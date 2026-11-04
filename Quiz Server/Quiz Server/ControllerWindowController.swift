@@ -186,6 +186,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
 
 		installLEDStrip(window: window)
+
+		TestProbe.startIfRequested(controller: self)
     }
 	
 	func windowWillClose(_ notification: Notification) {
@@ -526,7 +528,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	//MARK: - Websockets
 	//--------------------------------------------------------------------------------------------------------------------------
 	
-	var socket = QuizWebSocket(url: URL(string: "ws://localhost:8091/")!)
+	var socket = QuizWebSocket(url: URL(string: ProcessInfo.processInfo.environment["QUIZ_SERVER_URL"] ?? "ws://localhost:8091/")!)
 
 	/// The panels' route to the node server
 	func send(_ command: QuizCommand) {
