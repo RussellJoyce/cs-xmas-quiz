@@ -115,7 +115,7 @@ class ScoresScene: QuizScene {
 			
 			//Determine ranks
 			var rankedScores : [(Int, Int, Int)] = []
-			var lastScore = -1
+			var lastScore: Int? = nil
 			var currentRank = 0
 			var skipped = 1
 			for i in res.sorted(by: { $0.1 > $1.1 }) {
