@@ -16,6 +16,9 @@ class TrueFalseScene: QuizScene {
 	static let TIMEOUT = 5
 	
 	var counting = false
+
+	/// Whether there are any guesses to judge yet, as a team with no guess counts as wrong
+	private var questionAsked = false
 	var teamEnabled = [Bool]()
 	/// Which teams are playing, from the enable buttons at the top of the controller window.
 	/// Separate from `teamEnabled` which means "survived so far", and a team
@@ -76,6 +79,7 @@ class TrueFalseScene: QuizScene {
 	override func reset() {
 		self.timer?.invalidate()
 		self.timeLabel.text = ""
+		questionAsked = false
 		
 		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
@@ -130,6 +134,7 @@ class TrueFalseScene: QuizScene {
 	}
 	
 	func start(sounds: Bool) {
+		questionAsked = true
 		self.time = TrueFalseScene.TIMEOUT
 		teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 		QuizWebSocket.shared?.send(.clearEmphasis) //As startNoTimer: the phones still show the last answer
@@ -151,6 +156,7 @@ class TrueFalseScene: QuizScene {
 	func startNoTimer(sounds: Bool) {
 		if self.counting == false {
 			//Starting
+			questionAsked = true
 			self.counting = true
 			teamGuesses = [Bool?](repeating: nil, count: Settings.shared.numTeams)
 			QuizWebSocket.shared?.send(.clearEmphasis) //Also clear emphasis just in case
@@ -172,17 +178,22 @@ class TrueFalseScene: QuizScene {
 			}
 			
 		} else {
-			//Stopping
-			self.counting = false
-			QuizWebSocket.shared?.pulseWhite()
-			self.timeLabel.text = ""
-			self.revealTeamGuesses()
-			self.stopFire()
-			
-			if sounds {
-				music?.pause()
-				self.run(self.tensionend)
-			}
+			endQuestion(sounds: sounds)
+		}
+	}
+
+	/// Ends a running question early, whichever way it was started
+	private func endQuestion(sounds: Bool) {
+		self.timer?.invalidate()
+		self.counting = false
+		QuizWebSocket.shared?.pulseWhite()
+		self.timeLabel.text = ""
+		self.revealTeamGuesses()
+		self.stopFire()
+
+		if sounds {
+			music?.pause()
+			self.run(self.tensionend)
 		}
 	}
 	
@@ -248,7 +259,13 @@ class TrueFalseScene: QuizScene {
 		}
 	}
 	
-	func showAnswer(ans: Bool) {
+	/// Judges the last question. If we pressed the wrong True/False then we can judge again and bring back incorrectly removed teams
+	func showAnswer(ans: Bool, sounds: Bool) {
+		guard questionAsked else { return }
+		if counting {
+			endQuestion(sounds: sounds)
+		}
+
 		for team in 0..<Settings.shared.numTeams {
 			guard isParticipating(team) else {
 				teamBoxes[team].setEnabled(false)
@@ -303,11 +320,11 @@ class TrueFalsePanel: NSObject, RoundPanel {
 	}
 
 	@IBAction func answerTrue(_ sender: NSButton) {
-		scene.showAnswer(ans: true)
+		scene.showAnswer(ans: true, sounds: soundsToggle.state == .on)
 	}
 
 	@IBAction func answerFalse(_ sender: NSButton) {
-		scene.showAnswer(ans: false)
+		scene.showAnswer(ans: false, sounds: soundsToggle.state == .on)
 	}
 
 	@IBAction func modeToggled(_ sender: Any) {

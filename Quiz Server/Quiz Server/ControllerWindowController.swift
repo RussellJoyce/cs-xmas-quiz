@@ -38,7 +38,7 @@ protocol RoundPanel: AnyObject {
 	/// Whether the round is taking typed answers from the phones at the moment
 	var acceptingTextAnswers: Bool { get }
 
-	/// A typed answer from a team that is playing, already trimmed. `team` is 0-based.
+	/// A typed answer from a team that is playing, which may be empty to remove the guess. `team` is 0-based.
 	func receive(textGuess: String, from team: Int)
 
 	/// Somebody has been switched on or off, or the round has just started
