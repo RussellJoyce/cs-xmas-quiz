@@ -96,7 +96,7 @@ quizScenarios('trying to break the buzzer', { teams: 7 }, scenario => {
         const time = await quiz.host.read(BUZZER + '.time');
         await quiz.host.click('buzzerPanel.stopTimer:');
         assert.ok(time >= 0, 'the clock has reached ' + time);
-    }, { todo: 'BuzzerScene only stops when time is exactly 0, and it decrements before checking' });
+    });
 
     scenario('a countdown that is not a number is ignored', async quiz => {
         await buzzers(quiz, false);

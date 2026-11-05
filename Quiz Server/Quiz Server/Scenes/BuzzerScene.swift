@@ -210,6 +210,8 @@ class BuzzerScene: QuizScene {
 	}
 	
 	func startTimer(_ secs : Int) {
+		//The countdown only stops on reaching exactly 0, so it must start at 1 or more
+		let secs = max(1, secs)
 		time = secs
 		starttime = secs
 		timer?.invalidate()

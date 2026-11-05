@@ -284,12 +284,15 @@ class TrueFalseScene: QuizScene {
 		}
 	}
 	
-	func teamGuess(teamid : Int, guess : Bool) {
+	/// Returns whether the guess was taken, so that only then is the team's phone told
+	func teamGuess(teamid : Int, guess : Bool) -> Bool {
 		if counting && teamid >= 0 && teamid < teamEnabled.count && isIn(teamid) {
 			teamGuesses[teamid] = guess
 			teamBoxes[teamid].setIfGuessed(true)
 			teamBoxes[teamid].pulseBox()
+			return true
 		}
+		return false
 	}
 }
 

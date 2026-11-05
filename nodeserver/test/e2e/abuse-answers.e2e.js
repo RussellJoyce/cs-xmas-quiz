@@ -69,7 +69,7 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         assert.ok(!quiz.wire.has('host→srv', 'hh2', mark), 'phone 2 was lit up');
         assert.strictEqual(await quiz.phones[2].hasClass(quiz.phones[2].higher, 'higherLowerSelected'), false);
         await stopTF(quiz);
-    }, { todo: 'The controller sends hh/hl whenever the question is running, without asking whether the team is still in' });
+    });
 
     scenario('true/false: being switched off and on again does not undo being out', async quiz => {
         await trueFalse(quiz);

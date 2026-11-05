@@ -559,8 +559,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 
 		case .higherLower(let team, let higher):
 			guard roster.isPlaying(team.index) else { break }
-			quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher)
-			if quizDisplay.truefalseScene.counting {
+			if quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher) {
 				send(.higherLowerAccepted(team: team.index, higher: higher))
 			}
 
