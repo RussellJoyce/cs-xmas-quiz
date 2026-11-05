@@ -54,8 +54,14 @@ class TextScene: QuizScene {
 	private func refreshBoxes() {
 		for team in 0..<min(Settings.shared.numTeams, teamBoxes.count) {
 			teamBoxes[team].setPlaying(isParticipating(team))
+			if let revealedWithRoundNumbers {
+				showGuess(team: team, showroundno: revealedWithRoundNumbers)
+			}
 		}
 	}
+
+	/// Whether the answers are on screen, and if so how they were put there
+	private var revealedWithRoundNumbers: Bool?
 
 	func roundPoints(_ roundid : Int) -> String {
 		switch(roundid) {
@@ -115,35 +121,40 @@ class TextScene: QuizScene {
 			}
 		}
 		
+		revealedWithRoundNumbers = showroundno
 		for team in 0..<Settings.shared.numTeams {
-			if let tg = teamGuesses[team] {
-				
-				//Long answers shrink so they fit across the box, but nothing grows past the
-				//size the grid allows for the current number of teams
-				let preferredSize : CGFloat = (tg.guess.count > 13) ? 40 : 60
-				teamBoxes[team].setTextSize(size: min(preferredSize, teamBoxes[team].fontSize))
-				
-				if showroundno {
-					teamBoxes[team].guessLabel.text = "\(tg.guess)"
-					teamBoxes[team].roundLabel.text = "(at Clue \(tg.roundid) - " + roundPoints(tg.roundid) + ")"
-					teamBoxes[team].singleLabel.text = ""
-				} else {
-					teamBoxes[team].singleLabel.text = "\(tg.guess)"
-					teamBoxes[team].guessLabel.text = ""
-					teamBoxes[team].roundLabel.text = ""
-				}
-			} else {
-				teamBoxes[team].guessLabel.text = ""
-				teamBoxes[team].roundLabel.text = ""
-				teamBoxes[team].singleLabel.text = ""
-			}
+			showGuess(team: team, showroundno: showroundno)
+		}
+	}
+
+	/// Puts one team's answer in its box
+	private func showGuess(team: Int, showroundno: Bool) {
+		guard isParticipating(team), let tg = teamGuesses[team] else {
+			teamBoxes[team].guessLabel.text = ""
+			teamBoxes[team].roundLabel.text = ""
+			teamBoxes[team].singleLabel.text = ""
+			return
+		}
+
+		//Long answers shrink so they fit across the box
+		let preferredSize : CGFloat = (tg.guess.count > 13) ? 40 : 60
+		teamBoxes[team].setTextSize(size: min(preferredSize, teamBoxes[team].fontSize))
+
+		if showroundno {
+			teamBoxes[team].guessLabel.text = "\(tg.guess)"
+			teamBoxes[team].roundLabel.text = "(at Clue \(tg.roundid) - " + roundPoints(tg.roundid) + ")"
+			teamBoxes[team].singleLabel.text = ""
+		} else {
+			teamBoxes[team].singleLabel.text = "\(tg.guess)"
+			teamBoxes[team].guessLabel.text = ""
+			teamBoxes[team].roundLabel.text = ""
 		}
 	}
 	
 	func isTeamAnswerUnique(_ team : Int) -> Bool {
 		if let ourguess = teamGuesses[team] {
 			for tid in 0..<Settings.shared.numTeams {
-				if tid != team {
+				if tid != team && isParticipating(tid) {
 					if let tg = teamGuesses[tid] {
 						if tg.guess == ourguess.guess {
 							return false
@@ -171,7 +182,7 @@ class TextScene: QuizScene {
 			
 			
 			//First mark all correct answers
-			for team in 0..<Settings.shared.numTeams {
+			for team in 0..<Settings.shared.numTeams where isParticipating(team) {
 				if let tg = teamGuesses[team] {
 					if uniques.contains(tg.guess)  {
 						//team is right but might not be unique
@@ -196,6 +207,7 @@ class TextScene: QuizScene {
 	
 	override func reset() {
 		QuizWebSocket.shared?.ledsOff()
+		revealedWithRoundNumbers = nil
 		for team in 0..<Settings.shared.numTeams {
 			teamGuesses[team] = nil
 			teamBoxes[team].guessLabel.text = ""

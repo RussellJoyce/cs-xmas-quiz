@@ -370,7 +370,9 @@ async function startQuiz(options) {
 
 
         //--- The phones
-        const browser = await firefox.launch({ headless: !!process.env.E2E_HEADLESS });
+        //Headless unless asked, as a covered window stops producing animation frames, and
+        //Playwright waits for those before it will click. E2E_HEADED=1 to watch the phones.
+        const browser = await firefox.launch({ headless: !process.env.E2E_HEADED });
         cleanups.push(() => browser.close());
         const context = await browser.newContext({
             ignoreHTTPSErrors: true,

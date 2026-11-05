@@ -155,7 +155,7 @@ class NumbersScene: QuizScene {
 	}
 
 	/// The guesses that count, which leaves out any team switched off since it answered
-	private var countedGuesses: [Int?] {
+	var countedGuesses: [Int?] {
 		teamGuesses.enumerated().map { team, guess in isParticipating(team) ? guess : nil }
 	}
 
@@ -844,7 +844,7 @@ class NumbersPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 	private func updateGuesses() {
 		guard let answer = typedAnswer else {
 			teamGuesses.stringValue = (0..<Settings.shared.numTeams).compactMap { team -> String? in
-				if let tg = scene.teamGuesses[team] {
+				if let tg = scene.countedGuesses[team] {
 					return "Team \(team + 1): \(tg)"
 				}
 				return nil
@@ -852,10 +852,14 @@ class NumbersPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 			return
 		}
 		let marks = ["🟢", "🟡", "🔵"]
-		teamGuesses.stringValue = NumbersScene.placings(guesses: scene.teamGuesses, actualAnswer: answer).map { entry in
+		teamGuesses.stringValue = NumbersScene.placings(guesses: scene.countedGuesses, actualAnswer: answer).map { entry in
 			let mark = entry.place.map { marks[$0] } ?? "⚪️"
 			return "\(mark) Team \(entry.team + 1): \(entry.guess)  (off by \(entry.distance))"
 		}.joined(separator: "\n")
+	}
+
+	func participationChanged() {
+		updateGuesses()
 	}
 
 	/// The answer as typed so far, or nil if the box does not hold a number

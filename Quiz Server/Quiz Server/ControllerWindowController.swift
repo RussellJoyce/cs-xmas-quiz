@@ -40,6 +40,9 @@ protocol RoundPanel: AnyObject {
 
 	/// A typed answer from a team that is playing, already trimmed. `team` is 0-based.
 	func receive(textGuess: String, from team: Int)
+
+	/// Somebody has been switched on or off, or the round has just started
+	func participationChanged()
 }
 
 extension RoundPanel {
@@ -51,6 +54,7 @@ extension RoundPanel {
 	func clientTeamState(team: Int) -> [ClientState] { [] }
 	var acceptingTextAnswers: Bool { false }
 	func receive(textGuess: String, from team: Int) {}
+	func participationChanged() {}
 }
 
 
@@ -257,6 +261,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	/// Tells the live round who is playing. Called whenever the enable buttons change and whenever a round starts
 	func pushTeamParticipation() {
 		quizDisplay.setParticipating(roster.flags)
+		panels[quizDisplay.currentRound]?.participationChanged()
 	}
 
 

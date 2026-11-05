@@ -303,7 +303,49 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         await quiz.host.click('textPanel.showGuesses:');
         await seen(quiz, 'open');
         assert.ok(!(await showing(quiz, 'secret')), 'its answer went up on the screen');
-    }, { todo: 'TextScene.showGuesses ignores participation, unlike NumbersScene.countedGuesses' });
+
+        await quiz.setPlaying(1, true);
+        await seen(quiz, 'secret');
+    });
+
+    scenario('text: switching a team off after the reveal takes its answer down', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('secret');
+        await until('the answer', async () => (await guesses(quiz)).includes('secret'));
+        await quiz.host.click('textPanel.showGuesses:');
+        await seen(quiz, 'secret');
+
+        await quiz.setPlaying(1, false);
+        await until('the answer to go', async () => !(await showing(quiz, 'secret')));
+    });
+
+    scenario('text: a reset forgets the reveal as well', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('secret');
+        await until('the answer', async () => (await guesses(quiz)).includes('secret'));
+        await quiz.host.click('textPanel.showGuesses:');
+        await seen(quiz, 'secret');
+        await quiz.host.click('resetRound:');
+
+        //An answer given now is hidden again, and stays so if the team is switched off and on
+        await quiz.phones[1].answerText('another');
+        await until('the new answer', async () => (await guesses(quiz)).includes('another'));
+        await quiz.setPlaying(1, false);
+        await quiz.setPlaying(1, true);
+        assert.ok(!(await showing(quiz, 'another')), 'it went up on the screen');
+    });
+
+    scenario('text: a team switched off earns no star of its own', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('york');
+        await quiz.phones[2].answerText('rome');
+        await until('both', async () => (await guesses(quiz)).split('\n').length === 2);
+
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('textPanel.showGuesses:');
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual((await quiz.host.read('quizDisplay.textScene.emitters')).length, 1);
+    });
 
     scenario('text: an answer only earns the star for being unique', async quiz => {
         await begin(quiz, 'text');
@@ -331,7 +373,7 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         await quiz.host.click('textPanel.showGuesses:');
         await quiz.host.click('textPanel.scoreUnique:');
         assert.strictEqual((await quiz.host.read('quizDisplay.textScene.emitters')).length, 1);
-    }, { todo: 'isTeamAnswerUnique ignores participation' });
+    });
 
     scenario('text: a reset forgets every answer', async quiz => {
         await begin(quiz, 'text');
@@ -357,17 +399,27 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
     const reveal = quiz => quiz.host.click('numbersPanel.showAnswers:');
 
     scenario('numbers: the host and the display agree once a team is switched off', async quiz => {
-        await numbers(quiz, 50, { 1: 49, 2: 60 });
+        await numbers(quiz, 50, { 1: 49, 2: 60, 3: 90 });
+        await until('team 1 first on the list', async () =>
+            /🟢 Team 1/.test(await panel(quiz, 'numbersPanel.teamGuesses')));
+
         await quiz.setPlaying(1, false);
+        await until('the list to redraw', async () =>
+            /🟢 Team 2/.test(await panel(quiz, 'numbersPanel.teamGuesses')));
+        assert.doesNotMatch(await panel(quiz, 'numbersPanel.teamGuesses'), /Team 1/);
 
-        //Anything arriving redraws the host's list
-        await quiz.phones[3].textbox.fill('90');
-        await quiz.tapped(3, 'tt', quiz.phones[3].enter);
+        await quiz.setPlaying(1, true);
+        await until('team 1 to return', async () =>
+            /🟢 Team 1/.test(await panel(quiz, 'numbersPanel.teamGuesses')));
+    });
 
-        const list = await panel(quiz, 'numbersPanel.teamGuesses');
-        assert.match(list, /🟢 Team 2/, list);
-        assert.doesNotMatch(list, /Team 1/, list);
-    }, { todo: 'The panel ranks scene.teamGuesses while the display ranks countedGuesses' });
+    scenario('numbers: the same with no answer typed yet', async quiz => {
+        await numbers(quiz, 'none', { 1: 49, 2: 60 });
+        await until('both on the list', async () => /Team 1: 49\nTeam 2: 60/.test(await panel(quiz, 'numbersPanel.teamGuesses')));
+        await quiz.setPlaying(1, false);
+        await until('team 1 to leave the list', async () =>
+            (await panel(quiz, 'numbersPanel.teamGuesses')) === 'Team 2: 60');
+    });
 
     scenario('numbers: everybody guessing the same does not upset the scale', async quiz => {
         await numbers(quiz, 50, { 1: 50, 2: 50, 3: 50 });
