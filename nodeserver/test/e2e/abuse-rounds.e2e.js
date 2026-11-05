@@ -348,7 +348,7 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         await until('the wall', async () => (await quiz.phones[1].wallTileCount('wallSolved')) === 16);
         await quiz.setPlaying(2, false);
         await until('the wall to end', async () => (await quiz.host.read('onlyConnectPanel.startButton')).title === 'Finished', 3000);
-    }, { todo: 'everyoneFinished is only looked at after a guess' });
+    });
 
     scenario('only connect: a reset takes the wall off every phone', async quiz => {
         await wall(quiz);

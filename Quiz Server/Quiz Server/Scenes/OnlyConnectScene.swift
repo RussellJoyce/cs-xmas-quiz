@@ -851,11 +851,21 @@ class OnlyConnectPanel: NSObject, RoundPanel {
 			sendState(team: team)
 		}
 
+		stopIfEveryoneFinished()
+		refreshControls()
+	}
+
+	/// Switching off the last team still playing can leave everyone who is playing finished
+	func participationChanged() {
+		stopIfEveryoneFinished()
+		refreshControls()
+	}
+
+	private func stopIfEveryoneFinished() {
 		if scene.phase == .running && scene.everyoneFinished {
 			scene.stop()
 			pushWall()
 		}
-		refreshControls()
 	}
 
 	/// A phone asking for its wall, which it does whenever it arrives on the view
