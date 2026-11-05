@@ -430,8 +430,10 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
     //--- Pointless
 
     async function pointless(quiz, answers) {
-        await begin(quiz, 'pointless');
+        //Before the round is entered, as changing question sends the phones a reset of its own
+        await quiz.host.click('tabitemPointless');
         await quiz.host.set('pointlessPanel.questionSelector', '1-fruit.txt');
+        await begin(quiz, 'pointless');
         for(const [n, answer] of Object.entries(answers)) {
             await quiz.phones[n].textbox.fill(answer);
             await quiz.tapped(n, 'tt', quiz.phones[n].enter);
@@ -443,21 +445,79 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         await pointless(quiz, { 1: 'kiwi', 2: 'apple' });
         await quiz.setPlaying(1, false);
         await quiz.host.click('pointlessPanel.showAnswers:');
+        await seen(quiz, 'apple');
         assert.ok(!(await showing(quiz, 'kiwi')), 'its answer went up on the screen');
         await quiz.host.click('pointlessPanel.runScoring:');
         assert.strictEqual(await quiz.host.read(POINTLESS + '.lowestScoreThisRound'), 40);
-    }, { todo: 'PointlessScene has no idea of participation at all' });
+    });
 
-    scenario('pointless: changing question does not leave answers judged against the old one', async quiz => {
+    scenario('pointless: a team switched back on has its answer and its score again', async quiz => {
+        await pointless(quiz, { 1: 'kiwi', 2: 'apple' });
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        assert.ok(!(await showing(quiz, 'kiwi')));
+
+        await quiz.setPlaying(1, true);
+        await seen(quiz, 'kiwi');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await quiz.host.read(POINTLESS + '.lowestScoreThisRound'), 3);
+    });
+
+    scenario('pointless: a team switched off before the count gets no bar and does not stop it', async quiz => {
+        await pointless(quiz, { 1: 'quince', 2: 'apple' });
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        const bars = await quiz.host.read(POINTLESS + '.scoreBars');
+        assert.strictEqual(bars[0], null, 'it has a bar');
+        assert.notStrictEqual(bars[1], null);
+        await until('the count to finish', async () => (await state(quiz)) === 'done', 10000);
+    });
+
+    scenario('pointless: a bar left over from an interrupted count does not carry on', async quiz => {
+        await pointless(quiz, { 1: 'quince', 2: 'apple' });
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('resetRound:');
+        assert.deepStrictEqual((await quiz.host.read(POINTLESS + '.scoreBars')).slice(0, 2), [null, null]);
+    });
+
+    scenario('pointless: changing question starts the question again, on the phones as well', async quiz => {
         await pointless(quiz, { 1: 'kiwi' });
         assert.strictEqual((await quiz.host.read(POINTLESS + '.teamScores'))[0], 3);
+        const one = quiz.phones[1];
+        assert.strictEqual(await one.textbox.inputValue(), 'kiwi');
 
         await quiz.host.set('pointlessPanel.questionSelector', '2-green.txt');
-        const score = (await quiz.host.read(POINTLESS + '.teamScores'))[0];
-        const guess = (await quiz.host.read(POINTLESS + '.teamGuesses'))[0];
-        assert.ok(guess === null || score === 5,
-                  'team 1 still shows "' + guess + '", which scores ' + score + ' on a question where it is worth 5');
-    }, { todo: 'changeToQuestion clears teamScores and keeps teamGuesses' });
+        assert.strictEqual((await quiz.host.read(POINTLESS + '.teamGuesses'))[0], null);
+        assert.strictEqual((await quiz.host.read(POINTLESS + '.teamScores'))[0], null);
+        await seen(quiz, 'Team 1');
+        await until('the phone to clear', async () => (await one.textbox.inputValue()) === '');
+
+        //And the same answer is judged against the new one
+        await one.answerText('kiwi');
+        await until('the new score', async () => (await quiz.host.read(POINTLESS + '.teamScores'))[0] === 5);
+    });
+
+    scenario('pointless: changing question during the count stops it', async quiz => {
+        await pointless(quiz, { 1: 'kiwi' });
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.set('pointlessPanel.questionSelector', '2-green.txt');
+        assert.strictEqual(await state(quiz), 'waitForAnswers');
+        await pause(400);
+        assert.strictEqual(await state(quiz), 'waitForAnswers', 'the count carried on');
+    });
+
+    scenario('pointless: picking the question already loaded keeps the answers', async quiz => {
+        await pointless(quiz, { 1: 'kiwi' });
+        await quiz.host.set('pointlessPanel.questionSelector', '1-fruit.txt');
+        assert.strictEqual((await quiz.host.read(POINTLESS + '.teamScores'))[0], 3);
+        assert.strictEqual((await quiz.host.read(POINTLESS + '.teamGuesses'))[0], 'kiwi');
+    });
 
     scenario('pointless: everybody wrong still finishes', async quiz => {
         await pointless(quiz, { 1: 'bread', 2: 'cheese', 3: 'wine' });

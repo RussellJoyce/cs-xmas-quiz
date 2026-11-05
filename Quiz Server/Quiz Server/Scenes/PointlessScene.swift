@@ -140,8 +140,12 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		counter?.removeFromParent()
 		counter = nil
 		
+		//Emptied as well as removed: the next count only makes bars for the teams that scored,
+		//and would otherwise go on running the old ones of any team that has been switched off
 		scoreBars.forEach {$0?.removeFromParent()}
+		scoreBars = Array(repeating: nil, count: scoreBars.count)
 		barEmitters.forEach {$0?.removeFromParent()}
+		barEmitters = Array(repeating: nil, count: barEmitters.count)
 		retiredEmitters.forEach {$0.removeFromParent()}
 		retiredEmitters.removeAll()
 		scoreLabels.forEach {$0.removeFromParent()}
@@ -226,12 +230,48 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		}
 	}
 	
+	/// Which teams are playing, from the enable buttons at the top of the controller window.
+	private var participating = [Bool]()
+
+	override func setParticipating(_ teams: [Bool]) {
+		participating = teams
+		refreshBoxes()
+	}
+
+	private func isParticipating(_ team: Int) -> Bool {
+		//Defaults to in, for the window before the controller has said anything
+		return team < participating.count ? participating[team] : true
+	}
+
+	/// The scores that count, which leaves out any team switched off since it answered. Kept
+	/// separate from `teamScores` so that switching a team back on restores its score, including
+	/// one the host has typed into the table.
+	private var countedScores: [Int?] {
+		teamScores.enumerated().map { team, score in isParticipating(team) ? score : nil }
+	}
+
+	/// What a team's box says at this point in the round
+	private func boxText(_ team: Int) -> String {
+		guard isParticipating(team) else { return "Team \(team + 1)" }
+		if gameState == .waitForAnswers {
+			return teamGuesses[team] == nil ? "Team \(team + 1)" : "••••••••"
+		}
+		return teamGuesses[team] ?? ""
+	}
+
+	private func refreshBoxes() {
+		for team in 0..<min(Settings.shared.numTeams, teamBoxes.count) {
+			teamBoxes[team].alpha = isParticipating(team) ? 1.0 : 0.3
+			teamBoxes[team].updateText(boxText(team))
+		}
+	}
+
 	func showAnswers() {
-		for i in 0..<Settings.shared.numTeams {
-			teamBoxes[i].updateText((teamGuesses[i] ?? ""))
+		gameState = .answersRevealed
+		refreshBoxes()
+		for i in 0..<Settings.shared.numTeams where isParticipating(i) {
 			teamBoxes[i].runShimmerEffect(shimmerWidth: 300, duration: 0.5)
 		}
-		gameState = .answersRevealed
 		
 		run(showAnswersSound)
 	}
@@ -245,7 +285,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 			var atLeastOneWrong = false
 			
 			//Fade to red any teams that are wrong
-			for i in 0..<Settings.shared.numTeams {
+			for i in 0..<Settings.shared.numTeams where isParticipating(i) {
 				if teamScores[i] == nil {
 					teamBoxes[i].fadeBackgroundColor(to: NSColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.7), duration: 1.0)
 					teamBoxes[i].fadeTextColor(to: .red, duration: 0.7)
@@ -254,7 +294,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 			}
 			if atLeastOneWrong { run(wrongSound) }
 			
-			lowestScoreThisRound = teamScores.compactMap({$0}).min()
+			lowestScoreThisRound = countedScores.compactMap({$0}).min()
 			gameState = .incorrectShown
 			
 		case .incorrectShown:
@@ -264,7 +304,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 			
 			// Prepare bars and emitters for correct teams
 			for i in 0..<Settings.shared.numTeams {
-				if let _ = teamScores[i] { //If has correct answer
+				if let _ = countedScores[i] { //If has correct answer
 					let barNode = SKShapeNode()
 					barNode.fillColor = PointlessScene.barColour
 					barNode.strokeColor = .clear
@@ -618,6 +658,8 @@ class PointlessPanel: NSObject, RoundPanel {
 
 	private var scene: PointlessScene { host.quizDisplay.pointlessScene }
 
+	private var loadedQuestion: String?
+
 	func connectControls() {
 		if let textView = questionScroller.documentView as? NSTextView {
 			scene.textQuestion = textView
@@ -656,8 +698,12 @@ class PointlessPanel: NSObject, RoundPanel {
 	}
 
 	@IBAction func questionSelected(_ sender: Any) {
-		guard let title = questionSelector.selectedItem?.title else { return }
+		guard let title = questionSelector.selectedItem?.title, title != loadedQuestion else { return }
+		loadedQuestion = title
 		scene.changeToQuestion(path: Settings.shared.pointlessPath + "/" + title)
+		if host.quizDisplay.currentRound == round {
+			host.enterRound(round, presenting: false)
+		}
 	}
 
 	@IBAction func test(_ sender: Any) {
