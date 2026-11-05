@@ -420,7 +420,7 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
 
         await quiz.host.click('textPanel.scoreUnique:');
         assert.strictEqual(await stars(), 1, 'pressing it again adds another star');
-    }, { todo: 'scoreUnique adds its emitters again on each press' });
+    });
 
     scenario('text: a team switched off does not spoil somebody else being unique', async quiz => {
         await begin(quiz, 'text');

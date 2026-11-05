@@ -172,7 +172,10 @@ class TextScene: QuizScene {
 	func scoreUnique() {
 		if let uniques = uniques {
 			print("Unique correct answers are: ", uniques)
-			
+
+			//Scoring again starts afresh, rather than adding a second star to each unique answer
+			removeStars()
+
 			//Convert team guesses to a comparable format
 			for team in 0..<Settings.shared.numTeams {
 				if teamGuesses[team] != nil {
@@ -218,7 +221,10 @@ class TextScene: QuizScene {
 			teamBoxes[team].bgBox.run(SKAction.scale(to: 1, duration: 0.2))
 		}
 		refreshBoxes()
+		removeStars()
+	}
 
+	private func removeStars() {
 		for e in emitters {
 			e.removeFromParent()
 		}

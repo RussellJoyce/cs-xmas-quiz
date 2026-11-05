@@ -497,8 +497,13 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
 
     scenario('scores: everybody on minus one still comes first', async quiz => {
         await scores(quiz, '1,-1\n2,-1\n');
-        assert.doesNotMatch(await output(quiz), /^0:/m, await output(quiz));
-    }, { todo: 'parseAndReset uses -1 as its no-score-yet value' });
+        assert.strictEqual(await output(quiz), '1: Team 1 (-1)\n1: Team 2 (-1)');
+    });
+
+    scenario('scores: a top score of minus one comes first', async quiz => {
+        await scores(quiz, '1,-1\n2,-3\n');
+        assert.strictEqual(await output(quiz), '2: Team 2 (-3)\n1: Team 1 (-1)');
+    });
 
     scenario('scores: a team marked x, or with no line at all, is left out', async quiz => {
         await scores(quiz, '1,10\n2,x\n\n');
