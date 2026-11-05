@@ -32,7 +32,7 @@ quizScenarios('host rounds', { teams: 3 }, scenario => {
     scenario('scores: typed in by the host, revealed lowest first, with draws sharing a rank', async quiz => {
         await quiz.round('scores');
         await quiz.host.click('scoresPanel.initText:');
-        assert.strictEqual((await quiz.host.read('scoresPanel.scoreText')).value, '1,\n2,\n3,\n');
+        assert.strictEqual((await quiz.host.read('scoresPanel.scoreText')).value, '1,x\n2,x\n3,x\n');
 
         await quiz.host.set('scoresPanel.scoreText', '1,10\n2,30\n3,30\n');
         await quiz.host.click('scoresPanel.parseAndReset:');

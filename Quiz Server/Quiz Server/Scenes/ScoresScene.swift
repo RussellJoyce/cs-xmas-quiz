@@ -58,28 +58,46 @@ class ScoresScene: QuizScene {
 	enum ParseError: Error {
 		case invalidFormat
 		case nonIntegerValue
+		case teamOutOfRange
+		case duplicateTeam
 	}
 	
 	func parseStringToPairs(_ input: String) -> [(Int, Int)]? {
 		var pairs = [(Int, Int)]()
+		var seenTeams = Set<Int>()
 		let lines = input.replacingOccurrences(of: "\r", with: "").split(separator: "\n")
 		for line in lines {
 			do {
-				//Split on either tab or comma
-				var components : [Substring.SubSequence]
-				if line.split(separator: ",").count != 2 {
-					components = line.split(separator: "\t")
-				} else {
-					components = line.split(separator: ",")
+				//Each line is a team and its score, separated by one comma or by spaces or tabs.
+				//A score of x means the team has no score and is left out, as is a team with no
+				//line at all. Blank lines are ignored, and anything else is an error.
+				let trimmed = line.trimmingCharacters(in: .whitespaces)
+				if trimmed.isEmpty {
+					continue
 				}
-				
-				if components.count == 2 {
-					guard let x = Int(components[0].trimmingCharacters(in: .whitespaces)),
-						  let y = Int(components[1].trimmingCharacters(in: .whitespaces)) else {
-						throw ParseError.nonIntegerValue
-					}
-					pairs.append((x, y))
+				//Empty fields are kept when splitting on commas, so that 1,,10 is an error
+				let components = trimmed.contains(",")
+					? trimmed.split(separator: ",", omittingEmptySubsequences: false).map { $0.trimmingCharacters(in: .whitespaces) }
+					: trimmed.split(whereSeparator: { $0.isWhitespace }).map(String.init)
+				guard components.count == 2 else {
+					throw ParseError.invalidFormat
 				}
+				guard let team = Int(components[0]) else {
+					throw ParseError.nonIntegerValue
+				}
+				guard (1...Settings.shared.numTeams).contains(team) else {
+					throw ParseError.teamOutOfRange
+				}
+				guard seenTeams.insert(team).inserted else {
+					throw ParseError.duplicateTeam
+				}
+				if components[1].lowercased() == "x" {
+					continue
+				}
+				guard let score = Int(components[1]) else {
+					throw ParseError.nonIntegerValue
+				}
+				pairs.append((team, score))
 			} catch {
 				print("Error parsing line '\(line)': \(error)")
 				output?.stringValue = "Error parsing line '\(line)': \(error)"
@@ -116,6 +134,7 @@ class ScoresScene: QuizScene {
 			
 		} else {
 			print("Failed to parse input.")
+			scores = []
 		}
 		displayIndex = 0
 	}
@@ -184,7 +203,7 @@ class ScoresPanel: NSObject, RoundPanel {
 
 	/// Lays out one blank line per team, ready for the host to type the scores in
 	@IBAction func initText(_ sender: Any) {
-		scoreText.string = (1...Settings.shared.numTeams).map { "\($0),\n" }.joined()
+		scoreText.string = (1...Settings.shared.numTeams).map { "\($0),x\n" }.joined()
 	}
 
 	@IBAction func parseAndReset(_ sender: Any) {

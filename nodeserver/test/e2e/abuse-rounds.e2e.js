@@ -463,31 +463,71 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         assert.ok(!(await showing(quiz, 'Team 1')));
     });
 
+    scenario('scores: a failed parse does not leave the previous scores ready to reveal', async quiz => {
+        await scores(quiz, '1,10\n');
+        assert.match(await output(quiz), /Team 1 \(10\)/);
+
+        await quiz.host.set('scoresPanel.scoreText', '1,10\nfirst,second\n');
+        await quiz.host.click('scoresPanel.parseAndReset:');
+        assert.match(await output(quiz), /Error/);
+
+        await quiz.host.click('scoresPanel.showNext:');
+        await pause(300);
+        assert.ok(!(await showing(quiz, 'Team 1')));
+    });
+
     scenario('scores: a team that does not exist is refused', async quiz => {
         await scores(quiz, '1,10\n99,20\n');
+        assert.match(await output(quiz), /Error/);
         assert.doesNotMatch(await output(quiz), /Team 99/, 'it is in the running order');
-    }, { todo: 'parseStringToPairs does not check the team' });
+    });
 
     scenario('scores: team nought is refused', async quiz => {
         await scores(quiz, '0,10\n1,20\n');
+        assert.match(await output(quiz), /Error/);
         assert.doesNotMatch(await output(quiz), /Team 0/, 'it is in the running order');
-    }, { todo: 'parseStringToPairs does not check the team' });
+    });
 
     scenario('scores: a team listed twice is refused', async quiz => {
         await scores(quiz, '1,10\n1,20\n2,5\n');
+        assert.match(await output(quiz), /Error/);
         const lines = (await output(quiz)).split('\n').filter(l => l.includes('Team 1 '));
         assert.ok(lines.length < 2, await output(quiz));
-    }, { todo: 'parseStringToPairs does not check for duplicates' });
+    });
 
     scenario('scores: everybody on minus one still comes first', async quiz => {
         await scores(quiz, '1,-1\n2,-1\n');
         assert.doesNotMatch(await output(quiz), /^0:/m, await output(quiz));
     }, { todo: 'parseAndReset uses -1 as its no-score-yet value' });
 
-    scenario('scores: a blank score is not silently dropped', async quiz => {
-        await scores(quiz, '1,10\n2,\n3,5\n');
-        assert.match(await output(quiz), /Error|Team 2/, await output(quiz));
-    }, { todo: 'parseStringToPairs skips a line without two fields instead of reporting it' });
+    scenario('scores: a team marked x, or with no line at all, is left out', async quiz => {
+        await scores(quiz, '1,10\n2,x\n\n');
+        const text = await output(quiz);
+        assert.doesNotMatch(text, /Error|Team 2|Team 3/, text);
+        assert.match(text, /Team 1 \(10\)/, text);
+    });
+
+    scenario('scores: a line that is not a team and a score or x is refused', async quiz => {
+        await begin(quiz, 'scores');
+        for(const bad of ['2,', '2', '2,10,5', '2,,10', '2,10 5', 'hello', '2,y']) {
+            await quiz.host.set('scoresPanel.scoreText', `1,10\n${bad}\n`);
+            await quiz.host.click('scoresPanel.parseAndReset:');
+            assert.match(await output(quiz), /Error/, `'${bad}' was accepted`);
+        }
+    });
+
+    scenario('scores: a team cannot be both marked x and given a score', async quiz => {
+        await scores(quiz, '1,x\n1,10\n');
+        assert.match(await output(quiz), /Error/);
+    });
+
+    scenario('scores: a space or a tab separates a team from its score as well as a comma', async quiz => {
+        await scores(quiz, '1 10\n2\t20\n3, 30\n');
+        const text = await output(quiz);
+        assert.match(text, /Team 1 \(10\)/, text);
+        assert.match(text, /Team 2 \(20\)/, text);
+        assert.match(text, /Team 3 \(30\)/, text);
+    });
 
     scenario('scores: next, past the end and with nothing typed', async quiz => {
         await begin(quiz, 'scores');
