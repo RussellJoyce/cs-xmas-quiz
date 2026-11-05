@@ -273,12 +273,16 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         assert.strictEqual(await quiz.phones[1].tiles(), 4);
         assert.strictEqual(await panel(quiz, 'multiChoicePanel.optionsNumber'), '4');
 
-        await quiz.host.click('multiChoicePanel.time30');
-        const scene = await quiz.host.read(MC + '.timeout');
-        assert.strictEqual(await quiz.host.read('multiChoicePanel.timeout'), scene,
-                           'the host is told one length of question, and gets another');
+        for(const time of ['time10', 'time20', 'time30']) {
+            assert.strictEqual((await quiz.host.read('multiChoicePanel.' + time)).enabled, false,
+                               time + ' can be pressed during a question');
+        }
         await startMC(quiz);
-    }, { todo: 'timeChanged sets the panel\'s timeout before pushOptions refuses it, so the two disagree' });
+        for(const time of ['time10', 'time20', 'time30']) {
+            assert.strictEqual((await quiz.host.read('multiChoicePanel.' + time)).enabled, true,
+                               time + ' is still greyed out after the question');
+        }
+    });
 
     scenario('multiple choice: the clock running out ends the question', async quiz => {
         await multiChoice(quiz);
@@ -286,6 +290,9 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         await startMC(quiz);
         await quiz.tapped(1, 'mc', quiz.phones[1].tile(1));
         await until('the clock to run out', async () => !(await quiz.host.read(MC + '.counting')), 14000);
+        assert.strictEqual((await quiz.host.read('multiChoicePanel.startButton')).title, 'Start');
+        assert.strictEqual((await quiz.host.read('multiChoicePanel.time20')).enabled, true,
+                           'the time buttons are still greyed out once the clock has run out');
 
         await quiz.tapped(2, 'mc', quiz.phones[2].tile(2));
         assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[1], null);

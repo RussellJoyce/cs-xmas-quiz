@@ -34,6 +34,8 @@ class MultiChoiceScene: QuizScene {
 	private(set) var labelStyle = LabelStyle.letters
 	private(set) var timeout = MultiChoiceScene.defaultTimeout
 	private(set) var counting = false
+	/// Called when a question ends, whether the clock ran out or the host stopped it
+	var onFinish: (() -> Void)?
 	private(set) var revealed = false
 
 	var teamGuesses = [Int?]()
@@ -271,6 +273,7 @@ class MultiChoiceScene: QuizScene {
 		QuizWebSocket.shared?.setCounterValue(0)
 
 		showGuesses()
+		onFinish?()
 	}
 
 
@@ -367,6 +370,11 @@ class MultiChoicePanel: NSObject, RoundPanel {
 
 	private var scene: MultiChoiceScene { host.quizDisplay.multiChoiceScene }
 
+	func connectControls() {
+		//The clock running out ends a question without the panel being pressed
+		scene.onFinish = { [weak self] in self?.updateRunningControls() }
+	}
+
 	private var answerButtons: [NSButton?] {
 		[answer1, answer2, answer3, answer4, answer5, answer6]
 	}
@@ -424,12 +432,12 @@ class MultiChoicePanel: NSObject, RoundPanel {
 			teamGuesses?.stringValue = ""
 			scene.start(sounds: sounds.state == .on)
 		}
-		updateStartButton()
+		updateRunningControls()
 	}
 
 	@IBAction func answerPressed(_ sender: NSButton) {
 		scene.showAnswer(option: sender.tag)
-		updateStartButton()
+		updateRunningControls()
 		updateGuesses()
 	}
 
@@ -474,11 +482,15 @@ class MultiChoicePanel: NSObject, RoundPanel {
 			button?.title = scene.labelStyle.label(option)
 			button?.isEnabled = option <= scene.optionCount
 		}
-		updateStartButton()
+		updateRunningControls()
 	}
 
-	private func updateStartButton() {
+	/// The question's length is fixed once it starts, so its buttons are greyed out until it ends
+	private func updateRunningControls() {
 		startButton?.title = scene.counting ? "Stop" : "Start"
+		for button in timeButtons {
+			button?.isEnabled = !scene.counting
+		}
 	}
 
 	private func updateGuesses() {
