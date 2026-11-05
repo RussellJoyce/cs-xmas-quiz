@@ -66,10 +66,14 @@ function writeFixtures(root) {
           POINTLESS.title + '\n' +
           Object.entries(POINTLESS.answers).map(([a, score]) => a + ',' + score).join('\n') + '\n');
 
+    //Shares an answer with the first question, at a different score
+    write(path.join(root, 'Questions/Pointless/2-green.txt'), 'Name something green\nkiwi,5\nlime,1\n');
+
+    write(path.join(root, 'Questions/Unique/1-cities.txt'), 'paris\nrome\nyork\n');
+
     write(path.join(root, 'Questions/OnlyConnect/1-wall.txt'),
           Object.entries(WALL).map(([name, clues]) => name + ': ' + clues.join(', ')).join('\n') + '\n');
 
-    fs.mkdirSync(path.join(root, 'Questions/Unique'), { recursive: true });
     fs.mkdirSync(path.join(root, 'Questions/Music'), { recursive: true });
 
     //The phones are served the real pages, with the corpus swapped for this one. The app reads

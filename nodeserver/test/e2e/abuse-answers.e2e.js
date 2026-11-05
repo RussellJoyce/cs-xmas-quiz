@@ -1,0 +1,508 @@
+'use strict';
+
+//Trying to break the logic of the rounds where teams answer a question: answers at the wrong
+//moment, teams that are out or switched off, and hosts pressing things out of order. Each
+//scenario says what ought to happen, not what the code happens to do.
+
+const assert = require('node:assert');
+const { quizScenarios, until } = require('./rig');
+
+const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+const panel = async (quiz, path) => (await quiz.host.read(path)).value;
+const showing = async (quiz, what) => (await quiz.host.visibleText()).join('\n').includes(what);
+const seen = (quiz, what) => until('"' + what + '" on screen', () => showing(quiz, what));
+
+async function begin(quiz, round) {
+    await quiz.allPlaying();
+    await quiz.round(round);
+}
+
+const TF = 'quizDisplay.truefalseScene';
+const MC = 'quizDisplay.multiChoiceScene';
+const POINTLESS = 'quizDisplay.pointlessScene';
+const NUMBERS = 'quizDisplay.numbersScene';
+
+quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
+
+    //--- True or false: who is still in
+
+    async function trueFalse(quiz) {
+        await begin(quiz, 'trueFalse');
+        await quiz.host.setToggle('trueFalsePanel.soundsToggle', false);
+    }
+    const startTF = quiz => quiz.host.click('trueFalsePanel.startWithoutTimer:');
+    const stopTF = quiz => quiz.host.click('trueFalsePanel.startWithoutTimer:');
+    const say = (quiz, n, truth) => truth
+        ? quiz.tapped(n, 'hi', quiz.phones[n].higher)
+        : quiz.tapped(n, 'lo', quiz.phones[n].lower);
+
+    //One question that team 2 gets wrong and team 1 gets right, which team 3 sits out
+    async function knockOutTeam2(quiz) {
+        await startTF(quiz);
+        await say(quiz, 1, true);
+        await say(quiz, 2, false);
+        await stopTF(quiz);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [true, false, false]);
+    }
+
+    scenario('true/false: a team that is out cannot guess its way back in', async quiz => {
+        await trueFalse(quiz);
+        await knockOutTeam2(quiz);
+
+        await startTF(quiz);
+        await say(quiz, 1, true);
+        await say(quiz, 2, true);
+        await stopTF(quiz);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [true, false, false]);
+    });
+
+    scenario("true/false: a team that is out is not told its answer was accepted", async quiz => {
+        await trueFalse(quiz);
+        await knockOutTeam2(quiz);
+
+        await startTF(quiz);
+        const mark = quiz.wire.length;
+        await say(quiz, 2, true);
+        assert.ok(!quiz.wire.has('host→srv', 'hh2', mark), 'phone 2 was lit up');
+        assert.strictEqual(await quiz.phones[2].hasClass(quiz.phones[2].higher, 'higherLowerSelected'), false);
+        await stopTF(quiz);
+    }, { todo: 'The controller sends hh/hl whenever the question is running, without asking whether the team is still in' });
+
+    scenario('true/false: being switched off and on again does not undo being out', async quiz => {
+        await trueFalse(quiz);
+        await knockOutTeam2(quiz);
+
+        await quiz.setPlaying(2, false);
+        await quiz.setPlaying(2, true);
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [true, false, false]);
+
+        await startTF(quiz);
+        await say(quiz, 2, true);
+        await stopTF(quiz);
+        await seen(quiz, 'Team 2 OUT');
+    });
+
+    scenario('true/false: a team switched off is not judged, and its guess does not count', async quiz => {
+        await trueFalse(quiz);
+        await quiz.setPlaying(2, false);
+        await startTF(quiz);
+        await say(quiz, 1, true);
+        await say(quiz, 2, true);
+        assert.strictEqual((await quiz.host.read(TF + '.teamGuesses'))[1], null);
+        await stopTF(quiz);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+        assert.strictEqual((await quiz.host.read(TF + '.teamEnabled'))[1], true, 'not put out by sitting it out');
+    });
+
+    scenario('true/false: a guess made before being switched off does not carry it through', async quiz => {
+        await trueFalse(quiz);
+        await startTF(quiz);
+        await say(quiz, 2, false);
+        await quiz.setPlaying(2, false);
+        await stopTF(quiz);
+        await seen(quiz, 'Team 1 no guess');
+        assert.ok(!(await showing(quiz, 'Team 2: FALSE')), 'a switched-off team has its answer shown');
+    });
+
+
+    //--- True or false: timing
+
+    scenario('true/false: the clock running out ends the question', async quiz => {
+        await trueFalse(quiz);
+        await quiz.host.click('trueFalsePanel.startWithTimer:');
+        await say(quiz, 1, true);
+        await until('the clock to run out', async () => !(await quiz.host.read(TF + '.counting')), 8000);
+        await seen(quiz, 'Team 1: TRUE');
+
+        const mark = quiz.wire.length;
+        await say(quiz, 2, true);
+        assert.ok(!quiz.wire.has('host→srv', 'hh2', mark), 'a late answer was accepted');
+        assert.strictEqual((await quiz.host.read(TF + '.teamGuesses'))[1], null);
+    });
+
+    scenario('true/false: stopping a timed question early stops its clock', async quiz => {
+        await trueFalse(quiz);
+        await quiz.host.click('trueFalsePanel.startWithTimer:');
+        await stopTF(quiz);
+        assert.strictEqual(await quiz.host.read(TF + '.counting'), false);
+
+        const stoppedAt = await quiz.host.read(TF + '.time');
+        await pause(2200);
+        assert.strictEqual(await quiz.host.read(TF + '.time'), stoppedAt, 'the clock kept going');
+    }, { todo: 'The stop branch of startNoTimer does not invalidate the timer started by start' });
+
+    scenario('true/false: a reset during a timed question stops its clock', async quiz => {
+        await trueFalse(quiz);
+        await quiz.host.click('trueFalsePanel.startWithTimer:');
+        await quiz.host.click('resetRound:');
+        const stoppedAt = await quiz.host.read(TF + '.time');
+        await pause(2200);
+        assert.strictEqual(await quiz.host.read(TF + '.time'), stoppedAt);
+        assert.strictEqual(await quiz.host.read(TF + '.counting'), false);
+    });
+
+    scenario('true/false: giving the answer ends the question', async quiz => {
+        await trueFalse(quiz);
+        await startTF(quiz);
+        await say(quiz, 1, true);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+        assert.strictEqual(await quiz.host.read(TF + '.counting'), false, 'teams can still answer, knowing the answer');
+    }, { todo: 'showAnswer does not stop the question, as multiple choice\'s does' });
+
+    scenario('true/false: an answer given with no question asked puts nobody out', async quiz => {
+        await trueFalse(quiz);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [true, true, true]);
+    }, { todo: 'showAnswer treats no guess as wrong even when no question has run' });
+
+    scenario('true/false: everybody wrong leaves a round a reset can recover', async quiz => {
+        await trueFalse(quiz);
+        await startTF(quiz);
+        await say(quiz, 1, false);
+        await stopTF(quiz);
+        await quiz.host.click('trueFalsePanel.answerTrue:');
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [false, false, false]);
+
+        await quiz.host.click('resetRound:');
+        assert.deepStrictEqual(await quiz.host.read(TF + '.teamEnabled'), [true, true, true]);
+    });
+
+
+    //--- Multiple choice
+
+    async function multiChoice(quiz) {
+        await begin(quiz, 'multichoice');
+        await quiz.host.setToggle('multiChoicePanel.sounds', false);
+    }
+    const startMC = quiz => quiz.host.click('multiChoicePanel.startButton');
+    const lit = (phone, option) => phone.hasClass(phone.tile(option), 'multiSelected');
+
+    scenario('multiple choice: an option that is not on the grid is refused', async quiz => {
+        await multiChoice(quiz);
+        await startMC(quiz);
+        const mark = quiz.wire.length;
+        for(const bad of ['mc1,5', 'mc1,0', 'mc1,-1', 'mc1,abc', 'mc1,']) await quiz.rawFrom(1, bad);
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[0], null);
+        assert.ok(!quiz.wire.slice(mark).some(w => w.msg.startsWith('ms')), 'a tile was lit');
+        await startMC(quiz);
+    });
+
+    scenario('multiple choice: a bad option does not lose a good one already given', async quiz => {
+        await multiChoice(quiz);
+        await startMC(quiz);
+        await quiz.tapped(1, 'mc', quiz.phones[1].tile(2));
+        await quiz.rawFrom(1, 'mc1,5');
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[0], 2);
+        assert.ok(await lit(quiz.phones[1], 2));
+        await startMC(quiz);
+    });
+
+    scenario('multiple choice: a team switched off gets no tile and no guess', async quiz => {
+        await multiChoice(quiz);
+        await quiz.setPlaying(2, false);
+        await startMC(quiz);
+        await quiz.tapped(2, 'mc', quiz.phones[2].tile(1));
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[1], null);
+        assert.ok(!(await lit(quiz.phones[2], 1)));
+        await startMC(quiz);
+    });
+
+    scenario('multiple choice: the grid and the clock cannot change during a question', async quiz => {
+        await multiChoice(quiz);
+        await startMC(quiz);
+        await quiz.host.set('multiChoicePanel.optionsStepper', 6);
+        assert.strictEqual(await quiz.phones[1].tiles(), 4);
+        assert.strictEqual(await panel(quiz, 'multiChoicePanel.optionsNumber'), '4');
+
+        await quiz.host.click('multiChoicePanel.time30');
+        const scene = await quiz.host.read(MC + '.timeout');
+        assert.strictEqual(await quiz.host.read('multiChoicePanel.timeout'), scene,
+                           'the host is told one length of question, and gets another');
+        await startMC(quiz);
+    }, { todo: 'timeChanged sets the panel\'s timeout before pushOptions refuses it, so the two disagree' });
+
+    scenario('multiple choice: the clock running out ends the question', async quiz => {
+        await multiChoice(quiz);
+        await quiz.host.click('multiChoicePanel.time10');
+        await startMC(quiz);
+        await quiz.tapped(1, 'mc', quiz.phones[1].tile(1));
+        await until('the clock to run out', async () => !(await quiz.host.read(MC + '.counting')), 14000);
+
+        await quiz.tapped(2, 'mc', quiz.phones[2].tile(2));
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[1], null);
+        assert.ok(!(await lit(quiz.phones[2], 2)), 'a late answer lit up');
+        await seen(quiz, '1: A');
+    });
+
+    scenario('multiple choice: shrinking the grid forgets answers that no longer exist', async quiz => {
+        await multiChoice(quiz);
+        await quiz.host.set('multiChoicePanel.optionsStepper', 6);
+        await until('six tiles', async () => (await quiz.phones[1].tiles()) === 6);
+        await startMC(quiz);
+        await quiz.tapped(1, 'mc', quiz.phones[1].tile(6));
+        await startMC(quiz);
+
+        await quiz.host.set('multiChoicePanel.optionsStepper', 4);
+        await until('four tiles', async () => (await quiz.phones[1].tiles()) === 4);
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[0], null);
+        assert.strictEqual(await panel(quiz, 'multiChoicePanel.teamGuesses'), '');
+    });
+
+    scenario('multiple choice: a reset during a question clears the phones as well', async quiz => {
+        await multiChoice(quiz);
+        await startMC(quiz);
+        const one = quiz.phones[1];
+        await quiz.tapped(1, 'mc', one.tile(2));
+        await until('lit', () => lit(one, 2));
+
+        await quiz.host.click('resetRound:');
+        await until('the tile to go out', async () => !(await lit(one, 2)));
+        assert.strictEqual(await quiz.host.read(MC + '.counting'), false);
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[0], null);
+    });
+
+    scenario('multiple choice: an answer with no question asked is harmless', async quiz => {
+        await multiChoice(quiz);
+        await quiz.host.click('multiChoicePanel.answer2');
+        await startMC(quiz);
+        await quiz.tapped(1, 'mc', quiz.phones[1].tile(1));
+        assert.strictEqual((await quiz.host.read(MC + '.teamGuesses'))[0], 1);
+        await startMC(quiz);
+    });
+
+
+    //--- Text
+
+    const guesses = quiz => panel(quiz, 'textPanel.teamGuesses');
+
+    scenario('text: submitting nothing does not wipe an answer', async quiz => {
+        await begin(quiz, 'text');
+        const one = quiz.phones[1];
+        await one.answerText('paris');
+        await until('the answer', async () => (await guesses(quiz)).includes('paris'));
+
+        await one.textbox.fill('');
+        await quiz.tapped(1, 'tt', one.enter);
+        assert.match(await guesses(quiz), /Team 1: paris/, 'an empty answer replaced it');
+
+        await one.textbox.fill('   ');
+        await quiz.tapped(1, 'tt', one.enter);
+        assert.match(await guesses(quiz), /Team 1: paris/, 'a blank answer replaced it');
+    }, { todo: 'Nothing trims or refuses an empty tt, despite RoundPanel saying the answer is already trimmed' });
+
+    scenario('text: a team switched off after answering is not revealed', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('secret');
+        await quiz.phones[2].answerText('open');
+        await until('both', async () => (await guesses(quiz)).includes('open') && (await guesses(quiz)).includes('secret'));
+
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('textPanel.showGuesses:');
+        await seen(quiz, 'open');
+        assert.ok(!(await showing(quiz, 'secret')), 'its answer went up on the screen');
+    }, { todo: 'TextScene.showGuesses ignores participation, unlike NumbersScene.countedGuesses' });
+
+    scenario('text: an answer only earns the star for being unique', async quiz => {
+        await begin(quiz, 'text');
+        const stars = async () => (await quiz.host.read('quizDisplay.textScene.emitters')).length;
+
+        await quiz.phones[1].answerText('Paris');
+        await quiz.phones[2].answerText('paris ');
+        await quiz.phones[3].answerText('rome');
+        await until('all three', async () => (await guesses(quiz)).split('\n').length === 3);
+        await quiz.host.click('textPanel.showGuesses:');
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual(await stars(), 1, 'only rome is unique');
+
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual(await stars(), 1, 'pressing it again adds another star');
+    }, { todo: 'scoreUnique adds its emitters again on each press' });
+
+    scenario('text: a team switched off does not spoil somebody else being unique', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('york');
+        await quiz.phones[2].answerText('york');
+        await until('both', async () => (await guesses(quiz)).split('\n').length === 2);
+
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('textPanel.showGuesses:');
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual((await quiz.host.read('quizDisplay.textScene.emitters')).length, 1);
+    }, { todo: 'isTeamAnswerUnique ignores participation' });
+
+    scenario('text: a reset forgets every answer', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.phones[1].answerText('paris');
+        await until('the answer', async () => (await guesses(quiz)).includes('paris'));
+        await quiz.host.click('resetRound:');
+        assert.strictEqual(await guesses(quiz), '');
+        await quiz.host.click('textPanel.showGuesses:');
+        assert.ok(!(await showing(quiz, 'paris')));
+    });
+
+
+    //--- Numbers
+
+    async function numbers(quiz, answer, values) {
+        await begin(quiz, 'numbers');
+        await quiz.host.set('numbersPanel.actualAnswer', String(answer));
+        for(const [n, value] of Object.entries(values)) {
+            await quiz.phones[n].textbox.fill(String(value));
+            await quiz.tapped(n, 'tt', quiz.phones[n].enter);
+        }
+    }
+    const reveal = quiz => quiz.host.click('numbersPanel.showAnswers:');
+
+    scenario('numbers: the host and the display agree once a team is switched off', async quiz => {
+        await numbers(quiz, 50, { 1: 49, 2: 60 });
+        await quiz.setPlaying(1, false);
+
+        //Anything arriving redraws the host's list
+        await quiz.phones[3].textbox.fill('90');
+        await quiz.tapped(3, 'tt', quiz.phones[3].enter);
+
+        const list = await panel(quiz, 'numbersPanel.teamGuesses');
+        assert.match(list, /🟢 Team 2/, list);
+        assert.doesNotMatch(list, /Team 1/, list);
+    }, { todo: 'The panel ranks scene.teamGuesses while the display ranks countedGuesses' });
+
+    scenario('numbers: everybody guessing the same does not upset the scale', async quiz => {
+        await numbers(quiz, 50, { 1: 50, 2: 50, 3: 50 });
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        assert.ok(await quiz.host.read(NUMBERS + '.revealed'));
+    });
+
+    scenario('numbers: a single guess, and zero', async quiz => {
+        await numbers(quiz, 0, { 2: 0 });
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+    });
+
+    scenario('numbers: nobody guessing at all', async quiz => {
+        await numbers(quiz, 50, {});
+        await reveal(quiz);
+        await reveal(quiz);
+        await reveal(quiz);
+        assert.ok(await quiz.host.read(NUMBERS + '.scored'));
+    });
+
+    scenario('numbers: an answer far from every guess', async quiz => {
+        await numbers(quiz, 1000000, { 1: 1, 2: 2 });
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the answer on screen', () => showing(quiz, '1,000,000').then(found => found) , 6000).catch(() => {});
+        assert.ok(await quiz.host.read(NUMBERS + '.scored'));
+    });
+
+    scenario('numbers: the largest number a phone can send', async quiz => {
+        await numbers(quiz, 50, { 1: '9223372036854775807', 2: 40 });
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        await pause(2500); //The scoring animation is where this would go wrong
+        await quiz.host.scene();
+    });
+
+    scenario('numbers: not a number', async quiz => {
+        await numbers(quiz, 50, { 1: 40 });
+        for(const bad of ['tt1,abc', 'tt1,12abc', 'tt1,', 'tt1,99999999999999999999']) await quiz.rawFrom(1, bad);
+        assert.match(await panel(quiz, 'numbersPanel.teamGuesses'), /Team 1: 40/);
+    });
+
+    scenario('numbers: a reset during the scoring leaves nothing behind', async quiz => {
+        await numbers(quiz, 50, { 1: 40, 2: 70 });
+        await reveal(quiz);
+        await reveal(quiz);
+        await quiz.host.click('resetRound:');
+        await pause(2500);
+        assert.strictEqual(await quiz.host.read(NUMBERS + '.scored'), false);
+        assert.strictEqual(await quiz.host.read(NUMBERS + '.revealed'), false);
+        assert.ok(!(await showing(quiz, '40')), 'the old guesses are back');
+    });
+
+
+    //--- Pointless
+
+    async function pointless(quiz, answers) {
+        await begin(quiz, 'pointless');
+        await quiz.host.set('pointlessPanel.questionSelector', '1-fruit.txt');
+        for(const [n, answer] of Object.entries(answers)) {
+            await quiz.phones[n].textbox.fill(answer);
+            await quiz.tapped(n, 'tt', quiz.phones[n].enter);
+        }
+    }
+    const state = quiz => quiz.host.read(POINTLESS + '.gameState');
+
+    scenario('pointless: a team switched off after answering cannot win', async quiz => {
+        await pointless(quiz, { 1: 'kiwi', 2: 'apple' });
+        await quiz.setPlaying(1, false);
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        assert.ok(!(await showing(quiz, 'kiwi')), 'its answer went up on the screen');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await quiz.host.read(POINTLESS + '.lowestScoreThisRound'), 40);
+    }, { todo: 'PointlessScene has no idea of participation at all' });
+
+    scenario('pointless: changing question does not leave answers judged against the old one', async quiz => {
+        await pointless(quiz, { 1: 'kiwi' });
+        assert.strictEqual((await quiz.host.read(POINTLESS + '.teamScores'))[0], 3);
+
+        await quiz.host.set('pointlessPanel.questionSelector', '2-green.txt');
+        const score = (await quiz.host.read(POINTLESS + '.teamScores'))[0];
+        const guess = (await quiz.host.read(POINTLESS + '.teamGuesses'))[0];
+        assert.ok(guess === null || score === 5,
+                  'team 1 still shows "' + guess + '", which scores ' + score + ' on a question where it is worth 5');
+    }, { todo: 'changeToQuestion clears teamScores and keeps teamGuesses' });
+
+    scenario('pointless: everybody wrong still finishes', async quiz => {
+        await pointless(quiz, { 1: 'bread', 2: 'cheese', 3: 'wine' });
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await until('the scoring to finish', async () => (await state(quiz)) === 'done', 3000);
+    });
+
+    scenario('pointless: nobody answering still finishes', async quiz => {
+        await pointless(quiz, {});
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await until('the scoring to finish', async () => (await state(quiz)) === 'done', 3000);
+    });
+
+    scenario('pointless: scoring cannot be run before the answers are up', async quiz => {
+        await pointless(quiz, { 1: 'kiwi' });
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await state(quiz), 'waitForAnswers');
+    });
+
+    scenario('pointless: a reset during the count puts everything back', async quiz => {
+        await pointless(quiz, { 1: 'kiwi', 2: 'quince' });
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await state(quiz), 'runPointless');
+
+        await quiz.host.click('resetRound:');
+        assert.strictEqual(await state(quiz), 'waitForAnswers');
+        await pause(500);
+        assert.strictEqual(await state(quiz), 'waitForAnswers', 'the count carried on');
+
+        await quiz.phones[1].answerText('apple');
+        await until('a new answer to count', async () => (await quiz.host.read(POINTLESS + '.teamScores'))[0] === 40);
+    });
+
+    scenario('pointless: a winner on zero, and a draw', async quiz => {
+        await pointless(quiz, { 1: 'quince', 2: 'quince', 3: 'apple' });
+        await quiz.host.click('pointlessPanel.showAnswers:');
+        await quiz.host.click('pointlessPanel.runScoring:');
+        assert.strictEqual(await quiz.host.read(POINTLESS + '.lowestScoreThisRound'), 0);
+        await quiz.host.click('pointlessPanel.runScoring:');
+        await until('the count to finish', async () => (await state(quiz)) === 'done', 15000);
+    });
+});

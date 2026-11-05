@@ -32,9 +32,6 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 	/// everything sent ahead of it has been handled. See `Host.settled` in rig.js.
 	private var barriersReached = 0
 
-	/// The experiment's stand-in for another app's window. See `windowAction`.
-	private var coverWindow: NSWindow?
-
 	static func startIfRequested(controller: ControllerWindowController) {
 		guard let address = ProcessInfo.processInfo.environment["QUIZ_TEST_PROBE"],
 			  let url = URL(string: address) else { return }
@@ -119,10 +116,6 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			case "screenshot":
 				try screenshot(to: path)
 				reply(id)
-			case "renderTick":
-				renderTick(id)
-			case "window":
-				reply(id, result: try windowAction(path))
 			default:
 				reply(id, error: "unknown op '\(op)'")
 			}
@@ -343,56 +336,5 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			throw ProbeError(message: "the scene could not be written as a PNG")
 		}
 		try png.write(to: URL(fileURLWithPath: file))
-	}
-
-
-	// MARK: - Spike experiment: does SpriteKit keep running when nobody can see it?
-	// To be removed, or kept only as a health check, once that has been answered.
-
-	/// Answers once a 0.2s SKAction has finished, with how long it really took. SKActions only
-	/// advance when the view renders, so a stalled view never answers.
-	private func renderTick(_ id: Any) {
-		guard let scene = controller.quizDisplay.skView.scene else {
-			reply(id, error: "no scene")
-			return
-		}
-		let started = Date()
-		scene.run(SKAction.wait(forDuration: 0.2)) { [weak self] in
-			self?.reply(id, result: Date().timeIntervalSince(started))
-		}
-	}
-
-	/// Puts the display window into a state that nobody can see
-	private func windowAction(_ action: String) throws -> [String: Any] {
-		guard let window = controller.quizDisplay.view.window else {
-			throw ProbeError(message: "no display window")
-		}
-		switch action {
-		case "cover":
-			let cover = NSWindow(contentRect: window.frame.insetBy(dx: -40, dy: -40), styleMask: .borderless,
-								 backing: .buffered, defer: false)
-			cover.isReleasedWhenClosed = false
-			cover.backgroundColor = .black
-			cover.isOpaque = true
-			cover.level = .floating
-			cover.orderFrontRegardless()
-			coverWindow = cover
-		case "minimise":
-			window.miniaturize(nil)
-		case "hide":
-			window.orderOut(nil)
-		case "show":
-			coverWindow?.close()
-			coverWindow = nil
-			window.deminiaturize(nil)
-			window.orderFrontRegardless()
-		case "status":
-			break
-		default:
-			throw ProbeError(message: "unknown window action '\(action)'")
-		}
-		return ["visible": window.occlusionState.contains(.visible),
-				"miniaturised": window.isMiniaturized,
-				"appActive": NSApp.isActive]
 	}
 }

@@ -109,6 +109,13 @@ class Host {
         this.socket = socket;
         this.nextId = 1;
         this.waiting = new Map();
+        //Nothing more is coming, so anything still waiting has failed, and at once
+        this.dead = false;
+        socket.on('close', () => {
+            this.dead = true;
+            this.waiting.forEach(w => w.reject(new Error('probe: the app has gone away')));
+            this.waiting.clear();
+        });
         socket.on('message', data => {
             const reply = JSON.parse(data.toString());
             const w = this.waiting.get(reply.id);
@@ -121,6 +128,7 @@ class Host {
 
     command(op, path, value) {
         const id = this.nextId++;
+        if(this.dead) return Promise.reject(new Error('probe: the app has gone away'));
         return new Promise((resolve, reject) => {
             //The app dying, or a command it cannot answer, should fail the scenario and not hang it
             const timer = setTimeout(() => {
@@ -145,7 +153,6 @@ class Host {
     read(path) { return this.command('read', path); }
     scene() { return this.command('scene'); }
     screenshot(file) { return this.command('screenshot', file); }
-    window(action) { return this.command('window', action); }
 
     //Resolves once the app has handled everything the server has sent it so far. Without
     //this, asserting that the app ignored something can pass only because it has not arrived.
@@ -168,14 +175,6 @@ class Host {
         const scene = await this.scene();
         if(scene.nodes) walk(scene.nodes, 1);
         return found;
-    }
-
-    //Reports how long a 0.2s SKAction really took, or null if it never finished.
-    renderTick(timeoutMs) {
-        return Promise.race([
-            this.command('renderTick'),
-            new Promise(resolve => setTimeout(() => resolve(null), timeoutMs || 3000))
-        ]);
     }
 }
 
@@ -252,7 +251,10 @@ const ROUNDS = {
 };
 
 async function startQuiz(options) {
+    //How many teams the phones and the server have. The app is told the same unless a scenario
+    //wants them to disagree, as they will if the host starts it with fewer than config.json.
     const teams = options.teams;
+    const appTeams = options.appTeams || teams;
     const unmute = muteLogs();
     const cleanups = [unmute];
     const close = async () => {
@@ -338,7 +340,7 @@ async function startQuiz(options) {
                     QUIZ_TEST_PROBE: 'ws://127.0.0.1:' + probeServer.address().port + '/',
                     QUIZ_SERVER_URL: 'ws://127.0.0.1:' + ports.server + '/',
                     QUIZ_ROOT: root,
-                    QUIZ_TEAMS: String(teams)
+                    QUIZ_TEAMS: String(appTeams)
                 }),
                 stdio: ['ignore', 'pipe', 'pipe']
             });
@@ -432,8 +434,9 @@ async function startQuiz(options) {
             async setPlaying(n, playing) {
                 await host.setToggle('virtualBuzzersBtn', false);
                 await host.setToggle('buzzerButton' + n, !playing);
-                await until('phone ' + n + ' to go ' + (playing ? 'on' : 'off'),
-                            async () => (await phones[n].isOn()) === playing);
+                //The race page has no button to grey
+                await until('phone ' + n + ' to go ' + (playing ? 'on' : 'off'), async () =>
+                    (await phones[n].buzzer.count()) === 0 || (await phones[n].isOn()) === playing);
             },
 
 
@@ -450,6 +453,25 @@ async function startQuiz(options) {
             async restartApp() {
                 await killApp();
                 await launchApp();
+            },
+
+            //Anything at all, down a phone's own socket, once the app has dealt with it. This
+            //is what a confused page or a hand-rolled client can send, so the server still
+            //gets its say on who is allowed to send what.
+            async rawFrom(n, message) {
+                const since = wire.length;
+                //Through the page's own socket, as the race page does not lend it to the harness
+                await phones[n].frame.locator('body').evaluate((_, m) => ws.send(m), message);
+                await until('"' + message + '" to reach the server', () => wire.has('T' + n + '→srv', message, since));
+                await host.settled();
+            },
+
+            //Back to everybody playing, whatever the last scenario left behind
+            async allPlaying() {
+                await host.setToggle('virtualBuzzersBtn', false);
+                for(let n = 1; n <= appTeams; n++) {
+                    if((await host.read('buzzerButton' + n)).on) await quiz.setPlaying(n, true);
+                }
             },
 
             //A message as though from the app, for a round whose questions are not in the fixtures
@@ -507,6 +529,12 @@ function quizScenarios(name, options, body) {
             try {
                 await fn(quiz);
             } catch(err) {
+                //A crash is the finding. The scenarios after it can still say something.
+                if(quiz.host.dead) {
+                    const log = quiz.appLog.join('').slice(-1500);
+                    await quiz.restartApp();
+                    err.message = 'THE APP CRASHED. ' + err.message + '\n\nApp log:\n' + log;
+                }
                 const shot = path.join(os.tmpdir(), 'quiz-e2e-' + title.replace(/\W+/g, '-').slice(0, 50) + '.png');
                 await quiz.host.screenshot(shot).catch(() => {});
                 //A new error, because node:test prints an AssertionError's diff and not its message
