@@ -94,7 +94,7 @@ quizScenarios('more teams on the server than in the app', { teams: 5, appTeams: 
         await quiz.round('wikirace');
         await quiz.host.click('wikiRacePanel.startButton');
         await until('phone 5 on the race', async () => (await quiz.phones[5].articleTitle.textContent()) === 'Start Line');
-        await quiz.phones[5].link('Middle Ground').click();
+        await quiz.phones[5].press(quiz.phones[5].link('Middle Ground'));
         await until('the move', () => quiz.wire.some(w => w.msg.startsWith('wp5,')));
         await quiz.host.click('wikiRacePanel.endButton');
         await until('the standings', () => quiz.wire.some(w => w.msg.startsWith('wd5,')));

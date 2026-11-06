@@ -281,7 +281,7 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         await until('the words', async () => (await quiz.phones[1].wallTile('apple').count()) === 1);
     }
     async function pick(quiz, n, words) {
-        for(const word of words) await quiz.phones[n].wallTile(word).click();
+        for(const word of words) await quiz.phones[n].press(quiz.phones[n].wallTile(word));
     }
 
     scenario('only connect: nonsense from a phone costs it nothing', async quiz => {
@@ -402,9 +402,9 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
     scenario('wikirace: a team that has arrived can go no further', async quiz => {
         await race(quiz);
         const one = quiz.phones[1];
-        await one.link(MIDDLE).click();
+        await one.press(one.link(MIDDLE));
         await on(one, MIDDLE);
-        await one.link(FINISH).click();
+        await one.press(one.link(FINISH));
         await until('the arrival', () => quiz.wire.some(w => w.msg.startsWith('ww1,')));
 
         const mark = quiz.wire.length;
@@ -418,9 +418,9 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         await quiz.setPlaying(2, false);
         const ledsBefore = quiz.leds.length;
         const two = quiz.phones[2];
-        await two.link(MIDDLE).click();
+        await two.press(two.link(MIDDLE));
         await on(two, MIDDLE);
-        await two.link(FINISH).click();
+        await two.press(two.link(FINISH));
         await until('the arrival', () => quiz.wire.some(w => w.msg.startsWith('ww2,')));
         await quiz.host.settled();
         assert.deepStrictEqual(quiz.leds.slice(ledsBefore), [], 'the LEDs reacted');
@@ -430,16 +430,16 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
     scenario('wikirace: a new race starts everybody again', async quiz => {
         await race(quiz);
         const one = quiz.phones[1];
-        await one.link(MIDDLE).click();
+        await one.press(one.link(MIDDLE));
         await on(one, MIDDLE);
-        await one.link(FINISH).click();
+        await one.press(one.link(FINISH));
         await until('the arrival', () => quiz.wire.some(w => w.msg.startsWith('ww1,')));
 
         await quiz.host.click('wikiRacePanel.startButton');
         await on(one, START);
         assert.strictEqual(await one.frame.locator('#curtain').evaluate(c => c.classList.contains('hidden')), true,
                            'the celebration is still up');
-        await one.link(DETOUR).click();
+        await one.press(one.link(DETOUR));
         await on(one, DETOUR);
         assert.strictEqual(await one.hops.textContent(), '1');
         await quiz.host.click('wikiRacePanel.endButton');

@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test --test-force-exit \"test/*.test.js\"",
-    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=120000 \"test/e2e/*.e2e.js\""
+    "test:e2e": "node --test --test-force-exit --test-concurrency=1 --test-timeout=120000 \"test/e2e/*.e2e.js\"",
+    "test:e2e:touch": "E2E_PHONES=touch npm run test:e2e"
   },
   "dependencies": {
     "connect": "^3.6.6",

@@ -8,7 +8,7 @@ const { WALL } = require('./fixtures');
 
 //Picks four words. The phone sends them as the fourth goes in.
 async function pick(quiz, n, words) {
-    for(const word of words) await quiz.phones[n].wallTile(word).click();
+    for(const word of words) await quiz.phones[n].press(quiz.phones[n].wallTile(word));
 }
 
 const status = async quiz => (await quiz.host.read('onlyConnectPanel.statusText')).value;
@@ -52,7 +52,7 @@ quizScenarios('only connect', { teams: 3 }, scenario => {
         await quiz.host.click('onlyConnectPanel.startButton');
         await until('phone 2 to freeze', async () => (await two.wallTileCount('buttonOff')) === 16);
 
-        await two.wallTile('cat').click();
+        await two.press(two.wallTile('cat'));
         assert.strictEqual(await two.wallTileCount('multiSelected'), 0, 'a frozen tile cannot be picked');
     });
 

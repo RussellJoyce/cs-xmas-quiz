@@ -257,6 +257,21 @@ quizScenarios('answer rounds', { teams: 3 }, scenario => {
     });
 
 
+    //The value only follows the finger or the mouse as it moves, so ending up near the far
+    //end shows the moves were seen, and not only the press and the release.
+    scenario('wavelength: a drag along the bar sends where it was let go', async quiz => {
+        await quiz.round('wavelength');
+        const one = quiz.phones[1];
+
+        await one.drag(one.waveTrack, 0.2, 0.8, 0.5);
+        const shown = Number(await one.waveValue.textContent());
+        assert.ok(Math.abs(shown - 80) <= 2, 'the drag ended at ' + shown);
+
+        await until('the host to have it', async () =>
+            (await panelText(quiz, 'wavelengthPanel.teamGuesses')).includes('Team 1: ' + shown));
+    });
+
+
     //--- Geography
 
     scenario('geography: a tap lands where it was tapped, and the closest team wins', async quiz => {

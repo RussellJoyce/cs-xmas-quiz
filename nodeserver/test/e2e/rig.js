@@ -14,7 +14,14 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const WebSocket = require('ws');
-const { firefox } = require('playwright');
+const { firefox, webkit } = require('playwright');
+
+//E2E_PHONES=touch runs the phones in WebKit with a touchscreen instead of Firefox with a mouse.
+//The phone page listens for touchstart rather than mousedown whenever touch is available, so
+//every press on a phone has to go through Phone.press, tapAt or drag to work in both.
+const TOUCH = process.env.E2E_PHONES === 'touch';
+//The shortest gap between two touches on one phone, a little over the pages' longest guard
+const TOUCH_GAP_MS = 600;
 
 const { startWebsocketServers, startWebServers } = require('../../server');
 const { muteLogs, testCerts } = require('../helpers');
@@ -206,11 +213,61 @@ class Phone {
     wallTileCount(cls) { return this.frame.locator('.wallTile.' + cls).count(); }
     link(title) { return this.article.locator('a').filter({ hasText: title }); }
 
+    //Touches come no faster than a person makes them. The pages cancel a touchend that comes
+    //soon after the previous one (400ms in the wiki race, 500ms elsewhere), so that iOS cannot
+    //turn a double tap into two clicks, and a test tapping at machine speed loses its taps.
+    async humanPace() {
+        const wait = (this.lastTouch || 0) + TOUCH_GAP_MS - Date.now();
+        if(wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+    }
+
+    async touched(action) {
+        await this.humanPace();
+        try { await action(); } finally { this.lastTouch = Date.now(); }
+    }
+
+    //A press on an element: a tap on a touchscreen, a click with a mouse
+    async press(locator) {
+        if(TOUCH) await this.touched(() => locator.tap());
+        else await locator.click();
+    }
+
     //A tap at a fraction of the way across and down an element. In page coordinates, as the
     //harness scales its phones and a locator's click position does not allow for that.
     async tapAt(locator, fx, fy) {
         const box = await locator.boundingBox();
-        await this.page.mouse.click(box.x + box.width * fx, box.y + box.height * fy);
+        const x = box.x + box.width * fx, y = box.y + box.height * fy;
+        if(TOUCH) await this.touched(() => this.page.touchscreen.tap(x, y));
+        else await this.page.mouse.click(x, y);
+    }
+
+    //A drag across an element, at height fy, from fraction fromX to toX of its width.
+    //Playwright's touchscreen can only tap, so a touch drag is made of touch events sent by
+    //hand. Those are in the phone's own coordinates, as they are dispatched inside its frame.
+    async drag(locator, fromX, toX, fy, steps = 10) {
+        const along = i => fromX + (toX - fromX) * i / steps;
+        if(TOUCH) {
+            const rect = await locator.evaluate(el => {
+                const r = el.getBoundingClientRect();
+                return { x: r.left, y: r.top, width: r.width, height: r.height };
+            });
+            const touch = f => [{ identifier: 0, clientX: rect.x + rect.width * f, clientY: rect.y + rect.height * fy }];
+            const send = (type, touches, changed) =>
+                locator.dispatchEvent(type, { touches, targetTouches: touches, changedTouches: changed });
+
+            await this.touched(async () => {
+                await send('touchstart', touch(fromX), touch(fromX));
+                for(let i = 1; i <= steps; i++) await send('touchmove', touch(along(i)), touch(along(i)));
+                await send('touchend', [], touch(toX));
+            });
+        } else {
+            const box = await locator.boundingBox();
+            const at = f => [box.x + box.width * f, box.y + box.height * fy];
+            await this.page.mouse.move(...at(fromX));
+            await this.page.mouse.down();
+            for(let i = 1; i <= steps; i++) await this.page.mouse.move(...at(along(i)));
+            await this.page.mouse.up();
+        }
     }
 
     async isOn() {
@@ -225,7 +282,7 @@ class Phone {
 
     async answerText(text) {
         await this.textbox.fill(text);
-        await this.enter.click();
+        await this.press(this.enter);
     }
 
     async hasClass(locator, name) {
@@ -372,11 +429,14 @@ async function startQuiz(options) {
         //--- The phones
         //Headless unless asked, as a covered window stops producing animation frames, and
         //Playwright waits for those before it will click. E2E_HEADED=1 to watch the phones.
-        const browser = await firefox.launch({ headless: !process.env.E2E_HEADED });
+        const browser = await (TOUCH ? webkit : firefox).launch({ headless: !process.env.E2E_HEADED });
         cleanups.push(() => browser.close());
+        //Not isMobile, which would also apply the harness page's meta viewport and lay it out
+        //again. hasTouch alone is what makes the phone page choose touchstart.
         const context = await browser.newContext({
             ignoreHTTPSErrors: true,
-            viewport: { width: 1300, height: 800 }
+            viewport: { width: 1300, height: 800 },
+            hasTouch: TOUCH
         });
         //A locator that will never resolve should say so soon, as a scenario has many of them
         context.setDefaultTimeout(8000);
@@ -426,7 +486,7 @@ async function startQuiz(options) {
             //the app ignored something could pass only because it had not arrived yet.
             async tapped(n, code, locator) {
                 const seen = wire.filter(w => w.dir === 'T' + n + '→srv' && w.msg.startsWith(code)).length;
-                await locator.click();
+                await phones[n].press(locator);
                 await until('team ' + n + "'s " + code + ' to reach the server', () =>
                     wire.filter(w => w.dir === 'T' + n + '→srv' && w.msg.startsWith(code)).length > seen);
                 await host.settled();
@@ -552,4 +612,4 @@ function quizScenarios(name, options, body) {
     });
 }
 
-module.exports = { buildApp, startQuiz, quizScenarios, until };
+module.exports = { buildApp, startQuiz, quizScenarios, until, TOUCH };

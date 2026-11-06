@@ -67,13 +67,13 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
 
         const one = quiz.phones[1];
         await onView(quiz, 1, 'pickteam');
-        await one.teamButton(1).click();
+        await one.press(one.teamButton(1));
         await onView(quiz, 1, 'text');
 
         //Leave the others as they were found
         for(const n of [2, 3]) {
             await onView(quiz, n, 'pickteam');
-            await quiz.phones[n].teamButton(n).click();
+            await quiz.phones[n].press(quiz.phones[n].teamButton(n));
             await onView(quiz, n, 'text');
         }
         await quiz.page.check('#cfg-autopick');
@@ -148,6 +148,10 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         quiz.dropPhone(3);
         await quiz.host.click('tabitemText');
         await until('the round to change', () => quiz.wire.has('host→srv', 'vitext', mark));
+        //WebKit takes up to 100ms to notice the drop, and connect does nothing while the
+        //client still holds a socket
+        await until('the virtual client to notice the drop', async () =>
+            await quiz.page.evaluate(() => clients[3].ws === null));
         await quiz.page.evaluate(() => clients[3].connect());
 
         await until('the virtual client to be told the round', async () => (await held()).view === 'text');
@@ -298,15 +302,15 @@ quizScenarios('when things go wrong', { teams: 3 }, scenario => {
         for(const n of [1, 2, 3]) await onView(quiz, n, 'pickteam');
 
         const [, one, two, three] = quiz.phones;
-        await one.teamButton(1).click();
+        await one.press(one.teamButton(1));
         await onView(quiz, 1, 'buzzer');
-        await two.teamButton(1).click();
+        await two.press(two.teamButton(1));
         await until('phone 2 to be refused', async () =>
             (await two.frame.locator('#teamtitle').textContent()).includes('already taken'));
         assert.strictEqual(await two.view(), 'pickteam');
 
-        await two.teamButton(2).click();
-        await three.teamButton(3).click();
+        await two.press(two.teamButton(2));
+        await three.press(three.teamButton(3));
         await onView(quiz, 2, 'buzzer');
         await onView(quiz, 3, 'buzzer');
 

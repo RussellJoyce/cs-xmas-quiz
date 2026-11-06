@@ -12,7 +12,7 @@ const onArticle = (phone, title) => until('the phone on ' + title, async () => (
 
 //The server is the only thing that moves a team, so wait for it to say so
 async function follow(phone, title) {
-    await phone.link(title).click();
+    await phone.press(phone.link(title));
     await onArticle(phone, title);
 }
 
@@ -39,7 +39,7 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
     scenario('going back is a move, and goes on the record', async quiz => {
         const two = quiz.phones[2];
         await follow(two, DETOUR);
-        await two.back.click();
+        await two.press(two.back);
         await onArticle(two, START);
         await follow(two, DETOUR);
     });

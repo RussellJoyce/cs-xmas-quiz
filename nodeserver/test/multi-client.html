@@ -590,7 +590,12 @@ VirtualClient.prototype.powerPhone = function(on) {
     }
     //Assigning src rather than calling contentWindow.location.reload(), which also reloads
     //a phone that is already on.
-    this.frame.src = on ? this.phoneURL() : 'about:blank';
+    //A new frame that starts off is left without a src. Setting it to about:blank would be
+    //a navigation of its own, and if that finished after the phone was switched on straight
+    //afterwards (phone 1 in connectAll is, at 0ms) it replaced the phone with a blank page.
+    if (on || this.frame.hasAttribute('src')) {
+        this.frame.src = on ? this.phoneURL() : 'about:blank';
+    }
     document.getElementById('screen-' + this.index).classList.toggle('off', !on);
     this.updateStatus();
 };
@@ -642,10 +647,14 @@ window.quizPhoneSocket = function(win, sock) {
 };
 
 // Each phone is scaled to fill its cell, and no further than real size.
+//The scale is set on the next frame. Setting it inside the callback changes the layout of
+//the cell being observed, which WebKit reports as a "ResizeObserver loop" page error.
 var phoneSizer = new ResizeObserver(function(entries) {
-    entries.forEach(function(e) {
-        var screen = e.target.querySelector('.screen');
-        if (screen) screen.style.setProperty('--s', Math.min(1, e.contentRect.width / 800));
+    requestAnimationFrame(function() {
+        entries.forEach(function(e) {
+            var screen = e.target.querySelector('.screen');
+            if (screen) screen.style.setProperty('--s', Math.min(1, e.contentRect.width / 800));
+        });
     });
 });
 
