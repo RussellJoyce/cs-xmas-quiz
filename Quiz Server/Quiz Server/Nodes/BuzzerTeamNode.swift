@@ -10,7 +10,15 @@ import Cocoa
 import SpriteKit
 
 class BuzzerTeamNode: SKNode {
-	
+
+	/// How the box itself is drawn
+	enum BoxStyle {
+		/// A flat, square-cornered rectangle
+		case flat
+		/// Rounded corners and a top-lit gradient, with the shimmer clipped to the box
+		case glossy
+	}
+
 	var glow : SKEmitterNode?
 	
 	//let font = "Electronic Highway Sign"
@@ -26,21 +34,23 @@ class BuzzerTeamNode: SKNode {
 	
 	private var width : Int = 0
 	private var height : Int = 0
-	
+	private var style = BoxStyle.flat
+
 	convenience init(team: Int, width: Int, height: Int, fontSize: CGFloat,
 					 addGlow: Bool = false, glowType: String = "BuzzGlow",
 					 entranceFlash: Bool = true, entranceParticles: Bool = false, entranceShimmer: Bool = false,
-					 altText: String? = nil) {
+					 altText: String? = nil, style: BoxStyle = .flat) {
 		self.init()
-		
+
 		self.width = width
 		self.height = height
-		
+		self.style = style
+
 		teamNo = team
 		let particleColour = Utils.teamColour(team, saturation: 0.6)
 		let glowColour = Utils.teamColour(team)
-		bgColour = Utils.teamColour(team, brightness: 0.8)
-		
+		bgColour = baseColour(team)
+
 		let scale = SKAction.scale(to: 1, duration: 0.2)
 		scale.timingMode = .easeOut
 		let fade = SKAction.fadeIn(withDuration: 0.2)
@@ -50,13 +60,22 @@ class BuzzerTeamNode: SKNode {
 		let mainNode = SKNode()
 		mainNode.position = CGPoint.zero
 		
-		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
+		let boxSize = CGSize(width: width, height: height)
+		let radius = cornerRadius
+		bgBox = SKShapeNode(rectOf: boxSize, cornerRadius: radius)
 		bgBox!.zPosition = 4
 		bgBox!.position = CGPoint.zero
 		bgBox!.fillColor = bgColour!
 		bgBox!.lineWidth = 0.0
-		
-		let shadow = SKShapeNode(rectOf: CGSize(width: width + 20, height: height + 20))
+		if style == .glossy {
+			//The fill colour tints the texture, so every colour change still works unaltered
+			bgBox!.fillTexture = BuzzerTeamNode.glossTexture(height: CGFloat(height))
+			bgBox!.strokeColor = NSColor(white: 1.0, alpha: 0.35)
+			bgBox!.lineWidth = 2.0
+		}
+
+		let shadow = SKShapeNode(rectOf: CGSize(width: width + 20, height: height + 20),
+								 cornerRadius: radius == 0 ? 0 : radius + 10)
 		shadow.zPosition = 3
 		shadow.position = CGPoint.zero
 		shadow.fillColor = NSColor(white: 0.1, alpha: 0.5)
@@ -118,7 +137,17 @@ class BuzzerTeamNode: SKNode {
 		mainNode.setScale(1.3)
 		
 		self.addChild(mainNode)
-		
+
+		if style == .glossy {
+			let mask = SKShapeNode(rectOf: boxSize, cornerRadius: radius)
+			mask.fillColor = .white
+			mask.lineWidth = 0
+			let clip = SKCropNode()
+			clip.maskNode = mask
+			clip.zPosition = 20
+			self.addChild(clip)
+		}
+
 		mainNode.run(entranceGroup)
 		
 		// Color flash effect for bgBox
@@ -176,13 +205,39 @@ class BuzzerTeamNode: SKNode {
 	    shimmer.blendMode = .add
 	    self.addChild(shimmer)
 
-	    // Animate shimmer
+	    // Animate shimmer. A slow sweep must not fade out before it reaches the far side.
 		let move = SKAction.moveBy(x: CGFloat(self.width)-shimmerWidth, y: 0, duration: duration)
 		move.timingMode = .easeOut
-		let fade = SKAction.fadeOut(withDuration: 0.7)
+		let fade = SKAction.fadeOut(withDuration: max(0.7, duration * 1.2))
 	    let group = SKAction.group([move, fade])
 	    let sequence = SKAction.sequence([group, SKAction.removeFromParent()])
 	    shimmer.run(sequence)
+	}
+
+	private var cornerRadius: CGFloat {
+		style == .glossy ? min(CGFloat(height) * 0.2, 14) : 0
+	}
+
+	/// The resting colour of the box. A glossy box starts brighter, as its gradient darkens it.
+	private func baseColour(_ team: Int) -> NSColor {
+		Utils.teamColour(team, brightness: style == .glossy ? 0.95 : 0.8)
+	}
+
+	/// A top-lit gradient in greys, for the fill colour to tint. It is stretched over the
+	/// whole box, so only its height matters.
+	private static func glossTexture(height: CGFloat) -> SKTexture {
+		let size = CGSize(width: 4, height: height)
+		let image = NSImage(size: size)
+		image.lockFocus()
+		let greys: [CGFloat] = [1.0, 0.86, 0.74, 0.6]
+		let colours = greys.map { NSColor(white: $0, alpha: 1.0).cgColor } as CFArray
+		let locations: [CGFloat] = [0.0, 0.47, 0.53, 1.0]
+		if let context = NSGraphicsContext.current?.cgContext,
+		   let gradient = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colours, locations: locations) {
+			context.drawLinearGradient(gradient, start: CGPoint(x: 0, y: height), end: .zero, options: [])
+		}
+		image.unlockFocus()
+		return SKTexture(image: image)
 	}
 
 	static func makeAngledGradientTexture(width: CGFloat, height: CGFloat) -> SKTexture {
@@ -248,7 +303,7 @@ class BuzzerTeamNode: SKNode {
 	
 	func resetTeamColour() {
 		guard let bgBox = self.bgBox, let textLabel = self.textLabel else { return }
-		bgBox.fillColor = Utils.teamColour(teamNo, brightness: 0.8)
+		bgBox.fillColor = baseColour(teamNo)
 		self.bgColour = bgBox.fillColor
 		textLabel.fontColor = .white
 	}

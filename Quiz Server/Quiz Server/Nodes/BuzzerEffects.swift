@@ -21,6 +21,24 @@ enum BuzzerEffects {
 		case crackAndShatter
 		case bumpShockwave
 
+		/// The name shown against the effect's toggle in the controller window
+		var title: String {
+			switch self {
+			case .edgeBurst:        return "Edge burst"
+			case .confettiShower:   return "Confetti shower"
+			case .shockwaveRing:    return "Shockwave ring"
+			case .lightningCrackle: return "Lightning crackle"
+			case .sparklerRun:      return "Sparkler run"
+			case .crackAndShatter:  return "Crack and shatter"
+			case .bumpShockwave:    return "Bump shockwave"
+			}
+		}
+
+		/// Whether the effect is in the random pool before anyone touches its toggle
+		var enabledByDefault: Bool {
+			self != .crackAndShatter
+		}
+
 		/// Runs the effect, positioned relative to the centre of a box of the given size.
 		func run(at position: CGPoint, color: NSColor, parent: SKNode, size: CGSize) {
 			switch self {
@@ -43,10 +61,12 @@ enum BuzzerEffects {
 		}
 	}
 
-	/// Picks one of the entrance effects at random and runs it.
+	/// The effects `randomEntrance` chooses between, set from the controller window
+	static var enabledEntrances = Set(Entrance.allCases.filter(\.enabledByDefault))
+
+	/// Picks one of the enabled entrance effects at random and runs it. Does nothing if none are enabled.
 	static func randomEntrance(at position: CGPoint, color: NSColor, parent: SKNode, size: CGSize) {
-		guard let effect = Entrance.allCases.randomElement() else { return }
-		//let effect = Entrance.bumpShockwave
+		guard let effect = enabledEntrances.randomElement() else { return }
 		effect.run(at: position, color: color, parent: parent, size: size)
 	}
 
@@ -287,52 +307,89 @@ enum BuzzerEffects {
 	static func bumpShockwave(
 		at position: CGPoint,
 		parent: SKNode,
+		delay: TimeInterval = 0.1,
 		duration: TimeInterval = 0.45,
 		maxRadius: CGFloat = 900,
 		strength: CGFloat = 0.65
 	) {
 		// An SKEffectNode can only filter its children so the scene's own filter is used
-		var filter: CIFilter?
+		var bump: SceneBumpFilter?
 		var restingEffects = false
 		var restingCentring = true
 
 		let wave = SKAction.customAction(withDuration: duration) { node, elapsed in
-			if filter == nil {
-				guard let scene = node.scene, let view = scene.view else { return }
-				guard scene.filter == nil, let bump = CIFilter(name: "CIBumpDistortion") else { return }
-				bump.setDefaults()
-				let scenePoint = parent.convert(position, to: scene)
-				let backingPoint = view.convertToBacking(scene.convertPoint(toView: scenePoint))
-				bump.setValue(CIVector(x: backingPoint.x, y: backingPoint.y), forKey: kCIInputCenterKey)
+			if bump == nil {
+				guard let scene = node.scene, scene.filter == nil else { return }
+				let filter = SceneBumpFilter(sceneSize: scene.size, centre: parent.convert(position, to: scene))
 
 				restingEffects = scene.shouldEnableEffects
 				restingCentring = scene.shouldCenterFilter
-				scene.filter = bump
+				scene.filter = filter
 				scene.shouldEnableEffects = true
 				scene.shouldRasterize = false
 				scene.shouldCenterFilter = false
-				filter = bump
+				bump = filter
 			}
-			guard let bump = filter, let view = node.scene?.view else { return }
+			guard let bump = bump else { return }
 
 			// The wave starts already a bit open
-			let backingScale = view.convertToBacking(NSSize(width: 1, height: 1)).width
 			let t = CGFloat(elapsed) / CGFloat(duration)
-			bump.setValue(maxRadius * (0.15 + 0.85 * t) * backingScale, forKey: kCIInputRadiusKey)
-			bump.setValue(strength * (1.0 - t) * (1.0 - t), forKey: kCIInputScaleKey)
+			bump.radius = maxRadius * (0.15 + 0.85 * t)
+			bump.scale = strength * (1.0 - t) * (1.0 - t)
 		}
 
 		let restore = SKAction.run {
-			guard filter != nil, let scene = parent.scene else { return }
+			guard bump != nil, let scene = parent.scene else { return }
 			scene.filter = nil
 			scene.shouldEnableEffects = restingEffects
 			scene.shouldCenterFilter = restingCentring
 		}
 
-		// Driven by a node of our own, so the effect still tidies up after itself
+		// Driven by a node of our own, so the effect still tidies up after itself.
+		// The distortion is only visible where there is detail to bend, so the wave waits
+		// for the box (which fades in over 0.2s) and its text to be on screen.
 		let carrier = SKNode()
 		parent.addChild(carrier)
-		carrier.run(SKAction.sequence([wave, restore, SKAction.removeFromParent()]))
+		carrier.run(SKAction.sequence([SKAction.wait(forDuration: delay), wave, restore, SKAction.removeFromParent()]))
+	}
+
+	/// CIBumpDistortion with its centre and radius in scene units. SpriteKit renders the
+	/// scene at its own resolution, which need not match the view's backing scale (on one
+	/// Retina setup it was 2x while the view reported 1x), so the image the filter is given
+	/// is measured each frame and the scene is mapped onto it.
+	final class SceneBumpFilter: CIFilter {
+		@objc dynamic var inputImage: CIImage?
+		var radius: CGFloat = 0
+		var scale: CGFloat = 0
+
+		private let sceneSize: CGSize
+		private let centre: CGPoint
+		private let bump = CIFilter(name: "CIBumpDistortion")!
+
+		init(sceneSize: CGSize, centre: CGPoint) {
+			self.sceneSize = sceneSize
+			self.centre = centre
+			super.init()
+			bump.setDefaults()
+		}
+
+		required init?(coder: NSCoder) {
+			fatalError("init(coder:) is not supported")
+		}
+
+		override var outputImage: CIImage? {
+			guard let input = inputImage, !input.extent.isInfinite,
+				  sceneSize.width > 0, sceneSize.height > 0 else { return inputImage }
+			let extent = input.extent
+			let sx = extent.width / sceneSize.width
+			let sy = extent.height / sceneSize.height
+
+			bump.setValue(input, forKey: kCIInputImageKey)
+			bump.setValue(CIVector(x: extent.minX + centre.x * sx, y: extent.minY + centre.y * sy), forKey: kCIInputCenterKey)
+			bump.setValue(radius * sx, forKey: kCIInputRadiusKey)
+			bump.setValue(scale, forKey: kCIInputScaleKey)
+			return bump.outputImage
+		}
 	}
 
 	// MARK: - Crack and Shatter

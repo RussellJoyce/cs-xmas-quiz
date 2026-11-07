@@ -87,6 +87,7 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="Bzp-nl-obj" userLabel="Buzzer Panel" customClass="BuzzerPanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="entranceEffectsList" destination="Bfx-dc-v00" id="Bfx-ol-r00"/>
                 <outlet property="timerSeconds" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
             </connections>
         </customObject>
@@ -1091,6 +1092,37 @@
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                         </button>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bfx-lb-l00">
+                                            <rect key="frame" x="648" y="256" width="230" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Entrance effects" id="Bfx-lb-c00">
+                                                <font key="font" metaFont="systemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bfx-sv-s00">
+                                            <rect key="frame" x="650" y="20" width="226" height="230"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="Bfx-cv-c00">
+                                                <rect key="frame" x="1" y="1" width="224" height="228"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <customView id="Bfx-dc-v00" customClass="FlippedView" customModule="Quiz_Server" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="224" height="228"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                                    </customView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Bfx-hs-s00">
+                                                <rect key="frame" x="-100" y="-100" width="224" height="16"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Bfx-vs-s00">
+                                                <rect key="frame" x="209" y="1" width="16" height="228"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
                                     </subviews>
                                 </view>
                             </tabViewItem>

@@ -31,6 +31,13 @@ class BuzzerScene: QuizScene {
 	private var flare1 : SKEmitterNode?
 	private var flare2 : SKEmitterNode?
 
+	/// Floods the scene with the colour of the team that has the buzz
+	private var teamWash: SKSpriteNode?
+	private static let washAlpha: CGFloat = 0.85
+	private static let washKey = "teamWash"
+	private static let bokehColour = NSColor(calibratedRed: 1.0, green: 0.62, blue: 0.35, alpha: 1)
+	private static let flareColour = NSColor(calibratedRed: 1.0, green: 0.85, blue: 0.75, alpha: 1)
+
 	fileprivate var time: Int = 30
 	fileprivate var starttime: Int = 30
 	fileprivate var timer: Timer?
@@ -46,7 +53,7 @@ class BuzzerScene: QuizScene {
 		//Just under the team boxes, which also sit at 1, as sibling order is not respected.
 		bokeh = addBokehBackground(replacing: bokeh, textureName: "spark", zPosition: 0.5) {
 			$0.particleBirthRate = 12
-			$0.particleColor = NSColor(calibratedRed: 1.0, green: 0.62, blue: 0.35, alpha: 1)
+			$0.particleColor = BuzzerScene.bokehColour
 			$0.particleColorBlendFactor = 1
 			$0.particleBlendMode = .add
 		}
@@ -56,6 +63,22 @@ class BuzzerScene: QuizScene {
 		flare2 = addBokehBackground(replacing: flare2, textureName: "flare2", zPosition: 0.5) {
 			BuzzerScene.configureFlare($0)
 		}
+
+		//Over the background but under the bokeh, and outside the pulsable background for the
+		//same reason as the bokeh. A team-coloured vignette: lighter in the middle, deeper at the edges.
+		let washImage = radialGradientImage(size: self.size,
+											colors: [NSColor(white: 1.0, alpha: 0.7), NSColor(white: 0.35, alpha: 1.0)],
+											locations: [0.0, 1.0],
+											centre: CGPoint(x: self.size.width / 2, y: self.size.height * 0.6),
+											radius: hypot(self.size.width, self.size.height) * 0.55)
+		let wash = SKSpriteNode(texture: SKTexture(image: washImage))
+		wash.position = self.centrePoint
+		wash.size = self.size
+		wash.zPosition = 0.25
+		wash.colorBlendFactor = 1
+		wash.alpha = 0
+		self.addChild(wash)
+		teamWash = wash
 
 		let mainAction = SKAction.run({ () -> Void in
 			self.time -= 1
@@ -86,9 +109,9 @@ class BuzzerScene: QuizScene {
 	
 	private func backgroundGradientImage(size: CGSize) -> NSImage {
 		let colours = [
-			NSColor(calibratedRed: 0.96, green: 0.50, blue: 0.32, alpha: 1),
-			NSColor(calibratedRed: 0.78, green: 0.16, blue: 0.18, alpha: 1),
-			NSColor(calibratedRed: 0.32, green: 0.02, blue: 0.08, alpha: 1)
+			NSColor(calibratedRed: 0.9, green: 0.7, blue: 0.9, alpha: 1),
+			NSColor(calibratedRed: 0.5, green: 0.5, blue: 0.9, alpha: 1),
+			NSColor(calibratedRed: 0.3, green: 0.3, blue: 0.7, alpha: 1)
 		]
 		return radialGradientImage(size: size, colors: colours, locations: [0.0, 0.45, 1.0],
 								   centre: CGPoint(x: size.width * 0.55, y: size.height * 0.6),
@@ -103,7 +126,7 @@ class BuzzerScene: QuizScene {
 		flare.particleScaleRange = 0.5
 		flare.particleScaleSpeed = 0
 		flare.particleRotationSpeed = 0.05
-		flare.particleColor = NSColor(calibratedRed: 1.0, green: 0.85, blue: 0.75, alpha: 1)
+		flare.particleColor = BuzzerScene.flareColour
 		flare.particleColorBlendFactor = 1
 		flare.particleBlendMode = .add
 
@@ -114,12 +137,43 @@ class BuzzerScene: QuizScene {
 
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
-		snow1 = addSnow(replacing: snow1, emitterNamed: "SnowBackground", zPosition: 1, xOffset: -300) {
-			$0.particlePositionRange.dx = 2500
-		}
+		//snow1 = addSnow(replacing: snow1, emitterNamed: "SnowBackground", zPosition: 1, xOffset: -300) {
+		//	$0.particlePositionRange.dx = 2500
+		//	$0.particleBirthRate = 50
+		//}
 	}
 	
 	
+	/// Turns the room the colour of `team`, or back to its resting colours if nil.
+	/// The bokeh only colours new particles, so it drifts over to the new colour over a few seconds.
+	private func washRoom(team: Int?) {
+		guard let wash = teamWash else { return }
+		wash.removeAction(forKey: BuzzerScene.washKey)
+
+		if let team = team {
+			let colour = Utils.teamColour(team)
+			let tint = SKAction.colorize(with: colour, colorBlendFactor: 1, duration: 0.3)
+			let show = SKAction.fadeAlpha(to: BuzzerScene.washAlpha, duration: 0.3)
+			if wash.alpha == 0 {
+				//Nothing showing, so there is no old colour to blend away from
+				wash.color = colour
+				show.timingMode = .easeOut
+				wash.run(show, withKey: BuzzerScene.washKey)
+			} else {
+				wash.run(SKAction.group([tint, show]), withKey: BuzzerScene.washKey)
+			}
+			bokeh?.particleColor = BuzzerScene.bokehColour.blended(withFraction: 0.85, of: colour) ?? colour
+			let flare = BuzzerScene.flareColour.blended(withFraction: 0.45, of: colour) ?? colour
+			flare1?.particleColor = flare
+			flare2?.particleColor = flare
+		} else {
+			wash.run(SKAction.fadeOut(withDuration: 0.5), withKey: BuzzerScene.washKey)
+			bokeh?.particleColor = BuzzerScene.bokehColour
+			flare1?.particleColor = BuzzerScene.flareColour
+			flare2?.particleColor = BuzzerScene.flareColour
+		}
+	}
+
 	func buzzSound(_ quietMode: Bool) {
 		if timer != nil && timer!.isValid {
 			self.run(buzzNoiseQuack)
@@ -156,6 +210,7 @@ class BuzzerScene: QuizScene {
 			teamBox.removeFromParent()
 		}
 		teamBoxes.removeAll()
+		washRoom(team: nil)
 	}
 	
 	override func buzzerPressed(team: Int, type: BuzzerType, options: BuzzerOptions) {
@@ -179,13 +234,14 @@ class BuzzerScene: QuizScene {
 					}
 					nextTeamNumber = 1
 					
-					let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, entranceParticles: true, entranceShimmer: true)
+					let box = BuzzerTeamNode(team: team, width: 1000, height: 200, fontSize: 150, addGlow: true, entranceParticles: true, entranceShimmer: true, style: .glossy)
 					box.position = CGPoint(x: self.centrePoint.x, y: self.size.height - 160)
 					box.zPosition = 1
 					teamBoxes.append(box)
 					self.addChild(box)
+					washRoom(team: team)
 				} else {
-					let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false, entranceParticles: true, entranceShimmer: true)
+					let box = BuzzerTeamNode(team: team, width: 800, height: 130, fontSize: 100, addGlow: false, entranceParticles: true, entranceShimmer: true, style: .glossy)
 					box.position = CGPoint(x: self.centrePoint.x, y: (self.size.height - 230) - CGFloat(buzzNumber * 175))
 					box.zPosition = 1
 					teamBoxes.append(box)
@@ -204,6 +260,7 @@ class BuzzerScene: QuizScene {
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
 			let team = buzzes[nextTeamNumber]
+			washRoom(team: team)
 			QuizWebSocket.shared?.setTeamColour(team)
 			nextTeamNumber += 1
 		}
@@ -245,7 +302,38 @@ class BuzzerPanel: NSObject, RoundPanel {
 
 	@IBOutlet weak var timerSeconds: NSTextField!
 
+	/// Document view of the entrance-effects scroll view. Holds one checkbox per effect,
+	/// made here rather than in the xib so that a new effect gets one automatically.
+	@IBOutlet weak var entranceEffectsList: NSView!
+
 	private var scene: BuzzerScene { host.quizDisplay.buzzerScene }
+
+	func setUp() {
+		let rowHeight: CGFloat = 22
+		let width = entranceEffectsList.frame.width
+		entranceEffectsList.subviews.forEach { $0.removeFromSuperview() }
+
+		for (row, effect) in BuzzerEffects.Entrance.allCases.enumerated() {
+			let toggle = NSButton(checkboxWithTitle: effect.title, target: self, action: #selector(entranceToggled(_:)))
+			toggle.tag = row
+			toggle.state = BuzzerEffects.enabledEntrances.contains(effect) ? .on : .off
+			toggle.frame = NSRect(x: 4, y: 2 + CGFloat(row) * rowHeight, width: width - 8, height: rowHeight - 4)
+			toggle.autoresizingMask = [.width]
+			entranceEffectsList.addSubview(toggle)
+		}
+
+		let rows = CGFloat(BuzzerEffects.Entrance.allCases.count)
+		entranceEffectsList.setFrameSize(NSSize(width: width, height: rows * rowHeight + 4))
+	}
+
+	@objc private func entranceToggled(_ sender: NSButton) {
+		let effect = BuzzerEffects.Entrance.allCases[sender.tag]
+		if sender.state == .on {
+			BuzzerEffects.enabledEntrances.insert(effect)
+		} else {
+			BuzzerEffects.enabledEntrances.remove(effect)
+		}
+	}
 
 	@IBAction func nextTeam(_ sender: AnyObject) {
 		scene.nextTeam()
@@ -260,4 +348,10 @@ class BuzzerPanel: NSObject, RoundPanel {
 	@IBAction func stopTimer(_ sender: Any) {
 		scene.stopTimer()
 	}
+}
+
+/// A view whose origin is at the top left, so that a list laid out in it reads top
+/// down and a scroll view holding it starts scrolled to the top.
+final class FlippedView: NSView {
+	override var isFlipped: Bool { true }
 }
