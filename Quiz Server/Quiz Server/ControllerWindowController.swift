@@ -433,26 +433,26 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		sidebarRows = [
 			.group("Show"),
 			.round(tabitemIdleSnow, .idleSnow, "❄️ Idle (Snow)"),
-			.round(tabitemIdle, .idle, "🎄 Idle (Games)"),
-			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
 			.round(tabitemScores, .scores, "📋 Scores"),
+			.round(tabitemDisconnect, nil, "🔧 Client Admin"),
 			
 			.group("Rounds"),
 			.round(tabitemBuzzers, .buzzers, "🔊 Buzzers"),
 			.round(tabitemMusic, .music, "🎶 Music + Video"),
-			.round(tabitemtruefalse, .trueFalse, "✅ True / False"),
-			.round(tabitemMultiChoice, .multichoice, "🎲 Multiple Choice"),
-			.round(tabitemGeography, .geography, "🌍 Geography"),
 			.round(tabitemWikiRace, .wikirace, "🔗 Wikirace"),
-			.round(tabitemText, .text, "✍️ Text"),
 			.round(tabitemNumbers, .numbers, "🔢 Numbers"),
 			.round(tabitemWavelength, .wavelength, "🌊 Wavelength"),
-			.round(tabitemPointless, .pointless, "0️⃣ Pointless"),
 			.round(tabitemOnlyConnect, .onlyConnect, "🧱 Only Connect"),
-			.round(tabitemTimer, .timer, "🕓 Timer"),
 
-			.group("Admin"),
-			.round(tabitemDisconnect, nil, "🔧 Client Admin")
+			.group("Archived"),
+			.round(tabitemIdle, .idle, "🎄 Idle (Games)"),
+			.round(tabitemIdleCeefax, .idleCeefax, "📺 Idle (Ceefax)"),
+			.round(tabitemPointless, .pointless, "0️⃣ Pointless"),
+			.round(tabitemText, .text, "✍️ Text"),
+			.round(tabitemGeography, .geography, "🌍 Geography"),
+			.round(tabitemMultiChoice, .multichoice, "🎲 Multiple Choice"),
+			.round(tabitemtruefalse, .trueFalse, "✅ True / False"),
+			.round(tabitemTimer, .timer, "🕓 Timer"),
 		]
 	}
 
