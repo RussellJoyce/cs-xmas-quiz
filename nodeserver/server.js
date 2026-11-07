@@ -30,7 +30,12 @@ const DEV_MODE = process.argv.includes('--dev');
 //Team picks are kept here so that a restart does not send every phone back to the picker.
 //--nostorage holds them in memory only, and the file is neither read nor written.
 const PICKS_FILE = __dirname + '/state/picks.json';
-const NO_STORAGE = process.argv.includes('--nostorage');
+
+//The storage part of a real run's config, from its command line. Kept apart from the
+//start-up below so that a test can check what --nostorage gives without opening real ports.
+function storageConfig(argv) {
+    return { picksFile: argv.includes('--nostorage') ? null : PICKS_FILE };
+}
 
 //Checks a parsed config and returns it normalised. Separate from reading the file so the
 //rules can be tested against made-up configs without writing over the real one.
@@ -413,7 +418,7 @@ function startDnsServer(overrides) {
 module.exports = { startWebsocketServers, startWebServers, startDnsServer, defaultConfig,
                    loadDeploymentConfig, validateDeploymentConfig, REQUIRED_PORTS,
                    certStatus, certMessages, logCertStatus, logDevMode, CONFIG_FILE, PICKS_FILE,
-                   CLIENT_MAX_PAYLOAD };
+                   CLIENT_MAX_PAYLOAD, storageConfig };
 
 //Only start listening when run directly, so that tests can require this file.
 if(require.main === module) {
@@ -422,8 +427,9 @@ if(require.main === module) {
     log.boot('serving ' + cfg.dnsHostname + ' → ' + cfg.hostAddress + ' for ' + cfg.numTeams + ' teams');
     logDevMode(cfg.dev);
     if(!cfg.certs) log.bootError('*** no certificates configured');
-    if(NO_STORAGE) log.boot('team picks: --nostorage, so held in memory only and lost on restart');
-    startWebsocketServers({ picksFile: NO_STORAGE ? null : PICKS_FILE });
+    const storage = storageConfig(process.argv);
+    if(!storage.picksFile) log.boot('team picks: --nostorage, so held in memory only and lost on restart');
+    startWebsocketServers(storage);
     startWebServers();
     startDnsServer();
     logCertStatus(cfg.certs);

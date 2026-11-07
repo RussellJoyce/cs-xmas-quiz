@@ -12,7 +12,7 @@ const WebSocket = require('ws');
 
 const { PickStore, MAX_AGE_MS } = require('../picks');
 const { QuizState } = require('../protocol');
-const { startWebsocketServers } = require('../server');
+const { startWebsocketServers, storageConfig, PICKS_FILE } = require('../server');
 const { FakeSocket, recordingTransport, muteLogs, captureLogs, testCerts } = require('./helpers');
 
 function tempFile() {
@@ -276,5 +276,42 @@ describe('a real server restarting under a phone', () => {
         await p.until(m => m === 'vipickteam');
         p.close();
         await new Promise(resolve => server.close(resolve));
+    });
+
+    test('ignores teams already saved when restarted with no file, and leaves the file alone', async () => {
+        const file = tempFile();
+        let server = await start(file);
+        let p = phone(server.ports().clientWss);
+        await p.until(m => m === 'vipickteam');
+        p.send('pt9');
+        await p.until(m => m === 'ok9');
+        p.close();
+        await new Promise(resolve => server.close(resolve));
+
+        const before = { bytes: fs.readFileSync(file, 'utf8'), mtime: fs.statSync(file).mtimeMs };
+        assert.match(before.bytes, /"9"/, 'the pick was never saved, so this proves nothing');
+
+        server = await start(null);
+        p = phone(server.ports().clientWss);
+        await p.until(m => m === 'vipickteam');
+        //Picking again must not reach the file either.
+        p.send('pt4');
+        await p.until(m => m === 'ok4');
+        p.close();
+        await new Promise(resolve => server.close(resolve));
+
+        assert.strictEqual(fs.readFileSync(file, 'utf8'), before.bytes);
+        assert.strictEqual(fs.statSync(file).mtimeMs, before.mtime);
+    });
+});
+
+
+describe('the command line', () => {
+    test('--nostorage gives no picks file', () => {
+        assert.strictEqual(storageConfig(['node', 'server.js', '--dev', '--nostorage']).picksFile, null);
+    });
+
+    test('without it the real picks file is used', () => {
+        assert.strictEqual(storageConfig(['node', 'server.js', '--dev']).picksFile, PICKS_FILE);
     });
 });
