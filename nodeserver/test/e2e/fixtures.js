@@ -61,6 +61,17 @@ function writeWiki(dir) {
     }]));
 }
 
+//A mono 16-bit WAV of silence. The app is muted in the tests, but it still has to play.
+function silentWav(seconds, rate = 8000) {
+    const data = seconds * rate * 2;
+    const wav = Buffer.alloc(44 + data);
+    wav.write('RIFF', 0); wav.writeUInt32LE(36 + data, 4); wav.write('WAVE', 8);
+    wav.write('fmt ', 12); wav.writeUInt32LE(16, 16); wav.writeUInt16LE(1, 20); wav.writeUInt16LE(1, 22);
+    wav.writeUInt32LE(rate, 24); wav.writeUInt32LE(rate * 2, 28); wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34);
+    wav.write('data', 36); wav.writeUInt32LE(data, 40);
+    return wav;
+}
+
 function writeFixtures(root) {
     write(path.join(root, 'Questions/Pointless/1-fruit.txt'),
           POINTLESS.title + '\n' +
@@ -74,7 +85,12 @@ function writeFixtures(root) {
     write(path.join(root, 'Questions/OnlyConnect/1-wall.txt'),
           Object.entries(WALL).map(([name, clues]) => name + ': ' + clues.join(', ')).join('\n') + '\n');
 
-    fs.mkdirSync(path.join(root, 'Questions/Music'), { recursive: true });
+    //Audio and video interleaved, as the music round lists them together in name order
+    const music = path.join(root, 'Questions/Music');
+    fs.mkdirSync(music, { recursive: true });
+    fs.writeFileSync(path.join(music, '1-song.wav'), silentWav(20));
+    fs.copyFileSync(path.join(__dirname, 'media/clip.mp4'), path.join(music, '2-clip.mp4'));
+    fs.writeFileSync(path.join(music, '3-song.wav'), silentWav(20));
 
     //The phones are served the real pages, with the corpus swapped for this one. The app reads
     //the same folder, as it does in the real checkout.

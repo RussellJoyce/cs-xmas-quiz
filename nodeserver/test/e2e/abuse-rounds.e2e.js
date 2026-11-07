@@ -46,18 +46,26 @@ quizScenarios('trying to break the buzzer', { teams: 7 }, scenario => {
         assert.deepStrictEqual(await buzzes(quiz), [0, 1, 2, 3, 4]);
     });
 
-    scenario('next team, past the end of the queue and with nobody in it', async quiz => {
+    scenario('next team is greyed out with nobody queued, and past the end of the queue', async quiz => {
+        const nextTeamLive = async () => (await quiz.host.read('buzzerPanel.nextTeamButton')).enabled;
         await buzzers(quiz, true);
-        await quiz.host.click('buzzerPanel.nextTeam:');
+        assert.strictEqual(await nextTeamLive(), false, 'nobody has buzzed');
 
         await buzz(quiz, 1);
+        assert.strictEqual(await nextTeamLive(), false, 'only the first team has buzzed');
         await buzz(quiz, 2);
-        for(let i = 0; i < 4; i++) await quiz.host.click('buzzerPanel.nextTeam:');
+        assert.strictEqual(await nextTeamLive(), true, 'a second team is queued');
+        await quiz.host.click('buzzerPanel.nextTeam:');
+        assert.strictEqual(await nextTeamLive(), false, 'the end of the queue');
 
         //And somebody joining after that
         await buzz(quiz, 3);
+        assert.strictEqual(await nextTeamLive(), true, 'a third team has joined');
         await quiz.host.click('buzzerPanel.nextTeam:');
         assert.deepStrictEqual(await buzzes(quiz), [0, 1, 2]);
+
+        await quiz.host.click('resetRound:');
+        assert.strictEqual(await nextTeamLive(), false, 'after a reset');
     });
 
     scenario('stopping everybody and starting them again keeps who was out', async quiz => {

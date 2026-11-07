@@ -294,6 +294,7 @@ class Phone {
 const ROUNDS = {
     idleSnow:    { tab: 'tabitemIdleSnow',    scene: 'SnowIdleScene',    view: 'buzzer' },
     buzzers:     { tab: 'tabitemBuzzers',     scene: 'BuzzerScene',      view: 'buzzer' },
+    music:       { tab: 'tabitemMusic',       scene: 'MusicScene',       view: 'buzzer' },
     text:        { tab: 'tabitemText',        scene: 'TextScene',        view: 'text' },
     trueFalse:   { tab: 'tabitemtruefalse',   scene: 'TrueFalseScene',   view: 'higherlower' },
     multichoice: { tab: 'tabitemMultiChoice', scene: 'MultiChoiceScene', view: 'multi' },

@@ -17,13 +17,32 @@ class MusicScene: QuizScene {
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
 	var teamEnabled = [Bool](repeating: true, count: 15)
-	var buzzes = [Int]()
-	var nextTeamNumber = 0
+	var buzzes = [Int]() { didSet { onQueueChanged?() } }
+	var nextTeamNumber = 0 { didSet { onQueueChanged?() } }
+
+	/// Called whenever a team joins the queue, the highlight moves on, or it is cleared
+	var onQueueChanged: (() -> Void)?
 	var buzzNoises = [SKAction]()
 	var teamBoxes = [BuzzerTeamNode]()
-    var music: AVAudioPlayer?
-	var video: SKVideoNode?
+	/// What is loaded. Only one thing at a time, so a buzz can never be handled as video
+	/// while music is playing, or the other way round.
+	enum Track {
+		case none
+		case audio(AVAudioPlayer)
+		case video(SKVideoNode, AVPlayer)
+	}
+	private(set) var track: Track = .none
 	var videoEffect = SKEffectNode()
+
+	var isVideo: Bool {
+		if case .video = track { return true }
+		return false
+	}
+
+	private var audioPlayer: AVAudioPlayer? {
+		if case .audio(let player) = track { return player }
+		return nil
+	}
 	
 	private var lastMusicUpdateTime: TimeInterval = 0
 	private let musicUpdateFPS: Double = 30.0
@@ -53,14 +72,14 @@ class MusicScene: QuizScene {
         }
         lastMusicUpdateTime = currentTime
         
-        if music?.isPlaying ?? false {
-			music?.updateMeters()
+        if let music = audioPlayer, music.isPlaying {
+			music.updateMeters()
 			
 			if useLEDs?.state == .on {
-				let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
-				let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
-				let avgL = normalisePower(power: music?.averagePower(forChannel: 0) ?? -160.0)
-				let avgR = normalisePower(power: music?.averagePower(forChannel: 1) ?? -160.0)
+				let peakL = normalisePower(power: music.peakPower(forChannel: 0))
+				let peakR = normalisePower(power: music.peakPower(forChannel: 1))
+				let avgL = normalisePower(power: music.averagePower(forChannel: 0))
+				let avgR = normalisePower(power: music.averagePower(forChannel: 1))
 				QuizWebSocket.shared?.setMusicLevels(leftAvg: Int(avgL*100), leftPeak: Int(peakL*100), rightAvg: Int(avgR*100), rightPeak: Int(peakR*100))
 			}
         }
@@ -89,9 +108,15 @@ class MusicScene: QuizScene {
         }
     }
 	
+	/// Stops (back to the start) and clears the buzzes, leaving the track loaded.
+	/// Also called on entering the round, so it always starts from the top.
 	override func reset() {
-		QuizWebSocket.shared?.ledsOff()
-        pauseMusic()
+		stop()
+		clearBuzzes()
+	}
+
+	/// Clears the buzzes and shuts the buzzers, without touching the playhead
+	private func clearBuzzes() {
 		teamEnabled = [Bool](repeating: false, count: Settings.shared.numTeams)
 		buzzNumber = 0
 		buzzes.removeAll()
@@ -125,11 +150,10 @@ class MusicScene: QuizScene {
 			nextTeamNumber = 1
 		}
 
-		if video != nil {
-			//We are playing a video
+		if isVideo {
 			if isFirstBuzz {
 				buzzSound()
-				video?.pause()
+				pause()
 				QuizWebSocket.shared?.buzz(team: team)
 			}
 			if options.blankVideo {
@@ -140,7 +164,7 @@ class MusicScene: QuizScene {
 			//letting every team queue up behind it
 			firstBuzzTime = Date()
 			buzzSound()
-			pauseMusic()
+			pause()
 			QuizWebSocket.shared?.buzz(team: team)
 		}
 
@@ -151,7 +175,8 @@ class MusicScene: QuizScene {
 								 fontSize: layout.fontSize,
 								 addGlow: layout.addGlow,
 								 entranceShimmer: true,
-								 altText: layout.altText)
+								 altText: layout.altText,
+								 style: .glossy)
 		box.position = layout.position
 		box.zPosition = 1
 		teamBoxes.append(box)
@@ -166,7 +191,7 @@ class MusicScene: QuizScene {
 		let centreX = self.centrePoint.x
 		let top = self.size.height
 
-		if video != nil {
+		if isVideo {
 			return BuzzerBoxLayout(width: 350, height: 90, fontSize: 50,
 								   position: CGPoint(x: 250, y: (top - 230) - CGFloat(buzzNumber * 120)), addGlow: isFirstBuzz)
 		}
@@ -208,13 +233,15 @@ class MusicScene: QuizScene {
 	}
 	
 	override func teardown() {
-		//This will allow play from where we left off. Reselect the track to reset it.
-		pauseMusic()
-		video?.pause()
+		//Coming back to the round resets it, which goes back to the start
+		pause()
 	}
 
+	/// Whether a team has buzzed behind the one currently highlighted
+	var hasNextTeam: Bool { nextTeamNumber < buzzes.count }
+
 	func nextTeam() {
-		if nextTeamNumber < buzzes.count {
+		if hasNextTeam {
 			teamBoxes[nextTeamNumber-1].run(SKAction.fadeAlpha(to: 0.3, duration: 0.5))
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
@@ -227,70 +254,115 @@ class MusicScene: QuizScene {
 	static let audioExtensions: Set<String> = ["mp3", "wav"]
 	static let videoExtensions: Set<String> = ["mov", "mp4", "mpeg", "avi"]
 
-    func initMusic(file: String) {
-        if music != nil {
-            reset()
-        }
-        music = nil
-        let musicUrl = URL(fileURLWithPath: file)
-        music = Sound.player(contentsOf: musicUrl)
-        music?.isMeteringEnabled = true
-        music?.prepareToPlay()
-    }
-    
-	
-	func prepareVideo(file: String) {
-		if video != nil {
-			reset()
-		}
-		discardVideo()
-		
-		let videoUrl = URL(fileURLWithPath: file)
-		let player = AVPlayer(url: videoUrl)
-		player.isMuted = Settings.shared.muted
-		video = SKVideoNode(avPlayer: player)
-		video!.position = CGPoint(x: self.frame.midX + 200, y: self.frame.midY)
-		video!.size = CGSize(width: 1400, height: 840)
-		video!.zPosition = 1000
-		videoEffect.addChild(video!)
-
-	}
-	
-	func resumeVideo() {
+	/// Replaces whatever was loaded, clearing the buzzes. Returns false if the file could
+	/// not be opened, which leaves nothing loaded.
+	@discardableResult
+	func load(file: String) -> Bool {
 		reset()
-		video?.play()
-		videoEffect.filter?.setValue(0, forKey: "inputRadius")
-		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
+		unload()
+
+		let url = URL(fileURLWithPath: file)
+		let ext = url.pathExtension.lowercased()
+		if MusicScene.videoExtensions.contains(ext) {
+			let player = AVPlayer(url: url)
+			player.isMuted = Settings.shared.muted
+			let node = SKVideoNode(avPlayer: player)
+			node.position = CGPoint(x: self.frame.midX + 200, y: self.frame.midY)
+			node.size = CGSize(width: 1400, height: 840)
+			node.zPosition = 1000
+			videoEffect.addChild(node)
+			track = .video(node, player)
+		} else if let player = Sound.player(contentsOf: url) {
+			player.isMeteringEnabled = true
+			player.prepareToPlay()
+			track = .audio(player)
+		}
+		return isLoaded
 	}
-	
-    func resumeMusic() {
-        reset()
+
+	var isLoaded: Bool {
+		if case .none = track { return false }
+		return true
+	}
+
+	/// Starts or resumes, clearing the buzzes and letting every team buzz again
+	func play() {
+		clearBuzzes()
 		firstBuzzTime = Date()
 		teamEnabled = [Bool](repeating: true, count: Settings.shared.numTeams)
-		music?.play()
-        music?.updateMeters()
-    }
-    
-    func pauseMusic() {
-        music?.pause()
-		QuizWebSocket.shared?.ledsOff()
-    }
-    
-    func stopMusic() {
-        music?.stop()
-        music?.currentTime = 0
-        music?.prepareToPlay()
-		QuizWebSocket.shared?.ledsOff()
-		discardVideo()
+		switch track {
+		case .none:
+			break
+		case .audio(let player):
+			player.play()
+			player.updateMeters()
+		case .video(_, let player):
+			//A video left at its end would otherwise just sit there
+			if let duration = duration, playhead >= duration - 0.1 {
+				player.seek(to: .zero)
+			}
+			player.play()
+		}
 	}
 
-	/// Tears down the current video node.
-	private func discardVideo() {
-		video?.pause()
-		video?.removeFromParent()
-		video = nil
+	func pause() {
+		switch track {
+		case .none: break
+		case .audio(let player): player.pause()
+		case .video(let node, _): node.pause()
+		}
+		QuizWebSocket.shared?.ledsOff()
 	}
-	
+
+	/// A pause that also goes back to the start. The buzzes stay on screen.
+	func stop() {
+		pause()
+		switch track {
+		case .none: break
+		case .audio(let player):
+			player.currentTime = 0
+			player.prepareToPlay()
+		case .video(_, let player):
+			player.seek(to: .zero)
+		}
+	}
+
+	var isPlaying: Bool {
+		switch track {
+		case .none: return false
+		case .audio(let player): return player.isPlaying
+		case .video(_, let player): return player.rate != 0
+		}
+	}
+
+	/// Seconds into the track
+	var playhead: TimeInterval {
+		switch track {
+		case .none: return 0
+		case .audio(let player): return player.currentTime
+		case .video(_, let player): return player.currentTime().seconds.finiteOrZero
+		}
+	}
+
+	/// Length of the track in seconds, or nil while a video is still working it out
+	var duration: TimeInterval? {
+		switch track {
+		case .none: return nil
+		case .audio(let player): return player.duration
+		case .video(_, let player):
+			let seconds = player.currentItem?.duration.seconds ?? .nan
+			return seconds.isFinite ? seconds : nil
+		}
+	}
+
+	private func unload() {
+		if case .video(let node, _) = track {
+			node.pause()
+			node.removeFromParent()
+		}
+		track = .none
+	}
+
 	func addMonitorBars() {
 		let barWidth: CGFloat = 30
 		let barYOffset: CGFloat = size.height * 0.1
@@ -330,6 +402,7 @@ class MusicScene: QuizScene {
 	
 	
 	func updateMonitors() {
+		let music = audioPlayer
 		music?.updateMeters()
 		let peakL = normalisePower(power: music?.peakPower(forChannel: 0) ?? -160.0)
 		let peakR = normalisePower(power: music?.peakPower(forChannel: 1) ?? -160.0)
@@ -377,61 +450,121 @@ class MusicPanel: NSObject, RoundPanel {
 	let round = RoundType.music
 	weak var host: ControllerWindowController!
 
-	@IBOutlet weak var audioFile: NSPopUpButton!
-	@IBOutlet weak var videoFile: NSPopUpButton!
+	@IBOutlet weak var trackList: NSPopUpButton!
+	@IBOutlet weak var nextTrackButton: NSButton!
+	@IBOutlet weak var nextTeamButton: NSButton!
+	@IBOutlet weak var playPauseButton: NSButton!
+	@IBOutlet weak var trackStatus: NSTextField!
+	@IBOutlet weak var trackProgress: NSProgressIndicator!
 	@IBOutlet weak var useLEDs: NSButton!
 
 	private var scene: MusicScene { host.quizDisplay.musicScene }
+	private var statusTimer: Timer?
 
 	func connectControls() {
 		scene.useLEDs = useLEDs
 	}
 
 	func setUp() {
-		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.audioExtensions) {
-			audioFile.addItem(withTitle: file)
+		scene.onQueueChanged = { [weak self] in
+			guard let self else { return }
+			self.nextTeamButton.isEnabled = self.scene.hasNextTeam
 		}
-		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: MusicScene.videoExtensions) {
-			videoFile.addItem(withTitle: file)
+		scene.onQueueChanged?()
+
+		trackList.removeAllItems()
+		let extensions = MusicScene.audioExtensions.union(MusicScene.videoExtensions)
+		for file in Utils.questionFiles(in: Settings.shared.musicPath, extensions: extensions) {
+			trackList.addItem(withTitle: file)
+			let isVideo = MusicScene.videoExtensions.contains((file as NSString).pathExtension.lowercased())
+			trackList.lastItem?.image = NSImage(systemSymbolName: isVideo ? "film" : "music.note",
+												accessibilityDescription: isVideo ? "Video" : "Audio")
 		}
-		if audioFile.numberOfItems > 0 {
-			chooseAudio(audioFile)
+		if trackList.numberOfItems > 0 {
+			chooseTrack(trackList)
+		} else {
+			refreshStatus()
 		}
+
+		let timer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in self?.refreshStatus() }
+		RunLoop.main.add(timer, forMode: .common)
+		statusTimer = timer
+	}
+
+	func tearDown() {
+		statusTimer?.invalidate()
 	}
 
 	@IBAction func nextTeam(_ sender: AnyObject) {
 		scene.nextTeam()
 	}
 
-	@IBAction func play(_ sender: AnyObject) {
-		scene.resumeMusic()
-	}
-
-	@IBAction func pause(_ sender: AnyObject) {
-		scene.pauseMusic()
+	/// Pauses if playing, otherwise plays, which also clears the buzzes
+	@IBAction func playPause(_ sender: AnyObject) {
+		if scene.isPlaying {
+			scene.pause()
+		} else {
+			scene.play()
+		}
+		refreshStatus()
 	}
 
 	@IBAction func stop(_ sender: AnyObject) {
-		scene.stopMusic()
+		scene.stop()
+		refreshStatus()
 	}
 
-	@IBAction func chooseAudio(_ sender: NSPopUpButton) {
-		guard let file = sender.selectedItem?.title else {
-			print("Error choosing music file")
+	@IBAction func chooseTrack(_ sender: NSPopUpButton) {
+		guard let file = trackList.selectedItem?.title else { return }
+		scene.load(file: Settings.shared.musicPath + "/" + file)
+
+		//The options that only make sense for the other kind of track are greyed out
+		host.buzzcocksMode.isEnabled = !scene.isVideo
+		useLEDs.isEnabled = !scene.isVideo
+		host.blankVideo.isEnabled = scene.isVideo
+		refreshStatus()
+	}
+
+	@IBAction func nextTrack(_ sender: AnyObject) {
+		let next = trackList.indexOfSelectedItem + 1
+		guard next < trackList.numberOfItems else { return }
+		trackList.selectItem(at: next)
+		chooseTrack(trackList)
+	}
+
+	private func refreshStatus() {
+		nextTrackButton.isEnabled = trackList.indexOfSelectedItem + 1 < trackList.numberOfItems
+		//A buzz pauses without going through here, so the timer catches the label up
+		playPauseButton.title = scene.isPlaying ? "Pause" : "Play"
+		playPauseButton.isEnabled = scene.isLoaded
+
+		guard scene.isLoaded else {
+			trackStatus.stringValue = trackList.numberOfItems == 0
+				? "No music or video in \(Settings.shared.musicPath)"
+				: "Could not open \(trackList.selectedItem?.title ?? "that file")"
+			trackProgress.doubleValue = 0
 			return
 		}
-		scene.initMusic(file: Settings.shared.musicPath + "/" + file)
-	}
 
-	@IBAction func chooseVideo(_ sender: NSPopUpButton) {
-		guard let file = sender.selectedItem?.title else {
-			print("Error choosing video file")
-			return
+		let playhead = scene.playhead
+		let state = scene.isPlaying ? "▶ Playing" : (playhead == 0 ? "■ At start" : "❚❚ Paused")
+		let kind = scene.isVideo ? "video" : "audio"
+		let length = scene.duration.map(Self.format) ?? "–:––"
+		trackStatus.stringValue = "\(state) · \(kind) · \(Self.format(playhead)) / \(length)"
+
+		if let duration = scene.duration, duration > 0 {
+			trackProgress.doubleValue = 100 * playhead / duration
+		} else {
+			trackProgress.doubleValue = 0
 		}
-		scene.prepareVideo(file: Settings.shared.musicPath + "/" + file)
 	}
 
-	@IBAction func playVideo(_ sender: Any) {
-		scene.resumeVideo()
+	private static func format(_ seconds: TimeInterval) -> String {
+		let whole = Int(seconds)
+		return String(format: "%d:%02d", whole / 60, whole % 60)
 	}
+}
+
+private extension Double {
+	var finiteOrZero: Double { isFinite ? self : 0 }
 }

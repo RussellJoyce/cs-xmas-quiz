@@ -88,14 +88,19 @@
         <customObject id="Bzp-nl-obj" userLabel="Buzzer Panel" customClass="BuzzerPanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
                 <outlet property="entranceEffectsList" destination="Bfx-dc-v00" id="Bfx-ol-r00"/>
+                <outlet property="nextTeamButton" destination="C4c-Bw-JeK" id="Bzp-nt-out"/>
                 <outlet property="timerSeconds" destination="RVn-Ye-icG" id="fha-mT-OGz"/>
             </connections>
         </customObject>
         <customObject id="Msp-nl-obj" userLabel="Music Panel" customClass="MusicPanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
-                <outlet property="audioFile" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
+                <outlet property="nextTeamButton" destination="AAX-dK-BKE" id="Mtr-nt-out"/>
+                <outlet property="nextTrackButton" destination="Mtr-nx-btn" id="Mtr-nx-out"/>
+                <outlet property="playPauseButton" destination="96H-lb-nY9" id="Mtr-pp-out"/>
+                <outlet property="trackList" destination="YNA-i9-2Xz" id="5jZ-4P-aA7"/>
+                <outlet property="trackProgress" destination="Mtr-pg-ind" id="Mtr-pg-out"/>
+                <outlet property="trackStatus" destination="esN-G8-qTg" id="Mtr-st-out"/>
                 <outlet property="useLEDs" destination="b1t-gJ-oOC" id="9eU-V7-rtN"/>
-                <outlet property="videoFile" destination="PQ5-v2-RX1" id="FE5-eB-nwX"/>
             </connections>
         </customObject>
         <customObject id="Tmp-nl-obj" userLabel="Timer Panel" customClass="TimerPanel" customModule="Quiz_Server" customModuleProvider="target">
@@ -211,7 +216,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1106,7 +1111,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Bfx-cv-c00">
                                                 <rect key="frame" x="1" y="1" width="224" height="228"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <customView id="Bfx-dc-v00" customClass="FlippedView" customModule="Quiz_Server" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="224" height="228"/>
@@ -1131,21 +1136,8 @@
                                     <rect key="frame" x="10" y="7" width="896" height="284"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R7I-N7-f85">
-                                            <rect key="frame" x="715" y="173" width="167" height="47"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Pause Music" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PFN-D6-phr">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="systemBold" size="20"/>
-                                                <string key="keyEquivalent">n</string>
-                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="pause:" target="Msp-nl-obj" id="dUl-15-tHj"/>
-                                            </connections>
-                                        </button>
                                         <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YNA-i9-2Xz">
-                                            <rect key="frame" x="212" y="211" width="492" height="25"/>
+                                            <rect key="frame" x="212" y="211" width="410" height="25"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="6im-dm-09n">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -1153,45 +1145,35 @@
                                                 <menu key="menu" id="4Os-sN-Ihl"/>
                                             </popUpButtonCell>
                                             <connections>
-                                                <action selector="chooseAudio:" target="Msp-nl-obj" id="t5L-Kf-36u"/>
+                                                <action selector="chooseTrack:" target="Msp-nl-obj" id="t5L-Kf-36u"/>
                                             </connections>
                                         </popUpButton>
-                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PQ5-v2-RX1">
-                                            <rect key="frame" x="212" y="108" width="492" height="25"/>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mtr-nx-btn">
+                                            <rect key="frame" x="630" y="206" width="71" height="35"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="i9E-Fh-Nt0">
-                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="message"/>
-                                                <menu key="menu" id="X0W-3g-Zyc"/>
-                                            </popUpButtonCell>
-                                            <connections>
-                                                <action selector="chooseVideo:" target="Msp-nl-obj" id="cbh-Nk-w7N"/>
-                                            </connections>
-                                        </popUpButton>
-                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96H-lb-nY9">
-                                            <rect key="frame" x="715" y="228" width="167" height="46"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Play Music" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cOH-gH-QWx">
+                                            <buttonCell key="cell" type="push" title="Next ▸" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Mnx-cl-001">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="systemBold" size="20"/>
-                                                <string key="keyEquivalent">n</string>
-                                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                                <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="play:" target="Msp-nl-obj" id="gcX-oi-4Qw"/>
+                                                <action selector="nextTrack:" target="Msp-nl-obj" id="Mtr-nx-act"/>
                                             </connections>
                                         </button>
-                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qu2-6j-adx">
-                                            <rect key="frame" x="715" y="98" width="167" height="46"/>
+                                        <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="Mtr-pg-ind">
+                                            <rect key="frame" x="214" y="152" width="488" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Play Video" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHW-tO-kWi">
+                                        </progressIndicator>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="96H-lb-nY9">
+                                            <rect key="frame" x="715" y="201" width="167" height="46"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Play" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cOH-gH-QWx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="systemBold" size="20"/>
                                                 <string key="keyEquivalent">n</string>
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="playVideo:" target="Msp-nl-obj" id="9dD-tE-nL7"/>
+                                                <action selector="playPause:" target="Msp-nl-obj" id="gcX-oi-4Qw"/>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q02-rr-pCd">
@@ -1211,9 +1193,9 @@
                                             </buttonCell>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AAX-dK-BKE">
-                                            <rect key="frame" x="3" y="139" width="155" height="73"/>
+                                            <rect key="frame" x="26" y="166" width="113" height="73"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Highlight next buzzed team" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="G57-uk-LCf">
+                                            <buttonCell key="cell" type="bevel" title="Highlight next" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="G57-uk-LCf">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="systemBold" size="18"/>
                                                 <string key="keyEquivalent">n</string>
@@ -1224,11 +1206,11 @@
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uRd-aY-n3e">
-                                            <rect key="frame" x="379" y="39" width="157" height="42"/>
+                                            <rect key="frame" x="715" y="138" width="167" height="47"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Stop" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="45Y-yI-Axx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="systemBold" size="26"/>
+                                                <font key="font" metaFont="systemBold" size="20"/>
                                                 <string key="keyEquivalent">n</string>
                                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                                             </buttonCell>
@@ -1237,25 +1219,25 @@
                                             </connections>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V9x-al-aKK">
-                                            <rect key="frame" x="213" y="243" width="56" height="21"/>
+                                            <rect key="frame" x="213" y="243" width="57" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Music" id="sFB-1b-Lmr">
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Media" id="sFB-1b-Lmr">
                                                 <font key="font" metaFont="systemBold" size="18"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="esN-G8-qTg">
-                                            <rect key="frame" x="213" y="140" width="64" height="21"/>
+                                            <rect key="frame" x="213" y="180" width="490" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Videos" id="mtB-fM-y3p">
-                                                <font key="font" metaFont="systemBold" size="18"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" title="Nothing loaded" id="mtB-fM-y3p">
+                                                <font key="font" metaFont="system" size="15"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="b1t-gJ-oOC">
-                                            <rect key="frame" x="198" y="57" width="86" height="24"/>
+                                            <rect key="frame" x="198" y="59" width="86" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Use LEDs" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="QBf-zg-3zA">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -1964,7 +1946,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Wv0-cv-g05">
                                                 <rect key="frame" x="1" y="1" width="381" height="234"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Wv0-tv-g05">
                                                         <rect key="frame" x="0.0" y="0.0" width="381" height="234"/>
@@ -2040,7 +2022,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" id="CI5-ck-Ndt">
                                                 <rect key="frame" x="1" y="1" width="375" height="243"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" headerView="i0a-gC-Jde" viewBased="YES" id="hRn-Hf-fKA">
                                                         <rect key="frame" x="0.0" y="0.0" width="375" height="215"/>
@@ -2157,7 +2139,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="XjU-Im-ltz">
                                                 <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="D1j-fk-BWg">
                                                         <rect key="frame" x="0.0" y="0.0" width="295" height="245"/>
@@ -2225,7 +2207,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Onc-cv-g05">
                                                 <rect key="frame" x="1" y="1" width="421" height="252"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Onc-tv-g05">
                                                         <rect key="frame" x="0.0" y="0.0" width="421" height="252"/>
@@ -2292,7 +2274,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Fag-Ir-clm">
                                                 <rect key="frame" x="0.0" y="0.0" width="218" height="221"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="nUs-YF-jmA">
                                                         <rect key="frame" x="0.0" y="0.0" width="218" height="221"/>
@@ -2592,7 +2574,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Mg3-5r-8dH">
                                                 <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="oQn-Zl-Zcb">
                                                         <rect key="frame" x="0.0" y="0.0" width="317" height="225"/>
@@ -2645,7 +2627,7 @@ Answers</string>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <clipView key="contentView" drawsBackground="NO" id="BwY-Hb-Yhi">
                                                 <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="K3w-wP-K2k">
                                                         <rect key="frame" x="0.0" y="0.0" width="304" height="104"/>

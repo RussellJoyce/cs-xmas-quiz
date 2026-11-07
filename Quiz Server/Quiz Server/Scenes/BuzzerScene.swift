@@ -16,8 +16,14 @@ class BuzzerScene: QuizScene {
 	var buzzNumber = 0
 	var firstBuzzTime: Date?
 	var teamEnabled = [Bool](repeating: true, count: 15) //Will be rebuilt every call of reset()
-	var buzzes = [Int]()
-	var nextTeamNumber = 0
+	var buzzes = [Int]() { didSet { onQueueChanged?() } }
+	var nextTeamNumber = 0 { didSet { onQueueChanged?() } }
+
+	/// Called whenever a team joins the queue, the highlight moves on, or it is cleared
+	var onQueueChanged: (() -> Void)?
+
+	/// Whether a team has buzzed behind the one currently highlighted
+	var hasNextTeam: Bool { nextTeamNumber < buzzes.count }
 	let buzzNoise = Sound.effect("buzzer")
 	let buzzNoiseQuack = Sound.effect("altBuzz1")
 	let buzzNoiseQuiet = Sound.effect("quietbuzz1")
@@ -271,7 +277,7 @@ class BuzzerScene: QuizScene {
 	}
 	
 	func nextTeam() {
-		if nextTeamNumber < buzzes.count {
+		if hasNextTeam {
 			teamBoxes[nextTeamNumber-1].run(SKAction.fadeAlpha(to: 0.3, duration: 0.5))
 			teamBoxes[nextTeamNumber-1].stopGlow()
 			teamBoxes[nextTeamNumber].startGlow()
@@ -317,6 +323,7 @@ class BuzzerPanel: NSObject, RoundPanel {
 	weak var host: ControllerWindowController!
 
 	@IBOutlet weak var timerSeconds: NSTextField!
+	@IBOutlet weak var nextTeamButton: NSButton!
 
 	/// Document view of the entrance-effects scroll view. Holds one checkbox per effect,
 	/// made here rather than in the xib so that a new effect gets one automatically.
@@ -325,6 +332,12 @@ class BuzzerPanel: NSObject, RoundPanel {
 	private var scene: BuzzerScene { host.quizDisplay.buzzerScene }
 
 	func setUp() {
+		scene.onQueueChanged = { [weak self] in
+			guard let self else { return }
+			self.nextTeamButton.isEnabled = self.scene.hasNextTeam
+		}
+		scene.onQueueChanged?()
+
 		let rowHeight: CGFloat = 22
 		let width = entranceEffectsList.frame.width
 		entranceEffectsList.subviews.forEach { $0.removeFromSuperview() }
