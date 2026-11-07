@@ -18,8 +18,8 @@ class ScoresScene: QuizScene {
 	
 	var scoreSounds = [SKAction]()
 	var lastScoreSound = 0
-	let topScoreNoise = SKAction.playSoundFileNamed("topscore", waitForCompletion: false)
-	let simpleScoreNoise = SKAction.playSoundFileNamed("score5", waitForCompletion: false)
+	let topScoreNoise = Sound.effect("topscore")
+	let simpleScoreNoise = Sound.effect("score5")
 	
 	var snow1 : SKEmitterNode?
 	
@@ -30,7 +30,7 @@ class ScoresScene: QuizScene {
 
 		//Load team sounds
 		for i in 1...14 {
-			scoreSounds.append(SKAction.playSoundFileNamed("orch\(i)", waitForCompletion: false))
+			scoreSounds.append(Sound.effect("orch\(i)"))
 		}
 	}
 

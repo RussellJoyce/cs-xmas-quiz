@@ -47,9 +47,9 @@ class MultiChoiceScene: QuizScene {
 	fileprivate var timer: Timer?
 	fileprivate var tickSounds: Bool = true
 
-	let guessSound = SKAction.playSoundFileNamed("notification-1.mp3", waitForCompletion: false)
-	let tickSound = SKAction.playSoundFileNamed("notification-2.mp3", waitForCompletion: false)
-	let tickEnd = SKAction.playSoundFileNamed("notification-long.mp3", waitForCompletion: false)
+	let guessSound = Sound.effect("notification-1.mp3")
+	let tickSound = Sound.effect("notification-2.mp3")
+	let tickEnd = Sound.effect("notification-long.mp3")
 
 	var bg1: SKEmitterNode? = nil
 	var bg2: SKEmitterNode? = nil

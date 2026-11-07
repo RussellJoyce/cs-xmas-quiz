@@ -18,9 +18,9 @@ class BuzzerScene: QuizScene {
 	var teamEnabled = [Bool](repeating: true, count: 15) //Will be rebuilt every call of reset()
 	var buzzes = [Int]()
 	var nextTeamNumber = 0
-	let buzzNoise = SKAction.playSoundFileNamed("buzzer", waitForCompletion: false)
-	let buzzNoiseQuack = SKAction.playSoundFileNamed("altBuzz1", waitForCompletion: false)
-	let buzzNoiseQuiet = SKAction.playSoundFileNamed("quietbuzz1", waitForCompletion: false)
+	let buzzNoise = Sound.effect("buzzer")
+	let buzzNoiseQuack = Sound.effect("altBuzz1")
+	let buzzNoiseQuiet = Sound.effect("quietbuzz1")
 	var teamBoxes = [BuzzerTeamNode]()
 	
 	var altBuzzNoise = [SKAction]()
@@ -43,8 +43,8 @@ class BuzzerScene: QuizScene {
 	fileprivate var time: Int = 30
 	fileprivate var starttime: Int = 30
 	fileprivate var timer: Timer?
-	let tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
-	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
+	let tickSound = Sound.effect("tick")
+	let hornSound = Sound.effect("airhorn")
 	fileprivate var pulseAction: SKAction?
 	fileprivate var buzzPulseAction: SKAction?
 
@@ -99,7 +99,7 @@ class BuzzerScene: QuizScene {
 			let docsArray = try FileManager.default.contentsOfDirectory(atPath: Bundle.main.resourcePath!)
 			for fileName in docsArray {
 				if fileName.starts(with: "altBuzz") {
-					altBuzzNoise.append(SKAction.playSoundFileNamed(fileName, waitForCompletion: false))
+					altBuzzNoise.append(Sound.effect(fileName))
 				}
 			}
 			altBuzzNoise.shuffle()

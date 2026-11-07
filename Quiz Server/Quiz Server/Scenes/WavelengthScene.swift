@@ -118,10 +118,10 @@ class WavelengthScene: QuizScene {
 	private var snow: SKEmitterNode?
 
 	//MARK: - Sound
-	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	let revealSound = SKAction.playSoundFileNamed("display_sweep", waitForCompletion: false)
-	let landSound = SKAction.playSoundFileNamed("counter_score", waitForCompletion: false)
-	let winnerSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
+	let blopSound = Sound.effect("blop")
+	let revealSound = Sound.effect("display_sweep")
+	let landSound = Sound.effect("counter_score")
+	let winnerSound = Sound.effect("tada")
 	private var counterPlayer: AVAudioPlayer?
 
 
@@ -141,11 +141,7 @@ class WavelengthScene: QuizScene {
 		self.addChild(teamStrip)
 
 		if let url = Bundle.main.url(forResource: "counter_nosting", withExtension: "wav") {
-			do {
-				try counterPlayer = AVAudioPlayer(contentsOf: url)
-			} catch let error {
-				print(error.localizedDescription)
-			}
+			counterPlayer = Sound.player(contentsOf: url)
 		}
 		counterPlayer?.prepareToPlay()
 

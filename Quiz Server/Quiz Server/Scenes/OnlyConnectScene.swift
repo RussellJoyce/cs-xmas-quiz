@@ -205,10 +205,10 @@ class OnlyConnectScene: QuizScene {
 	private var clockLabel: OutlinedLabelNode!
 	private var connectionLabels = [OutlinedLabelNode]()
 
-	let solvedSound = SKAction.playSoundFileNamed("notification-3", waitForCompletion: false)
-	let wrongSound = SKAction.playSoundFileNamed("wrong", waitForCompletion: false)
-	let finishedSound = SKAction.playSoundFileNamed("notification-3", waitForCompletion: false)
-	let revealSound = SKAction.playSoundFileNamed("display_sweep", waitForCompletion: false)
+	let solvedSound = Sound.effect("notification-3")
+	let wrongSound = Sound.effect("wrong")
+	let finishedSound = Sound.effect("notification-3")
+	let revealSound = Sound.effect("display_sweep")
 
 	//MARK: Layout
 

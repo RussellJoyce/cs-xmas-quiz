@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 
 // MARK: - Settings
@@ -16,6 +17,10 @@ final class Settings {
 	private init() {}
 
 	var debug: Bool = false
+
+	/// True when the app was launched with QUIZ_MUTE set, as the end-to-end tests do.
+	/// Fixed at launch: sounds are built when each scene is created, so it cannot change later.
+	let muted = ProcessInfo.processInfo.environment["QUIZ_MUTE"] != nil
 	
 	/// The very first time the websocket connects, this is set to true and left true
 	var websocketHasPreviouslyConnected = false
@@ -322,5 +327,31 @@ extension SKAction {
 			(node as? SKShapeNode)?.fillColor = transColor
 		}
 		)
+	}
+}
+
+// MARK: - Sound
+
+enum Sound {
+	/// A fire-and-forget sound effect, or a do-nothing action when muted.
+	static func effect(_ name: String) -> SKAction {
+		if Settings.shared.muted {
+			return SKAction.wait(forDuration: 0)
+		}
+		return SKAction.playSoundFileNamed(name, waitForCompletion: false)
+	}
+
+	/// An `AVAudioPlayer` for `url`, silenced when muted. Nil if the file cannot be opened.
+	static func player(contentsOf url: URL) -> AVAudioPlayer? {
+		do {
+			let player = try AVAudioPlayer(contentsOf: url)
+			if Settings.shared.muted {
+				player.volume = 0
+			}
+			return player
+		} catch {
+			print(error.localizedDescription)
+			return nil
+		}
 	}
 }

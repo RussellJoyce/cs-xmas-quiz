@@ -14,9 +14,9 @@ class TextScene: QuizScene {
 	
 	var teamGuesses = [(roundid: Int, guess: String)?]()
 	var teamBoxes = [TeamAnswerNode]()
-	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	//let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
-	let hornSound = SKAction.playSoundFileNamed("drums", waitForCompletion: false)
+	let blopSound = Sound.effect("blop")
+	//let hornSound = Sound.effect("airhorn")
+	let hornSound = Sound.effect("drums")
 	var uniques: [String]?
 	var emitters = [SKEmitterNode]()
 	

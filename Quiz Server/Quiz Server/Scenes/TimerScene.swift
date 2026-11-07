@@ -29,10 +29,10 @@ class TimerScene: QuizScene {
 	let mainNode = SKNode()
 	let countmainNode = SKNode()
 	
-	var tickSound = SKAction.playSoundFileNamed("tick", waitForCompletion: false)
-	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	let hornSound = SKAction.playSoundFileNamed("airhorn", waitForCompletion: false)
-	let timerSound = SKAction.playSoundFileNamed("minutetimer", waitForCompletion: false)
+	var tickSound = Sound.effect("tick")
+	let blopSound = Sound.effect("blop")
+	let hornSound = Sound.effect("airhorn")
+	let timerSound = Sound.effect("minutetimer")
 	let audioNode = SKAudioNode(url: Bundle.main.url(forResource: "minutetimer", withExtension: "mp3")!)
 	
 	override func buildScene() {
@@ -111,6 +111,9 @@ class TimerScene: QuizScene {
 
 		self.addChild(countmainNode)
 		self.addChild(mainNode)
+		if Settings.shared.muted {
+			audioNode.autoplayLooped = false
+		}
 		self.addChild(audioNode)
 	}
 	
@@ -132,7 +135,9 @@ class TimerScene: QuizScene {
 		
 		if(music) {
 			self.time = 59
-			audioNode.run(SKAction.play())
+			if !Settings.shared.muted {
+				audioNode.run(SKAction.play())
+			}
 		}
 		tickWhileCounting = !music
 		

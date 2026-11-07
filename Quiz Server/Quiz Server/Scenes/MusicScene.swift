@@ -67,9 +67,9 @@ class MusicScene: QuizScene {
     }
     
 	override func buildScene() {
-        buzzNoises.append(SKAction.playSoundFileNamed("scratch1", waitForCompletion: false))
-        buzzNoises.append(SKAction.playSoundFileNamed("scratch2", waitForCompletion: false))
-        buzzNoises.append(SKAction.playSoundFileNamed("scratch3", waitForCompletion: false))
+        buzzNoises.append(Sound.effect("scratch1"))
+        buzzNoises.append(Sound.effect("scratch2"))
+        buzzNoises.append(Sound.effect("scratch3"))
 		
 		addBackground(imageNamed: "music2")
 
@@ -233,11 +233,7 @@ class MusicScene: QuizScene {
         }
         music = nil
         let musicUrl = URL(fileURLWithPath: file)
-        do {
-            try music = AVAudioPlayer(contentsOf: musicUrl)
-        } catch let error {
-            print(error.localizedDescription)
-        }
+        music = Sound.player(contentsOf: musicUrl)
         music?.isMeteringEnabled = true
         music?.prepareToPlay()
     }
@@ -250,7 +246,9 @@ class MusicScene: QuizScene {
 		discardVideo()
 		
 		let videoUrl = URL(fileURLWithPath: file)
-		video = SKVideoNode(url: videoUrl)
+		let player = AVPlayer(url: videoUrl)
+		player.isMuted = Settings.shared.muted
+		video = SKVideoNode(avPlayer: player)
 		video!.position = CGPoint(x: self.frame.midX + 200, y: self.frame.midY)
 		video!.size = CGSize(width: 1400, height: 840)
 		video!.zPosition = 1000

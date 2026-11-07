@@ -37,8 +37,8 @@ class WikiRaceScene: QuizScene {
 	private let titleLabel = OutlinedLabelNode(text: "Wikirace", fontNamed: ".AppleSystemUIFontBold", fontSize: 44, fontColor: .white)
 	private let targetLabel = OutlinedLabelNode(text: "", fontNamed: ".AppleSystemUIFontBold", fontSize: 72, fontColor: NSColor(calibratedRed: 0.27, green: 0.84, blue: 0.65, alpha: 1.0))
 
-	private let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	private let arrivedSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
+	private let blopSound = Sound.effect("blop")
+	private let arrivedSound = Sound.effect("tada")
 
 	var showDistance = false {
 		didSet { refreshAll() }

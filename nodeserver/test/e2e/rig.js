@@ -397,7 +397,8 @@ async function startQuiz(options) {
                     QUIZ_TEST_PROBE: 'ws://127.0.0.1:' + probeServer.address().port + '/',
                     QUIZ_SERVER_URL: 'ws://127.0.0.1:' + ports.server + '/',
                     QUIZ_ROOT: root,
-                    QUIZ_TEAMS: String(appTeams)
+                    QUIZ_TEAMS: String(appTeams),
+                    QUIZ_MUTE: '1'
                 }),
                 stdio: ['ignore', 'pipe', 'pipe']
             });

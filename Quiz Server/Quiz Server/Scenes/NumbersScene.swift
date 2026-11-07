@@ -14,9 +14,9 @@ class NumbersScene: QuizScene {
 
 	var teamGuesses = [Int?]()
 	private var teamBoxes = [NumberBoxNode]()
-	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	let hornSound = SKAction.playSoundFileNamed("tada", waitForCompletion: false)
-	let landSound = SKAction.playSoundFileNamed("counter_score", waitForCompletion: false)
+	let blopSound = Sound.effect("blop")
+	let hornSound = Sound.effect("tada")
+	let landSound = Sound.effect("counter_score")
 	private(set) var revealed = false
 	private(set) var scored = false
 	/// Continuous emitters added by scoring, which have to be cleared on reset.

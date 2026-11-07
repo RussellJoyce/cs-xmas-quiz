@@ -39,13 +39,13 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 	private var gameState : PointlessGameState = .waitForAnswers
 	
 	//Media
-	let blopSound = SKAction.playSoundFileNamed("blop", waitForCompletion: false)
-	let scoreSound = SKAction.playSoundFileNamed("counter_score", waitForCompletion: false)
-	let scorePointlessSound = SKAction.playSoundFileNamed("counter_score2", waitForCompletion: false)
-	let showAnswersSound = SKAction.playSoundFileNamed("display_sweep", waitForCompletion: false)
-	let teamDoneSound = SKAction.playSoundFileNamed("circle_illuminates", waitForCompletion: false)
-	let wrongSound = SKAction.playSoundFileNamed("counter_wrong", waitForCompletion: false)
-	let manualEditSound = SKAction.playSoundFileNamed("quietbuzz2", waitForCompletion: false)
+	let blopSound = Sound.effect("blop")
+	let scoreSound = Sound.effect("counter_score")
+	let scorePointlessSound = Sound.effect("counter_score2")
+	let showAnswersSound = Sound.effect("display_sweep")
+	let teamDoneSound = Sound.effect("circle_illuminates")
+	let wrongSound = Sound.effect("counter_wrong")
+	let manualEditSound = Sound.effect("quietbuzz2")
 	private var counterPlayer: AVAudioPlayer? = nil
 	
 	//Layout constants
@@ -119,11 +119,7 @@ class PointlessScene : QuizScene, NSTableViewDataSource, NSTableViewDelegate, NS
 		}
 		
 		if let url = Bundle.main.url(forResource: "counter_nosting", withExtension: "wav") {
-			do {
-				try counterPlayer = AVAudioPlayer(contentsOf: url)
-			} catch let error {
-				print(error.localizedDescription)
-			}
+			counterPlayer = Sound.player(contentsOf: url)
 		}
 		counterPlayer?.prepareToPlay()
 	}

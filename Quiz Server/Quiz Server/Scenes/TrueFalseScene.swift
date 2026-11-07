@@ -32,9 +32,9 @@ class TrueFalseScene: QuizScene {
 	fileprivate var tickSounds : Bool = true
 	var teamBoxes = [TeamGuessNode]()
 	
-	let tickSound = SKAction.playSoundFileNamed("timer.wav", waitForCompletion: false)
-	let tickEnd = SKAction.playSoundFileNamed("timerend.wav", waitForCompletion: false)
-	let tensionend = SKAction.playSoundFileNamed("counter_score2.wav", waitForCompletion: false)
+	let tickSound = Sound.effect("timer.wav")
+	let tickEnd = Sound.effect("timerend.wav")
+	let tensionend = Sound.effect("counter_score2.wav")
 	var music: AVAudioPlayer?
 	
 	var timeLabel: OutlinedLabelNode!
@@ -168,11 +168,7 @@ class TrueFalseScene: QuizScene {
 			music = nil
 			if sounds {
 				if let musicUrl = Bundle.main.url(forResource: "counter_soft_end", withExtension: "wav") {
-					do {
-						try music = AVAudioPlayer(contentsOf: musicUrl)
-					} catch let error {
-						print(error.localizedDescription)
-					}
+					music = Sound.player(contentsOf: musicUrl)
 					music?.play()
 				}
 			}
