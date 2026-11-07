@@ -35,6 +35,8 @@ class BuzzerScene: QuizScene {
 	private var teamWash: SKSpriteNode?
 	private static let washAlpha: CGFloat = 0.85
 	private static let washKey = "teamWash"
+	/// The team whose colour the room is washed with, or nil when resting
+	private var washTeam: Int?
 	private static let bokehColour = NSColor(calibratedRed: 1.0, green: 0.62, blue: 0.35, alpha: 1)
 	private static let flareColour = NSColor(calibratedRed: 1.0, green: 0.85, blue: 0.75, alpha: 1)
 
@@ -149,6 +151,7 @@ class BuzzerScene: QuizScene {
 	private func washRoom(team: Int?) {
 		guard let wash = teamWash else { return }
 		wash.removeAction(forKey: BuzzerScene.washKey)
+		washTeam = team
 
 		if let team = team {
 			let colour = Utils.teamColour(team)
@@ -171,6 +174,19 @@ class BuzzerScene: QuizScene {
 			bokeh?.particleColor = BuzzerScene.bokehColour
 			flare1?.particleColor = BuzzerScene.flareColour
 			flare2?.particleColor = BuzzerScene.flareColour
+		}
+	}
+
+	private static func restingParticleColour() -> NSColor {
+		if Bool.random() { return .white }
+		return NSColor(calibratedHue: .random(in: 0..<1), saturation: 0.8, brightness: 1, alpha: 1)
+	}
+
+	override func update(_ currentTime: TimeInterval) {
+		super.update(currentTime)
+		guard washTeam == nil else { return }
+		for emitter in [bokeh, flare1, flare2] {
+			emitter?.particleColor = BuzzerScene.restingParticleColour()
 		}
 	}
 
