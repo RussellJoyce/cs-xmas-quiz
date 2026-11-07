@@ -254,6 +254,13 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lea05")
 	}
 
+	/// One of the canned animations, by its number in the LED protocol (see quizleds/src/web.cpp)
+	func animation(_ number: Int) {
+		if number >= 0 && number < 100 {
+			send("lea" + String(format: "%02d", number))
+		}
+	}
+
 	/// Trigger a random buzzer animation for team (0-based)
 	func buzz(team: Int) {
 		if team >= 0 && team < 50 {

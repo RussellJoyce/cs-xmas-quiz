@@ -233,8 +233,10 @@ class MusicScene: QuizScene {
 	}
 	
 	override func teardown() {
-		//Coming back to the round resets it, which goes back to the start
-		pause()
+		//Coming back to the round resets it, which goes back to the start. The LEDs are
+		//left alone: this runs once the transition has finished, by which time the
+		//incoming round has already set them.
+		pausePlayer()
 	}
 
 	/// Whether a team has buzzed behind the one currently highlighted
@@ -306,12 +308,16 @@ class MusicScene: QuizScene {
 	}
 
 	func pause() {
+		pausePlayer()
+		QuizWebSocket.shared?.ledsOff()
+	}
+
+	private func pausePlayer() {
 		switch track {
 		case .none: break
 		case .audio(let player): player.pause()
 		case .video(let node, _): node.pause()
 		}
-		QuizWebSocket.shared?.ledsOff()
 	}
 
 	/// A pause that also goes back to the start. The buzzes stay on screen.

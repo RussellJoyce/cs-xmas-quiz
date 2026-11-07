@@ -7,6 +7,43 @@ const { quizScenarios, until } = require('./rig');
 
 quizScenarios('host rounds', { teams: 3 }, scenario => {
 
+    scenario('snow: the LED animation chosen is played, and again on coming back', async quiz => {
+        const lastAnimation = () => quiz.leds.filter(m => m.startsWith('a')).pop();
+        const chosen = () => quiz.host.read('quizDisplay.snowIdleScene.ledAnimation');
+
+        let before = quiz.leds.length;
+        await quiz.round('idleSnow');
+        await until('Megamas on the LEDs', () => quiz.leds.slice(before).includes('a01'));
+        assert.strictEqual(await chosen(), 'megamas', 'Megamas is the default');
+
+        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#4');
+        await until('Embers on the LEDs', () => lastAnimation() === 'a04');
+        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#5');
+        await until('Old Lights on the LEDs', () => lastAnimation() === 'a05');
+
+        await quiz.round('buzzers');
+        before = quiz.leds.length;
+        await quiz.round('idleSnow');
+        await until('Old Lights again', () => quiz.leds.slice(before).includes('a05'));
+        assert.strictEqual(await chosen(), 'oldLights');
+    });
+
+    scenario('snow: the LED animation survives coming back from the music round', async quiz => {
+        const lastAnimation = () => quiz.leds.filter(m => m.startsWith('a')).pop();
+        await quiz.round('idleSnow');
+        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#1');
+        await quiz.round('music');
+        //Let its transition finish, or going back cuts it short and tears down at once
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        await quiz.round('idleSnow');
+        await until('Megamas on the LEDs', () => lastAnimation() === 'a01');
+
+        //The music round is torn down once the 1s transition ends, after the snow has
+        //set the LEDs, so anything it sends then would land on top
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        assert.strictEqual(lastAnimation(), 'a01');
+    });
+
     scenario('timer: runs, stops, counts answers, and a reset puts it all back', async quiz => {
         await quiz.round('timer');
         const time = () => quiz.host.read('quizDisplay.timerScene.time');
