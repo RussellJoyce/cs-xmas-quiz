@@ -41,3 +41,6 @@ nodeserver/cloudflare.ini
 # Wikirace
 tools/wiki/corpus/
 nodeserver/static/wiki/
+
+# Per-developer code signing, see Quiz Server/Signing.xcconfig
+Signing.local.xcconfig

@@ -1,0 +1,20 @@
+// Code signing for the Quiz Server target.
+//
+// The shared default is ad-hoc signing, which builds for anyone. Its drawback is that macOS keys
+// privacy grants (such as access to ~/Documents) to the code signature, and an ad-hoc signature
+// changes with every build, so macOS keeps asking again.
+//
+// To sign with your own development certificate instead, create Signing.local.xcconfig next to
+// this file (it is git-ignored) containing, with your own team ID:
+//
+//     CODE_SIGN_IDENTITY = Apple Development
+//     DEVELOPMENT_TEAM = ABCDE12345
+//
+// Find your team ID as the OU field of your certificate:
+//     security find-certificate -c "Apple Development" -p | openssl x509 -noout -subject
+
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = -
+DEVELOPMENT_TEAM =
+
+#include? "Signing.local.xcconfig"
