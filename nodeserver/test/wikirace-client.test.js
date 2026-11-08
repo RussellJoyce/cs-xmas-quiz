@@ -51,7 +51,7 @@ function makeLink(articleId) {
 function loadClient(options) {
     const opts = options || {};
     const elements = {};
-    ['article', 'title', 'page', 'target', 'hops', 'clock', 'here', 'back',
+    ['article', 'title', 'page', 'target', 'away', 'awayLabel', 'here', 'back',
      'curtain', 'curtainIcon', 'curtainText', 'curtainSub', 'toast'].forEach(id => {
         elements[id] = makeElement(id);
     });
@@ -244,7 +244,7 @@ describe('the wikirace client', () => {
             const sock = await connected(client);
             sock.deliver('ok4');
             sock.deliver('wr0,99,Start|Target');
-            sock.deliver('wg0,0');
+            sock.deliver('wg0,0,5');
             await settle();
             sock.drain();
             return { client, sock };
@@ -258,23 +258,42 @@ describe('the wikirace client', () => {
             assert.strictEqual(client.elements.title.textContent, 'Article 0');
         });
 
-        test('renders only what the server authorises, and takes the hop count from it', async () => {
+        test('renders only what the server authorises, and takes the distance from it', async () => {
+            const { client, sock } = await racing();
+            client.elements.article.fire('click', { target: makeLink(42), preventDefault: () => {} });
+            sock.deliver('wg42,1,4');
+            await settle();
+            assert.strictEqual(client.elements.title.textContent, 'Article 42');
+            assert.strictEqual(client.elements.away.textContent, 4);
+            assert.strictEqual(client.elements.awayLabel.textContent, 'hops away');
+        });
+
+        test('says hop, not hops, when there is one to go', async () => {
+            const { client, sock } = await racing();
+            client.elements.article.fire('click', { target: makeLink(42), preventDefault: () => {} });
+            sock.deliver('wg42,1,1');
+            await settle();
+            assert.strictEqual(client.elements.away.textContent, 1);
+            assert.strictEqual(client.elements.awayLabel.textContent, 'hop away');
+        });
+
+        test('a distance the server did not send is a question mark, not a number', async () => {
+            //What an older server sends, and what an unreachable article would come back as
             const { client, sock } = await racing();
             client.elements.article.fire('click', { target: makeLink(42), preventDefault: () => {} });
             sock.deliver('wg42,1');
             await settle();
-            assert.strictEqual(client.elements.title.textContent, 'Article 42');
-            assert.strictEqual(client.elements.hops.textContent, 1);
+            assert.strictEqual(client.elements.away.textContent, '?');
         });
 
-        test('a refused move leaves the team where it was, with the right hop count', async () => {
+        test('a refused move leaves the team where it was, the same distance away', async () => {
             //The client must never quietly disagree with the server about either.
             const { client, sock } = await racing();
             client.elements.article.fire('click', { target: makeLink(42), preventDefault: () => {} });
             sock.deliver('wx');
             await settle();
             assert.strictEqual(client.elements.title.textContent, 'Article 0');
-            assert.strictEqual(client.elements.hops.textContent, 0);
+            assert.strictEqual(client.elements.away.textContent, 5);
             assert.match(client.elements.toast.textContent, /not a link/i);
         });
 
@@ -393,7 +412,7 @@ describe('the wikirace client', () => {
             const sock = await connected(client);
             sock.deliver('ok4');
             sock.deliver('wr0,99,Start|Target');
-            sock.deliver('wg0,0');
+            sock.deliver('wg0,0,5');
             await settle();
             sock.drain();
             return { client, sock };
@@ -443,25 +462,29 @@ describe('the wikirace client', () => {
             const sock = await connected(client);
             sock.deliver('ok1');
             sock.deliver('wr7,99,Start|Target');
-            sock.deliver('wg7,0');     //asked for the slow article
-            sock.deliver('wg500,3');   //then immediately for a different one
+            sock.deliver('wg7,0,4');     //asked for the slow article
+            sock.deliver('wg500,3,2');   //then immediately for a different one
             await settle();
             assert.strictEqual(client.elements.title.textContent, 'Article 500');
-            assert.strictEqual(client.elements.hops.textContent, 3);
+            assert.strictEqual(client.elements.away.textContent, 2);
         });
     });
 
     describe('reconnecting mid-race', () => {
-        test('lands back on its own article with the server hop count', async () => {
+        test('lands back on its own article, with the hop count and distance from the server', async () => {
             const client = loadClient();
             const sock = await connected(client);
             sock.deliver('ok2');
             //What the server sends a returning client: the race, then where it actually is.
             sock.deliver('wr0,99,Start|Target');
-            sock.deliver('wg500,3');
+            sock.deliver('wg500,3,2');
             await settle();
             assert.strictEqual(client.elements.title.textContent, 'Article 500');
-            assert.strictEqual(client.elements.hops.textContent, 3);
+            assert.strictEqual(client.elements.away.textContent, 2);
+            //The hop count is not shown, but Back depends on it: three hops in, there is somewhere to go
+            sock.drain();
+            client.elements.back.fire('click', {});
+            assert.deepStrictEqual(sock.drain(), ['wb2']);
         });
     });
 

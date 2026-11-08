@@ -57,7 +57,14 @@ function writeWiki(dir) {
 
     write(path.join(dir, 'puzzles.json'), JSON.stringify([{
         start: 0, target: 2, startTitle: titles[0], targetTitle: titles[2], hops: 2,
-        route: [titles[0], titles[1], titles[2]], routeIds: [0, 1, 2]
+        route: [titles[0], titles[1], titles[2]], routeIds: [0, 1, 2],
+        routeCount: 1, moreRoutes: [], moreRouteIds: [], note: 'A note for the host'
+    }, {
+        //Only for the host panel's list of routes: this graph has no pair with two shortest
+        //routes, so the extra ones here are not real
+        start: 3, target: 2, startTitle: titles[3], targetTitle: titles[2], hops: 2,
+        route: [titles[3], titles[1], titles[2]], routeIds: [3, 1, 2],
+        routeCount: 2500000, moreRoutes: [['X', 'Y', 'Z'], ['P', 'Q', 'R']], moreRouteIds: [[9, 9, 9], [9, 9, 9]]
     }]));
 }
 

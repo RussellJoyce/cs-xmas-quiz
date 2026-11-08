@@ -443,13 +443,14 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         await one.press(one.link(FINISH));
         await until('the arrival', () => quiz.wire.some(w => w.msg.startsWith('ww1,')));
 
+        await quiz.host.click('wikiRacePanel.endButton');
         await quiz.host.click('wikiRacePanel.startButton');
         await on(one, START);
         assert.strictEqual(await one.frame.locator('#curtain').evaluate(c => c.classList.contains('hidden')), true,
                            'the celebration is still up');
         await one.press(one.link(DETOUR));
         await on(one, DETOUR);
-        assert.strictEqual(await one.hops.textContent(), '1');
+        assert.strictEqual(await one.away.textContent(), '2', 'Detour is two from the finish');
         await quiz.host.click('wikiRacePanel.endButton');
     });
 

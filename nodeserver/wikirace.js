@@ -138,6 +138,8 @@ class WikiRace {
         this.startedAt = 0;
         this.distances = null;
         this.teams = {};
+        //Overridden by the tests, which need two teams to reach the same point at known times
+        this.now = () => Date.now();
     }
 
     awayFrom(id) {
@@ -146,12 +148,27 @@ class WikiRace {
     }
 
     //Fresh state for one team. 1-based
-    static blank(start) {
+    blank(start) {
         return {
             route: [start],   //the path from the start to where they are now; Back pops it
             trail: [start],   //every article visited, including ones backed out of
-            finishedAt: 0
+            finishedAt: 0,
+            //The closest the team has ever been to the target, and when it first got there.
+            //This is what the race is scored on, not where the team ends up.
+            closest: this.awayFrom(start),
+            closestAt: this.startedAt
         };
+    }
+
+    //Called on every article a team lands on, forwards or back
+    noteClosest(state, at) {
+        const away = this.awayFrom(at);
+        //-1 is unreachable, which is no progress at all
+        if(away < 0) return;
+        if(state.closest < 0 || away < state.closest) {
+            state.closest = away;
+            state.closestAt = this.now();
+        }
     }
 
     begin(start, target) {
@@ -161,11 +178,11 @@ class WikiRace {
         this.running = true;
         this.start = start;
         this.target = target;
-        this.startedAt = Date.now();
+        this.startedAt = this.now();
         this.distances = this.corpus.distancesTo(target);
         this.teams = {};
         for(let team = 1; team <= this.numTeams; team++) {
-            this.teams[team] = WikiRace.blank(start);
+            this.teams[team] = this.blank(start);
         }
         return true;
     }
@@ -210,7 +227,8 @@ class WikiRace {
         state.trail.push(to);
 
         const arrived = (to === this.target);
-        if(arrived) state.finishedAt = Date.now();
+        if(arrived) state.finishedAt = this.now();
+        this.noteClosest(state, to);
 
         return {
             ok: true,
@@ -235,14 +253,19 @@ class WikiRace {
         state.route.pop();
         const to = state.route[state.route.length - 1];
         state.trail.push(to);
+        //Somewhere already visited, so this cannot be closer than before, but it costs nothing to be sure
+        this.noteClosest(state, to);
         return { ok: true, to: to, hops: state.route.length - 1,
                  away: this.awayFrom(to), arrived: false, seconds: 0 };
     }
 
     //Final standings, for the reveal and for scoring.
+    //
+    //A team is ranked by the closest it ever got to the target, wherever it ended up, with
+    //ties going to whoever got there first. Arriving is getting to 0, so teams that arrived
+    //come first, in the order they arrived. `away` and `seconds` are that closest point and
+    //when it was first reached; `at` and `hops` are where the team finished.
     standings() {
-        //Already computed at the start of the race.
-        const dist = this.distances || this.corpus.distancesTo(this.target);
         const rows = [];
         for(let team = 1; team <= this.numTeams; team++) {
             const state = this.teams[team];
@@ -251,19 +274,20 @@ class WikiRace {
             rows.push({
                 team: team,
                 finished: Boolean(state.finishedAt),
-                seconds: state.finishedAt ? Math.round((state.finishedAt - this.startedAt) / 1000) : 0,
+                seconds: Math.round((state.closestAt - this.startedAt) / 1000),
+                ms: state.closestAt - this.startedAt,
                 hops: state.route.length - 1,
                 at: at,
                 title: this.corpus.title(at),
-                away: state.finishedAt ? 0 : dist[at],
+                away: state.closest,
                 trail: state.trail.slice()
             });
         }
+        //Unreachable (-1) sorts last. Array.sort is stable, so a dead heat stays in team order.
+        const rank = away => away < 0 ? Infinity : away;
         rows.sort(function(a, b) {
-            if(a.finished !== b.finished) return a.finished ? -1 : 1;
-            if(a.finished) return a.seconds - b.seconds;
-            if(a.away !== b.away) return a.away - b.away;
-            return a.hops - b.hops;
+            if(a.away !== b.away) return rank(a.away) - rank(b.away);
+            return a.ms - b.ms;
         });
         return rows;
     }

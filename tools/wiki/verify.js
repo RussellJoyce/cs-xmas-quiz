@@ -73,35 +73,46 @@ console.log('  body opens: ' + sample.h.replace(/<[^>]*>/g, '').slice(0, 180).tr
 //as the puzzle claims. It is what the host compares a team's effort against, so a wrong
 //one is worse than none at all.
 console.log('\nchecking the routes recorded in puzzles.json');
-let routeProblems = 0;
+let routeProblems = 0, routesChecked = 0;
+function checkRoute(puzzle, ids, titles) {
+    routesChecked++;
+    if(ids.length - 1 !== puzzle.hops) {
+        console.log('  ' + puzzle.startTitle + ': route is ' + (ids.length - 1) +
+                    ' hops, puzzle says ' + puzzle.hops);
+        routeProblems++;
+    }
+    if(ids[0] !== puzzle.start || ids[ids.length - 1] !== puzzle.target) {
+        console.log('  ' + puzzle.startTitle + ': route does not run from the start to the target');
+        routeProblems++;
+    }
+    //Every hop must be a link a team could actually have clicked.
+    for(let i = 0; i < ids.length; i++) {
+        const here = article(ids[i]);
+        if(i + 1 < ids.length && !here.l.includes(ids[i + 1])) {
+            console.log('  ' + puzzle.startTitle + ': "' + here.t + '" does not link to "' +
+                        titles[i + 1] + '"');
+            routeProblems++;
+        }
+        if(here.t !== titles[i]) {
+            console.log('  ' + puzzle.startTitle + ': titles and ids disagree at step ' + i);
+            routeProblems++;
+        }
+    }
+}
 for(const puzzle of puzzles) {
     if(!puzzle.route || !puzzle.routeIds) {
         console.log('  ' + puzzle.startTitle + ': no route recorded');
         routeProblems++;
         continue;
     }
-    if(puzzle.routeIds.length - 1 !== puzzle.hops) {
-        console.log('  ' + puzzle.startTitle + ': route is ' + (puzzle.routeIds.length - 1) +
-                    ' hops, puzzle says ' + puzzle.hops);
+    checkRoute(puzzle, puzzle.routeIds, puzzle.route);
+    //The extra routes shown to the host have to be just as real, and all different
+    const more = puzzle.moreRouteIds || [];
+    more.forEach((ids, k) => checkRoute(puzzle, ids, (puzzle.moreRoutes || [])[k] || []));
+    const distinct = new Set([puzzle.routeIds].concat(more).map(r => r.join(',')));
+    if(distinct.size !== more.length + 1) {
+        console.log('  ' + puzzle.startTitle + ': the same route is recorded twice');
         routeProblems++;
-    }
-    if(puzzle.routeIds[0] !== puzzle.start ||
-       puzzle.routeIds[puzzle.routeIds.length - 1] !== puzzle.target) {
-        console.log('  ' + puzzle.startTitle + ': route does not run from the start to the target');
-        routeProblems++;
-    }
-    //Every hop must be a link a team could actually have clicked.
-    for(let i = 0; i + 1 < puzzle.routeIds.length; i++) {
-        const here = article(puzzle.routeIds[i]);
-        if(!here.l.includes(puzzle.routeIds[i + 1])) {
-            console.log('  ' + puzzle.startTitle + ': "' + here.t + '" does not link to "' +
-                        puzzle.route[i + 1] + '"');
-            routeProblems++;
-        }
-        if(here.t !== puzzle.route[i]) {
-            console.log('  ' + puzzle.startTitle + ': titles and ids disagree at step ' + i);
-            routeProblems++;
-        }
     }
     //And no shorter route may exist, or the "ideal" is not ideal.
     const best = shortestPath(puzzle.start, puzzle.target);
@@ -112,7 +123,7 @@ for(const puzzle of puzzles) {
     }
 }
 console.log(routeProblems === 0
-    ? '  all ' + puzzles.length + ' recorded routes are walkable and genuinely shortest'
+    ? '  all ' + routesChecked + ' routes recorded for ' + puzzles.length + ' puzzles are walkable and genuinely shortest'
     : '  ' + routeProblems + ' PROBLEMS');
 
 console.log((failures === 0 && routeProblems === 0)

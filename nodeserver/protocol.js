@@ -168,6 +168,13 @@ class QuizState {
         return null;
     }
 
+    //"wg<articleId>,<hops>,<away>": put a team on an article. `away` is how many links it
+    //still has to go, which the phone shows as the team's main score.
+    placeMessage(team) {
+        const at = this.wikirace.positionOf(team);
+        return 'wg' + at + ',' + this.wikirace.hopsOf(team) + ',' + this.wikirace.awayFrom(at);
+    }
+
     raceMessage() {
         const race = this.wikirace;
         return 'wr' + race.start + ',' + race.target + ',' +
@@ -206,7 +213,7 @@ class QuizState {
         if(this.wikirace && this.wikirace.running && team) {
             safeSend(sock, this.raceMessage());
             const at = this.wikirace.positionOf(team);
-            if(at >= 0) safeSend(sock, 'wg' + at + ',' + this.wikirace.hopsOf(team));
+            if(at >= 0) safeSend(sock, this.placeMessage(team));
             if(this.wikirace.hasFinished(team)) safeSend(sock, 'wf');
         }
     }
@@ -333,7 +340,7 @@ class QuizState {
                                      ' to ' + this.wikiCorpus.title(target));
                             this.transport.toClients(this.raceMessage());
                             //"wr" sets up the race; "wg" puts a team on an article
-                            this.transport.toClients('wg' + start + ',0');
+                            this.transport.toClients('wg' + start + ',0,' + this.wikirace.awayFrom(start));
                         }
                         break;
                     }
@@ -348,7 +355,7 @@ class QuizState {
                             log.info('quiz', 'T' + team, 'wk', 'resent the race and their article');
                             safeSend(c.sock, this.raceMessage());
                             const at = this.wikirace.positionOf(String(team));
-                            if(at >= 0) safeSend(c.sock, 'wg' + at + ',' + this.wikirace.hopsOf(String(team)));
+                            if(at >= 0) safeSend(c.sock, this.placeMessage(String(team)));
                             if(this.wikirace.hasFinished(String(team))) safeSend(c.sock, 'wf');
                         } else {
                             log.debug('quiz', 'T' + team, 'wk', 'dropped, team not connected');
@@ -538,7 +545,7 @@ class QuizState {
 
                             const title = this.wikiCorpus.title(result.to);
                             log.info(who, 'srv', code, (code === 'wb' ? 'back to ' : 'to ') + title + ' (' + result.hops + ' hops)');
-                            safeSend(sock, 'wg' + result.to + ',' + result.hops);
+                            safeSend(sock, 'wg' + result.to + ',' + result.hops + ',' + result.away);
                             this.transport.toServers('wp' + team + ',' + result.hops + ',' + result.away + ',' + title);
 
                             if(result.arrived) {

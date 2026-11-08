@@ -76,6 +76,12 @@ class WikiRaceScene: QuizScene {
 		let targetTitle: String
 		let hops: Int
 		let route: [String]
+		/// A few more of the equally short routes, and how many there are altogether.
+		/// Absent from puzzle files made before stage5 recorded them.
+		var moreRoutes = [[String]]()
+		var routeCount = 0.0
+		/// Whatever the quizmaster wrote when picking it with tools/wiki/explore.js
+		var note = ""
 		var menuTitle: String {
 			return "\(startTitle)  →  \(targetTitle)   (\(hops) hops)"
 		}
@@ -85,9 +91,9 @@ class WikiRaceScene: QuizScene {
 		let team: Int
 		let rank: Int
 		let finished: Bool
-		let seconds: Int
-		let hops: Int
-		let away: Int //Links still to go. Zero for a team that arrived.
+		let seconds: Int //When the team first got as close as `away`; its finishing time if it arrived
+		let hops: Int //Where the team ended up
+		let away: Int //The closest the team ever got. Zero for a team that arrived.
 	}
 	
 	var raceTrails = [Int: [String]]()
@@ -114,7 +120,9 @@ class WikiRaceScene: QuizScene {
 				  let startTitle = row["startTitle"] as? String,
 				  let targetTitle = row["targetTitle"] as? String else { continue }
 			let route = row["route"] as? [String] ?? []
-			puzzles.append(WikiRacePuzzle(start: start, target: target, startTitle: startTitle, targetTitle: targetTitle, hops: row["hops"] as? Int ?? 0, route: route))
+			puzzles.append(WikiRacePuzzle(start: start, target: target, startTitle: startTitle, targetTitle: targetTitle, hops: row["hops"] as? Int ?? 0, route: route,
+										  moreRoutes: row["moreRoutes"] as? [[String]] ?? [], routeCount: row["routeCount"] as? Double ?? 0,
+										  note: row["note"] as? String ?? ""))
 		}
 	}
 	
@@ -135,9 +143,9 @@ class WikiRaceScene: QuizScene {
 		if let standing = raceStandings.first(where: { $0.team == team }) {
 			lines.append("")
 			if standing.finished {
-				lines.append("Arrived in \(standing.seconds)s, placed \(standing.rank).")
+				lines.append("Arrived in \(timeString(standing.seconds)), placed \(standing.rank).")
 			} else {
-				lines.append("Did not arrive: \(standing.away) link\(standing.away == 1 ? "" : "s") short, placed \(standing.rank).")
+				lines.append("Did not arrive. Closest: \(standing.away) link\(standing.away == 1 ? "" : "s") away, first reached at \(timeString(standing.seconds)). Placed \(standing.rank).")
 			}
 		}
 		return lines.joined(separator: "\n")
@@ -167,6 +175,12 @@ class WikiRaceScene: QuizScene {
 			raceTrails[team] = [start]
 		}
 		
+		showRace(start: start, target: target)
+	}
+
+	/// Puts the start and target up on the display without starting anything, so the host
+	/// can introduce the race before the phones get it.
+	func showRace(start: String, target: String) {
 		startTitle = start
 		targetTitle = target
 		titleLabel.text = "From \(start) to..."
@@ -395,7 +409,12 @@ class WikiRaceScene: QuizScene {
 		box.singleLabel.text = ""
 
 		var detail = "\(state.hops) hop\(state.hops == 1 ? "" : "s")"
-		if showDistance && state.away >= 0 {
+		if let standing = raceStandings.first(where: { $0.team == team }), standing.away >= 0 {
+			//Once the race is over a team is scored on the closest it got, so that is what is shown
+			if showDistance {
+				detail += "   •   got to \(standing.away) away at \(timeString(standing.seconds))"
+			}
+		} else if showDistance && state.away >= 0 {
 			detail += "   •   \(state.away) away"
 		}
 		if let place = state.nearMiss, let name = WikiRaceScene.nearMissNames[place] {
@@ -473,6 +492,7 @@ class WikiRacePanel: NSObject, RoundPanel {
 	@IBOutlet weak var pathView: NSScrollView!
 	@IBOutlet var pathViewText: NSTextView!
 	@IBOutlet weak var showDistances: NSButton!
+	@IBOutlet weak var showButton: NSButton!
 	@IBOutlet weak var startButton: NSButton!
 	@IBOutlet weak var endButton: NSButton!
 	@IBOutlet weak var revealButton: NSButton!
@@ -491,7 +511,8 @@ class WikiRacePanel: NSObject, RoundPanel {
 		scene.puzzles.forEach { questionSelector.addItem(withTitle: $0.menuTitle) }
 		questionSelector.selectItem(at: 0)
 		questionSelectorChanged(questionSelector!)
-		startButton.isEnabled = true
+		startButton.isEnabled = !scene.puzzles.isEmpty
+		showButton.isEnabled = !scene.puzzles.isEmpty
 
 		teamSelector.removeAllItems()
 		for i in 0...Settings.maxTeams {
@@ -512,9 +533,18 @@ class WikiRacePanel: NSObject, RoundPanel {
 		endButton.isEnabled = false
 		revealButton.isEnabled = false
 		startButton.isEnabled = !scene.puzzles.isEmpty
+		showButton.isEnabled = !scene.puzzles.isEmpty
 		if presenting {
 			questionSelector.selectItem(at: 0)
 		}
+	}
+
+	/// Only the display changes: the phones and the server know nothing until Start Race.
+	@IBAction func show(_ sender: Any) {
+		let index = questionSelector.indexOfSelectedItem
+		guard (index >= 0 && index < scene.puzzles.count) else { return }
+		let p = scene.puzzles[index]
+		scene.showRace(start: p.startTitle, target: p.targetTitle)
 	}
 
 	@IBAction func start(_ sender: Any) {
@@ -530,12 +560,17 @@ class WikiRacePanel: NSObject, RoundPanel {
 		refreshPath()
 		endButton.isEnabled = true
 		revealButton.isEnabled = false
+		//Either would wipe the boxes on the display while the server carries on with the race
+		startButton.isEnabled = false
+		showButton.isEnabled = false
 	}
 
 	@IBAction func end(_ sender: Any) {
 		//The server freezes every client, works out the standings and sends them back as "wd" rows, and a "wt" trail per team
 		host.send(.endRace)
 		clockTimer?.invalidate()
+		startButton.isEnabled = !scene.puzzles.isEmpty
+		showButton.isEnabled = !scene.puzzles.isEmpty
 	}
 
 	func standingsArrived() {
@@ -558,7 +593,24 @@ class WikiRacePanel: NSObject, RoundPanel {
 	@IBAction func questionSelectorChanged(_ sender: Any) {
 		let index = questionSelector.indexOfSelectedItem
 		guard (index >= 0 && index < scene.puzzles.count) else { return }
-		bestRouteText.string = scene.puzzles[index].route.joined(separator: "\n")
+		bestRouteText.string = WikiRacePanel.describeRoutes(scene.puzzles[index])
+	}
+
+	/// The note, if any, then every shortest route the puzzle file records, one paragraph each
+	static func describeRoutes(_ p: WikiRaceScene.WikiRacePuzzle) -> String {
+		var lines = [String]()
+		if !p.note.isEmpty {
+			lines += [p.note, ""]
+		}
+		let routes = [p.route] + p.moreRoutes
+		if p.routeCount > Double(routes.count) {
+			let total = p.routeCount < 1e6 ? String(Int(p.routeCount)) : String(format: "%.1f million", p.routeCount / 1e6)
+			lines += ["\(total) shortest routes of \(p.hops) hops. \(routes.count) of them:", ""]
+		} else if routes.count > 1 {
+			lines += ["All \(routes.count) shortest routes of \(p.hops) hops:", ""]
+		}
+		lines.append(routes.map { $0.joined(separator: " → ") }.joined(separator: "\n\n"))
+		return lines.joined(separator: "\n")
 	}
 
 	/// The clock is not tracked by the round, because it is purely decorative for the quizmaster who ends the race manually

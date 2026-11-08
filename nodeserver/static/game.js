@@ -86,8 +86,12 @@ function connect() {
                 applyView(event.data.slice(2));
                 break;
             case "vs":
-                //Put us on a view only if we are not already there
-                if(event.data.slice(2) == lastview) {
+                //Put us on a view only if we are not already there. This page is never
+                //really on the wikirace, which lives on a page of its own: lastview says
+                //"wikirace" only because it was set just before leaving, and a copy of this
+                //page brought back by the phone's back gesture still has it. Ignoring the
+                //resync then would strand the team on the buzzer for the rest of the race.
+                if(event.data.slice(2) == lastview && lastview != "wikirace") {
                     console.log("Already on view " + lastview + ", ignoring the resync");
                 } else {
                     console.log("Resync moves us from " + lastview + " to " + event.data.slice(2));
@@ -772,6 +776,17 @@ document.addEventListener('touchend', function (event) {
 //Keep the connection alive, and notice when it has died
 //client -> "pi" -> server. server -> "pb" -> client
 QuizConnection.keepAlive(function() { return ws; }, connectionLost);
+
+//A page brought back from the back-forward cache (the back gesture, mostly) resumes with
+//whatever socket it had, which is long dead. The keepalive would notice within seconds, but
+//until then the team is looking at a buzzer in the middle of some other round, so start
+//again now: the server's resync then puts the page wherever the round really is.
+window.addEventListener("pageshow", function(event) {
+    if(!event.persisted || !ws) return;   //no socket means a reconnect is already on its way
+    ws.onopen = ws.onmessage = ws.onclose = ws.onerror = null;
+    try { ws.close(); } catch(err) {}
+    connect();
+});
 
 
 connect();

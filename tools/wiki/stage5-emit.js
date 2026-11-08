@@ -6,12 +6,13 @@
 //   a/<id/1000>/<id>.json   one article: {t: title, h: html, l: [id, ...]}
 //   index.json              id -> title, for the host's puzzle picker and the big display
 //   graph.bin               CSR adjacency, for the server's move validation
-//   puzzles.json            candidate start/target pairs with their shortest-path length
+//   puzzles.json            the hand-picked races in puzzles.curated.json, with their shortest routes
 
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { fork } = require('child_process');
+const { routeCounts, sampleRoutes } = require('./lib/explore');
 
 const BUILD = path.join(__dirname, 'corpus', 'build');
 const OUT = path.join(__dirname, '..', '..', 'nodeserver', 'static', 'wiki');
@@ -20,6 +21,11 @@ const KEEP_INFOBOXES = process.env.QUIZ_INFOBOXES === '1';
 //Articles are cut to this many words, at a paragraph boundary. 0 ships them whole.
 const MAX_WORDS = parseInt(process.env.QUIZ_MAX_WORDS || '1000', 10);
 const SHARD = 1000;
+//The races, hand-picked with explore.js. By title, so they survive a rebuild that renumbers
+//the articles. They are the only puzzles: nothing is generated.
+const CURATED = path.join(__dirname, 'puzzles.curated.json');
+//How many shortest routes to record besides the first, for the host to compare against
+const MORE_ROUTES = 4;
 
 function loadCorpus() {
     return JSON.parse(fs.readFileSync(path.join(BUILD, 'corpus.json'), 'utf8'));
@@ -167,10 +173,8 @@ function finish(started, totals, corpus) {
 
     //---- Puzzles ----------------------------------------------------------------------
 
-    console.log('\nlooking for playable start/target pairs');
-    const puzzles = findPuzzles(graph, corpus);
-    fs.writeFileSync(path.join(OUT, 'puzzles.json'), JSON.stringify(puzzles, null, 1));
-    console.log('  wrote ' + puzzles.length + ' candidates to puzzles.json');
+    console.log('\nworking out the routes for the curated puzzles');
+    writePuzzles(graph, corpus);
 
     const total = fs.readdirSync(path.join(OUT, 'a')).length;
     console.log('\ncorpus ready: ' + OUT + ' (' + total + ' shards)');
@@ -231,78 +235,94 @@ function shortestRoute(graph, dist, from) {
     return route;
 }
 
-//Proposes pairs. this needs expanding but works at the moment
-function findPuzzles(graph, corpus) {
-    const FAMOUS = 2000;    //the top slice of the corpus by in-degree
-    const HOPS = [3, 4, 5];
-    const TARGETS = 60;
-    const PER_BUCKET = 1;   //per target, per hop count
-
-    const out = [];
-    for(let t = 0; t < TARGETS; t++) {
-        //Spread through the famous slice rather than taking the top 60, which would be
-        //all countries and wars.
-        const target = 20 + Math.floor(t * (FAMOUS - 20) / TARGETS);
-        const dist = distancesTo(graph, target);
-
-        const buckets = new Map(HOPS.map(h => [h, []]));
-        for(let s = 0; s < FAMOUS; s++) {
-            if(s === target) continue;
-            const bucket = buckets.get(dist[s]);
-            if(bucket) bucket.push(s);
-        }
-
-        for(const hops of HOPS) {
-            const candidates = buckets.get(hops);
-            for(let k = 0; k < PER_BUCKET && candidates.length > 0; k++) {
-                const start = candidates[Math.floor(candidates.length * (k + 1) / (PER_BUCKET + 1))];
-
-                //The ideal line, worked out here rather than at run time. It only depends
-                //on the corpus and the two endpoints, so it belongs in the file with them:
-                //nothing about a race in progress can change it.
-                const route = shortestRoute(graph, dist, start);
-                if(!route) continue;                 //the corpus should make this impossible
-                if(route.length - 1 !== hops) {
-                    throw new Error('route for ' + corpus.titles[start] + ' -> ' +
-                                    corpus.titles[target] + ' is ' + (route.length - 1) +
-                                    ' hops but the distance says ' + hops);
-                }
-
-                out.push({
-                    start: start,
-                    target: target,
-                    startTitle: corpus.titles[start],
-                    targetTitle: corpus.titles[target],
-                    hops: hops,
-                    //Titles, so the file is readable on its own and whatever loads it does
-                    //not need the index to make sense of a route.
-                    route: route.map(id => corpus.titles[id]),
-                    routeIds: route
-                });
-            }
-        }
+//One puzzle, with its ideal line worked out here rather than at run time. That line only
+//depends on the corpus and the two endpoints, so it belongs in the file with them: nothing
+//about a race in progress can change it.
+function puzzle(graph, corpus, dist, start, target) {
+    const route = shortestRoute(graph, dist, start);
+    if(!route) return null;                 //the corpus should make this impossible
+    if(route.length - 1 !== dist[start]) {
+        throw new Error('route for ' + corpus.titles[start] + ' -> ' + corpus.titles[target] + ' is ' +
+                        (route.length - 1) + ' hops but the distance says ' + dist[start]);
     }
 
-    out.sort((a, b) => a.hops - b.hops || a.startTitle.localeCompare(b.startTitle));
+    //A few more of the equally short routes, so the host can see the different ways it can
+    //be done. Seeded by the pair, so rebuilding gives the same ones whatever order puzzles
+    //are made in.
+    const shaped = { size: graph.n, offsets: graph.offsets, targets: graph.targets };
+    const ways = routeCounts(shaped, dist);
+    const first = route.join(',');
+    const more = sampleRoutes(shaped, dist, ways, start, MORE_ROUTES + 1, seeded(start * 100003 + target))
+        .filter(r => r.join(',') !== first)
+        .slice(0, MORE_ROUTES);
+
+    return {
+        start: start,
+        target: target,
+        startTitle: corpus.titles[start],
+        targetTitle: corpus.titles[target],
+        hops: dist[start],
+        //Titles, so the file is readable on its own and whatever loads it does
+        //not need the index to make sense of a route.
+        route: route.map(id => corpus.titles[id]),
+        routeIds: route,
+        routeCount: ways[start],
+        moreRoutes: more.map(r => r.map(id => corpus.titles[id])),
+        moreRouteIds: more
+    };
+}
+
+//A small seeded generator (mulberry32), so the routes sampled for a puzzle are repeatable
+function seeded(seed) {
+    let a = seed >>> 0;
+    return function() {
+        a = (a + 0x6D2B79F5) >>> 0;
+        let t = a;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+//The hand-picked puzzles in puzzles.curated.json, in the order they were added. One whose
+//title is not in this corpus is reported and left out, rather than stopping the build.
+function curatedPuzzles(graph, corpus) {
+    if(!fs.existsSync(CURATED)) return [];
+    const ids = new Map(corpus.titles.map((t, id) => [t, id]));
+    const out = [];
+    for(const entry of JSON.parse(fs.readFileSync(CURATED, 'utf8'))) {
+        const start = ids.get(entry.start), target = ids.get(entry.target);
+        if(start === undefined || target === undefined) {
+            console.log('  curated ' + entry.start + ' -> ' + entry.target + ' left out: ' +
+                        (start === undefined ? entry.start : entry.target) + ' is not in this corpus');
+            continue;
+        }
+        const p = puzzle(graph, corpus, distancesTo(graph, target), start, target);
+        if(!p) { console.log('  curated ' + entry.start + ' -> ' + entry.target + ' left out: no route'); continue; }
+        if(entry.note) p.note = entry.note;
+        out.push(p);
+    }
     return out;
 }
 
-function puzzlesOnly() {
-    const corpus = loadCorpus();
-    const graph = loadGraph();
-    console.log('rebuilding puzzles from the existing corpus');
-    const puzzles = findPuzzles(graph, corpus);
+//Writes puzzles.json from puzzles.curated.json, and lists what went in
+function writePuzzles(graph, corpus) {
+    const puzzles = curatedPuzzles(graph, corpus);
     fs.writeFileSync(path.join(OUT, 'puzzles.json'), JSON.stringify(puzzles, null, 1));
-
-    const byHops = {};
-    puzzles.forEach(p => { byHops[p.hops] = (byHops[p.hops] || 0) + 1; });
-    console.log('  ' + puzzles.length + ' candidates: ' +
-                Object.entries(byHops).map(([h, n]) => n + ' at ' + h + ' hops').join(', '));
-    console.log('\na sample, with the ideal line each one is scored against:');
-    for(const hops of [3, 4, 5]) {
-        puzzles.filter(p => p.hops === hops).slice(0, 3).forEach(p =>
-            console.log('  ' + hops + ' hops   ' + p.route.join('  →  ')));
+    if(puzzles.length === 0) {
+        console.log('  no puzzles: add some with explore.js. The round cannot be played until you do.');
+        return;
     }
+    console.log('  wrote ' + puzzles.length + ' puzzle' + (puzzles.length === 1 ? '' : 's') + ' to puzzles.json:');
+    for(const p of puzzles) {
+        console.log('  ' + p.hops + ' hops, ' + p.routeCount + ' route' + (p.routeCount === 1 ? '' : 's') +
+                    '   ' + p.route.join('  →  '));
+    }
+}
+
+function puzzlesOnly() {
+    console.log('rebuilding puzzles.json from ' + path.basename(CURATED));
+    writePuzzles(loadGraph(), loadCorpus());
 }
 
 if(process.argv[2] === 'worker') {

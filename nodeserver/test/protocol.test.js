@@ -1065,9 +1065,9 @@ describe('wikirace', () => {
             //whichever landed last would win.
             const { state, transport } = setupRace(2);
             state.handleServerMessage('wr0,2');
-            assert.ok(transport.clients.includes('wg0,0'));
+            assert.ok(transport.clients.includes('wg0,0,2'));
             assert.ok(transport.clients.indexOf('wr0,2,Start|Washington, D.C.') <
-                      transport.clients.indexOf('wg0,0'), 'the race must be set up before the article');
+                      transport.clients.indexOf('wg0,0,2'), 'the race must be set up before the article');
         });
 
         test('an article outside the corpus does not start a race', () => {
@@ -1100,7 +1100,7 @@ describe('wikirace', () => {
             socks.forEach(s => s.drain());
 
             state.handleClientMessage(key(1), socks[0], 'wl1,1');
-            assert.deepStrictEqual(socks[0].drain(), ['wg1,1']);
+            assert.deepStrictEqual(socks[0].drain(), ['wg1,1,1']);
             assert.strictEqual(state.wikirace.positionOf('1'), 1);
         });
 
@@ -1165,7 +1165,7 @@ describe('wikirace', () => {
             socks[0].drain();
 
             state.handleClientMessage(key(1), socks[0], 'wl1,2');
-            assert.deepStrictEqual(socks[0].drain(), ['wg2,2', 'wf']);
+            assert.deepStrictEqual(socks[0].drain(), ['wg2,2,0', 'wf']);
             assert.ok(transport.servers.some(m => m.startsWith('ww1,2,')));
         });
 
@@ -1190,7 +1190,7 @@ describe('wikirace', () => {
 
             state.handleClientMessage(key(1), socks[0], 'wb1');
             //Back is free, so the hop count goes back down with it.
-            assert.deepStrictEqual(socks[0].drain(), ['wg0,0']);
+            assert.deepStrictEqual(socks[0].drain(), ['wg0,0,2']);
             assert.strictEqual(state.wikirace.positionOf('1'), 0);
         });
 
@@ -1228,6 +1228,20 @@ describe('wikirace', () => {
             //"wd<team>,<rank>,<finished>,<seconds>,<hops>,<away>"
             assert.match(standings[0], /^wd2,1,1,/);
             assert.match(standings[1], /^wd1,2,0,/);
+        });
+
+        test('a standing carries the closest a team got, not where it ended up', () => {
+            const { state, transport, socks, key } = setupRace(2);
+            state.handleServerMessage('wr0,2');
+            state.handleClientMessage(key(1), socks[0], 'wl1,1');   //Middle, one away
+            state.handleClientMessage(key(1), socks[0], 'wb1');     //back to Start, two away
+            state.handleClientMessage(key(2), socks[1], 'wl2,3');   //Detour, two away
+            state.handleServerMessage('we');
+
+            const standings = transport.servers.filter(m => m.startsWith('wd'));
+            //Team 1 is placed first, one away, though it finished at the start with no hops
+            assert.match(standings[0], /^wd1,1,0,\d+,0,1$/);
+            assert.match(standings[1], /^wd2,2,0,\d+,1,2$/);
         });
 
         test('reports each team trail for the reveal, pipe separated', () => {
@@ -1270,7 +1284,7 @@ describe('wikirace', () => {
             state.handleServerMessage('wk1');
             const sent = socks[0].drain();
             assert.ok(sent.includes('wr0,2,Start|Washington, D.C.'), sent.join(' | '));
-            assert.ok(sent.includes('wg1,1'), sent.join(' | '));
+            assert.ok(sent.includes('wg1,1,1'), sent.join(' | '));
             //and nobody else is disturbed
             assert.deepStrictEqual(socks[1].drain(), []);
         });
@@ -1306,7 +1320,7 @@ describe('wikirace', () => {
 
             const sent = replacement.drain();
             assert.ok(sent.includes('wr0,2,Start|Washington, D.C.'), 'told about the race: ' + sent);
-            assert.ok(sent.includes('wg1,1'), 'put back on its own article with its hops: ' + sent);
+            assert.ok(sent.includes('wg1,1,1'), 'put back on its own article with its hops: ' + sent);
         });
 
         test('is told it has already arrived, so it cannot race again', () => {

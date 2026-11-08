@@ -167,6 +167,7 @@
                 <outlet property="pathViewText" destination="oQn-Zl-Zcb" id="W4L-XQ-NO4"/>
                 <outlet property="questionSelector" destination="BuW-xu-Lje" id="WJm-uO-pLV"/>
                 <outlet property="revealButton" destination="j3q-5u-6Gc" id="FeW-hw-XLW"/>
+                <outlet property="showButton" destination="WSh-bt-n01" id="WSh-ou-t01"/>
                 <outlet property="showDistances" destination="UNX-9x-JQa" id="WPn-az-Grc"/>
                 <outlet property="startButton" destination="GTB-ij-9cw" id="APl-C8-1Y4"/>
                 <outlet property="teamSelector" destination="dSz-Yv-4qW" id="Sxv-qQ-vkc"/>
@@ -2471,8 +2472,19 @@ Answers</string>
                                     <rect key="frame" x="10" y="7" width="896" height="284"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
+                                        <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WSh-bt-n01">
+                                            <rect key="frame" x="14" y="192" width="100" height="24"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="push" title="Show Route" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WSh-ce-l01">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="show:" target="Wkp-nl-obj" id="WSh-ac-t01"/>
+                                            </connections>
+                                        </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GTB-ij-9cw">
-                                            <rect key="frame" x="14" y="192" width="88" height="24"/>
+                                            <rect key="frame" x="120" y="192" width="88" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Start Race" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="HjH-Gr-qwx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2494,7 +2506,7 @@ Answers</string>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ptw-ex-t7f">
-                                            <rect key="frame" x="114" y="192" width="81" height="24"/>
+                                            <rect key="frame" x="220" y="192" width="81" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="End Race" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AH7-LP-gw9">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2505,7 +2517,7 @@ Answers</string>
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j3q-5u-6Gc">
-                                            <rect key="frame" x="207" y="192" width="128" height="24"/>
+                                            <rect key="frame" x="313" y="192" width="128" height="24"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="push" title="Reveal Standings" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vog-aw-tXb">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -2516,7 +2528,7 @@ Answers</string>
                                             </buttonCell>
                                         </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hbd-V7-M4z">
-                                            <rect key="frame" x="423" y="191" width="63" height="26"/>
+                                            <rect key="frame" x="462" y="191" width="63" height="26"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" lineBreakMode="clipping" title="00:00" id="MKX-2F-zk9">
                                                 <font key="font" textStyle="title1" name=".SFNS-Regular"/>
@@ -2569,9 +2581,9 @@ Answers</string>
                                             </connections>
                                         </popUpButton>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wYD-so-DJb">
-                                            <rect key="frame" x="12" y="123" width="71" height="16"/>
+                                            <rect key="frame" x="12" y="123" width="160" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Best route:" id="nLq-Eo-xlG">
+                                            <textFieldCell key="cell" lineBreakMode="clipping" title="Shortest routes:" id="nLq-Eo-xlG">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

@@ -224,7 +224,7 @@ class Phone {
         this.waveValue = this.frame.locator('#wavevalue');
         this.article = this.frame.locator('#article');
         this.articleTitle = this.frame.locator('#title');
-        this.hops = this.frame.locator('#hops');
+        this.away = this.frame.locator('#away');
         this.back = this.frame.locator('#back');
     }
 

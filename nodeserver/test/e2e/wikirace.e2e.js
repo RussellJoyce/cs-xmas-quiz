@@ -18,12 +18,39 @@ async function follow(phone, title) {
 
 quizScenarios('wikirace', { teams: 3 }, scenario => {
 
-    scenario('every phone goes to the race page and starts on the same article', async quiz => {
+    scenario('the host sees the note and the shortest routes of the chosen puzzle', async quiz => {
         await quiz.round('wikirace');
+        const routes = async () => (await quiz.host.read('wikiRacePanel.bestRouteText')).value;
+        const arrow = '  →  ';
+        assert.strictEqual(await routes(), 'A note for the host\n\n' + [START, MIDDLE, FINISH].join(' → '));
+        assert.strictEqual((await quiz.host.read('wikiRacePanel.questionSelector')).title,
+                           START + arrow + FINISH + '   (2 hops)');
+
+        await quiz.host.set('wikiRacePanel.questionSelector', DETOUR + arrow + FINISH + '   (2 hops)');
+        assert.strictEqual(await routes(), '2.5 million shortest routes of 2 hops. 3 of them:\n\n' +
+                           [DETOUR, MIDDLE, FINISH].join(' → ') + '\n\nX → Y → Z\n\nP → Q → R');
+        await quiz.host.set('wikiRacePanel.questionSelector', START + arrow + FINISH + '   (2 hops)');
+    });
+
+    scenario('Show Route puts the race on the display and tells nobody else', async quiz => {
+        const mark = quiz.wire.length;
+        await quiz.host.click('wikiRacePanel.showButton');
+        assert.strictEqual(await quiz.host.read('quizDisplay.wikiRaceScene.startTitle'), START);
+        assert.strictEqual(await quiz.host.read('quizDisplay.wikiRaceScene.targetTitle'), FINISH);
+        await quiz.host.settled();
+        assert.ok(!quiz.wire.some((w, i) => i >= mark && w.dir === 'host→srv' && w.msg.startsWith('wr')), 'the race was started');
+    });
+
+    scenario('every phone goes to the race page and starts on the same article', async quiz => {
         await quiz.host.setToggle('wikiRacePanel.showDistances', false);
         await quiz.host.click('wikiRacePanel.startButton');
         for(const n of [1, 2, 3]) await onArticle(quiz.phones[n], START);
+        //How far there is still to go is what the team sees, not the hops or the time
+        assert.strictEqual(await quiz.phones[1].away.textContent(), '2');
+        assert.strictEqual(await quiz.phones[1].frame.locator('#awayLabel').textContent(), 'hops away');
         assert.ok(!(await quiz.host.read('wikiRacePanel.revealButton')).enabled, 'nothing to reveal yet');
+        assert.ok(!(await quiz.host.read('wikiRacePanel.startButton')).enabled, 'a race can be started over the top of this one');
+        assert.ok(!(await quiz.host.read('wikiRacePanel.showButton')).enabled, 'the display can be wiped mid-race');
     });
 
     scenario('a move is reported to the host, comma in the title and all', async quiz => {
@@ -46,14 +73,14 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
 
     scenario('reload: a team lands back on its article with its route intact', async quiz => {
         const two = quiz.phones[2];
-        const hops = await two.hops.textContent();
+        assert.strictEqual(await two.away.textContent(), '2');
 
         const mark = quiz.wire.length;
         await quiz.reloadPhone(2);
         await quiz.phoneReconnected(2, mark);
         await until('the race page again', async () => (await two.article.count()) === 1);
         await onArticle(two, DETOUR);
-        assert.strictEqual(await two.hops.textContent(), hops);
+        assert.strictEqual(await two.away.textContent(), '2');
 
         await follow(two, MIDDLE);
     });
@@ -76,6 +103,8 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
             quiz.wire.some(w => w.msg.startsWith('wd3,3,0,')));
         await until('the trail', () => quiz.wire.has('srv→servers', 'wt1,' + [START, MIDDLE, FINISH].join('|')));
         await quiz.host.settled();
+        assert.ok((await quiz.host.read('wikiRacePanel.startButton')).enabled, 'no next race');
+        assert.ok((await quiz.host.read('wikiRacePanel.showButton')).enabled, 'no next route to show');
 
         assert.strictEqual((await quiz.host.read('quizDisplay.wikiRaceScene.raceStandings')).length, 3);
     });
@@ -118,5 +147,26 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
             await until('phone ' + n + ' to hold its team', async () =>
                 (await quiz.phones[n].buzzer.textContent()) === 'TEAM ' + n);
         }
+    });
+
+    scenario('the back gesture onto an old buzzer page during a race goes straight back to it', async quiz => {
+        //What the phone's back gesture can land on: a buzzer page out of the back-forward
+        //cache, frozen just as it left for the race. Its lastview still says "wikirace" and
+        //its socket is long dead. The browser cannot be made to do this on demand, so phone
+        //3's buzzer is put in exactly that state by hand.
+        const three = quiz.phones[3];
+        await three.buzzer.evaluate(() => {
+            lastview = 'wikirace';
+            ws.onopen = ws.onmessage = ws.onclose = ws.onerror = null;
+            ws.close();
+        });
+        await quiz.round('wikirace', [1, 2]);
+        await quiz.host.click('wikiRacePanel.startButton');
+        await onArticle(quiz.phones[1], START);
+
+        //And then the browser brings it back
+        await three.buzzer.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+        await onArticle(three, START);
+        await quiz.host.click('wikiRacePanel.endButton');
     });
 });

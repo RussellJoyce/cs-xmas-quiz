@@ -17,8 +17,8 @@ var articleEl = document.getElementById("article");
 var titleEl = document.getElementById("title");
 var pageEl = document.getElementById("page");
 var targetEl = document.getElementById("target");
-var hopsEl = document.getElementById("hops");
-var clockEl = document.getElementById("clock");
+var awayEl = document.getElementById("away");
+var awayLabelEl = document.getElementById("awayLabel");
 var hereEl = document.getElementById("here");
 var backEl = document.getElementById("back");
 var curtainEl = document.getElementById("curtain");
@@ -37,9 +37,8 @@ var shard = 1000;
 var racing = false;      //a race is running and we may still move
 var targetId = -1;
 var currentId = -1;
-var hops = 0;
+var hops = 0;            //not shown during the race, but Back needs it and the finish reports it
 var startedAt = 0;
-var clockTimer = null;
 
 //Articles already fetched. A team goes back and forth over the same few pages constantly,
 //and re-fetching makes the round feel sluggish for no reason.
@@ -97,12 +96,14 @@ function connect() {
                 break;   //pong
 
             case "wg": {
-                //Authorised. This is the only thing that ever changes what is on screen,
-                //and the hop count comes with it: the client never counts its own taps,
-                //so a refused move and a mid-race reconnect both stay honest.
+                //"wg<article>,<hops>,<away>". Authorised. This is the only thing that ever
+                //changes what is on screen, and the hop count and distance come with it: the
+                //client never counts its own taps, so a refused move and a mid-race
+                //reconnect both stay honest.
                 awaiting = false;
                 var parts = data.slice(2).split(",");
                 setHops(parseInt(parts[1], 10));
+                setAway(parseInt(parts[2], 10));
                 showArticle(parseInt(parts[0], 10));
                 break;
             }
@@ -174,16 +175,19 @@ function startRace(payload) {
     racing = true;
     awaiting = false;
 
-    if(!clockTimer) {
-        startedAt = Date.now();
-        clockTimer = setInterval(tickClock, 1000);
-        tickClock();
-    }
+    //Not on a resync after a dropped connection, which carries on the race already timed
+    if(!startedAt) startedAt = Date.now();
 }
 
 function setHops(n) {
     hops = (n >= 0) ? n : 0;
-    hopsEl.textContent = hops;
+}
+
+//Links still to go. Unknown (an old server, or an article the target cannot be reached
+//from, which the corpus should rule out) shows as a question mark rather than a lie.
+function setAway(n) {
+    awayEl.textContent = (n >= 0) ? n : "?";
+    awayLabelEl.textContent = (n === 1) ? "hop away" : "hops away";
 }
 
 function waiting() {
@@ -191,27 +195,25 @@ function waiting() {
     curtain("⏳", "Ready", "Waiting for the race to start.");
 }
 
-function tickClock() {
+//How long since this page saw the race start. Only for the team's own celebration: the
+//server keeps the time that is scored.
+function elapsed() {
     var secs = Math.floor((Date.now() - startedAt) / 1000);
-    clockEl.textContent = Math.floor(secs / 60) + ":" + (secs % 60 < 10 ? "0" : "") + (secs % 60);
-}
-
-function stopClock() {
-    if(clockTimer) { clearInterval(clockTimer); clockTimer = null; }
+    return Math.floor(secs / 60) + ":" + (secs % 60 < 10 ? "0" : "") + (secs % 60);
 }
 
 function arrived() {
     racing = false;
-    stopClock();
     curtainEl.classList.add("won");
     curtain("🎉", "You made it!", "In " + hops + " hop" + (hops === 1 ? "" : "s") +
-                                  " and " + clockEl.textContent + ".");
+                                  " and " + elapsed() + ".");
+    startedAt = 0;   //so the next race times itself from its own start
 }
 
 function timeUp() {
     if(!racing) return;   //already arrived; leave the celebration up
     racing = false;
-    stopClock();
+    startedAt = 0;
     curtain("⏱", "Time!", "You got as far as " + (titleEl.textContent || "the start") + ".");
 }
 

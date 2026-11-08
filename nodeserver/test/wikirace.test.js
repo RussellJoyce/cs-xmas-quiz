@@ -220,6 +220,80 @@ describe('a race', () => {
             assert.strictEqual(unfinished[1].away, 2);
         });
 
+        describe('are scored on the closest a team ever got', () => {
+            //A clock the test moves by hand, so that "first" is not left to chance
+            let clock;
+            beforeEach(() => {
+                clock = 1000;
+                race = new WikiRace(corpus, 3);
+                race.now = () => clock;
+                race.begin(0, 2);
+            });
+
+            test('not where it ended up', () => {
+                race.move(1, 1);      //Middle, one away...
+                clock += 5000;
+                race.back(1);         //...then back to Start, two away
+                race.move(2, 3);      //Detour, two away, and stays there
+                const rows = race.standings();
+                assert.strictEqual(rows[0].team, 1);
+                assert.strictEqual(rows[0].away, 1);
+                assert.strictEqual(rows[0].at, 0, 'but it is reported as ending up at the start');
+            });
+
+            test('with a tie going to whoever got there first', () => {
+                clock += 3000;
+                race.move(2, 1);      //team 2 at Middle after 3s
+                clock += 4000;
+                race.move(1, 1);      //team 1 at Middle after 7s
+                const rows = race.standings();
+                assert.deepStrictEqual(rows.slice(0, 2).map(r => [r.team, r.away, r.seconds]),
+                                       [[2, 1, 3], [1, 1, 7]]);
+            });
+
+            test('by the time it first got there, not the last', () => {
+                clock += 2000;
+                race.move(1, 1);      //Middle at 2s
+                race.back(1);
+                clock += 1000;
+                race.move(2, 1);      //team 2 to Middle at 3s
+                clock += 6000;
+                race.move(1, 1);      //team 1 back to Middle at 9s
+                const rows = race.standings();
+                assert.deepStrictEqual(rows.slice(0, 2).map(r => [r.team, r.seconds]), [[1, 2], [2, 3]]);
+            });
+
+            test('only to the millisecond, beyond the whole seconds reported', () => {
+                clock += 2400;
+                race.move(3, 1);
+                clock += 300;          //2.7s, which also rounds to 3
+                race.move(1, 1);
+                const rows = race.standings();
+                assert.deepStrictEqual(rows.slice(0, 2).map(r => r.team), [3, 1]);
+            });
+
+            test('arriving is getting to nothing away, and the first to arrive wins', () => {
+                clock += 1000;
+                race.move(1, 1);
+                clock += 1000;
+                race.move(1, 2);      //team 1 arrives at 2s
+                race.move(2, 1);
+                clock += 1000;
+                race.move(2, 2);      //team 2 arrives at 3s
+                const rows = race.standings();
+                assert.deepStrictEqual(rows.map(r => [r.team, r.finished, r.away, r.seconds]),
+                                       [[1, true, 0, 2], [2, true, 0, 3], [3, false, 2, 0]]);
+            });
+
+            test('a team that never got closer than the start is there at no time at all', () => {
+                clock += 4000;
+                race.move(1, 3);      //Detour is no closer than Start
+                const row = race.standings().find(r => r.team === 1);
+                assert.strictEqual(row.away, 2);
+                assert.strictEqual(row.seconds, 0);
+            });
+        });
+
         test('report where each team actually ended up', () => {
             race.move(1, 3);
             const row = race.standings().find(r => r.team === 1);

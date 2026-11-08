@@ -62,7 +62,9 @@ enum QuizMessage: Equatable {
 	case wikiArrived(team: Team, hops: Int, seconds: Int)
 
 	/// "wd<team>,<rank>,<finished>,<secs>,<hops>,<away>" — one team's final standing,
-	/// sent for every team once the host ends the race.
+	/// sent for every team once the host ends the race. Teams are ranked on the closest
+	/// they ever got: `away` is that, `secs` is when they first got there (their finishing
+	/// time if they arrived) and `hops` is where they ended up.
 	case wikiStanding(team: Team, rank: Int, finished: Bool, seconds: Int, hops: Int, away: Int)
 
 	/// "wt<team>,<title>|<title>|..." — a team's whole trail, for the host to look back over.
