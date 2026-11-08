@@ -25,6 +25,8 @@ class TeamAnswerNode: SKNode {
 	var teamNo : Int
 
 	let fontSize : CGFloat
+	/// The smaller line's size as built, for `resetTextSize`
+	private let roundFontSize : CGFloat
 	private var animatedNodes = [SKNode]()
 
 	static let bgColour = NSColor(calibratedHue: 0, saturation: 0.0, brightness: 0.9, alpha: 0.9)
@@ -42,6 +44,7 @@ class TeamAnswerNode: SKNode {
 		let bigFontSize = fontSize
 		let smallFontSize : CGFloat = height >= 150 ? 38 : 28
 		self.fontSize = fontSize
+		self.roundFontSize = smallFontSize
 
 		bgBox = SKShapeNode(rectOf: CGSize(width: width, height: height))
 		bgBox.zPosition = 5
@@ -128,6 +131,34 @@ class TeamAnswerNode: SKNode {
 	func resetTextSize() {
 		guessLabel.fontSize = fontSize
 		singleLabel.fontSize = fontSize
+		roundLabel.fontSize = roundFontSize
+	}
+
+	/// "Team 14" rather than "14.", for when the boxes are no longer in team order and a bare
+	/// number would read as a place. The text moves along to make room for the widest such
+	/// label, so that it lines up from box to box whatever the team's number.
+	func labelAsTeam() {
+		teamNoLabel.text = "Team \(teamNo + 1)"
+		let widest = SKLabelNode(fontNamed: teamNoLabel.fontName)
+		widest.fontSize = teamNoLabel.fontSize
+		widest.text = "Team 88"
+		let left = teamNoLabel.position.x + widest.frame.width + 28
+		guessLabel.position.x = left
+		roundLabel.position.x = left
+		singleLabel.position.x = left
+	}
+
+	/// Fills the box with the team's own colour, with black or white text, whichever reads
+	func fillWithTeamColour() {
+		let fill = Utils.teamColour(teamNo, saturation: 0.85)
+		bgBox.fillColor = fill
+		let rgb = fill.usingColorSpace(.sRGB) ?? fill
+		let light = 0.299 * rgb.redComponent + 0.587 * rgb.greenComponent + 0.114 * rgb.blueComponent > 0.55
+		let text: NSColor = light ? .black : .white
+		teamNoLabel.fontColor = text
+		guessLabel.fontColor = text
+		singleLabel.fontColor = text
+		roundLabel.fontColor = text.withAlphaComponent(0.75)
 	}
 
 	/// Sparks up the left edge of the box in the team's colour and pops it briefly,

@@ -342,6 +342,30 @@ quizScenarios('fourteen teams', { teams: TEAMS }, scenario => {
         assert.strictEqual((await quiz.host.read('quizDisplay.wikiRaceScene.raceStandings')).length, TEAMS);
 
         await quiz.host.click('wikiRacePanel.revealButton');
+
+        //The boxes move into the standings: team 14 home, then 10 to 13 one away in the order
+        //they got there, then the nine who never left the start
+        assert.deepStrictEqual((await quiz.host.read('quizDisplay.wikiRaceScene.revealedOrder')).map(t => t + 1),
+                               [14, 10, 11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        //Seven to a column, first at the top of the left one. Each box is found by its label,
+        //which now names the team in words, as a bare number would read as a place.
+        const where = async () => {
+            const at = {};
+            const walk = node => {
+                const m = /^Team ([0-9]+)$/.exec(node.text || '');
+                if(m && node.frame) at[m[1]] = { x: node.frame.x, y: node.frame.y };
+                (node.children || []).forEach(walk);
+            };
+            walk((await quiz.host.scene()).nodes);
+            return at;
+        };
+        await until('the boxes in standings order', async () => {
+            const at = await where();
+            const left = [14, 10, 11, 12, 13, 1, 2], right = [3, 4, 5, 6, 7, 8, 9];
+            const column = list => list.every((t, i) => i === 0 || at[list[i - 1]].y > at[t].y);
+            return [...left, ...right].every(t => at[t]) && column(left) && column(right) &&
+                   left.every(t => right.every(u => at[t].x < at[u].x));
+        });
         await fits(quiz, 'with the standings up');
         await quiz.round('buzzers');
     });

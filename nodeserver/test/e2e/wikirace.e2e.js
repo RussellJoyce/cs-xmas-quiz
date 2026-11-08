@@ -114,6 +114,11 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
         assert.ok((await quiz.host.read('wikiRacePanel.revealButton')).enabled);
         await quiz.host.click('wikiRacePanel.revealButton');
         assert.strictEqual(await quiz.host.read('quizDisplay.wikiRaceScene.showDistance'), true);
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.wikiRaceScene.revealedOrder'), [0, 1, 2]);
+        await until('the boxes named by team', async () => {
+            const shown = await quiz.host.visibleText();
+            return ['Team 1', 'Team 2', 'Team 3'].every(t => shown.includes(t)) && !shown.includes('1.');
+        });
     });
 
     scenario('a move after the race is refused', async quiz => {
@@ -139,6 +144,11 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
             quiz.wire.slice(mark).some(w => w.msg.startsWith('wd')));
         await quiz.host.settled();
         assert.ok(!(await quiz.host.read('wikiRacePanel.revealButton')).enabled);
+        //And the phones are ready for the next race, not told that time was called on this one
+        for(const n of [1, 2, 3]) {
+            await until('phone ' + n + ' to be ready', async () =>
+                (await quiz.phones[n].frame.locator('#curtainText').textContent()) === 'Ready');
+        }
     });
 
     scenario('leaving the round takes every phone back to the buzzer', async quiz => {
@@ -167,6 +177,23 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
         //And then the browser brings it back
         await three.buzzer.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
         await onArticle(three, START);
+        await quiz.host.click('wikiRacePanel.endButton');
+    });
+
+    scenario('the harness patterns can walk a phone along the route', async quiz => {
+        //test-patterns.js drives teams through the harness, which borrows each phone's
+        //socket. It has to keep hold of it when the phone moves to the race page.
+        await quiz.host.click('wikiRacePanel.startButton');
+        for(const n of [1, 2, 3]) await onArticle(quiz.phones[n], START);
+        await until('the harness to know the race', () => quiz.page.evaluate(() => clients[3].race !== null));
+
+        //What the pattern line "3,wiki,short,1" does
+        assert.strictEqual(await quiz.page.evaluate(() => clients[3].walkShort(1)), null);
+        await onArticle(quiz.phones[3], MIDDLE);
+        assert.strictEqual(await quiz.phones[3].away.textContent(), '1');
+
+        assert.strictEqual(await quiz.page.evaluate(() => clients[3].walkShort(0)), null);
+        await until('the arrival', () => quiz.wire.some(w => w.msg.startsWith('ww3,2,')));
         await quiz.host.click('wikiRacePanel.endButton');
     });
 });

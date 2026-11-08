@@ -555,7 +555,7 @@ async function startQuiz(options) {
             //gets its say on who is allowed to send what.
             async rawFrom(n, message) {
                 const since = wire.length;
-                //Through the page's own socket, as the race page does not lend it to the harness
+                //Through the page's own socket rather than the harness, so it is exactly what the page would send
                 await phones[n].frame.locator('body').evaluate((_, m) => ws.send(m), message);
                 await until('"' + message + '" to reach the server', () => wire.has('T' + n + '→srv', message, since));
                 await host.settled();

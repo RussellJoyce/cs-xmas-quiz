@@ -382,6 +382,58 @@ describe('the wikirace client', () => {
         });
     });
 
+    describe('the host resetting the round', () => {
+        //A reset sends "viwikirace", then ends the old race with "we"
+        async function resetMidRace(finished) {
+            const client = loadClient();
+            const sock = await connected(client);
+            sock.deliver('ok4');
+            sock.deliver('wr0,99,Start|Target');
+            sock.deliver('wg0,0,5');
+            await settle();
+            if(finished) sock.deliver('wf');
+            sock.drain();
+            sock.deliver('viwikirace');
+            sock.deliver('we');
+            return { client, sock };
+        }
+
+        test('puts the page back to Ready, not Time', async () => {
+            const { client, sock } = await resetMidRace(false);
+            assert.strictEqual(client.elements.curtainText.textContent, 'Ready');
+            assert.ok(!client.elements.curtain.classList.contains('hidden'));
+            assert.strictEqual(client.elements.away.textContent, '…');
+            client.elements.article.fire('click', { target: makeLink(42), preventDefault: () => {} });
+            assert.deepStrictEqual(sock.drain(), [], 'a tap under the curtain went to the server');
+        });
+
+        test('takes down the celebration of a team that had arrived', async () => {
+            const { client } = await resetMidRace(true);
+            assert.strictEqual(client.elements.curtainText.textContent, 'Ready');
+            assert.ok(!client.elements.curtain.classList.contains('won'));
+        });
+
+        test('the next race then starts as normal', async () => {
+            const { client, sock } = await resetMidRace(false);
+            sock.deliver('wr0,99,Start|Target');
+            sock.deliver('wg0,0,5');
+            await settle();
+            assert.ok(client.elements.curtain.classList.contains('hidden'));
+            assert.strictEqual(client.elements.away.textContent, 5);
+        });
+
+        test('a resync after a dropped connection is not a reset', async () => {
+            const client = loadClient();
+            const sock = await connected(client);
+            sock.deliver('ok4');
+            sock.deliver('wr0,99,Start|Target');
+            sock.deliver('wg0,0,5');
+            await settle();
+            sock.deliver('vswikirace');
+            assert.ok(client.elements.curtain.classList.contains('hidden'), 'the race was taken away');
+        });
+    });
+
     describe('leaving the round', () => {
         test('a view that is not the wikirace sends the team back to the buzzer', async () => {
             const client = loadClient();

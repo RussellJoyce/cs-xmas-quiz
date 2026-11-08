@@ -63,6 +63,15 @@ var renderSeq = 0;
 function connect() {
     ws = new WebSocket(QuizConnection.url());
 
+    //When the test harness (test/multi-client.html) is showing this page, it drives the team
+    //through our socket, as it does the buzzer's. Without this its wiki patterns cannot reach
+    //a phone once it has moved to the race.
+    try {
+        if(window.parent !== window && window.parent.quizPhoneSocket) {
+            window.parent.quizPhoneSocket(window, ws);
+        }
+    } catch(err) {}
+
     ws.onopen = function() {
         //Ask who we are. If a race is running the server follows up with the race and the
         //article we were last on, so a phone that slept comes back where it left off.
@@ -85,6 +94,12 @@ function connect() {
                 //anything else means going back to the buzzer.
                 if(data.slice(2) !== "wikirace") {
                     QuizConnection.go("/");
+                } else if(data.slice(0, 2) === "vi") {
+                    //The host has reset the round (or entered it, which a phone already
+                    //here only sees on a reset). Whatever race this page was in is over and
+                    //forgotten. A "vs" is only a resync after a dropped connection, so it
+                    //leaves the race alone.
+                    ready();
                 }
                 break;
 
@@ -188,6 +203,19 @@ function setHops(n) {
 function setAway(n) {
     awayEl.textContent = (n >= 0) ? n : "?";
     awayLabelEl.textContent = (n === 1) ? "hop away" : "hops away";
+}
+
+//Back to how the page starts: no race, nothing to show, waiting for the host. The "we" that
+//ending the old race sends after a reset then finds nothing racing and is ignored.
+function ready() {
+    racing = false;
+    awaiting = false;
+    startedAt = 0;
+    renderSeq++;   //an article still on its way belongs to the old race
+    targetEl.textContent = "…";
+    awayEl.textContent = "…";
+    awayLabelEl.textContent = "hops away";
+    waiting();
 }
 
 function waiting() {

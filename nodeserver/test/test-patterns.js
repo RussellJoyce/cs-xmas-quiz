@@ -59,8 +59,13 @@
 //is the number the quiz software ranks on: it colours the team(s) that stopped closest to
 //the target and then the next closest. So "wiki,short,1" is a team that came within one
 //link of the target and "wiki,short,0" is one that arrived, whichever puzzle is running.
-//The corpus only holds 3- and 4-hop puzzles, so anything beyond "short,3" needs a 4-hop
-//question; a pattern that asks for more than the route holds says so and does nothing.
+//The patterns below are written for a 5-hop puzzle, so they never ask for more than
+//"short,4". (No puzzle is named here: this file is in git, and the puzzles are answers.) Because
+//"short" counts back from the target they also work with any other race that long; a
+//pattern that asks for more than the route holds says so and does nothing.
+//
+//Start the race from the quiz software before firing a pattern, and with the phone displays
+//showing, wait until the phones are on the race page.
 
 window.TEST_PATTERNS = String.raw`
 
@@ -421,6 +426,8 @@ wait 4000
 
 :Wiki - One team walking the whole way, slowly
 # For watching the per-move blop, the box emphasis and the article titles shrinking to fit
+1,wiki,short,4
+wait 1500
 1,wiki,short,3
 wait 1500
 1,wiki,short,2
@@ -429,6 +436,133 @@ wait 1500
 wait 1500
 1,wiki,short,0
 wait 2000
+
+:Wiki - Closest ever, not where you end up
+# One team at a time, a move every 1.5s. For a 5-hop puzzle.
+# T1 walks all the way and arrives.
+# T2 gets to 1 away, then backs off to 3 away.
+# T3 also gets to 1 away, later than T2, then backs off to 2 away.
+# T4 gets to 3 away and stops.
+# T5 never moves. Its ping only marks the pattern as needing five clients connected.
+# End the race afterwards. The standings are scored on the closest each team ever got, ties
+# going to whoever got there first: T1, T2, T3, T4, T5, even though T3 finishes nearer
+# than T2. T2 and T3 are both highlighted "Closest", as the highlight goes by distance.
+5,ping
+1,wiki,short,4
+wait 1500
+1,wiki,short,3
+wait 1500
+1,wiki,short,2
+wait 1500
+1,wiki,short,1
+wait 1500
+1,wiki,short,0
+wait 2500
+2,wiki,short,4
+wait 1500
+2,wiki,short,3
+wait 1500
+2,wiki,short,2
+wait 1500
+2,wiki,short,1
+wait 2500
+2,wiki,back
+wait 1500
+2,wiki,back
+wait 2500
+3,wiki,short,4
+wait 1500
+3,wiki,short,3
+wait 1500
+3,wiki,short,2
+wait 1500
+3,wiki,short,1
+wait 2500
+3,wiki,back
+wait 2500
+4,wiki,short,4
+wait 1500
+4,wiki,short,3
+wait 1500
+
+:Wiki - Fourteen teams home in a jumbled order
+# Every team arrives, a second or so apart, in an order that is nothing like team order,
+# so that Reveal Standings visibly reshuffles the boxes and the finishing times differ.
+# Needs all fourteen clients on the race page before it is fired.
+# Finishing order, which should be the order after the reveal:
+#   9, 3, 12, 1, 7, 14, 5, 11, 2, 8, 13, 4, 10, 6
+9,wiki,short,0
+wait 1200
+3,wiki,short,0
+wait 900
+12,wiki,short,0
+wait 1500
+1,wiki,short,0
+wait 1000
+7,wiki,short,0
+wait 1300
+14,wiki,short,0
+wait 1100
+5,wiki,short,0
+wait 1600
+11,wiki,short,0
+wait 900
+2,wiki,short,0
+wait 1200
+8,wiki,short,0
+wait 1400
+13,wiki,short,0
+wait 1000
+4,wiki,short,0
+wait 1300
+10,wiki,short,0
+wait 1100
+6,wiki,short,0
+wait 2000
+
+:Wiki - Fourteen teams, four home and the rest spread out
+# A second or so between moves, in no particular team order. Four teams arrive (6, 11, 2,
+# then 9). The rest stop at 1 to 4 away, some tied on distance and separated only by who got
+# there first. Team 12 gets to 1 away and then backs off to 3, but is scored on the 1.
+# Teams 8 and 14 never move. Needs all fourteen clients on the race page before it is fired.
+# Standings after the reveal:
+#   6, 11, 2, 9          arrived, in that order
+#   12, 3, 7             1 away, in the order they got there
+#   4, 10                2 away
+#   1                    3 away
+#   13, 5                4 away
+#   8, 14                never moved
+4,wiki,short,2
+wait 1000
+6,wiki,short,0
+wait 1200
+12,wiki,short,1
+wait 900
+13,wiki,short,4
+wait 1100
+3,wiki,short,1
+wait 1300
+11,wiki,short,0
+wait 1000
+1,wiki,short,3
+wait 1200
+10,wiki,short,2
+wait 900
+7,wiki,short,1
+wait 1400
+2,wiki,short,0
+wait 1000
+5,wiki,short,4
+wait 1100
+12,wiki,back
+wait 1000
+12,wiki,back
+wait 1300
+9,wiki,short,0
+wait 1000
+8,ping
+14,ping
+wait 1000
 
 :Wiki - Awkward moves
 # Nonsense the server should refuse without the race or the client falling over

@@ -18,19 +18,12 @@ class WikiRaceScene: QuizScene {
 		var hops = 0
 		var away = -1
 		var finishedIn: Int?
-		/// Once the race is over, 1 for the team(s) that got closest without arriving and 2 for the next closest. Nil for everyone else.
-		var nearMiss: Int?
 		var hasStarted: Bool { return !title.isEmpty }
 	}
 
-	/// Boxes for the teams that did not arrive but got closest
-	private static let nearMissColours = [
-		1: NSColor(calibratedRed: 0.48, green: 0.66, blue: 0.88, alpha: 0.95),
-		2: NSColor(calibratedRed: 0.84, green: 0.60, blue: 0.32, alpha: 0.95)
-	]
-	private static let nearMissNames = [1: "Closest", 2: "2nd closest"]
-
 	private(set) var progress = [Progress]()
+	/// Teams from first to last, once the host has revealed the standings. Empty until then.
+	private(set) var revealedOrder = [Int]()
 	private var teamBoxes = [TeamAnswerNode]()
 	private var participating = [Bool]()
 
@@ -194,7 +187,7 @@ class WikiRaceScene: QuizScene {
 	}
 
 	private func resetTeams() {
-		self.removeAction(forKey: WikiRaceScene.nearMissActionKey)
+		revealedOrder = []
 		progress = Array(repeating: Progress(), count: Settings.shared.numTeams)
 		rebuildBoxes()
 		refreshAll()
@@ -324,62 +317,33 @@ class WikiRaceScene: QuizScene {
 	func raceStanding(team: Int, rank: Int, finished: Bool, secs: Int, hops: Int, away: Int) {
 		let wr = WikiRaceStanding(team: team, rank: rank, finished: finished, seconds: secs, hops: hops, away: away)
 		raceStandings.append(wr)
-		updateNearMisses()
-	}
-
-	// MARK: - Near misses
-
-	private static let nearMissActionKey = "nearMissFlourish"
-
-	private func updateNearMisses() {
-		for team in 0..<progress.count {
-			progress[team].nearMiss = nil
-		}
-
-		//A team that never left the start article is not "close", it just never played.
-		let candidates = raceStandings.filter { standing in
-			guard !standing.finished, standing.away >= 0 else { return false }
-			guard standing.team >= 0 && standing.team < progress.count else { return false }
-			return isParticipating(standing.team) && progress[standing.team].hasStarted
-		}
-
-		let distances = Set(candidates.map { $0.away }).sorted().prefix(2)
-		for (place, away) in distances.enumerated() {
-			for standing in candidates where standing.away == away {
-				progress[standing.team].nearMiss = place + 1
-			}
-		}
-
 		refreshAll()
-
-		self.removeAction(forKey: WikiRaceScene.nearMissActionKey)
-		self.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),
-									SKAction.run { [weak self] in self?.flourishNearMisses() }]),
-				 withKey: WikiRaceScene.nearMissActionKey)
 	}
 
-	/// Sparks over the highlighted boxes once the standings have settled, the runners-up
-	/// first so the eye finishes on the closest team.
-	private func flourishNearMisses() {
-		for place in [2, 1] {
-			let teams = (0..<progress.count).filter { progress[$0].nearMiss == place }
-			guard !teams.isEmpty else { continue }
+	// MARK: - The reveal
 
-			let delay = place == 2 ? 0.0 : 0.7
-			self.run(SKAction.sequence([SKAction.wait(forDuration: delay), SKAction.run { [weak self] in
-				guard let self = self else { return }
-				self.run(self.blopSound)
-				for team in teams where team < self.teamBoxes.count {
-					let box = self.teamBoxes[team]
-					QuizWebSocket.shared?.pulseTeamColour(team)
-					box.addEmitter(named: "SparksUp", at: CGPoint(x: -(CGFloat(box.width) / 2) + 40, y: 0), zPosition: 21) {
-						$0.particleColor = Utils.teamColour(team)
-						$0.particleColorSequence = nil
-						$0.numParticlesToEmit = 90
-					}
-					box.emphasise()
-				}
-			}]))
+	/// Moves every box to its place in the standings, first at the top of the left column and
+	/// down from there, in the same grid the boxes stand in during the race. The order is the
+	/// server's: closest the team ever got, ties to whoever got there first. Teams sitting
+	/// this round out go to the end, and so does any team the server sent no standing for.
+	func revealStandings() {
+		guard !raceStandings.isEmpty else { return }
+		let ranked = raceStandings.sorted { $0.rank < $1.rank }.map { $0.team }
+			.filter { $0 >= 0 && $0 < teamBoxes.count }
+		var order = [Int]()
+		for team in ranked where !order.contains(team) { order.append(team) }
+		for team in 0..<teamBoxes.count where !order.contains(team) { order.append(team) }
+		order = order.filter { isParticipating($0) } + order.filter { !isParticipating($0) }
+		revealedOrder = order
+
+		showDistance = true
+		self.run(blopSound)
+		let layout = raceLayout()
+		for (place, team) in order.enumerated() where place < layout.positions.count {
+			//A short cascade down the standings, so the eye can follow the boxes moving
+			let move = SKAction.move(to: layout.positions[place], duration: 0.9)
+			move.timingMode = .easeInEaseOut
+			teamBoxes[team].run(SKAction.sequence([SKAction.wait(forDuration: 0.06 * Double(place)), move]))
 		}
 	}
 
@@ -402,6 +366,7 @@ class WikiRaceScene: QuizScene {
 			box.guessLabel.text = "🏁 Finished!"
 			box.roundLabel.text = "\(state.hops) hop\(state.hops == 1 ? "" : "s") in \(timeString(seconds))"
 			box.singleLabel.text = ""
+			styleForReveal(team)
 			return
 		}
 
@@ -417,34 +382,34 @@ class WikiRaceScene: QuizScene {
 		} else if showDistance && state.away >= 0 {
 			detail += "   •   \(state.away) away"
 		}
-		if let place = state.nearMiss, let name = WikiRaceScene.nearMissNames[place] {
-			detail += "   •   \(name)"
-		}
 		box.roundLabel.text = state.hasStarted ? detail : ""
+		styleForReveal(team)
+	}
 
-		applyNearMissColours(box, place: state.nearMiss)
+	/// Once the standings are up the boxes are out of team order, so each says which team
+	/// it is in words and takes the team's colour. Teams sitting the round out stay grey.
+	private func styleForReveal(_ team: Int) {
+		let box = teamBoxes[team]
+		if !revealedOrder.isEmpty {
+			box.labelAsTeam()
+			if isParticipating(team) {
+				box.fillWithTeamColour()
+			}
+		}
 		shrinkToFit(box)
 	}
 
-	/// Silver or bronze for a near miss
-	private func applyNearMissColours(_ box: TeamAnswerNode, place: Int?) {
-		guard let place = place, let colour = WikiRaceScene.nearMissColours[place] else {
-			box.setPlaying(box.isPlaying)
-			return
-		}
-		box.bgBox.fillColor = colour
-		box.guessLabel.fontColor = .black
-		box.teamNoLabel.fontColor = .black
-		box.roundLabel.fontColor = NSColor(calibratedWhite: 0.25, alpha: 1.0)
-	}
-
-	/// Some article titles are far longer than the answers these boxes were built for...
+	/// Some article titles are far longer than the answers these boxes were built for, and
+	/// the line under them can be long too once it says how close the team got
 	private func shrinkToFit(_ box: TeamAnswerNode) {
-		let available = CGFloat(box.width) - 150
+		let available = CGFloat(box.width) / 2 - box.guessLabel.position.x - 30
 		var size = box.fontSize
 		while box.guessLabel.frame.width > available && size > 18 {
 			size -= 2
 			box.setTextSize(size: size)
+		}
+		while box.roundLabel.frame.width > available && box.roundLabel.fontSize > 16 {
+			box.roundLabel.fontSize -= 2
 		}
 	}
 
@@ -459,6 +424,10 @@ class WikiRaceScene: QuizScene {
 		participating = teams
 		for team in 0..<min(Settings.shared.numTeams, teamBoxes.count) {
 			teamBoxes[team].setPlaying(isParticipating(team))
+		}
+		//setPlaying puts the plain colours back, which after the reveal are the wrong ones
+		if !revealedOrder.isEmpty {
+			refreshAll()
 		}
 	}
 
@@ -578,8 +547,7 @@ class WikiRacePanel: NSObject, RoundPanel {
 	}
 
 	@IBAction func reveal(_ sender: Any) {
-		guard !scene.raceStandings.isEmpty else { return }
-		scene.showDistance = true
+		scene.revealStandings()
 	}
 
 	@IBAction func showDistanceChanged(_ sender: Any) {
