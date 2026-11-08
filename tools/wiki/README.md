@@ -22,7 +22,7 @@ Turns a Kiwix ZIM into the offline article corpus the wikirace round is played o
 | `stage5-emit.js` | 3 min | Writes the article files, index, graph and the curated puzzles into `nodeserver/static/wiki/`. |
 | `verify.js` | 2s | End-to-end validation. |
 
-`node stage5-emit.js puzzles` regenerates just `puzzles.json` from `puzzles.curated.json`, which is quick.
+`node stage5-emit.js puzzles` regenerates just `puzzles.json` from the curated list, which is quick.
 
 Articles are cut to their first 1000 words, at a paragraph boundary, so nothing in the round is a
 wall of text. The cut happens before links are collected, so the graph only has links a team can
@@ -48,17 +48,18 @@ the shipped corpus, so its distances are the ones the game enforces.
     node explore.js find pope                  exact titles, most linked-to first
     node explore.js route Scallop "Cyndi Lauper"   distance, route count, sample routes
     node explore.js near --to Cat --hops 5     well-known starts 5 hops from Cat
-    node explore.js near --from York --hops 5 --sort routes   the most forgiving first
+    node explore.js near --from Pope --hops 5 --sort routes   the most forgiving first
     node explore.js random --hops 7 --famous 15000   random pairs to browse
     node explore.js random --hops 5 --min-routes 5000   ...leaving out the frustrating ones
     node explore.js add Scallop "Cyndi Lauper" "Shellfish to synth-pop"
     node explore.js curated                    what has been picked, checked against this corpus
 
-`add` writes to `puzzles.curated.json`, which is checked in and keyed by title so it survives
-a rebuild. To change the list by hand, edit that file, never `puzzles.json`.
-`node stage5-emit.js puzzles` turns it into `puzzles.json`, in the same order, and the host's
-picker shows the note above the routes. A
-curated pair whose title is missing from a rebuilt corpus is reported and left out.
+`add` writes to `Questions/Wikirace/curated.json`, keyed by title so it survives a rebuild.
+That file is the quiz's answers, so like everything else in `Questions/` it is kept out of
+git: back it up some other way. To change the list by hand, edit that file, never
+`puzzles.json`. `node stage5-emit.js puzzles` turns it into `puzzles.json`, in the same order,
+and the host's picker shows the note above the routes. A curated pair whose title is missing
+from a rebuilt corpus is reported and left out.
 
 Every listing shows how forgiving a pair is as "routes": "6 / 204" means 6 shortest routes
 and 204 one hop longer. Teams seldom find a shortest route, so the second number is the better

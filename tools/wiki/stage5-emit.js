@@ -6,13 +6,13 @@
 //   a/<id/1000>/<id>.json   one article: {t: title, h: html, l: [id, ...]}
 //   index.json              id -> title, for the host's puzzle picker and the big display
 //   graph.bin               CSR adjacency, for the server's move validation
-//   puzzles.json            the hand-picked races in puzzles.curated.json, with their shortest routes
+//   puzzles.json            the hand-picked races in Questions/Wikirace/curated.json, with their shortest routes
 
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { fork } = require('child_process');
-const { routeCounts, sampleRoutes } = require('./lib/explore');
+const { routeCounts, sampleRoutes, CURATED } = require('./lib/explore');
 
 const BUILD = path.join(__dirname, 'corpus', 'build');
 const OUT = path.join(__dirname, '..', '..', 'nodeserver', 'static', 'wiki');
@@ -21,9 +21,9 @@ const KEEP_INFOBOXES = process.env.QUIZ_INFOBOXES === '1';
 //Articles are cut to this many words, at a paragraph boundary. 0 ships them whole.
 const MAX_WORDS = parseInt(process.env.QUIZ_MAX_WORDS || '1000', 10);
 const SHARD = 1000;
-//The races, hand-picked with explore.js. By title, so they survive a rebuild that renumbers
-//the articles. They are the only puzzles: nothing is generated.
-const CURATED = path.join(__dirname, 'puzzles.curated.json');
+//The races, hand-picked with explore.js, are read from CURATED (Questions/Wikirace/curated.json,
+//outside git). By title, so they survive a rebuild that renumbers the articles. They are the
+//only puzzles: nothing is generated.
 //How many shortest routes to record besides the first, for the host to compare against
 const MORE_ROUTES = 4;
 
@@ -284,7 +284,7 @@ function seeded(seed) {
     };
 }
 
-//The hand-picked puzzles in puzzles.curated.json, in the order they were added. One whose
+//The hand-picked puzzles in the curated list, in the order they were added. One whose
 //title is not in this corpus is reported and left out, rather than stopping the build.
 function curatedPuzzles(graph, corpus) {
     if(!fs.existsSync(CURATED)) return [];
@@ -305,7 +305,7 @@ function curatedPuzzles(graph, corpus) {
     return out;
 }
 
-//Writes puzzles.json from puzzles.curated.json, and lists what went in
+//Writes puzzles.json from the curated list, and lists what went in
 function writePuzzles(graph, corpus) {
     const puzzles = curatedPuzzles(graph, corpus);
     fs.writeFileSync(path.join(OUT, 'puzzles.json'), JSON.stringify(puzzles, null, 1));
@@ -321,7 +321,7 @@ function writePuzzles(graph, corpus) {
 }
 
 function puzzlesOnly() {
-    console.log('rebuilding puzzles.json from ' + path.basename(CURATED));
+    console.log('rebuilding puzzles.json from ' + CURATED);
     writePuzzles(loadGraph(), loadCorpus());
 }
 

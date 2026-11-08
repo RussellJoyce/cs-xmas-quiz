@@ -1,5 +1,7 @@
 'use strict';
 
+const path = require('path');
+
 //Questions about the shipped corpus, for choosing wikirace puzzles: how far apart two
 //articles are, the routes between them, and how easy a target is to find.
 //
@@ -149,4 +151,10 @@ function searchTitles(corpus, deg, text, limit) {
     return hits.slice(0, limit);
 }
 
-module.exports = { inDegrees, fameRanks, distancesFrom, routeCounts, walkCounts, sampleRoutes, findTitle, searchTitles };
+//The hand-picked races. They are the quiz's answers, so they live with the other questions
+//in Questions/, which is not in git, rather than beside these tools. QUIZ_WIKI_CURATED
+//points somewhere else.
+const CURATED = process.env.QUIZ_WIKI_CURATED ||
+    path.join(__dirname, '..', '..', '..', 'Questions', 'Wikirace', 'curated.json');
+
+module.exports = { CURATED,  inDegrees, fameRanks, distancesFrom, routeCounts, walkCounts, sampleRoutes, findTitle, searchTitles };

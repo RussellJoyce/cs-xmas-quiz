@@ -11,7 +11,7 @@ const { WikiCorpus } = require('../../nodeserver/wikirace');
 const X = require('./lib/explore');
 
 const WIKI = process.env.QUIZ_WIKI_DIR || path.join(__dirname, '..', '..', 'nodeserver', 'static', 'wiki');
-const CURATED = path.join(__dirname, 'puzzles.curated.json');
+const CURATED = X.CURATED;
 
 const HELP = `Explore the wikirace corpus to choose puzzles.
 
@@ -26,8 +26,11 @@ const HELP = `Explore the wikirace corpus to choose puzzles.
   node explore.js random --hops H              random pairs H hops apart, both ends famous,
           [--famous N] [--count N]             for browsing for funny ones (defaults 3000, 30)
           [--min-routes N]                     only pairs with at least N routes one hop longer
-  node explore.js add <start> <target> [note]  check a pair and add it to puzzles.curated.json
+  node explore.js add <start> <target> [note]  check a pair and add it to the curated list
   node explore.js curated                      list the curated puzzles and check they still resolve
+
+The curated list is Questions/Wikirace/curated.json, which git ignores like the other
+questions. Set QUIZ_WIKI_CURATED to use another file.
 
 "links in" is how many articles link to an article. A target with few is hard to find.
 
@@ -191,6 +194,7 @@ function add(ctx, startTitle, targetTitle, note) {
     if(hops < 0) fail('there is no route from ' + ctx.corpus.titles[start] + ' to ' + ctx.corpus.titles[target]);
 
     const curated = readCurated();
+    fs.mkdirSync(path.dirname(CURATED), { recursive: true });
     const entry = { start: ctx.corpus.titles[start], target: ctx.corpus.titles[target] };
     if(curated.some(p => p.start === entry.start && p.target === entry.target)) {
         fail('already curated: ' + entry.start + ' → ' + entry.target);
