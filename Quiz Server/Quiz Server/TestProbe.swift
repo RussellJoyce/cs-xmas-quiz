@@ -310,6 +310,8 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 		return [
 			"round": String(describing: controller.quizDisplay.currentRound),
 			"scene": view.scene.map { String(describing: type(of: $0)) } ?? NSNull(),
+			//What the audience can see, in the scene's own coordinates, as each label's frame is
+			"bounds": view.scene.map { rect($0.frame) } ?? NSNull(),
 			"nodes": view.scene.map { describe($0) } ?? NSNull()
 		]
 	}
@@ -321,9 +323,22 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			"hidden": node.isHidden
 		]
 		if let name = node.name { out["name"] = name }
-		if let label = node as? SKLabelNode, let text = label.text { out["text"] = text }
+		if let label = node as? SKLabelNode, let text = label.text {
+			out["text"] = text
+			//In scene coordinates, so that a test can tell whether it is on the screen at all
+			if let scene = label.scene, let parent = label.parent {
+				let f = label.calculateAccumulatedFrame()
+				let a = scene.convert(CGPoint(x: f.minX, y: f.minY), from: parent)
+				let b = scene.convert(CGPoint(x: f.maxX, y: f.maxY), from: parent)
+				out["frame"] = rect(CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(b.x - a.x), height: abs(b.y - a.y)))
+			}
+		}
 		if !node.children.isEmpty { out["children"] = node.children.map { describe($0) } }
 		return out
+	}
+
+	private func rect(_ r: CGRect) -> [String: Any] {
+		["x": r.minX, "y": r.minY, "width": r.width, "height": r.height]
 	}
 
 	private func screenshot(to file: String) throws {

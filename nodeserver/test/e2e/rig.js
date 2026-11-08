@@ -183,6 +183,28 @@ class Host {
         if(scene.nodes) walk(scene.nodes, 1);
         return found;
     }
+
+    //Visible text that runs off the edge of the audience's screen, as "text @ x,y wxh".
+    //More teams means more rows, and a layout that fits ten can push the fourteenth off.
+    async offScreen() {
+        const scene = await this.scene();
+        const b = scene.bounds;
+        const out = [];
+        const SLACK = 2;
+        const walk = (node, alpha) => {
+            const seen = alpha * node.alpha;
+            if(node.hidden || seen <= 0.01) return;
+            const f = node.frame;
+            if(node.text && f && f.width > 0 &&
+               (f.x < b.x - SLACK || f.y < b.y - SLACK ||
+                f.x + f.width > b.x + b.width + SLACK || f.y + f.height > b.y + b.height + SLACK)) {
+                out.push(node.text + ' @ ' + [f.x, f.y].map(Math.round) + ' ' + [f.width, f.height].map(Math.round).join('x'));
+            }
+            (node.children || []).forEach(child => walk(child, seen));
+        };
+        if(scene.nodes) walk(scene.nodes, 1);
+        return out;
+    }
 }
 
 //One team's phone: the real game.js, in one of the harness's iframes
@@ -234,7 +256,15 @@ class Phone {
 
     //A tap at a fraction of the way across and down an element. In page coordinates, as the
     //harness scales its phones and a locator's click position does not allow for that.
+    //With many phones on the harness page, an element may be below the fold. Not with
+    //scrollIntoViewIfNeeded, which waits for the element to be stable, and WebKit gives an
+    //off-screen frame no animation frames to be stable in.
+    async scrollTo(locator) {
+        await locator.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'center' }));
+    }
+
     async tapAt(locator, fx, fy) {
+        await this.scrollTo(locator);
         const box = await locator.boundingBox();
         const x = box.x + box.width * fx, y = box.y + box.height * fy;
         if(TOUCH) await this.touched(() => this.page.touchscreen.tap(x, y));
@@ -261,6 +291,7 @@ class Phone {
                 await send('touchend', [], touch(toX));
             });
         } else {
+            await this.scrollTo(locator);
             const box = await locator.boundingBox();
             const at = f => [box.x + box.width * f, box.y + box.height * fy];
             await this.page.mouse.move(...at(fromX));
