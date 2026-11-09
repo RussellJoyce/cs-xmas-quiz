@@ -36,9 +36,11 @@ function recordingTransport() {
         clients: [],
         servers: [],
         leds: [],
+        trees: [],
         toClients: m => t.clients.push(m),
         toServers: m => t.servers.push(m),
-        toLeds: m => t.leds.push(m)
+        toLeds: m => t.leds.push(m),
+        toTrees: m => t.trees.push(m)
     };
     return t;
 }

@@ -15,9 +15,9 @@ Quiz Server, `protocol.js`, the `le` routing — is untouched and unaware.
 
 ## What is real and what is not
 
-`../src` is compiled **unchanged**. `setup()` and `loop()` are the firmware's own, so the
-frame pacing, the serial debug keys and `network_tick()`'s command parsing are all the
-code that runs on the board.
+`../src/string` and the shared transport in `../src` are compiled **unchanged**. `setup()`
+and `loop()` are the firmware's own, so the frame pacing, the serial debug keys and
+`network_tick()`'s command parsing are all the code that runs on the board.
 
 NeoPixelBus' colour classes are also the library's own sources, compiled from
 `../.pio/libdeps`. That matters more than it looks: `Counter::tick` and

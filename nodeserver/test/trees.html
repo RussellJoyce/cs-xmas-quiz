@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tree Test Panel</title>
+<!--
+Drives the desk trees by posing as the quiz software: connects to the server's quiz port
+(8091) and sends "lt" commands, exactly as QuizWebSocket.swift does. Open it as a file, or
+at /test/trees.html on a server in development mode. The protocol is documented at the top
+of quizleds/src/tree/tree_main.cpp.
+-->
+<style>
+:root {
+    --bg: #14181d; --panel: #1d232a; --line: #2e3740; --text: #e6e9ec; --dim: #8c96a0;
+    --accent: #e8b84a; --ok: #4caf6d; --bad: #d9534f;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+       font: 14px/1.4 -apple-system, system-ui, sans-serif; }
+header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+         padding: 12px 16px; border-bottom: 1px solid var(--line); }
+header h1 { font-size: 16px; margin: 0 12px 0 0; }
+main { display: grid; gap: 12px; padding: 16px;
+       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin: 0 0 10px; }
+.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+button { background: #2a323b; color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+         padding: 7px 11px; font: inherit; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:active { transform: translateY(1px); }
+input[type=text], input[type=number] { background: #0f1317; color: var(--text); border: 1px solid var(--line);
+         border-radius: 6px; padding: 6px 8px; font: inherit; }
+input[type=range] { flex: 1; min-width: 120px; }
+.team { width: 44px; height: 36px; padding: 0; font-weight: 600; color: #111; border: 2px solid transparent; }
+.mode button.on { background: var(--accent); color: #111; border-color: var(--accent); }
+#status { padding: 3px 8px; border-radius: 10px; font-size: 12px; background: var(--bad); color: #fff; }
+#status.ok { background: var(--ok); }
+#log { grid-column: 1 / -1; }
+#log pre { margin: 0; max-height: 180px; overflow: auto; font: 12px/1.5 ui-monospace, Menlo, monospace; color: var(--dim); }
+.val { min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<header>
+    <h1>🎄 Tree test panel</h1>
+    <label>Server <input id="host" type="text" size="16"></label>
+    <label>port <input id="port" type="number" value="8091" style="width:6em"></label>
+    <button id="connect">Connect</button>
+    <span id="status">disconnected</span>
+</header>
+
+<main>
+    <section>
+        <h2>Ambient (a)</h2>
+        <div class="row">
+            <button data-cmd="a00">Off</button>
+            <button data-cmd="a01">✨ Twinkle</button>
+            <button data-cmd="a02">🌈 Rainbow</button>
+            <button data-cmd="a03">🕯️ Candle</button>
+            <button data-cmd="a04">🌊 Room wave</button>
+            <button data-cmd="a05">☄️ Chase</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Pulses and wave</h2>
+        <div class="row">
+            <button data-cmd="p00">Pulse white</button>
+            <button data-cmd="p01">Pulse red</button>
+            <button data-cmd="p02">Pulse green</button>
+        </div>
+        <div class="row">
+            <button id="wave">Wave</button>
+            <input id="waveStep" type="range" min="0" max="999" value="150">
+            <span class="val" id="waveStepVal"></span>
+        </div>
+    </section>
+
+    <section style="grid-column: 1 / -1">
+        <h2>Teams</h2>
+        <div class="row mode" id="teamMode">
+            <button data-mode="b" class="on">Buzz (b)</button>
+            <button data-mode="t">Solid colour (t)</button>
+            <button data-mode="q">Slow pulse (q)</button>
+            <button data-mode="Q">Quick pulse (q+50)</button>
+            <span style="flex:1"></span>
+            <label>Teams <input id="teamCount" type="number" min="1" max="49" value="14" style="width:4em"></label>
+            <button id="sendTeamCount" title="Sent as len, which also reaches the string">Set count (n)</button>
+        </div>
+        <div class="row" id="teams"></div>
+    </section>
+
+    <section>
+        <h2>Colour (c)</h2>
+        <div class="row">
+            <input id="colour" type="color" value="#ff00ff">
+            <button id="sendColour">Set colour</button>
+            <button data-cmd="c255255255">White</button>
+            <button data-cmd="c000000000">Black</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Countdown (k)</h2>
+        <div class="row">
+            <input id="count" type="range" min="0" max="100" value="100">
+            <span class="val" id="countVal"></span>
+        </div>
+        <div class="row">
+            <button id="runCount">Run 10 s countdown</button>
+            <button id="stopCount">Stop</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Brightness (g)</h2>
+        <div class="row">
+            <input id="bright" type="range" min="0" max="255" value="128">
+            <span class="val" id="brightVal"></span>
+        </div>
+    </section>
+
+    <section>
+        <h2>Raw</h2>
+        <div class="row">
+            <input id="raw" type="text" placeholder="b03, k050, …" style="flex:1">
+            <button id="sendRaw">Send</button>
+        </div>
+        <div class="row" style="color:var(--dim)">Sent as lt + text. Prefix with "le" to talk to the string instead.</div>
+    </section>
+
+    <section id="log">
+        <h2>Log</h2>
+        <pre id="logText"></pre>
+    </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const pad = (n, w) => String(n).padStart(w, '0');
+let ws = null;
+
+function log(line) {
+    const t = new Date().toTimeString().slice(0, 8);
+    const el = $('logText');
+    el.textContent = t + '  ' + line + '\n' + el.textContent;
+}
+
+function connect() {
+    if (ws) ws.close();
+    const url = 'ws://' + $('host').value + ':' + $('port').value;
+    log('connecting to ' + url);
+    ws = new WebSocket(url);
+    ws.onopen = () => { $('status').textContent = 'connected'; $('status').className = 'ok'; };
+    ws.onclose = () => { $('status').textContent = 'disconnected'; $('status').className = ''; };
+    ws.onerror = () => log('connection error');
+    ws.onmessage = e => log('← ' + e.data);
+}
+
+// Sends lt + cmd, or the text as-is if it already has an le/lt prefix
+function send(cmd) {
+    const msg = /^l[et]/.test(cmd) ? cmd : 'lt' + cmd;
+    if (!ws || ws.readyState !== WebSocket.OPEN) { log('not connected, dropped ' + msg); return; }
+    ws.send(msg);
+    log('→ ' + msg);
+}
+
+// Throttle for sliders: send at most every 80 ms, always sending the final value
+function throttled(fn) {
+    let timer = null, pending = null;
+    return v => {
+        pending = v;
+        if (timer) return;
+        fn(pending);
+        timer = setTimeout(() => { timer = null; if (pending !== null) fn(pending); pending = null; }, 80);
+    };
+}
+
+$('host').value = location.hostname || 'localhost';
+$('connect').onclick = connect;
+
+document.querySelectorAll('[data-cmd]').forEach(b => b.onclick = () => send(b.dataset.cmd));
+
+// Teams: buttons coloured by the same hue as the trees and the quiz software use
+let teamMode = 'b';
+document.querySelectorAll('#teamMode [data-mode]').forEach(b => b.onclick = () => {
+    teamMode = b.dataset.mode;
+    document.querySelectorAll('#teamMode [data-mode]').forEach(x => x.classList.toggle('on', x === b));
+});
+function drawTeams() {
+    const n = Math.max(1, Math.min(49, parseInt($('teamCount').value) || 14));
+    const box = $('teams');
+    box.innerHTML = '';
+    for (let t = 0; t < n; t++) {
+        const b = document.createElement('button');
+        b.className = 'team';
+        b.textContent = t + 1;
+        b.title = 'Team ' + (t + 1) + ' (id ' + t + ')';
+        b.style.background = 'hsl(' + (360 * t / n) + ', 100%, 50%)';
+        b.onclick = () => {
+            if (teamMode === 'Q') send('q' + pad(t + 50, 2));
+            else send(teamMode + pad(t, 2));
+        };
+        box.appendChild(b);
+    }
+}
+$('teamCount').oninput = drawTeams;
+$('sendTeamCount').onclick = () => send('len' + pad(parseInt($('teamCount').value) || 14, 2));
+drawTeams();
+
+$('sendColour').onclick = () => {
+    const h = $('colour').value;
+    const rgb = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    send('c' + rgb.map(v => pad(v, 3)).join(''));
+};
+
+const sendCount = throttled(v => send('k' + pad(v, 3)));
+$('count').oninput = e => { $('countVal').textContent = e.target.value + '%'; sendCount(e.target.value); };
+$('countVal').textContent = $('count').value + '%';
+let countTimer = null;
+$('runCount').onclick = () => {
+    clearInterval(countTimer);
+    let v = 100;
+    send('k100');
+    countTimer = setInterval(() => {
+        v -= 5;
+        $('count').value = v; $('countVal').textContent = v + '%';
+        send('k' + pad(v, 3));
+        if (v <= 0) clearInterval(countTimer);
+    }, 500);
+};
+$('stopCount').onclick = () => clearInterval(countTimer);
+
+const sendBright = throttled(v => send('g' + pad(v, 3)));
+$('bright').oninput = e => { $('brightVal').textContent = e.target.value; sendBright(e.target.value); };
+$('brightVal').textContent = $('bright').value;
+
+$('waveStep').oninput = e => $('waveStepVal').textContent = e.target.value + ' ms';
+$('waveStepVal').textContent = $('waveStep').value + ' ms';
+$('wave').onclick = () => send('w' + pad($('waveStep').value, 3));
+
+$('sendRaw').onclick = () => { if ($('raw').value) send($('raw').value.trim()); };
+$('raw').onkeydown = e => { if (e.key === 'Enter') $('sendRaw').onclick(); };
+
+connect();
+</script>
+</body>
+</html>

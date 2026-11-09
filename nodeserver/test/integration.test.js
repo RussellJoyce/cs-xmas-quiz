@@ -445,6 +445,59 @@ describe('the LED team count', () => {
     });
 });
 
+//Its own server, because the tree animation is remembered and replayed like the team count.
+describe('the desk trees', () => {
+    let handle, ports, unmute;
+
+    before(async () => {
+        unmute = muteLogs();
+        handle = startWebsocketServers({
+            certs: testCerts(),
+            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
+        });
+        await handle.ready();
+        ports = handle.ports();
+    });
+
+    after(async () => {
+        await new Promise(resolve => handle.close(resolve));
+        unmute();
+    });
+
+    test('a tree is sent an animation and its place, and is kept apart from the string', async () => {
+        const quiz = connectPlain(ports.server);
+        await quiz.next();
+        const string = connectPlain(ports.leds);
+        assert.strictEqual(await string.next(), 'a01');
+        const tree = connectPlain(ports.leds, '/?tree=d62534');
+        assert.deepStrictEqual(await tree.nextN(2), ['a01', 'i0001']);
+
+        quiz.send('ltb03');
+        assert.strictEqual(await tree.next(), 'b03');
+        quiz.send('lea05');
+        assert.strictEqual(await string.next(), 'a05');
+        await expectSilence(tree);
+        await expectSilence(string);
+
+        quiz.close(); string.close(); tree.close();
+    });
+
+    test('trees are renumbered as they come and go', async () => {
+        //The previous test's tree may not have finished disconnecting on the server's side
+        while(handle.trees.order().length) await new Promise(r => setTimeout(r, 10));
+        const b = connectPlain(ports.leds, '/?tree=bb0000');
+        assert.strictEqual((await b.nextN(2))[1], 'i0001');
+        const a = connectPlain(ports.leds, '/?tree=aa0000');
+        assert.strictEqual((await a.nextN(2))[1], 'i0002');
+        assert.strictEqual(await b.next(), 'i0102');
+
+        a.close();
+        assert.strictEqual(await b.next(), 'i0001');
+        b.close();
+    });
+});
+
 //Everything above runs with dev: true, because those tests name their clients. This block
 //is the other half: what a client can do to a server started the way a real quiz starts it.
 describe('with development mode off', () => {

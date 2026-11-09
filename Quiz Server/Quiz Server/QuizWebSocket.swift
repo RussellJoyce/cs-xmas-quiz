@@ -254,7 +254,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lea05")
 	}
 
-	/// One of the canned animations, by its number in the LED protocol (see quizleds/src/web.cpp)
+	/// One of the canned animations, by its number in the LED protocol (see quizleds/src/string/web.cpp)
 	func animation(_ number: Int) {
 		if number >= 0 && number < 100 {
 			send("lea" + String(format: "%02d", number))
@@ -327,5 +327,58 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	/// Set the leds to a value from 0 to NUM_LEDS.
 	func setCounterValue(_ val: Int) {
 		send("ler" + String(format: "%03d", val))
+	}
+
+	enum TreeAnimation: Int {
+		case off = 0, twinkle, rainbow, candle, roomWave, chase
+	}
+
+	func treeAnimation(_ animation: TreeAnimation) {
+		send("lta" + String(format: "%02d", animation.rawValue))
+	}
+
+	/// Spin up in a team's colour and hold it. Trees start one after another. Team is 0-based.
+	func treeBuzz(team: Int) {
+		if team >= 0 && team < 50 {
+			send("ltb" + String(format: "%02d", team))
+		}
+	}
+
+	func treeColour(r: UInt8, g: UInt8, b: UInt8) {
+		send("ltc" + String(format: "%03d", r) + String(format: "%03d", g) + String(format: "%03d", b))
+	}
+
+	/// Team is 0-based
+	func treeTeamColour(_ team: Int) {
+		if team >= 0 && team < 50 {
+			send("ltt" + String(format: "%02d", team))
+		}
+	}
+
+	/// Ring filled to a percentage, green to red, flashing red at 0
+	func treeCountdown(percent: Int) {
+		send("ltk" + String(format: "%03d", max(0, min(100, percent))))
+	}
+
+	/// Pulses fade in and out over whatever the trees were showing
+	func treePulseWhite() { send("ltp00") }
+	func treePulseRed() { send("ltp01") }
+	func treePulseGreen() { send("ltp02") }
+
+	/// Team is 0-based
+	func treePulseTeamColour(_ team: Int, quick: Bool = false) {
+		if team >= 0 && team < 50 {
+			send("ltq" + String(format: "%02d", quick ? team + 50 : team))
+		}
+	}
+
+	/// A white flash that ripples across the trees, `stepMs` apart
+	func treeWave(stepMs: Int = 100) {
+		send("ltw" + String(format: "%03d", max(0, min(999, stepMs))))
+	}
+
+	/// Global brightness of every tree, 0-255
+	func treeBrightness(_ value: Int) {
+		send("ltg" + String(format: "%03d", max(0, min(255, value))))
 	}
 }

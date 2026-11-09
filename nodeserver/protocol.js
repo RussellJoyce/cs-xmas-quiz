@@ -6,7 +6,8 @@
 //    transport.toClients(message)   broadcast to every buzzer client that holds a team
 //                                   (see teamSockets)
 //    transport.toServers(message)   send to the quiz software
-//    transport.toLeds(message)      send to the LED controllers
+//    transport.toLeds(message)      send to the LED string
+//    transport.toTrees(message)     send to the desk trees
 //
 //server.js wires those to the real WebSocket servers and the tests just use arrays
 
@@ -82,6 +83,8 @@ class QuizState {
         this.lastHigherLower = null;   //'h1' or 'h2', once the quiz software has said which
         this.multiAnswers = {};        //The tile each team has had accepted this question
         this.lastLedTeamCount = null;
+        this.lastTreeAnimation = 'a01';
+        this.lastTreeBrightness = null;
         this.nextHandle = 1;
 
         //Somewhere to keep the team picks across a restart, or null to hold them in memory only
@@ -200,6 +203,13 @@ class QuizState {
         if(this.lastLedTeamCount) safeSend(sock, this.lastLedTeamCount);
     }
 
+    //What a freshly connected tree is sent
+    sendTreeState(sock) {
+        safeSend(sock, this.lastTreeAnimation);
+        if(this.lastLedTeamCount) safeSend(sock, this.lastLedTeamCount);
+        if(this.lastTreeBrightness) safeSend(sock, this.lastTreeBrightness);
+    }
+
     //Everything a freshly connected or reconnected client needs in order to show the current state of play
     sendCurrentState(sock, team) {
         safeSend(sock, 'vs' + this.lastView);      //'vs' rather than 'vi': a phone already on this view has only lost its connection. 'vi' is a full reset.
@@ -286,8 +296,18 @@ class QuizState {
                     }
                     case "le": //Set LED function
                         log.info('quiz', 'leds', 'le', message.slice(2));
-                        if(message[2] == 'n') this.lastLedTeamCount = message.slice(2);
                         this.transport.toLeds(message.slice(2));
+                        if(message[2] == 'n') {
+                            //The trees need the team count too, for team colours
+                            this.lastLedTeamCount = message.slice(2);
+                            this.transport.toTrees(message.slice(2));
+                        }
+                        break;
+                    case "lt": //Desk tree function
+                        log.info('quiz', 'trees', 'lt', message.slice(2));
+                        if(message[2] == 'a') this.lastTreeAnimation = message.slice(2);
+                        if(message[2] == 'g') this.lastTreeBrightness = message.slice(2);
+                        this.transport.toTrees(message.slice(2));
                         break;
                     case "di": { //Disconnect client
                         const team = parseInt(message.slice(2)); //Teams are 1-based, so 0/NaN are both invalid

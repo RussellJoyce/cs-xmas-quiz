@@ -1,6 +1,6 @@
 # Builds the quizleds firmware as a host executable. See README.md.
 #
-# The firmware sources in ../src are compiled unchanged; everything ESP-specific is
+# The firmware sources in ../src/string, and the shared ones in ../src, are compiled unchanged; everything ESP-specific is
 # satisfied by the headers in shim/, which come first on the include path.
 
 CXX      ?= c++
@@ -8,6 +8,7 @@ CXXFLAGS ?= -O2 -g -std=c++11 -Wall -Wextra -Wno-unused-parameter
 LDFLAGS  ?=
 
 SRCDIR   := ../src
+STRDIR   := $(SRCDIR)/string
 SHIMDIR  := shim
 BUILDDIR := build
 TARGET   := $(BUILDDIR)/ledsim
@@ -18,16 +19,17 @@ TARGET   := $(BUILDDIR)/ledsim
 NPB      := ../.pio/libdeps/main/NeoPixelBus/src
 NPBCOLOR := $(NPB)/internal/colors
 
-INCLUDES := -I$(SHIMDIR) -I$(SRCDIR) -I$(NPB)
+INCLUDES := -I$(SHIMDIR) -I$(STRDIR) -I$(SRCDIR) -I$(NPB)
 
-FIRMWARE := $(SRCDIR)/main.cpp $(SRCDIR)/animation.cpp $(SRCDIR)/ledmapping.cpp $(SRCDIR)/web.cpp
+FIRMWARE := $(STRDIR)/main.cpp $(STRDIR)/animation.cpp $(STRDIR)/ledmapping.cpp $(STRDIR)/web.cpp \
+            $(SRCDIR)/net.cpp
 SIM      := simmain.cpp frameshm.cpp $(SHIMDIR)/arduino_shim.cpp $(SHIMDIR)/esp_websocket_client.cpp \
             $(SHIMDIR)/freertos_shim.cpp
 COLOURS  := $(NPBCOLOR)/RgbColor.cpp $(NPBCOLOR)/RgbColorBase.cpp \
             $(NPBCOLOR)/HslColor.cpp $(NPBCOLOR)/HsbColor.cpp
 
 OBJS := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(notdir $(FIRMWARE) $(SIM) $(COLOURS)))
-VPATH := $(SRCDIR):$(SHIMDIR):$(NPBCOLOR):.
+VPATH := $(STRDIR):$(SRCDIR):$(SHIMDIR):$(NPBCOLOR):.
 
 .PHONY: all clean run check-deps
 

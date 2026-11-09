@@ -11,6 +11,7 @@ const dns = require('native-dns');
 const { QuizState, safeSend, clientKeyForConnection, asText } = require('./protocol');
 const { WikiCorpus } = require('./wikirace');
 const { PickStore } = require('./picks');
+const { Trees, treeIdFromUrl } = require('./trees');
 const log = require('./log');
 
 //Deployment settings live in config.json
@@ -212,6 +213,7 @@ function startWebsocketServers(overrides) {
     const wleds = new WebSocketServer({ port: cfg.ledsPort, host: cfg.wsBindAddress });
     const clientServers = wclient ? [wclient] : [];
 
+    const trees = new Trees();
     const state = new QuizState({
         toClients: function(message) {
             state.teamSockets().forEach(c => safeSend(c, message));
@@ -220,7 +222,10 @@ function startWebsocketServers(overrides) {
             wserver.clients.forEach(c => safeSend(c, message));
         },
         toLeds: function(message) {
-            wleds.clients.forEach(c => safeSend(c, message));
+            wleds.clients.forEach(c => { if(!trees.has(c)) safeSend(c, message); });
+        },
+        toTrees: function(message) {
+            trees.broadcast(message);
         }
     }, { numTeams: cfg.numTeams, wikiCorpus: wikiCorpus,
          store: cfg.picksFile ? new PickStore(cfg.picksFile) : null });
@@ -242,11 +247,26 @@ function startWebsocketServers(overrides) {
         ws.on('message', message => state.handleServerMessage(message));
     });
 
-    wleds.on('connection', function(ws) {
-        log.info('leds', null, null, 'LED controller connected, set to Megamas (a01)' +
-                 (state.lastLedTeamCount ? ' and ' + state.lastLedTeamCount : ''));
-        guard(ws, 'leds');
-        state.sendLedState(ws);
+    //The string and the trees share this port. A tree says so with ?tree=<id> on the URL.
+    wleds.on('connection', function(ws, req) {
+        const treeId = treeIdFromUrl(req && req.url);
+        if(treeId) {
+            guard(ws, 'tree ' + treeId);
+            state.sendTreeState(ws);
+            trees.add(ws, treeId);
+            log.info('trees', null, null, 'tree ' + treeId + ' connected, ' + trees.order().length +
+                     ' now: ' + trees.order().join(' '));
+            ws.on('close', function() {
+                trees.remove(ws);
+                log.info('trees', null, null, 'tree ' + treeId + ' disconnected, ' +
+                         trees.order().length + ' left');
+            });
+        } else {
+            log.info('leds', null, null, 'LED controller connected, set to Megamas (a01)' +
+                     (state.lastLedTeamCount ? ' and ' + state.lastLedTeamCount : ''));
+            guard(ws, 'leds');
+            state.sendLedState(ws);
+        }
         ws.on('message', message => safeSend(ws, asText(message)));
     });
 
@@ -315,6 +335,7 @@ function startWebsocketServers(overrides) {
 
     return {
         state: state,
+        trees: trees,
         servers: { wclient, wserver, wleds },
         ready: function() {
             const waiting = [wserver, wleds].map(listening);

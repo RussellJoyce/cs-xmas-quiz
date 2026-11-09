@@ -502,6 +502,37 @@ describe('routing from the quiz software', () => {
         assert.deepStrictEqual(leds.sent, ['a01', 'n04']);
     });
 
+    test('lt forwards to the trees with the prefix stripped, and not to the string', () => {
+        const { state, transport } = setup(0);
+        state.handleServerMessage('ltb03');
+        assert.deepStrictEqual(transport.trees, ['b03']);
+        assert.deepStrictEqual(transport.leds, [], 'tree commands do not reach the string');
+        assert.deepStrictEqual(transport.clients, []);
+    });
+
+    test('le reaches the trees only when it is the team count', () => {
+        const { state, transport } = setup(0);
+        state.handleServerMessage('leb03');
+        state.handleServerMessage('len09');
+        assert.deepStrictEqual(transport.leds, ['b03', 'n09']);
+        assert.deepStrictEqual(transport.trees, ['n09']);
+    });
+
+    test('a new tree is sent twinkle, and the latest animation, team count and brightness once known', () => {
+        const { state } = setup(0);
+        const first = new FakeSocket('tree');
+        state.sendTreeState(first);
+        assert.deepStrictEqual(first.sent, ['a01']);
+
+        state.handleServerMessage('lta04');
+        state.handleServerMessage('ltb02');
+        state.handleServerMessage('len07');
+        state.handleServerMessage('ltg080');
+        const late = new FakeSocket('tree');
+        state.sendTreeState(late);
+        assert.deepStrictEqual(late.sent, ['a04', 'n07', 'g080']);
+    });
+
     ['h1', 'h2'].forEach(cmd => {
         test(cmd + ' relabels the buttons on every client', () => {
             const { state, transport } = setup(0);
