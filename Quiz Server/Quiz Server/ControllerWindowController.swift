@@ -189,7 +189,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
         // Start periodic task to ask the server what clients are connected
         clientListTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(clientListTask), userInfo: nil, repeats: true)
 
-		installLEDStrip(window: window)
+		installSimulatorMonitors(window: window)
 
 		TestProbe.startIfRequested(controller: self)
     }

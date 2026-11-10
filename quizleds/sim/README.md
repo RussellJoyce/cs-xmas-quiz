@@ -135,7 +135,20 @@ run is reproducible but the trees still twinkle independently.
 The serial pane shows the websocket URI from `credentials.h`, because that is what the
 firmware prints. The shim connects to `--uri` instead, keeping the firmware's `?tree=` query.
 
-treesim does not yet publish a frame file, so Quiz Server cannot show the trees.
+### Showing the trees in Quiz Server
+
+As ledsim does, treesim publishes the trees to a shared-memory file,
+`/tmp/quiztreesim.frame` (`--frame-file`, `--no-frame-file`). The controller window
+shows them as a row of rings, above the strip, with the same model: a one-line status while
+treesim is not running, growing to make room when it appears and shrinking again 1.5s
+after it goes. `treeshm.h` defines the layout and is the authority on it. It is pinned
+with `static_assert`s in `treesim.cpp`, and `TreeFrameReader.swift` writes the same offsets
+by hand.
+
+The file is not a copy: the parent maps it before forking, so it is the memory the children
+write their rings into, under a seqlock per tree. The parent writes the heartbeat, and each
+tree's process state, so a frozen or dead tree is still shown rather than dropped. The app
+applies the same sRGB encoding as the terminal view (`TreeRingsView.showWireValues` turns it off).
 
 ## Driving it without the Swift app
 

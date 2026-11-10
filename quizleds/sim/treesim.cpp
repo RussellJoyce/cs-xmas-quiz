@@ -21,9 +21,11 @@ single-threaded process and starts its own websocket thread from setup().
 #include <NeoPixelBus.h>
 #include <esp_websocket_client.h>
 #include <tree_settings.h>
+#include "treeshm.h"
 
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <termios.h>
 #include <unistd.h>
@@ -50,7 +52,27 @@ void loop();
 
 namespace {
 
-const int MAX_TREES = 32;
+const int MAX_TREES = TREESHM_MAX;
+static_assert(TREE_NUM_LEDS == TREESHM_LEDS, "treeshm.h carries 8 LEDs a tree");
+
+//The Swift reader hand-writes these offsets, so pin every one of them here
+static_assert(offsetof(TreeShm, magic)          ==    0, "TreeShm.magic moved");
+static_assert(offsetof(TreeShm, version)        ==    4, "TreeShm.version moved");
+static_assert(offsetof(TreeShm, trees)          ==    8, "TreeShm.trees moved");
+static_assert(offsetof(TreeShm, leds)           ==   12, "TreeShm.leds moved");
+static_assert(offsetof(TreeShm, heartbeat)      ==   16, "TreeShm.heartbeat moved");
+static_assert(offsetof(TreeShm, slot)           ==   32, "TreeShm.slot moved");
+static_assert(sizeof(TreeShm)                   == 3104, "TreeShm size changed");
+static_assert(offsetof(TreeShmSlot, seq)        ==    0, "TreeShmSlot.seq moved");
+static_assert(offsetof(TreeShmSlot, process)    ==    4, "TreeShmSlot.process moved");
+static_assert(offsetof(TreeShmSlot, frames)     ==    8, "TreeShmSlot.frames moved");
+static_assert(offsetof(TreeShmSlot, index)      ==   16, "TreeShmSlot.index moved");
+static_assert(offsetof(TreeShmSlot, count)      ==   20, "TreeShmSlot.count moved");
+static_assert(offsetof(TreeShmSlot, connected)  ==   24, "TreeShmSlot.connected moved");
+static_assert(offsetof(TreeShmSlot, id)         ==   32, "TreeShmSlot.id moved");
+static_assert(offsetof(TreeShmSlot, rgb)        ==   40, "TreeShmSlot.rgb moved");
+static_assert(offsetof(TreeShmSlot, last)       ==   64, "TreeShmSlot.last moved");
+static_assert(sizeof(TreeShmSlot)               ==   96, "TreeShmSlot size changed");
 
 //-------------------------------------------------------------------------------------------------
 // Options
@@ -62,22 +84,68 @@ struct Options {
 	bool plain = false;        //No alternate screen or raw input; serial goes to stdout
 	unsigned long seed = 0;    //0 means seed from the clock
 	int renderHz = 30;
+	std::string frameFile = TREESHM_DEFAULT_PATH;  //Empty: share anonymous memory instead
 };
 Options opts;
 
 //-------------------------------------------------------------------------------------------------
-// Shared memory: one slot per tree, written by the child, read by the parent
+// Shared memory: one slot per tree, written by the child, read by the parent and by anyone
+// else who maps the frame file. See treeshm.h.
 
-struct Slot {
-	uint32_t seq;              //Odd while the child is writing rgb
-	uint32_t connected;        //Websocket handshake done
-	uint64_t frames;           //Show() calls
-	int32_t index, count;      //From the last iNNCC, or -1 before one arrives
-	uint8_t rgb[TREE_NUM_LEDS * 3];
-	char last[32];             //Last text frame received
-};
-
+typedef TreeShmSlot Slot;
+TreeShm* shm = 0;
 Slot* slots = 0;
+
+double nowSeconds() {
+	struct timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+	return (double) ts.tv_sec + (double) ts.tv_nsec / 1e9;
+}
+
+//The frame file if it can be had, otherwise anonymous memory, which works just as well
+//between treesim's own processes. Either way it is mapped before any child is forked.
+void mapShared() {
+	void* p = MAP_FAILED;
+	if(!opts.frameFile.empty()) {
+		//No O_TRUNC, as in frameshm.cpp: a new inode would strand a reader on the old one
+		int fd = open(opts.frameFile.c_str(), O_RDWR | O_CREAT, 0600);
+		if(fd >= 0 && ftruncate(fd, sizeof(TreeShm)) == 0) {
+			p = mmap(0, sizeof(TreeShm), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+		}
+		if(p == MAP_FAILED) fprintf(stderr, "treesim: cannot use frame file '%s', not publishing\n",
+		                            opts.frameFile.c_str());
+		if(fd >= 0) close(fd);   //The mapping keeps the file
+	}
+	if(p == MAP_FAILED) p = mmap(0, sizeof(TreeShm), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
+	if(p == MAP_FAILED) { perror("treesim: mmap"); exit(1); }
+	shm = (TreeShm*) p;
+	slots = shm->slot;
+
+	//A file left over from an earlier run may hold anything: unclaim it, initialise it, and
+	//only then claim it again, so a reader never sees a half-built region as valid
+	__atomic_store_n(&shm->magic, 0u, __ATOMIC_RELEASE);
+	shm->version = TREESHM_VERSION;
+	shm->trees = (uint32_t) opts.trees;
+	shm->leds = TREESHM_LEDS;
+	shm->heartbeat = nowSeconds();
+	memset(shm->slot, 0, sizeof(shm->slot));
+	for(int i = 0; i < TREESHM_MAX; i++) slots[i].index = slots[i].count = -1;
+	__atomic_store_n(&shm->magic, TREESHM_MAGIC, __ATOMIC_RELEASE);
+}
+
+//10Hz, for a reader with a sub-second staleness threshold, as in ledsim
+void beat() {
+	static double last = 0;
+	double now = nowSeconds();
+	if(now - last < 0.1) return;
+	last = now;
+	shm->heartbeat = now;
+}
+
+void setProcess(int i, uint32_t state) {
+	__atomic_store_n(&slots[i].process, state, __ATOMIC_RELEASE);
+	if(state == TREESHM_DEAD) __atomic_store_n(&slots[i].connected, 0u, __ATOMIC_RELEASE);
+}
 
 //-------------------------------------------------------------------------------------------------
 // Child side. Only ever runs in a forked child; `me` is its slot.
@@ -89,9 +157,12 @@ int child_serial = -1;
 void childText(const char* data, size_t len) {
 	//The same rule tree_main.cpp applies: i, then two two-digit fields
 	if(len >= 5 && data[0] == 'i') {
-		for(int i = 1; i < 5; i++) if(data[i] < '0' || data[i] > '9') return;
-		me->index = (data[1] - '0') * 10 + (data[2] - '0');
-		me->count = (data[3] - '0') * 10 + (data[4] - '0');
+		bool digits = true;
+		for(int i = 1; i < 5; i++) if(data[i] < '0' || data[i] > '9') digits = false;
+		if(digits) {
+			me->index = (data[1] - '0') * 10 + (data[2] - '0');
+			me->count = (data[3] - '0') * 10 + (data[4] - '0');
+		}
 	}
 	size_t n = len < sizeof(me->last) - 1 ? len : sizeof(me->last) - 1;
 	memcpy(me->last, data, n);
@@ -118,9 +189,7 @@ void childText(const char* data, size_t len) {
 	signal(SIGINT, SIG_DFL);   //The parent's handlers only set its own quit flag
 	signal(SIGTERM, SIG_DFL);
 
-	me = &slots[tree];
-	memset(me, 0, sizeof(*me));
-	me->index = me->count = -1;
+	me = &slots[tree];   //Reset by the parent before the fork
 
 	//A locally administered MAC, so the id is 5100 followed by the tree number, and the
 	//server's id order is the order they are drawn in
@@ -183,6 +252,16 @@ bool spawn(int i) {
 	if(pipe(keys) != 0) return false;
 	if(pipe(serial) != 0) { close(keys[0]); close(keys[1]); return false; }
 
+	//Everything the child owns starts afresh, as on a board that has just booted. `seq` is
+	//left alone so that it stays even and only ever increases.
+	Slot& s = slots[i];
+	s.frames = 0;
+	s.index = s.count = -1;
+	s.connected = 0;
+	memset(s.rgb, 0, sizeof(s.rgb));
+	memset(s.last, 0, sizeof(s.last));
+	snprintf(s.id, sizeof(s.id), "%s", t.id);
+
 	std::vector<int> inherited = openFds();
 	inherited.push_back(keys[1]);
 	inherited.push_back(serial[0]);
@@ -199,6 +278,7 @@ bool spawn(int i) {
 	close(serial[1]);
 	t.pid = pid;
 	t.state = RUNNING;
+	setProcess(i, TREESHM_RUNNING);
 	t.keys = keys[1];
 	t.serial = serial[0];
 	t.partial.clear();
@@ -217,8 +297,8 @@ void stopTree(int i) {
 
 void toggleFreeze(int i) {
 	Tree& t = trees[i];
-	if(t.state == RUNNING) { kill(t.pid, SIGSTOP); t.state = FROZEN; }
-	else if(t.state == FROZEN) { kill(t.pid, SIGCONT); t.state = RUNNING; }
+	if(t.state == RUNNING) { kill(t.pid, SIGSTOP); t.state = FROZEN; setProcess(i, TREESHM_FROZEN); }
+	else if(t.state == FROZEN) { kill(t.pid, SIGCONT); t.state = RUNNING; setProcess(i, TREESHM_RUNNING); }
 }
 
 void reap() {
@@ -229,7 +309,7 @@ void reap() {
 			if(trees[i].pid != pid) continue;
 			trees[i].state = DEAD;
 			trees[i].pid = -1;
-			slots[i].connected = 0;
+			setProcess(i, TREESHM_DEAD);
 			if(WIFSIGNALED(status) && WTERMSIG(status) != SIGKILL) {
 				char buf[64];
 				snprintf(buf, sizeof(buf), "\x1b[31m(died on signal %d)\x1b[0m", WTERMSIG(status));
@@ -617,6 +697,9 @@ static void usage() {
 		"  --plain                  no alternate screen or raw input; serial goes to stdout\n"
 		"  --seed <n>               fixed random seed, for reproducible animations\n"
 		"  --render-hz <n>          terminal redraw rate (default 30)\n"
+		"  --frame-file <path>      shared frame file for other viewers\n"
+		"                           (default " TREESHM_DEFAULT_PATH ")\n"
+		"  --no-frame-file          do not publish frames\n"
 		"  --help\n", MAX_TREES);
 }
 
@@ -629,21 +712,17 @@ int main(int argc, char** argv) {
 		else if(a == "--plain") opts.plain = true;
 		else if(a == "--seed" && i + 1 < argc) opts.seed = strtoul(argv[++i], 0, 10);
 		else if(a == "--render-hz" && i + 1 < argc) opts.renderHz = atoi(argv[++i]);
+		else if(a == "--frame-file" && i + 1 < argc) opts.frameFile = argv[++i];
+		else if(a == "--no-frame-file") opts.frameFile.clear();
 		else { usage(); return a == "--help" ? 0 : 1; }
 	}
 	if(opts.trees < 1 || opts.trees > MAX_TREES) { usage(); return 1; }
 	if(opts.renderHz < 1) opts.renderHz = 1;
 
-	//Anonymous and shared, so it is inherited by every child forked from here
-	void* p = mmap(0, sizeof(Slot) * MAX_TREES, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANON, -1, 0);
-	if(p == MAP_FAILED) { perror("treesim: mmap"); return 1; }
-	slots = (Slot*) p;
-	memset(slots, 0, sizeof(Slot) * MAX_TREES);
-
+	mapShared();
 	buildColourTable();
 	for(int i = 0; i < opts.trees; i++) {
 		snprintf(trees[i].id, sizeof(trees[i].id), "51%04x", i + 1);  //As tree_main.cpp makes it
-		slots[i].index = slots[i].count = -1;
 	}
 
 	signal(SIGINT, onSignal);
@@ -667,6 +746,7 @@ int main(int argc, char** argv) {
 		drainSerial();
 		reap();
 		sampleFps();
+		beat();
 		const auto now = std::chrono::steady_clock::now();
 		if(!opts.plain && std::chrono::duration_cast<std::chrono::milliseconds>(now - last_render).count()
 		   >= 1000 / opts.renderHz) {

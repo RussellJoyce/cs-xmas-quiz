@@ -3,13 +3,14 @@
 //  Quiz Server
 //
 //  Draws the LED strip published by ledsim across the bottom of the controller window.
+//  SimulatorMonitors.swift places it and grows the window for it.
 //
 
 import Cocoa
 
 // MARK: - LEDStripView
 
-class LEDStripView: NSView {
+class LEDStripView: NSView, SimulatorMonitor {
 
 	enum Order {
 		/// Pixel n is the nth LED along the real strip: what the strip actually looks like.
@@ -32,8 +33,18 @@ class LEDStripView: NSView {
 
 	/// Height of the status line. The view is exactly this tall while the simulator is not
 	/// running, and the strip occupies whatever is left when it is.
-	static let statusHeight: CGFloat = 18
+	static let statusHeight = SimulatorMonitorLayout.statusHeight
 	private let ledInset: CGFloat = 1
+
+	let expandedHeight: CGFloat = 28
+
+	private let reader = LEDFrameReader()
+
+	func poll() -> Bool {
+		let (state, frame) = reader.poll()
+		update(state: state, frame: frame, lookup: reader.lookup, fps: reader.framesPerSecond)
+		return state == .live
+	}
 
 	/// Only marks itself dirty when something actually changed, so a settled animation
 	/// leaves the view idle rather than repainting 60 times a second.
@@ -111,65 +122,3 @@ class LEDStripView: NSView {
 }
 
 
-// MARK: - Control
-
-/// Shows what the LED strip is doing, read from the shared frame file that ledsim publishes
-private var ledStrip: LEDStripView?
-private var ledStripTimer: Timer?
-private let ledReader = LEDFrameReader()
-private let ledStripHeight: CGFloat = 28
-private let ledStripMargin: CGFloat = 4
-private var ledStripExpanded = false
-private var ledAbsentSince: Date?
-
-func installLEDStrip(window : NSWindow?) {
-	guard let window = window, let content = window.contentView else { return }
-
-	//Starts collapsed: just the status line. The poll below expands it if a simulator is already running.
-	growWindow(window, by: LEDStripView.statusHeight + ledStripMargin * 2)
-
-	let strip = LEDStripView(frame: NSRect(x: 8, y: ledStripMargin, width: content.bounds.width - 16, height: LEDStripView.statusHeight))
-	strip.autoresizingMask = [.width, .maxYMargin]
-	content.addSubview(strip)
-	ledStrip = strip
-	ledStripTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { _ in pollLEDStrip() }
-}
-
-private func pollLEDStrip() {
-	guard let strip = ledStrip else { return }
-	let (state, frame) = ledReader.poll()
-	strip.update(state: state, frame: frame, lookup: ledReader.lookup, fps: ledReader.framesPerSecond)
-	setLEDStripExpanded(shouldExpandLEDStrip(for: state))
-}
-
-private func shouldExpandLEDStrip(for state: LEDFrameReader.State) -> Bool {
-	switch state {
-	case .live:
-		ledAbsentSince = nil
-		return true
-	case .absent:
-		let since = ledAbsentSince ?? Date()
-		ledAbsentSince = since
-		return ledStripExpanded && Date().timeIntervalSince(since) < 1.5
-	}
-}
-
-private func setLEDStripExpanded(_ expanded: Bool) {
-	guard expanded != ledStripExpanded, let window = ledStrip?.window, let content = window.contentView else { return }
-	ledStripExpanded = expanded
-	growWindow(window, by: expanded ? ledStripHeight : -ledStripHeight)
-	ledStrip?.frame = NSRect(x: 8, y: ledStripMargin,
-							 width: content.bounds.width - 16,
-							 height: LEDStripView.statusHeight + (expanded ? ledStripHeight : 0))
-}
-
-/// Grows or shrinks the window downwards, leaving the title bar where the user put it.
-private func growWindow(_ window: NSWindow, by delta: CGFloat) {
-	var frame = window.frame
-	frame.origin.y -= delta
-	frame.size.height += delta
-	if let screen = window.screen {
-		frame = window.constrainFrameRect(frame, to: screen)
-	}
-	window.setFrame(frame, display: true)
-}
