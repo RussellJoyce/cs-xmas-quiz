@@ -65,5 +65,8 @@ void sim_websocket_set_uri(const char* uri);
 bool sim_websocket_is_connected();
 //The last text frame received, for the status line.
 const char* sim_websocket_last_message();
+//Called with every text frame, on the websocket thread, before the firmware sees it. For
+//display only: treesim uses it to show each tree's place among the others.
+void sim_websocket_set_text_hook(void (*hook)(const char* data, size_t len));
 
 #endif

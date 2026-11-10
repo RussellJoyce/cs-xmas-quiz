@@ -43,6 +43,7 @@ std::string base64(const uint8_t* data, size_t len) {
 }
 
 std::string sim_uri_override;
+void (*text_hook)(const char*, size_t) = 0;
 
 //Last text frame received, purely so the simulator can show it on its status line.
 char last_message[32] = {0};
@@ -230,7 +231,10 @@ void esp_websocket_client::run() {
 
 			if(opcode == 0x8) break;                                //close
 			if(opcode == 0x9) sendFrame(0xA, payload.data(), (size_t) len); //ping -> pong
-			if(opcode == 0x1) noteMessage((const char*) payload.data(), (size_t) len);
+			if(opcode == 0x1) {
+				noteMessage((const char*) payload.data(), (size_t) len);
+				if(text_hook) text_hook((const char*) payload.data(), (size_t) len);
+			}
 
 			esp_websocket_event_data_t data;
 			memset(&data, 0, sizeof(data));
@@ -254,6 +258,7 @@ void esp_websocket_client::run() {
 //-------------------------------------------------------------------------------------------------
 
 void sim_websocket_set_uri(const char* uri) { sim_uri_override = uri ? uri : ""; }
+void sim_websocket_set_text_hook(void (*hook)(const char* data, size_t len)) { text_hook = hook; }
 
 static esp_websocket_client* the_client = 0;
 bool sim_websocket_is_connected() { return the_client && the_client->connected; }
@@ -261,10 +266,22 @@ const char* sim_websocket_last_message() { return last_message; }
 
 esp_websocket_client_handle_t esp_websocket_client_init(const esp_websocket_client_config_t* config) {
 	esp_websocket_client* c = new esp_websocket_client();
-	std::string uri = !sim_uri_override.empty() ? sim_uri_override
-	                : (config && config->uri ? config->uri : "");
+	std::string uri = config && config->uri ? config->uri : "";
+	if(!sim_uri_override.empty()) {
+		//The override says which server to use, but the query is the firmware's own: it is
+		//how a tree tells the server who it is (?tree=<id>, added by net.cpp)
+		size_t q = uri.find('?');
+		std::string query = q == std::string::npos ? "" : uri.substr(q + 1);
+		uri = sim_uri_override;
+		if(!query.empty()) {
+			if(uri.find('?') != std::string::npos) uri += "&";
+			else if(uri.find('/', uri.find("://") + 3) == std::string::npos) uri += "/?";
+			else uri += "?";
+			uri += query;
+		}
+	}
 	if(!c->parseUri(uri)) {
-		fprintf(stderr, "ledsim: cannot parse websocket uri '%s'\n", uri.c_str());
+		fprintf(stderr, "sim: cannot parse websocket uri '%s'\n", uri.c_str());
 		delete c;
 		return 0;
 	}

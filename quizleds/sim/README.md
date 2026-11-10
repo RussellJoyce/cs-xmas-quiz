@@ -1,4 +1,4 @@
-# ledsim — the quizleds firmware on the host
+# ledsim and treesim — the quizleds firmware on the host
 
 Runs the real firmware as a native executable and draws the strip in the terminal, so the
 LED code and its interaction with the rest of the quiz can be tested without a board.
@@ -92,6 +92,50 @@ has gone away.
 
 The file is created if absent and never truncated or unlinked, so ledsim can be restarted
 underneath a reader that has already mapped it.
+
+## treesim — the desk trees
+
+`make` also builds `./build/treesim`, which does the same for the desk trees: the firmware
+in `../src/tree` and `../src/net.cpp`, compiled unchanged against the same shims.
+
+    ./build/treesim -n 6
+
+The interesting tree behaviour only appears with several trees connected (the `i`
+identities, staggered buzzes, the room wave, the `w` ripple), but the tree firmware keeps
+all of its state in file-scope statics, so one process can only be one tree. treesim
+therefore `fork()`s a child per tree. Each child runs the firmware's own `setup()` and
+`loop()` with a MAC address of its own, `02:00:00:51:00:<n>`, giving ids `510001`,
+`510002` and so on, and opens its own websocket with `?tree=<id>`, so the server sees
+separate trees in the order they are drawn. The parent runs no firmware: it owns the
+terminal and reads each tree's ring from shared memory, its serial output from a pipe, and
+sends it keystrokes down another. A tree whose parent has gone notices that pipe close and exits.
+
+Each tree is drawn as its ring, LED 0 at the top and the rest clockwise, with its number,
+its id and its state: `waiting` for the server, `n of m` once the server has given it a
+place, `frozen` or `dead`.
+
+Keys: **Tab** picks which tree the keys go to (all, or one). **X** kills it, so the
+server sees the socket close at once. **S** starts it again from boot. **Z** freezes and
+thaws it with SIGSTOP: its socket stays open but nothing answers, which is how a tree that
+has lost power or WiFi looks until the server gives up on it. Every other key goes to the
+firmware's debug console in `tree_main.cpp` (`0-5 b p r g k w = - i n`).
+
+### Colours
+
+The bytes sent to a WS2812 set its PWM duty, so they are proportional to light, and
+`tree_tick()` has already gamma corrected them for the eye. A monitor reads bytes as sRGB,
+which is not linear, so the wire values drawn as they are look much darker than the tree
+does. By default treesim encodes the light level as sRGB, which puts it on screen at about the brightness
+it has on the desk. `--wire` draws the raw bytes, for checking the values themselves.
+
+Options: `-n <trees>` (default 4, at most 32), `--uri`, `--wire`, `--plain`, `--seed`,
+`--render-hz`, as for ledsim. With `--seed` each tree gets the seed plus its number, so the
+run is reproducible but the trees still twinkle independently.
+
+The serial pane shows the websocket URI from `credentials.h`, because that is what the
+firmware prints. The shim connects to `--uri` instead, keeping the firmware's `?tree=` query.
+
+treesim does not yet publish a frame file, so Quiz Server cannot show the trees.
 
 ## Driving it without the Swift app
 

@@ -59,6 +59,19 @@ long random(long howsmall, long howbig);
 void randomSeed(unsigned long seed);
 
 //-------------------------------------------------------------------------------------------------
+// The bits of esp_system.h that the Arduino core pulls in and the trees use: the hardware
+// random number generator and the factory MAC address. The simulator sets both, so that each
+// simulated tree has an identity of its own and does not twinkle in step with the others.
+
+typedef enum { ESP_MAC_WIFI_STA = 0 } esp_mac_type_t;
+uint32_t esp_random();
+int esp_read_mac(uint8_t* mac, esp_mac_type_t type);
+
+//Simulator hooks, not part of the ESP-IDF API
+void sim_set_mac(const uint8_t mac[6]);
+void sim_set_entropy(uint32_t seed);
+
+//-------------------------------------------------------------------------------------------------
 // String. web.cpp uses it to hold credentials and hand them to WiFi.begin.
 
 class String {

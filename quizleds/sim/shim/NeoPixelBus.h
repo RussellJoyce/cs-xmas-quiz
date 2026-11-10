@@ -28,12 +28,23 @@ out over RMT/I2S, and Show() hands it to the simulator front end instead.
 #include <internal/colors/HsbColor.h>
 #include <internal/colors/HtmlColor.h>
 #include <internal/colors/RgbwColor.h>
+//NeoGamma has a Correct() for every colour type, so they all have to be declared
+#include <internal/colors/Rgbw64Color.h>
+#include <internal/colors/RgbwwColor.h>
+#include <internal/colors/Rgbww80Color.h>
+#include <internal/colors/RgbwwwColor.h>
+#include <internal/NeoUtil.h>
+#include <internal/colors/NeoGamma.h>
+#include <internal/colors/NeoGammaTableMethod.h>
 
 //The colour ordering feature and the output method carry no behaviour we can simulate:
 //NeoRgbFeature only fixes the byte order on the wire, and NeoWs2811Method is the DMA
 //driver. Both are empty here; only the ColorObject typedef is actually used.
 class NeoRgbFeature { public: typedef RgbColor ColorObject; };
 class NeoWs2811Method {};
+//The same for the trees' features and driver
+class NeoGrbFeature { public: typedef RgbColor ColorObject; };
+class NeoEsp32Rmt0Ws2812xMethod {};
 
 //Implemented by the simulator front end (simmain.cpp). Called from Show().
 void sim_leds_show(const RgbColor* pixels, uint16_t count);

@@ -43,3 +43,27 @@ long random(long howsmall, long howbig) {
 void randomSeed(unsigned long seed) {
 	srand((unsigned int) seed);
 }
+
+//-------------------------------------------------------------------------------------------------
+// esp_system.h. A locally administered MAC, so it cannot be mistaken for a real board's.
+
+static uint8_t sim_mac[6] = {0x02, 0x00, 0x00, 0x51, 0x00, 0x01};
+static uint32_t entropy = 0x9e3779b9u;
+
+void sim_set_mac(const uint8_t mac[6]) { memcpy(sim_mac, mac, sizeof(sim_mac)); }
+
+void sim_set_entropy(uint32_t seed) { entropy = seed ? seed : 0x9e3779b9u; }
+
+int esp_read_mac(uint8_t* mac, esp_mac_type_t type) {
+	(void) type;
+	memcpy(mac, sim_mac, sizeof(sim_mac));
+	return 0;
+}
+
+//xorshift32: the firmware only uses it to seed random(), so it need not be good
+uint32_t esp_random() {
+	entropy ^= entropy << 13;
+	entropy ^= entropy >> 17;
+	entropy ^= entropy << 5;
+	return entropy;
+}
