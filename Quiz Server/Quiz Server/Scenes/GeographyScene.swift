@@ -218,7 +218,13 @@ class GeographyScene: QuizScene {
 	
 	
 	
+	/// `x` and `y` are percentages across and down the map
 	func teamAnswered(team: Int, x: Int, y: Int) {
+		//The page clamps its guesses to the map, but a hand-made one need not be
+		guard (0...100).contains(x) && (0...100).contains(y) else {
+			print("Geography guess off the map from team \(team + 1): \(x), \(y)")
+			return
+		}
 		if !answering {
 			print("Team: " + String(team) + " X: " + String(x) + " Y: " + String(y))
 			var firstAnswer = false

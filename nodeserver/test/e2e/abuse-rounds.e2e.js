@@ -264,7 +264,7 @@ quizScenarios('trying to break the other rounds', { teams: 3 }, scenario => {
         await geography(quiz, {});
         for(const bad of ['ii1,500,500', 'ii1,-1,50', 'ii1,abc,1', 'ii1,1']) await quiz.rawFrom(1, bad);
         assert.strictEqual((await quiz.host.read(GEO + '.teamguesses'))[0], null);
-    }, { todo: 'Only the page clamps the coordinates, so neither the server nor the app checks them' });
+    });
 
     scenario('geography: a new question forgets the last one', async quiz => {
         await geography(quiz, { 1: [0.5, 0.5] });

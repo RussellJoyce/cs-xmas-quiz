@@ -194,7 +194,10 @@ class TrueFalseScene: QuizScene {
 	}
 	
 	override func teardown() {
+		//Leaving mid-question closes it, so no answer is taken until the next one starts
 		timer?.invalidate()
+		counting = false
+		stopFire()
 		music?.stop()
 	}
 

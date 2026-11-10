@@ -24,7 +24,7 @@ quizScenarios('messages for the wrong round', { teams: 3 }, scenario => {
         assert.deepStrictEqual(quiz.leds.slice(leds).filter(m => !m.startsWith('n')), [], 'the LEDs reacted');
         const replies = quiz.wire.slice(mark).filter(w => w.dir === 'host→srv' && /^(to|ms|hh|hl)/.test(w.msg));
         assert.deepStrictEqual(replies.map(w => w.msg), [], 'a phone was told something');
-    }, { todo: 'Geography and wavelength guesses go to their scenes whichever round is on show, and pulse the LEDs' });
+    });
 
     scenario('leaving true/false during a question closes it', async quiz => {
         await quiz.allPlaying();
@@ -36,7 +36,7 @@ quizScenarios('messages for the wrong round', { teams: 3 }, scenario => {
         const mark = quiz.wire.length;
         await quiz.rawFrom(1, 'hi1');
         assert.ok(!quiz.wire.has('host→srv', 'hh1', mark), 'an answer was accepted from another round');
-    }, { todo: 'teardown stops the clock but leaves counting true' });
+    });
 
     scenario('leaving multiple choice during a question closes it', async quiz => {
         await quiz.allPlaying();
@@ -48,7 +48,7 @@ quizScenarios('messages for the wrong round', { teams: 3 }, scenario => {
         const mark = quiz.wire.length;
         await quiz.rawFrom(1, 'mc1,1');
         assert.ok(!quiz.wire.slice(mark).some(w => w.msg.startsWith('ms')), 'an answer was accepted from another round');
-    }, { todo: 'teardown stops the clock but leaves counting true' });
+    });
 
     scenario('a text answer goes nowhere outside the text rounds', async quiz => {
         await quiz.allPlaying();

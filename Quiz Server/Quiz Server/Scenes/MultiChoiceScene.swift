@@ -173,8 +173,10 @@ class MultiChoiceScene: QuizScene {
 	}
 
 	override func teardown() {
+		//Leaving mid-question closes it, so no answer is taken until the next one starts
 		timer?.invalidate()
 		timer = nil
+		counting = false
 	}
 
 	override func setParticipating(_ teams: [Bool]) {

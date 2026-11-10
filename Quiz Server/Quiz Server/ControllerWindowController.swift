@@ -557,23 +557,26 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			guard roster.isPlaying(team.index) else { break }
 			quizDisplay.buzzerPressed(team: team.index, type: .websocket, options: buzzerOptions)
 
+		//The round guesses go to their scene only while it is on show. A scene keeps its state
+		//after the host moves on, and a stale or hand-made client can still send to it.
 		case .higherLower(let team, let higher):
-			guard roster.isPlaying(team.index) else { break }
+			guard quizDisplay.currentRound == .trueFalse, roster.isPlaying(team.index) else { break }
 			if quizDisplay.truefalseScene.teamGuess(teamid: team.index, guess: higher) {
 				send(.higherLowerAccepted(team: team.index, higher: higher))
 			}
 
 		case .geographyGuess(let team, let x, let y):
-			guard roster.isPlaying(team.index) else { break }
+			guard quizDisplay.currentRound == .geography, roster.isPlaying(team.index) else { break }
 			quizDisplay.geographyScene.teamAnswered(team: team.index, x: x, y: y)
 
 		case .wavelengthGuess(let team, let value):
-			guard roster.isPlaying(team.index) else { break }
+			guard quizDisplay.currentRound == .wavelength, roster.isPlaying(team.index) else { break }
 			quizDisplay.wavelengthScene.teamGuess(team: team.index, value: value)
 			wavelengthPanel.updateGuesses()
 
 		case .multiChoiceGuess(let team, let option):
-			guard roster.isPlaying(team.index), multiChoicePanel.counting else { break }
+			guard quizDisplay.currentRound == .multichoice, roster.isPlaying(team.index),
+			      multiChoicePanel.counting else { break }
 			if let taken = multiChoicePanel.teamGuessed(team: team.index, option: option) {
 				//If the round rejected it we wont light the tile on the client
 				send(.multiChoiceAccepted(team: team.index, option: taken))
