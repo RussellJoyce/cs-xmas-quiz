@@ -217,7 +217,7 @@ describe('a real server restarting under a phone', () => {
     function start(file) {
         const handle = startWebsocketServers({
             certs: testCerts(), dev: true, picksFile: file,
-            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
             bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
         });
         return handle.ready().then(() => handle);

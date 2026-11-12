@@ -6,6 +6,7 @@
     "clientWss": 8090,
     "server": 8091,
     "leds": 8092,
+    "firmware": 8093,
     "http": 80,
     "https": 443,
     "dns": 53

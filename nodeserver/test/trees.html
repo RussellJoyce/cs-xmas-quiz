@@ -123,6 +123,14 @@ input[type=range] { flex: 1; min-width: 120px; }
     </section>
 
     <section>
+        <h2>Firmware (u)</h2>
+        <div class="row">
+            <button data-cmd="u">Update all trees</button>
+        </div>
+        <div class="row" style="color:var(--dim)">Each tree fetches the latest build of quizleds/tree for its chip from the server, and reboots into it. Trees already running it pulse green.</div>
+    </section>
+
+    <section>
         <h2>Raw</h2>
         <div class="row">
             <input id="raw" type="text" placeholder="b03, k050, …" style="flex:1">

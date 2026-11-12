@@ -213,7 +213,7 @@ describe('what the ports and team count feed', () => {
 
     test('the ports the phones and the quiz software use are all distinct', () => {
         const cfg = defaultConfig();
-        const used = [cfg.clientWssPort, cfg.serverPort, cfg.ledsPort,
+        const used = [cfg.clientWssPort, cfg.serverPort, cfg.ledsPort, cfg.firmwarePort,
                       cfg.httpPort, cfg.httpsPort, cfg.dnsPort];
         assert.strictEqual(new Set(used).size, used.length, 'duplicate port in ' + used);
     });

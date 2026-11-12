@@ -368,12 +368,13 @@ async function startQuiz(options) {
         //    to everything trying to get back to it.
         let ws = null;
         let ledSocket = null;
-        let ports = { clientWss: 0, server: 0, leds: 0 };
+        let ports = { clientWss: 0, server: 0, leds: 0, firmware: 0 };
 
         async function startServer() {
             ws = startWebsocketServers({
                 certs, dev: true, numTeams: teams, picksFile,
                 clientWssPort: ports.clientWss, serverPort: ports.server, ledsPort: ports.leds,
+                firmwarePort: ports.firmware,
                 bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1', wikiDir
             });
             await ws.ready();

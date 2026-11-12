@@ -25,7 +25,7 @@ static char uri_buf[URI_MAX_LEN];
 static esp_websocket_client_config_t websocket_cfg = {
 	.uri = uri_buf
 };
-static esp_websocket_client_handle_t websocket_client;
+static esp_websocket_client_handle_t websocket_client = NULL;
 
 static void connect_websocket();
 
@@ -42,6 +42,17 @@ static void build_uri(const char *base) {
 	bool has_query = strchr(after_host, '?') != NULL;
 	snprintf(uri_buf, sizeof(uri_buf), "%s%s%s", base,
 	         has_query ? "&" : (has_path ? "?" : "/?"), net_query);
+}
+
+bool net_server_host(char *buf, int len) {
+	const char *scheme_end = strstr(uri_buf, "://");
+	if(scheme_end == NULL) return false;
+	const char *host = scheme_end + 3;
+	int n = strcspn(host, ":/?");
+	if(n == 0 || n >= len) return false;
+	memcpy(buf, host, n);
+	buf[n] = 0;
+	return true;
 }
 
 void net_print_details() {
@@ -79,6 +90,9 @@ static void connect_wifi() {
 			break;
 		}
 
+		//Abandon this attempt before the next. Core 3 (the trees) refuses WiFi.begin() while the
+		//station is still trying to connect.
+		WiFi.disconnect();
 		i++;
 		if(i >= NUM_CREDS) i = 0;
 	}
@@ -136,6 +150,14 @@ static void websocket_event_handler(void *handler_args, esp_event_base_t base, i
 }
 
 static void connect_websocket() {
+	//After a WiFi drop the old client still exists, and its task keeps reconnecting by itself.
+	//Left alone, it and the new client would both connect, and every command would arrive
+	//twice. Destroying it stops its task first. A new client is still needed: the network
+	//joined this time may have a different URI.
+	if(websocket_client != NULL) {
+		esp_websocket_client_destroy(websocket_client);
+		websocket_client = NULL;
+	}
 	websocket_client = esp_websocket_client_init(&websocket_cfg);
 	esp_websocket_register_events(websocket_client, WEBSOCKET_EVENT_ANY, websocket_event_handler, (void *)websocket_client);
 	if(esp_websocket_client_start(websocket_client) != ESP_OK) {

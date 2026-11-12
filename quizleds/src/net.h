@@ -17,4 +17,8 @@ void net_tick(net_command_handler handler);
 
 void net_print_details();
 
+// The host part of the websocket URI in use, e.g. "192.168.1.2": the quiz server, as reached
+// from this network. False if there is no URI yet or the host does not fit in `len`.
+bool net_server_host(char *buf, int len);
+
 #endif

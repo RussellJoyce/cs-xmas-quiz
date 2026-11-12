@@ -34,6 +34,9 @@ Faked, in `shim/`:
 | `WiFi.h` | the ESP32 WiFi class | permanently connected, so `connectWifi()` succeeds first time |
 | `esp_websocket_client.*` | the ESP-IDF websocket client | a real RFC6455 client over a POSIX socket, on its own thread, auto-reconnecting |
 | `NeoPixelBus.h` | the bus only | keeps the pixel buffer the driver would DMA out; `Show()` hands it to the renderer |
+| `tree_ring_shim.cpp` | the trees' RMT ring driver, `src/tree/tree_ring.cpp` | `ring_show()` hands the frame to the renderer |
+| `esp_mac.h` | the core 3 header for `esp_read_mac()` | declared in the `Arduino.h` shim |
+| `ota_shim.cpp` | firmware updates, `src/ota.cpp` | says what it would fetch, and carries on as if up to date |
 | `freertos/*.h` | FreeRTOS queues | a thread-safe fixed-size FIFO with the same by-value copy semantics and timeouts |
 | `credentials.h` | `../src/credentials.h` | only reached on a checkout that has never built the firmware |
 

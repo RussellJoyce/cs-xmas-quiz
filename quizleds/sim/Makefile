@@ -36,7 +36,8 @@ COLOURS  := $(NPBCOLOR)/RgbColor.cpp $(NPBCOLOR)/RgbColorBase.cpp \
 
 TREEFW   := $(TREEDIR)/tree_main.cpp $(TREEDIR)/tree_anim.cpp $(SRCDIR)/net.cpp
 TREESIMS := treesim.cpp $(SHIMDIR)/arduino_shim.cpp $(SHIMDIR)/esp_websocket_client.cpp \
-            $(SHIMDIR)/freertos_shim.cpp
+            $(SHIMDIR)/freertos_shim.cpp $(SHIMDIR)/tree_ring_shim.cpp \
+            $(SHIMDIR)/ota_shim.cpp
 TREECOL  := $(COLOURS) $(NPBCOLOR)/NeoGammaTableMethod.cpp
 
 OBJS     := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(notdir $(FIRMWARE) $(SIM) $(COLOURS)))

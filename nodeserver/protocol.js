@@ -89,6 +89,8 @@ class QuizState {
 
         //Somewhere to keep the team picks across a restart, or null to hold them in memory only
         this.store = (options && options.store) || null;
+        //Where the trees fetch firmware from (firmware.js); set by server.js once it is listening
+        this.firmwarePort = (options && options.firmwarePort) || null;
         this.restorePicks();
     }
 
@@ -305,6 +307,15 @@ class QuizState {
                         break;
                     case "lt": //Desk tree function
                         log.info('quiz', 'trees', 'lt', message.slice(2));
+                        if(message === 'ltu') {
+                            //Update firmware: the trees need to know where from
+                            if(!this.firmwarePort) {
+                                log.warn('quiz', 'trees', 'lt', 'no firmware server, update ignored');
+                                break;
+                            }
+                            this.transport.toTrees('u' + String(this.firmwarePort).padStart(5, '0'));
+                            break;
+                        }
                         if(message[2] == 'a') this.lastTreeAnimation = message.slice(2);
                         if(message[2] == 'g') this.lastTreeBrightness = message.slice(2);
                         this.transport.toTrees(message.slice(2));

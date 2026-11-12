@@ -1,5 +1,5 @@
-// Desk tree firmware. Built by the `tree` environment in platformio.ini; shares only the top of
-// src/ (net.cpp and credentials.h) with the string, whose code is in src/string/.
+// Desk tree firmware. Built by its own PlatformIO project in quizleds/tree/. Shares only the top
+// of src/ (net.cpp and credentials.h) with the string, whose code is in src/string/.
 //
 // Protocol. The quiz software sends "lt" + command; the server strips the "lt" and sends the
 // command to every tree. All numbers are fixed-width decimal. Team ids tt are 0-based.
@@ -35,9 +35,18 @@
 // Wave
 //   wsss      - white flash, tree NN firing NN * sss ms after the command: a ripple across
 //               the trees in order
+// Firmware update (the quiz software sends "ltu"; the server adds its firmware port)
+//   uPPPPP    - fetch http://<server>:PPPPP/firmware/tree-<chip>.bin, where <server> is the
+//               host this tree's websocket connects to and <chip> is e.g. esp32c3. The ring
+//               fills blue during the download, then the tree reboots into the new image.
+//               If it is already running that image it pulses green; if the update fails,
+//               red, and it carries on with the old one.
 
 #include <Arduino.h>
+#include <esp_mac.h>
+#include <WiFi.h>
 #include <net.h>
+#include <ota.h>
 #include "tree_settings.h"
 #include "tree_anim.h"
 
@@ -122,6 +131,15 @@ static void handle_command(char *dat, int len) {
 			if(s >= 0) tree_wave(s);
 			break;
 		}
+		case 'u': {
+			int port = field(dat, len, 1, 5);
+			char host[64];
+			if(port <= 0 || port > 65535 || !net_server_host(host, sizeof(host))) break;
+			tree_show_progress(0, 1);
+			ota_result r = ota_update(host, port, "tree-" CONFIG_IDF_TARGET, tree_show_progress);
+			tree_pulse_colour(r == OTA_UP_TO_DATE ? 2 : 1);
+			break;
+		}
 		default:
 			Serial.printf("Tree command %c\n", dat[0]);
 			break;
@@ -142,7 +160,7 @@ void setup() {
 	Serial.begin(115200);
 	tree_init();
 	make_identity();
-	Serial.printf("Tree %s\n", tree_id);
+	Serial.printf("Tree %s, built %s %s\n", tree_id, __DATE__, __TIME__);
 
 	// Show something while WiFi comes up, so a dead tree is obvious
 	tree_ambient(1);
@@ -152,7 +170,8 @@ void setup() {
 }
 
 // Serial debug keys: 0-5 ambient, b buzz (next team each press), p/r/g pulse, k countdown
-// step, w wave, -/= single LED, i identity, n network details
+// step, w wave, -/= single LED, i identity, n network details, x drop WiFi (to test
+// reconnecting)
 static void serial_keys() {
 	static int team = 0, single = 0, count = 100;
 	if(!Serial.available()) return;
@@ -169,6 +188,7 @@ static void serial_keys() {
 		case '-': single = (single + 7) % 8; tree_single(single); break;
 		case 'i': Serial.printf("Tree %s (%s)\n", tree_id, hostname); break;
 		case 'n': net_print_details(); break;
+		case 'x': Serial.println("Dropping WiFi"); WiFi.disconnect(); break;
 		default: Serial.print('#'); break;
 	}
 }

@@ -1,0 +1,9 @@
+{
+  "name": "esp_websocket_client",
+  "version": "1.8.0",
+  "description": "Espressif's WebSocket client component, vendored unchanged from esp-protocols tag websocket-v1.8.0. Arduino core 2.x includes it; core 3.x does not, so only the tree environment uses this copy.",
+  "license": "Apache-2.0",
+  "repository": { "type": "git", "url": "https://github.com/espressif/esp-protocols" },
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

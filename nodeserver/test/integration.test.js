@@ -120,7 +120,7 @@ describe('over real sockets', () => {
         handle = startWebsocketServers({
             certs: testCerts(),
             dev: true,
-            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
             bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
         });
         await handle.ready();
@@ -417,7 +417,7 @@ describe('the LED team count', () => {
         unmute = muteLogs();
         handle = startWebsocketServers({
             certs: testCerts(),
-            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
             bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
         });
         await handle.ready();
@@ -453,7 +453,7 @@ describe('the desk trees', () => {
         unmute = muteLogs();
         handle = startWebsocketServers({
             certs: testCerts(),
-            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
             bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
         });
         await handle.ready();
@@ -508,7 +508,7 @@ describe('with development mode off', () => {
         //No `dev`, so the server is in the state it is in on the night.
         handle = startWebsocketServers({
             certs: testCerts(),
-            clientWssPort: 0, serverPort: 0, ledsPort: 0,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
             bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
         });
         await handle.ready();

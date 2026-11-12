@@ -6,7 +6,7 @@ const assert = require('node:assert');
 const { QuizState, safeSend, clientKey, clientKeyForConnection, asText, validTeam,
         DEFAULT_NUM_TEAMS, ACTIVE_WINDOW_MS,
         DEFAULT_VIEW, DEFAULT_GEO_IMAGE, DEFAULT_MULTI } = require('../protocol');
-const { FakeSocket, recordingTransport, muteLogs } = require('./helpers');
+const { FakeSocket, recordingTransport, muteLogs, captureLogs } = require('./helpers');
 const { WikiCorpus } = require('../wikirace');
 
 let unmute;
@@ -508,6 +508,35 @@ describe('routing from the quiz software', () => {
         assert.deepStrictEqual(transport.trees, ['b03']);
         assert.deepStrictEqual(transport.leds, [], 'tree commands do not reach the string');
         assert.deepStrictEqual(transport.clients, []);
+    });
+
+    test('ltu tells the trees to update, from the firmware port', () => {
+        const { state, transport } = setup(0);
+        state.firmwarePort = 8093;
+        state.handleServerMessage('ltu');
+        assert.deepStrictEqual(transport.trees, ['u08093']);
+        assert.deepStrictEqual(transport.leds, []);
+    });
+
+    test('ltu is dropped when there is no firmware server', () => {
+        const { state, transport } = setup(0);
+        const logs = captureLogs();
+        try {
+            state.handleServerMessage('ltu');
+        } finally {
+            logs.stop();
+        }
+        assert.deepStrictEqual(transport.trees, []);
+        assert.ok(logs.some(l => /no firmware server/.test(l.line)));
+    });
+
+    test('an update is not replayed to a tree that connects later', () => {
+        const { state } = setup(0);
+        state.firmwarePort = 8093;
+        state.handleServerMessage('ltu');
+        const late = new FakeSocket('tree');
+        state.sendTreeState(late);
+        assert.deepStrictEqual(late.sent, ['a01']);
     });
 
     test('le reaches the trees only when it is the team count', () => {

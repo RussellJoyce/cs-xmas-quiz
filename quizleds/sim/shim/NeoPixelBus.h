@@ -42,11 +42,8 @@ out over RMT/I2S, and Show() hands it to the simulator front end instead.
 //driver. Both are empty here; only the ColorObject typedef is actually used.
 class NeoRgbFeature { public: typedef RgbColor ColorObject; };
 class NeoWs2811Method {};
-//The same for the trees' features and driver
-class NeoGrbFeature { public: typedef RgbColor ColorObject; };
-class NeoEsp32Rmt0Ws2812xMethod {};
-
-//Implemented by the simulator front end (simmain.cpp). Called from Show().
+//Implemented by the simulator front ends (simmain.cpp, treesim.cpp). Called from Show(), and
+//for the trees from ring_show() in tree_ring_shim.cpp.
 void sim_leds_show(const RgbColor* pixels, uint16_t count);
 
 template<typename T_COLOR_FEATURE, typename T_METHOD> class NeoPixelBus {

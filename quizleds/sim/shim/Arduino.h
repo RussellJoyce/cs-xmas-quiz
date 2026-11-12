@@ -63,6 +63,9 @@ void randomSeed(unsigned long seed);
 // random number generator and the factory MAC address. The simulator sets both, so that each
 // simulated tree has an identity of its own and does not twinkle in step with the others.
 
+//The chip name the trees put in their firmware file name, from sdkconfig on the board
+#define CONFIG_IDF_TARGET "sim"
+
 typedef enum { ESP_MAC_WIFI_STA = 0 } esp_mac_type_t;
 uint32_t esp_random();
 int esp_read_mac(uint8_t* mac, esp_mac_type_t type);

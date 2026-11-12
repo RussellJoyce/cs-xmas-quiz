@@ -12,6 +12,7 @@ const { QuizState, safeSend, clientKeyForConnection, asText } = require('./proto
 const { WikiCorpus } = require('./wikirace');
 const { PickStore } = require('./picks');
 const { Trees, treeIdFromUrl } = require('./trees');
+const { createFirmwareServer } = require('./firmware');
 const log = require('./log');
 
 //Deployment settings live in config.json
@@ -23,7 +24,7 @@ const CONFIG_FILE = __dirname + '/config.json';
 const CLIENT_MAX_PAYLOAD = 8 * 1024;
 
 //Every port the server listens on
-const REQUIRED_PORTS = ['clientWss', 'server', 'leds', 'http', 'https', 'dns'];
+const REQUIRED_PORTS = ['clientWss', 'server', 'leds', 'firmware', 'http', 'https', 'dns'];
 
 //Dev mode allows vcid and serves /test
 const DEV_MODE = process.argv.includes('--dev');
@@ -97,10 +98,12 @@ function defaultConfig(overrides) {
         clientWssPort: deployment.ports.clientWss,  //Buzzer clients, over TLS. The only client transport.
         serverPort: deployment.ports.server,        //The quiz software
         ledsPort: deployment.ports.leds,            //The LED controllers
+        firmwarePort: deployment.ports.firmware,    //Tree firmware updates, plain HTTP
         httpPort: deployment.ports.http,            //Probably 80
         httpsPort: deployment.ports.https,          //Probably 443
         dnsPort: deployment.ports.dns,              //Probably 53
         staticDir: __dirname + '/static',
+        firmwareDir: __dirname + '/firmware',
         testDir: __dirname + '/test',
         wikiDir: __dirname + '/static/wiki',
         numTeams: deployment.numTeams,
@@ -211,6 +214,8 @@ function startWebsocketServers(overrides) {
 
     const wserver = new WebSocketServer({ port: cfg.serverPort, host: cfg.wsBindAddress });
     const wleds = new WebSocketServer({ port: cfg.ledsPort, host: cfg.wsBindAddress });
+    const firmware = createFirmwareServer(cfg.firmwareDir);
+    firmware.listen(cfg.firmwarePort, cfg.bindAddress);
     const clientServers = wclient ? [wclient] : [];
 
     const trees = new Trees();
@@ -229,6 +234,10 @@ function startWebsocketServers(overrides) {
         }
     }, { numTeams: cfg.numTeams, wikiCorpus: wikiCorpus,
          store: cfg.picksFile ? new PickStore(cfg.picksFile) : null });
+
+    //The trees are told this port with each update command. Port 0 (the tests) is only known
+    //once the server is listening.
+    firmware.on('listening', function() { state.firmwarePort = firmware.address().port; });
 
     //Every socket needs an 'error' listener. `who` may be a function, so that a client is
     //named by whatever it is called at the time of the error: it may have claimed a team
@@ -319,9 +328,11 @@ function startWebsocketServers(overrides) {
     if(wclientHttpsServer) announce(wclientHttpsServer, 'wss', 'clients over TLS');
     announce(wserver, 'quiz', 'quiz software');
     announce(wleds, 'leds', 'LED controllers');
+    announce(firmware, 'firmware', 'tree firmware over http');
 
     guardServer(wserver, "the quiz software");
     guardServer(wleds, "the LEDs");
+    guardServer(firmware, "tree firmware");
     if(wclient) guardServer(wclient, "wss clients");
     if(wclientHttpsServer) guardServer(wclientHttpsServer, "the wss listener");
 
@@ -336,9 +347,9 @@ function startWebsocketServers(overrides) {
     return {
         state: state,
         trees: trees,
-        servers: { wclient, wserver, wleds },
+        servers: { wclient, wserver, wleds, firmware },
         ready: function() {
-            const waiting = [wserver, wleds].map(listening);
+            const waiting = [wserver, wleds, firmware].map(listening);
             if(wclientHttpsServer) waiting.push(listening(wclientHttpsServer));
             return Promise.all(waiting);
         },
@@ -346,14 +357,17 @@ function startWebsocketServers(overrides) {
             return {
                 clientWss: wclientHttpsServer ? wclientHttpsServer.address().port : null,
                 server: wserver.address().port,
-                leds: wleds.address().port
+                leds: wleds.address().port,
+                firmware: firmware.address().port
             };
         },
         close: function(cb) {
-            const closeables = [wserver, wleds];
+            const closeables = [wserver, wleds, firmware];
             if(wclient) closeables.push(wclient);
             let remaining = closeables.length + (wclientHttpsServer ? 1 : 0);
             const done = () => { if(--remaining <= 0 && cb) cb(); };
+            //A tree's download may still be open; don't wait for it
+            firmware.closeAllConnections();
             closeables.forEach(s => s.close(done));
             if(wclientHttpsServer) wclientHttpsServer.close(done);
         }

@@ -29,6 +29,10 @@ void tree_pulse_colour(int id);    // 0 white, 1 red, 2 green
 void tree_pulse_team(int param);   // team, or team + 50 for a quick pulse
 void tree_wave(int step_ms);       // white flash, tree i fires at i * step_ms
 
+// Firmware update: fills the ring in blue as the download goes. Draws and shows at once,
+// because loop() is blocked for the whole download and tree_tick() is not running.
+void tree_show_progress(int done, int total);
+
 // Debugging
 void tree_single(int led);
 

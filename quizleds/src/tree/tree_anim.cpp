@@ -1,10 +1,10 @@
 #include "tree_anim.h"
 #include "tree_settings.h"
+#include "tree_ring.h"
 #include <math.h>
 
 #define N TREE_NUM_LEDS
 
-static NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod> ring(N, TREE_LED_PIN);
 static NeoGamma<NeoGammaTableMethod> gamma_table;
 
 static int my_index = 0, tree_count = 1;
@@ -28,6 +28,7 @@ static uint32_t overlay_start = 0; // may be in the future (stagger)
 static uint32_t overlay_decay = 0;
 
 static RgbColor frame[N];
+static RgbColor out[N];      // frame after gamma and brightness
 
 //-------------------------------------------------------------------------------------------------
 
@@ -113,7 +114,15 @@ static void ambient_chase(uint32_t now) {
 #define BUZZ_SPIN_MS 700
 #define BUZZ_FLASH_MS 250
 
-static float shimmer[N];
+// The hold after a buzz: each LED drifts between dim and full brightness, and now and then
+// one sparkles towards white. It has to be bold to show through the diffusing shell.
+#define SHIMMER_RETARGET_PCT 6    // chance per frame that an LED picks a new level
+#define SHIMMER_MIN 0.2f          // dimmest level an LED drifts to
+#define SHIMMER_EASE 0.2f         // fraction of the way to its new level per frame
+#define SPARKLE_PER_MILLE 10      // chance per LED per frame of a sparkle, in thousandths
+#define SPARKLE_DECAY 0.88f       // per frame; about 150 ms to fade
+
+static float shimmer[N], shimmer_target[N], sparkle[N];
 
 static void draw_buzz(uint32_t now, RgbColor *before) {
 	if((int32_t)(now - base_start) < 0) {
@@ -136,8 +145,12 @@ static void draw_buzz(uint32_t now, RgbColor *before) {
 		for(int i = 0; i < N; i++) frame[i] = hsb(buzz_hue, s, 1);
 	} else {
 		for(int i = 0; i < N; i++) {
-			if(random(0, 100) < 4) shimmer[i] = 0.7f + 0.3f * frand();
-			frame[i] = hsb(buzz_hue, 1, shimmer[i]);
+			if(random(0, 100) < SHIMMER_RETARGET_PCT)
+				shimmer_target[i] = SHIMMER_MIN + (1.0f - SHIMMER_MIN) * frand();
+			shimmer[i] += (shimmer_target[i] - shimmer[i]) * SHIMMER_EASE;
+			if(random(0, 1000) < SPARKLE_PER_MILLE) sparkle[i] = 1.0f;
+			else sparkle[i] *= SPARKLE_DECAY;
+			frame[i] = hsb(buzz_hue, 1.0f - 0.8f * sparkle[i], fmaxf(shimmer[i], sparkle[i]));
 		}
 	}
 }
@@ -181,16 +194,17 @@ static void start_overlay(OverlayMode m, RgbColor c, uint32_t delay_ms, uint32_t
 //-------------------------------------------------------------------------------------------------
 
 void tree_init() {
-	ring.Begin();
-	ring.ClearTo(RgbColor(0));
-	ring.Show();
+	ring_begin(TREE_LED_PIN);
+	for(int i = 0; i < N; i++) out[i] = RgbColor(0);
+	ring_show(out, N);
 	randomSeed(esp_random());
 	for(int i = 0; i < N; i++) {
 		twinkles[i].phase = frand();
 		twinkles[i].speed = 0.0004f + frand() * 0.0008f;
 		twinkles[i].col = random(0, PALETTE_LEN);
 		candle_level[i] = candle_target[i] = 0.5f;
-		shimmer[i] = 1.0f;
+		shimmer[i] = shimmer_target[i] = 1.0f;
+		sparkle[i] = 0;
 	}
 }
 
@@ -229,9 +243,9 @@ void tree_tick(uint32_t now) {
 
 	for(int i = 0; i < N; i++) {
 		shown[i] = frame[i];
-		ring.SetPixelColor(i, gamma_table.Correct(frame[i]).Dim(brightness));
+		out[i] = gamma_table.Correct(frame[i]).Dim(brightness);
 	}
-	ring.Show();
+	ring_show(out, N);
 }
 
 void tree_set_identity(int index, int count) {
@@ -268,7 +282,10 @@ void tree_buzz(int team) {
 	base_mode = B_BUZZ;
 	buzz_hue = team_hue(team);
 	base_start = millis() + (uint32_t)my_index * TREE_STAGGER_MS;
-	for(int i = 0; i < N; i++) shimmer[i] = 1.0f;
+	for(int i = 0; i < N; i++) {
+		shimmer[i] = shimmer_target[i] = 1.0f;
+		sparkle[i] = 0;
+	}
 }
 
 void tree_countdown(int percent) {
@@ -292,6 +309,15 @@ void tree_pulse_team(int param) {
 
 void tree_wave(int step_ms) {
 	start_overlay(O_WAVE, RgbColor(255), (uint32_t)my_index * step_ms, 350);
+}
+
+void tree_show_progress(int done, int total) {
+	float lit = total > 0 ? (float)done * N / total : 0;
+	for(int i = 0; i < N; i++) {
+		RgbColor c = hsb(0.62f, 0.8f, clamp01(lit - i));
+		out[i] = gamma_table.Correct(c).Dim(brightness);
+	}
+	ring_show(out, N);
 }
 
 void tree_single(int led) {
