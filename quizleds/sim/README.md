@@ -121,7 +121,7 @@ Keys: **Tab** picks which tree the keys go to (all, or one). **X** kills it, so 
 server sees the socket close at once. **S** starts it again from boot. **Z** freezes and
 thaws it with SIGSTOP: its socket stays open but nothing answers, which is how a tree that
 has lost power or WiFi looks until the server gives up on it. Every other key goes to the
-firmware's debug console in `tree_main.cpp` (`0-5 b p r g k w = - i n`).
+firmware's debug console in `tree_main.cpp` (`0-7 b p r g k w = - i n x`).
 
 ### Colours
 

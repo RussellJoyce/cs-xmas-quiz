@@ -108,6 +108,58 @@ static void ambient_chase(uint32_t now) {
 	}
 }
 
+// Megamas in blocks: as the string's Megamas, LEDs are set to red, green or blue and slide
+// round the hue wheel to it (so red to green passes through orange and yellow), but three
+// neighbours change together. On eight LEDs that reads as a few bold patches of colour
+// rather than a scatter.
+#define MEGA_BLOCK 3
+#define MEGA_EVERY_MS 450         // a new block this often
+#define MEGA_HUE_PER_MS 0.0008f   // slide speed: the string's 0.01 per 13 ms frame
+static const float mega_hues[] = { 0.0f, 0.3f, 0.6f };
+static float mega_hue[N], mega_target[N];
+static uint32_t mega_next = 0;
+
+static void ambient_megamas(uint32_t now, uint32_t dt) {
+	if((int32_t)(now - mega_next) >= 0) {
+		mega_next = now + MEGA_EVERY_MS;
+		float h = mega_hues[random(0, 3)];
+		int start = random(0, N);
+		for(int k = 0; k < MEGA_BLOCK; k++) mega_target[(start + k) % N] = h;
+	}
+	float step = MEGA_HUE_PER_MS * dt;
+	for(int i = 0; i < N; i++) {
+		float d = mega_target[i] - mega_hue[i];
+		mega_hue[i] = fabsf(d) <= step ? mega_target[i] : mega_hue[i] + (d > 0 ? step : -step);
+		frame[i] = hsb(mega_hue[i], 1, 1);
+	}
+}
+
+// Megamas trees: the whole tree is one of Megamas' colours, and slides to another. The room
+// keeps a steady beat, counted from when the command arrived (the same moment, near enough,
+// on every tree), and each tree changes on every MEGATREE_GROUPS'th beat, which beat set by
+// its place in the room: so on every beat about a third of the trees change, never all.
+#define MEGATREE_BEAT_MS 1000
+#define MEGATREE_GROUPS 3
+static int32_t mega_beat = -1;
+
+static void ambient_megatree(uint32_t now, uint32_t dt) {
+	int32_t beat = (int32_t)(now - base_start) / MEGATREE_BEAT_MS;
+	if(beat != mega_beat && beat % MEGATREE_GROUPS == my_index % MEGATREE_GROUPS) {
+		// Always a different colour, so that no change is wasted
+		float h;
+		do { h = mega_hues[random(0, 3)]; } while(h == mega_target[0]);
+		for(int i = 0; i < N; i++) mega_target[i] = h;
+	}
+	mega_beat = beat;
+	float step = MEGA_HUE_PER_MS * dt;
+	float d = mega_target[0] - mega_hue[0];
+	float hue = fabsf(d) <= step ? mega_target[0] : mega_hue[0] + (d > 0 ? step : -step);
+	for(int i = 0; i < N; i++) {
+		mega_hue[i] = hue;
+		frame[i] = hsb(hue, 1, 1);
+	}
+}
+
 //-------------------------------------------------------------------------------------------------
 // Buzz: a comet in the team colour spins up, flashes, and settles on a shimmering solid colour
 
@@ -223,6 +275,8 @@ void tree_tick(uint32_t now) {
 				case 3: ambient_candle(); break;
 				case 4: ambient_roomwave(now); break;
 				case 5: ambient_chase(now); break;
+				case 6: ambient_megamas(now, dt); break;
+				case 7: ambient_megatree(now, dt); break;
 				default: for(int i = 0; i < N; i++) frame[i] = RgbColor(0); break;
 			}
 			break;
@@ -264,6 +318,12 @@ void tree_set_brightness(uint8_t b) {
 }
 
 void tree_ambient(int id) {
+	if((id == 6 || id == 7) && !(base_mode == B_AMBIENT && ambient_id == id)) {
+		// Start all red, as the string's Megamas does
+		for(int i = 0; i < N; i++) mega_hue[i] = mega_target[i] = 0;
+		mega_next = millis();
+		mega_beat = -1;
+	}
 	base_mode = B_AMBIENT;
 	ambient_id = id;
 	base_start = millis();

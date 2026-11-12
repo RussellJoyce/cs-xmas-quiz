@@ -20,6 +20,9 @@
 //   a03 - candle flicker
 //   a04 - room wave: each tree a single colour, rolling across the trees
 //   a05 - chase: a comet circling the ring
+//   a06 - Megamas in blocks: three neighbouring LEDs at a time slide to red, green or blue
+//   a07 - Megamas trees: each tree all one of those colours. On a steady 1 s beat, a third
+//         of the trees change, in turn by tree number
 //   Any other id is logged and treated as off.
 // Buzz for a team
 //   btt       - spin up in team tt's colour, flash, then hold it. Staggered by tree number.
@@ -87,7 +90,7 @@ static void handle_command(char *dat, int len) {
 		}
 		case 'a': {
 			int a = field(dat, len, 1, 2);
-			if(a < 0 || a > 5) {
+			if(a < 0 || a > 7) {
 				Serial.printf("Unknown animation %.*s\n", len - 1, dat + 1);
 				a = 0;
 			}
@@ -169,14 +172,14 @@ void setup() {
 	if(!TREE_OFFLINE_MODE) net_begin(hostname, query);
 }
 
-// Serial debug keys: 0-5 ambient, b buzz (next team each press), p/r/g pulse, k countdown
+// Serial debug keys: 0-7 ambient, b buzz (next team each press), p/r/g pulse, k countdown
 // step, w wave, -/= single LED, i identity, n network details, x drop WiFi (to test
 // reconnecting)
 static void serial_keys() {
 	static int team = 0, single = 0, count = 100;
 	if(!Serial.available()) return;
 	char c = Serial.read();
-	if(c >= '0' && c <= '5') { tree_ambient(c - '0'); return; }
+	if(c >= '0' && c <= '7') { tree_ambient(c - '0'); return; }
 	switch(c) {
 		case 'b': tree_buzz(team); team = (team + 1) % 14; break;
 		case 'p': tree_pulse_colour(0); break;

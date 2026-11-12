@@ -330,7 +330,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	}
 
 	enum TreeAnimation: Int {
-		case off = 0, twinkle, rainbow, candle, roomWave, chase
+		case off = 0, twinkle, rainbow, candle, roomWave, chase, megamasBlocks, megamasTrees
 	}
 
 	func treeAnimation(_ animation: TreeAnimation) {
