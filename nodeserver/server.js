@@ -214,8 +214,10 @@ function startWebsocketServers(overrides) {
 
     const wserver = new WebSocketServer({ port: cfg.serverPort, host: cfg.wsBindAddress });
     const wleds = new WebSocketServer({ port: cfg.ledsPort, host: cfg.wsBindAddress });
-    const firmware = createFirmwareServer(cfg.firmwareDir);
-    firmware.listen(cfg.firmwarePort, cfg.bindAddress);
+    //Tree firmware updates are for the workshop, not the night: a quiz started without --dev
+    //opens no firmware port, so it cannot fail to start over one, and drops 'ltu'.
+    const firmware = cfg.dev ? createFirmwareServer(cfg.firmwareDir) : null;
+    if(firmware) firmware.listen(cfg.firmwarePort, cfg.bindAddress);
     const clientServers = wclient ? [wclient] : [];
 
     const trees = new Trees();
@@ -236,8 +238,8 @@ function startWebsocketServers(overrides) {
          store: cfg.picksFile ? new PickStore(cfg.picksFile) : null });
 
     //The trees are told this port with each update command. Port 0 (the tests) is only known
-    //once the server is listening.
-    firmware.on('listening', function() { state.firmwarePort = firmware.address().port; });
+    //once the server is listening. Without a firmware server it stays null, and 'ltu' is dropped.
+    if(firmware) firmware.on('listening', function() { state.firmwarePort = firmware.address().port; });
 
     //Every socket needs an 'error' listener. `who` may be a function, so that a client is
     //named by whatever it is called at the time of the error: it may have claimed a team
@@ -328,11 +330,11 @@ function startWebsocketServers(overrides) {
     if(wclientHttpsServer) announce(wclientHttpsServer, 'wss', 'clients over TLS');
     announce(wserver, 'quiz', 'quiz software');
     announce(wleds, 'leds', 'LED controllers');
-    announce(firmware, 'firmware', 'tree firmware over http');
+    if(firmware) announce(firmware, 'firmware', 'tree firmware over http');
 
     guardServer(wserver, "the quiz software");
     guardServer(wleds, "the LEDs");
-    guardServer(firmware, "tree firmware");
+    if(firmware) guardServer(firmware, "tree firmware");
     if(wclient) guardServer(wclient, "wss clients");
     if(wclientHttpsServer) guardServer(wclientHttpsServer, "the wss listener");
 
@@ -349,7 +351,7 @@ function startWebsocketServers(overrides) {
         trees: trees,
         servers: { wclient, wserver, wleds, firmware },
         ready: function() {
-            const waiting = [wserver, wleds, firmware].map(listening);
+            const waiting = [wserver, wleds, firmware].filter(Boolean).map(listening);
             if(wclientHttpsServer) waiting.push(listening(wclientHttpsServer));
             return Promise.all(waiting);
         },
@@ -358,16 +360,16 @@ function startWebsocketServers(overrides) {
                 clientWss: wclientHttpsServer ? wclientHttpsServer.address().port : null,
                 server: wserver.address().port,
                 leds: wleds.address().port,
-                firmware: firmware.address().port
+                firmware: firmware ? firmware.address().port : null
             };
         },
         close: function(cb) {
-            const closeables = [wserver, wleds, firmware];
+            const closeables = [wserver, wleds, firmware].filter(Boolean);
             if(wclient) closeables.push(wclient);
             let remaining = closeables.length + (wclientHttpsServer ? 1 : 0);
             const done = () => { if(--remaining <= 0 && cb) cb(); };
             //A tree's download may still be open; don't wait for it
-            firmware.closeAllConnections();
+            if(firmware) firmware.closeAllConnections();
             closeables.forEach(s => s.close(done));
             if(wclientHttpsServer) wclientHttpsServer.close(done);
         }

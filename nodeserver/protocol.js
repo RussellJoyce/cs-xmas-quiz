@@ -308,9 +308,10 @@ class QuizState {
                     case "lt": //Desk tree function
                         log.info('quiz', 'trees', 'lt', message.slice(2));
                         if(message === 'ltu') {
-                            //Update firmware: the trees need to know where from
+                            //Update firmware: the trees need to know where from. There is only
+                            //a firmware server in development mode (server.js).
                             if(!this.firmwarePort) {
-                                log.warn('quiz', 'trees', 'lt', 'no firmware server, update ignored');
+                                log.warn('quiz', 'trees', 'lt', 'no firmware server (needs --dev), update ignored');
                                 break;
                             }
                             this.transport.toTrees('u' + String(this.firmwarePort).padStart(5, '0'));

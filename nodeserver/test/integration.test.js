@@ -500,6 +500,37 @@ describe('the desk trees', () => {
 
 //Everything above runs with dev: true, because those tests name their clients. This block
 //is the other half: what a client can do to a server started the way a real quiz starts it.
+describe('tree firmware updates in development mode', () => {
+    let handle, ports, unmute;
+
+    before(async () => {
+        unmute = muteLogs();
+        handle = startWebsocketServers({
+            certs: testCerts(), dev: true,
+            clientWssPort: 0, serverPort: 0, ledsPort: 0, firmwarePort: 0,
+            bindAddress: '127.0.0.1', wsBindAddress: '127.0.0.1'
+        });
+        await handle.ready();
+        ports = handle.ports();
+    });
+
+    after(async () => {
+        await new Promise(resolve => handle.close(resolve));
+        unmute();
+    });
+
+    test('ltu tells the trees to update from the firmware port', async () => {
+        assert.ok(ports.firmware > 0);
+        const quiz = connectPlain(ports.server);
+        await quiz.next();
+        const tree = connectPlain(ports.leds, '/?tree=d62534');
+        await tree.nextN(2);
+        quiz.send('ltu');
+        assert.strictEqual(await tree.next(), 'u' + String(ports.firmware).padStart(5, '0'));
+        quiz.close(); tree.close();
+    });
+});
+
 describe('with development mode off', () => {
     let handle, ports, unmute;
 
@@ -556,6 +587,23 @@ describe('with development mode off', () => {
         again.send('pt1');
         assert.strictEqual(await again.next(), 'ok1');
         again.close();
+    });
+
+    test('there is no firmware server, so a busy firmware port cannot stop the quiz starting', () => {
+        assert.strictEqual(ports.firmware, null);
+        assert.strictEqual(handle.servers.firmware, null);
+    });
+
+    test('ltu does not reach the trees', async () => {
+        const quiz = connectPlain(ports.server);
+        await quiz.next();
+        const tree = connectPlain(ports.leds, '/?tree=d62534');
+        await tree.nextN(2);
+        //Sent in order on one socket, so had the update been forwarded it would arrive first
+        quiz.send('ltu');
+        quiz.send('ltb03');
+        assert.strictEqual(await tree.next(), 'b03');
+        quiz.close(); tree.close();
     });
 });
 

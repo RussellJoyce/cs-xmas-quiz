@@ -6,6 +6,9 @@
 //Images live in firmware/ as tree-<chip>.bin (tree-esp32c3.bin, tree-esp32c6.bin), put there
 //by every build of quizleds/tree. A tree asks for the one for its own chip.
 //
+//Only started in development mode (server.js --dev). On the night there is no firmware port
+//and 'ltu' is dropped, so updating the trees cannot get in the way of the quiz.
+//
 //Plain HTTP, not HTTPS: the trees would need certificate checking for TLS, which is more
 //trouble than it is worth on the quiz network. Only the images in firmware/ are served.
 //
