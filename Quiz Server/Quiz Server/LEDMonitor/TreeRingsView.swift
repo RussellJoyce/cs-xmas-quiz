@@ -106,10 +106,7 @@ class TreeRingsView: NSView, SimulatorMonitor {
 					ctx.setFillColor(red: r, green: g, blue: b, alpha: running ? 1 : 0.4)
 					ctx.fillEllipse(in: rect)
 				} else {
-					//Unlit, or a tree that is not running: an outline, so the ring stays visible
-					ctx.setStrokeColor(gray: 0.3, alpha: 1)
-					ctx.setLineWidth(1)
-					ctx.strokeEllipse(in: rect.insetBy(dx: 0.5, dy: 0.5))
+					//Unlit
 				}
 			}
 
