@@ -183,6 +183,7 @@
         </customObject>
         <customObject id="Wvp-nl-obj" userLabel="Wavelength Panel" customClass="WavelengthPanel" customModule="Quiz_Server" customModuleProvider="target">
             <connections>
+                <outlet property="bar" destination="Wv0-bv-b06" id="Wv0-ou-o06"/>
                 <outlet property="number" destination="Wv0-tf-n02" id="Wv0-ou-o02"/>
                 <outlet property="rollButton" destination="Wv0-bt-r01" id="Wv0-ou-o03"/>
                 <outlet property="teamGuesses" destination="Wv0-tv-g05" id="Wv0-ou-o04"/>
@@ -217,7 +218,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -1856,16 +1857,16 @@ Answers</string>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-tf-n02">
-                                            <rect key="frame" x="232" y="152" width="196" height="86"/>
+                                            <rect key="frame" x="232" y="228" width="196" height="46"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" title="--" drawsBackground="YES" id="Wv0-cl-n02">
-                                                <font key="font" metaFont="system" size="60"/>
+                                                <font key="font" metaFont="system" size="30"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-r01">
-                                            <rect key="frame" x="30" y="152" width="180" height="86"/>
+                                            <rect key="frame" x="30" y="228" width="180" height="46"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Roll -&gt; 🎲" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wv0-cl-r01">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1875,8 +1876,12 @@ Answers</string>
                                                 <action selector="roll:" target="Wvp-nl-obj" id="Wv0-ac-r01"/>
                                             </connections>
                                         </button>
+                                        <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bv-b06" customClass="WavelengthBarView" customModule="Quiz_Server" customModuleProvider="target">
+                                            <rect key="frame" x="30" y="66" width="398" height="148"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        </customView>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-v03">
-                                            <rect key="frame" x="30" y="50" width="180" height="86"/>
+                                            <rect key="frame" x="30" y="11" width="180" height="41"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="bevel" title="Reveal" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wv0-cl-v03">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1886,30 +1891,19 @@ Answers</string>
                                                 <action selector="reveal:" target="Wvp-nl-obj" id="Wv0-ac-v03"/>
                                             </connections>
                                         </button>
-                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-s04">
-                                            <rect key="frame" x="232" y="50" width="196" height="86"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="bevel" title="Score" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wv0-cl-s04">
-                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                <font key="font" metaFont="system" size="26"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="score:" target="Wvp-nl-obj" id="Wv0-ac-s04"/>
-                                            </connections>
-                                        </button>
                                         <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-sv-g05">
-                                            <rect key="frame" x="470" y="38" width="400" height="236"/>
+                                            <rect key="frame" x="470" y="11" width="400" height="263"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" drawsBackground="NO" id="Wv0-cv-g05">
-                                                <rect key="frame" x="1" y="1" width="381" height="234"/>
+                                                <rect key="frame" x="1" y="1" width="381" height="261"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <textView editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" id="Wv0-tv-g05">
-                                                        <rect key="frame" x="0.0" y="0.0" width="381" height="234"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="381" height="261"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="minSize" width="381" height="234"/>
+                                                        <size key="minSize" width="381" height="261"/>
                                                         <size key="maxSize" width="800" height="10000000"/>
                                                     </textView>
                                                 </subviews>
@@ -1919,10 +1913,21 @@ Answers</string>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Wv0-vs-g05">
-                                                <rect key="frame" x="382" y="1" width="17" height="234"/>
+                                                <rect key="frame" x="382" y="1" width="17" height="261"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wv0-bt-s04">
+                                            <rect key="frame" x="232" y="11" width="196" height="40"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Score" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Wv0-cl-s04">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system" size="26"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="score:" target="Wvp-nl-obj" id="Wv0-ac-s04"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                 </view>
                             </tabViewItem>

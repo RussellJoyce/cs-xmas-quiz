@@ -699,19 +699,22 @@ class WavelengthScene: QuizScene {
 	/// The bar itself: red at 1, through orange and yellow, to green at 99. Matches the
 	/// gradient the teams see on their own sliders.
 	private func horizontalGradientImage(size: CGSize) -> NSImage {
-		let colours = [
-			NSColor(calibratedRed: 0.88, green: 0.12, blue: 0.12, alpha: 1),
-			NSColor(calibratedRed: 0.88, green: 0.44, blue: 0.12, alpha: 1),
-			NSColor(calibratedRed: 0.88, green: 0.83, blue: 0.12, alpha: 1),
-			NSColor(calibratedRed: 0.56, green: 0.80, blue: 0.12, alpha: 1),
-			NSColor(calibratedRed: 0.09, green: 0.75, blue: 0.29, alpha: 1)
-		]
 		return linearGradientImage(size: size,
-								   colors: colours,
-								   locations: [0.0, 0.25, 0.5, 0.75, 1.0],
+								   colors: WavelengthScene.barColours,
+								   locations: WavelengthScene.barLocations,
 								   start: CGPoint(x: 0, y: size.height / 2),
 								   end: CGPoint(x: size.width, y: size.height / 2))
 	}
+
+	/// The bar's gradient, shared with the copy of it in the controller window.
+	static let barColours = [
+		NSColor(calibratedRed: 0.88, green: 0.12, blue: 0.12, alpha: 1),
+		NSColor(calibratedRed: 0.88, green: 0.44, blue: 0.12, alpha: 1),
+		NSColor(calibratedRed: 0.88, green: 0.83, blue: 0.12, alpha: 1),
+		NSColor(calibratedRed: 0.56, green: 0.80, blue: 0.12, alpha: 1),
+		NSColor(calibratedRed: 0.09, green: 0.75, blue: 0.29, alpha: 1)
+	]
+	static let barLocations: [CGFloat] = [0.0, 0.25, 0.5, 0.75, 1.0]
 }
 
 
@@ -725,6 +728,7 @@ class WavelengthPanel: NSObject, RoundPanel {
 	@IBOutlet weak var number: NSTextField!
 	@IBOutlet weak var rollButton: NSButton!
 	@IBOutlet var teamGuesses: NSTextView!
+	@IBOutlet weak var bar: WavelengthBarView!
 
 	private var target: Int?
 	private var rollTimer: Timer?
@@ -744,6 +748,8 @@ class WavelengthPanel: NSObject, RoundPanel {
 		tearDown()
 		target = nil
 		number?.stringValue = "--"
+		bar?.value = nil
+		bar?.settled = true
 		rollButton?.title = "Roll -> 🎲"
 		teamGuesses?.string = ""
 		updateRollEnabled()
@@ -755,13 +761,18 @@ class WavelengthPanel: NSObject, RoundPanel {
 			tearDown()
 			target = randomValue
 			number.stringValue = String(target!)
+			bar?.value = target
+			bar?.settled = true
 			rollButton.title = "Roll -> 🎲"
 		} else {
 			target = nil
 			rollButton.title = "Stop"
+			bar?.settled = false
 			rollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
 				guard let self = self else { return }
-				self.number.stringValue = String(self.randomValue)
+				let spin = self.randomValue
+				self.number.stringValue = String(spin)
+				self.bar?.value = spin
 			}
 		}
 	}
