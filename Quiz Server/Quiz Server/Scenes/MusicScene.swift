@@ -53,6 +53,16 @@ class MusicScene: QuizScene {
 	private var peakMarkerRight: SKShapeNode?
 	
 	var lastAltBuzzIndex = 0
+
+	private var bokeh: SKEmitterNode?
+	private var emojiDrift = [SKEmitterNode]()
+	private static let emoji = ["🎵", "🎶", "🎬", "🎄"]
+	private static let bokehPalette: [NSColor] = [
+		.white,
+		NSColor(calibratedRed: 1.0, green: 0.8, blue: 0.4, alpha: 1),
+		NSColor(calibratedRed: 1.0, green: 0.45, blue: 0.8, alpha: 1),
+		NSColor(calibratedRed: 0.45, green: 0.85, blue: 1.0, alpha: 1)
+	]
 	
     func normalisePower(power: Float) -> Float {
         return pow(10.0, min(power, 0.0)/20.0)
@@ -65,6 +75,8 @@ class MusicScene: QuizScene {
 	
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+		//Only new particles take the colour, so each one comes out different
+		bokeh?.particleColor = MusicScene.bokehPalette.randomElement()!
         
         let dt = currentTime - lastMusicUpdateTime
         if dt < (1.0 / musicUpdateFPS) {
@@ -90,7 +102,23 @@ class MusicScene: QuizScene {
         buzzNoises.append(Sound.effect("scratch2"))
         buzzNoises.append(Sound.effect("scratch3"))
 		
-		addBackground(imageNamed: "music2")
+		addBackground(texture: SKTexture(image: backgroundGradientImage(size: self.size)))
+
+		//Under the team boxes at 1 and the video at 1000, as in BuzzerScene
+		bokeh = addBokehBackground(replacing: bokeh, textureName: "spark", zPosition: 0.5) {
+			$0.particleBirthRate = 12
+			$0.particleColorBlendFactor = 1
+			$0.particleBlendMode = .add
+		}
+		//One emitter per emoji, as an emitter has only the one texture
+		emojiDrift.forEach { $0.removeFromParent() }
+		emojiDrift = MusicScene.emoji.compactMap { emoji in
+			//The note emoji are black, which is murky on the background, so they are washed white
+			addBokehBackground(replacing: nil, texture: emojiTexture(emoji, wash: NSColor(white: 1, alpha: 0.85)),
+							   zPosition: 0.6, particleSpeedRange: 15) {
+				MusicScene.configureEmojiDrift($0)
+			}
+		}
 
 		videoEffect.name = "videoEffect"
 		videoEffect.filter = CIFilter(name: "CIGaussianBlur")
@@ -101,6 +129,38 @@ class MusicScene: QuizScene {
 		self.addChild(videoEffect)
 	}
 	
+	private func backgroundGradientImage(size: CGSize) -> NSImage {
+		let colours = [
+			NSColor(calibratedRed: 0.45, green: 0.85, blue: 0.75, alpha: 1),
+			NSColor(calibratedRed: 0.25, green: 0.6, blue: 0.4, alpha: 1),
+			NSColor(calibratedRed: 0.12, green: 0.08, blue: 0.3, alpha: 1)
+		]
+		return radialGradientImage(size: size, colors: colours, locations: [0.0, 0.45, 1.0],
+								   centre: CGPoint(x: size.width * 0.5, y: size.height * 0.6),
+								   radius: hypot(size.width, size.height) * 0.6)
+	}
+
+	/// Emoji floating upwards in the background
+	private static func configureEmojiDrift(_ drift: SKEmitterNode) {
+		drift.particleBirthRate = 1
+		drift.particleLifetime = 12
+		drift.particleLifetimeRange = 4
+		drift.particleScale = 0.6
+		drift.particleScaleRange = 0.4
+		drift.particleScaleSpeed = 0
+		drift.particleRotation = 0
+		drift.particleRotationRange = 0.6
+		drift.particleSpeed = 25
+		drift.emissionAngle = .pi / 2
+		drift.emissionAngleRange = .pi / 3
+		drift.particleColorBlendFactor = 0
+		drift.particleBlendMode = .alpha
+
+		let fade = SKKeyframeSequence(keyframeValues: [0.0, 0.55, 0.0], times: [0.0, 0.5, 1.0])
+		fade.interpolationMode = .spline
+		drift.particleAlphaSequence = fade
+	}
+
 	func buzzSound() {
         // Play random buzzer sound
         if let buzzNoise = buzzNoises.randomElement() {

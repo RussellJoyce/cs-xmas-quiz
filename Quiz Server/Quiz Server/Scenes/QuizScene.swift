@@ -337,10 +337,25 @@ class QuizScene: SKScene {
 							preSimulate: TimeInterval = 8,
 							configure: ((SKEmitterNode) -> Void)? = nil) -> SKEmitterNode?
 	{
+		return addBokehBackground(replacing: existing, texture: SKTexture(imageNamed: textureName),
+								  zPosition: zPosition, particleSpeedRange: particleSpeedRange,
+								  preSimulate: preSimulate, configure: configure)
+	}
+
+	/// As `addBokehBackground(textureName:)`, but for a texture drawn rather than loaded,
+	/// such as one from `emojiTexture(_:)`
+	@discardableResult
+	func addBokehBackground(replacing existing: SKEmitterNode?,
+							texture: SKTexture,
+							zPosition: CGFloat,
+							particleSpeedRange: CGFloat = 10,
+							preSimulate: TimeInterval = 8,
+							configure: ((SKEmitterNode) -> Void)? = nil) -> SKEmitterNode?
+	{
 		existing?.removeFromParent()
 		
 		let bok = SKEmitterNode()
-		bok.particleTexture = SKTexture(imageNamed: textureName)
+		bok.particleTexture = texture
 		bok.position = self.centrePoint
 		bok.zPosition = zPosition
 		bok.particlePositionRange = CGVector(dx: self.size.width, dy: self.size.height)
@@ -363,6 +378,29 @@ class QuizScene: SKScene {
 		bok.advanceSimulationTime(preSimulate)
 		self.addChild(bok)
 		return bok
+	}
+
+
+
+	/// Renders a string, usually a single emoji, into a square texture for a particle.
+	/// The glyph is drawn in full colour, so leave `particleColorBlendFactor` at 0.
+	/// - Parameter wash: painted over the glyph only, keeping its shape. SpriteKit's colour
+	///   blending multiplies, so it can darken a particle but never lighten a black emoji;
+	///   a part-transparent white here can, and keeps a little of the shading.
+	func emojiTexture(_ text: String, pointSize: CGFloat = 128, wash: NSColor? = nil) -> SKTexture {
+		let font = NSFont(name: "Apple Color Emoji", size: pointSize) ?? NSFont.systemFont(ofSize: pointSize)
+		let string = NSAttributedString(string: text, attributes: [.font: font])
+		let glyph = string.size()
+		let side = ceil(max(glyph.width, glyph.height))
+		let image = NSImage(size: NSSize(width: side, height: side))
+		image.lockFocus()
+		string.draw(at: NSPoint(x: (side - glyph.width) / 2, y: (side - glyph.height) / 2))
+		if let wash {
+			wash.setFill()
+			NSRect(x: 0, y: 0, width: side, height: side).fill(using: .sourceAtop)
+		}
+		image.unlockFocus()
+		return SKTexture(image: image)
 	}
 
 
