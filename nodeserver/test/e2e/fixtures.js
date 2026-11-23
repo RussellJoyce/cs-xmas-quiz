@@ -11,6 +11,18 @@ const STATIC = path.resolve(__dirname, '../../static');
 
 const POINTLESS = { title: 'Name a fruit', answers: { apple: 40, kiwi: 3, quince: 0 } };
 
+//Thirty answers, some long, as the real ones have, so that a full board has to fit. Written
+//as markdown with bullets, which the round must strip.
+const CATEGORIES = {
+    file: '1-countries.md',
+    heading: 'European countries',
+    subheading: 'any country with land in Europe',
+    answers: ['Albania', 'Andorra', 'Austria', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria', 'Croatia',
+              'Czech Republic', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary',
+              'Iceland', 'Ireland', 'Italy', 'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta',
+              'Netherlands', 'North Macedonia', 'Norway', 'Poland', 'Portugal', 'San Marino', 'Vatican City']
+};
+
 //Four groups of four, and a word in none of them would be no use to anybody
 const WALL = {
     fruit:   ['apple', 'pear', 'plum', 'fig'],
@@ -89,6 +101,11 @@ function writeFixtures(root) {
 
     write(path.join(root, 'Questions/Unique/1-cities.txt'), 'paris\nrome\nyork\n');
 
+    write(path.join(root, 'Questions/Categories', CATEGORIES.file),
+          '# ' + CATEGORIES.heading + ' - ' + CATEGORIES.subheading + '\n\n' +
+          CATEGORIES.answers.map(a => '- ' + a).join('\n') + '\n');
+    write(path.join(root, 'Questions/Categories/2-fruit.txt'), 'Fruit\napple\npear\nplum\n');
+
     write(path.join(root, 'Questions/OnlyConnect/1-wall.txt'),
           Object.entries(WALL).map(([name, clues]) => name + ': ' + clues.join(', ')).join('\n') + '\n');
 
@@ -111,4 +128,4 @@ function writeFixtures(root) {
     return { staticDir: served, wikiDir: path.join(served, 'wiki') };
 }
 
-module.exports = { writeFixtures, POINTLESS, WALL, WIKI };
+module.exports = { writeFixtures, POINTLESS, CATEGORIES, WALL, WIKI };

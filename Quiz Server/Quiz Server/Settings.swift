@@ -35,6 +35,7 @@ final class Settings {
 	var uniquePath: String { path(under: "Questions/Unique") }
 	var pointlessPath: String { path(under: "Questions/Pointless") }
 	var onlyConnectPath: String { path(under: "Questions/OnlyConnect") }
+	var categoriesPath: String { path(under: "Questions/Categories") }
 	var geographyImagesPath: String { path(under: "nodeserver/static/geography") }
 	var wikiCorpusPath: String { path(under: "nodeserver/static/wiki") }
 
@@ -100,6 +101,7 @@ enum RoundType {
 	case multichoice
 	case wikirace
 	case onlyConnect
+	case categories
 
 	/// The idle rounds all light up as the Quiz Admin panel says
 	var isIdle: Bool {
@@ -122,7 +124,7 @@ enum RoundType {
 		case .multichoice: return "multi"
 		case .wikirace:    return "wikirace"
 		case .onlyConnect: return "onlyconnect"
-		case .none, .idle, .idleCeefax, .idleSnow, .test, .buzzers, .music, .timer, .scores:
+		case .none, .idle, .idleCeefax, .idleSnow, .test, .buzzers, .music, .timer, .scores, .categories:
 			return "buzzer"
 		}
 	}

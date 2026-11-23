@@ -211,6 +211,21 @@ quizScenarios('fourteen teams', { teams: TEAMS }, scenario => {
     });
 
 
+    //--- Categories
+
+    scenario('categories: two-digit teams stack up to five, beside a full board', async quiz => {
+        await begin(quiz, 'categories');
+        for(const n of [14, 1, 11, 10, 13, 12]) await quiz.tapped(n, 'zz', quiz.phones[n].buzzer);
+        assert.deepStrictEqual(await quiz.host.read('quizDisplay.categoriesScene.buzzes'), [13, 0, 10, 9, 12],
+                               'the sixth is turned away');
+        await seenAll(quiz, 'the five teams', ['Team 14', 'Team 1', 'Team 11', 'Team 10', 'Team 13']);
+        await quiz.host.click('categoriesPanel.revealToggled:');
+        await seen(quiz, 'Bosnia and Herzegovina');
+        await fits(quiz, 'with the board revealed and five buzzed');
+        await quiz.host.click('categoriesPanel.revealToggled:');
+    });
+
+
     //--- Wavelength
 
     scenario('wavelength: fourteen guesses scored, closest first', async quiz => {

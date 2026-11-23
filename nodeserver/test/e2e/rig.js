@@ -335,6 +335,7 @@ const ROUNDS = {
     pointless:   { tab: 'tabitemPointless',   scene: 'PointlessScene',   view: 'text' },
     wavelength:  { tab: 'tabitemWavelength',  scene: 'WavelengthScene',  view: 'wavelength' },
     onlyConnect: { tab: 'tabitemOnlyConnect', scene: 'OnlyConnectScene', view: 'onlyconnect' },
+    categories:  { tab: 'tabitemCategories',  scene: 'CategoriesScene',  view: 'buzzer' },
     timer:       { tab: 'tabitemTimer',       scene: 'TimerScene',       view: 'buzzer' },
     scores:      { tab: 'tabitemScores',      scene: 'ScoresScene',      view: 'buzzer' },
     wikirace:    { tab: 'tabitemWikiRace',    scene: 'WikiRaceScene',    view: null } //A page of its own

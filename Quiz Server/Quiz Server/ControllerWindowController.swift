@@ -114,6 +114,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemQuizAdmin: NSTabViewItem!
 	@IBOutlet weak var tabitemWikiRace: NSTabViewItem!
 	@IBOutlet weak var tabitemOnlyConnect: NSTabViewItem!
+	@IBOutlet weak var tabitemCategories: NSTabViewItem!
 	
 	//MARK: - General
 	//--------------------------------------------------------------------------------------------------------------------------
@@ -141,6 +142,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var pointlessPanel: PointlessPanel!
 	@IBOutlet var scoresPanel: ScoresPanel!
 	@IBOutlet var onlyConnectPanel: OnlyConnectPanel!
+	@IBOutlet var categoriesPanel: CategoriesPanel!
 	@IBOutlet var quizAdminPanel: QuizAdminPanel!
 	private var panels = [RoundType: RoundPanel]()
 	
@@ -167,7 +169,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		
 		let allPanels: [RoundPanel] = [buzzerPanel, musicPanel, timerPanel, trueFalsePanel,
 									   multiChoicePanel, geographyPanel, wikiRacePanel, textPanel, snowIdlePanel,
-									   numbersPanel, wavelengthPanel, pointlessPanel, onlyConnectPanel, scoresPanel]
+									   numbersPanel, wavelengthPanel, pointlessPanel, onlyConnectPanel, categoriesPanel, scoresPanel]
 		for panel in allPanels {
 			panel.host = self
 			panels[panel.round] = panel
@@ -448,6 +450,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.round(tabitemNumbers, .numbers, "🔢 Numbers"),
 			.round(tabitemWavelength, .wavelength, "🌊 Wavelength"),
 			.round(tabitemOnlyConnect, .onlyConnect, "🧱 Only Connect"),
+			.round(tabitemCategories, .categories, "🗂️ Categories"),
 
 			.group("Archived"),
 			.round(tabitemIdle, .idle, "🎄 Idle (Games)"),

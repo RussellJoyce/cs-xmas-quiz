@@ -29,6 +29,7 @@
                 <outlet property="buzzerPanel" destination="Bzp-nl-obj" id="Bzp-nl-ref"/>
                 <outlet property="buzzerQueueMode" destination="zab-jV-I4P" id="QoK-ce-b4E"/>
                 <outlet property="buzzerSounds" destination="dOo-JQ-UKY" id="wZz-UI-pKw"/>
+                <outlet property="categoriesPanel" destination="Ctp-nl-obj" id="Ctp-nl-ref"/>
                 <outlet property="disconnectAllButton" destination="Dc1-Al-btn" id="Dc1-Al-out"/>
                 <outlet property="geographyPanel" destination="Gep-nl-obj" id="Gep-nl-ref"/>
                 <outlet property="multiChoicePanel" destination="Mcp-nl-obj" id="Mcp-nl-ref"/>
@@ -60,6 +61,7 @@
                 <outlet property="st9" destination="1ki-Xu-4az" id="80T-gU-iVo"/>
                 <outlet property="tabView" destination="SaY-do-P3f" id="ldq-kO-31n"/>
                 <outlet property="tabitemBuzzers" destination="zkE-YU-uHw" id="tqo-kG-iLP"/>
+                <outlet property="tabitemCategories" destination="Cat-tb-i00" id="Cat-ou-t00"/>
                 <outlet property="tabitemDisconnect" destination="VmW-2i-xzJ" id="MCj-00-v00"/>
                 <outlet property="tabitemGeography" destination="MCw-dI-hrf" id="bN4-Xw-l7Y"/>
                 <outlet property="tabitemIdle" destination="u2C-EJ-D9s" id="LjV-Is-cRp"/>
@@ -204,6 +206,15 @@
                 <outlet property="revealButton" destination="Onc-bt-r03" id="Onc-ou-o03"/>
                 <outlet property="startButton" destination="Onc-bt-s02" id="Onc-ou-o02"/>
                 <outlet property="statusText" destination="Onc-tv-g05" id="Onc-ou-o04"/>
+            </connections>
+        </customObject>
+        <customObject id="Ctp-nl-obj" userLabel="Categories Panel" customClass="CategoriesPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="answerList" destination="Cat-dc-v00" id="Cat-ou-o01"/>
+                <outlet property="questionSelector" destination="Cat-qs-sel" id="Cat-ou-o02"/>
+                <outlet property="revealButton" destination="Cat-bt-rev" id="Cat-ou-o03"/>
+                <outlet property="statusText" destination="Cat-tf-sta" id="Cat-ou-o04"/>
+                <outlet property="wrongGuessField" destination="Cat-tf-wrg" id="Cat-ou-o05"/>
             </connections>
         </customObject>
         <customObject id="Ptp-nl-obj" userLabel="Pointless Panel" customClass="PointlessPanel" customModule="Quiz_Server" customModuleProvider="target">
@@ -2153,6 +2164,102 @@ Answers</string>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="Onc-vs-g05">
                                                 <rect key="frame" x="422" y="1" width="17" height="252"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                        </scrollView>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Categories" identifier="" id="Cat-tb-i00">
+                                <view key="view" id="Cat-vw-v00">
+                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-qs-sel">
+                                            <rect key="frame" x="17" y="244" width="307" height="25"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="Cat-qs-cel">
+                                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="message"/>
+                                                <menu key="menu" id="Cat-qs-mnu"/>
+                                            </popUpButtonCell>
+                                            <connections>
+                                                <action selector="questionSelected:" target="Ctp-nl-obj" id="Cat-qs-act"/>
+                                            </connections>
+                                        </popUpButton>
+                                        <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-tf-wrg">
+                                            <rect key="frame" x="20" y="200" width="210" height="28"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Wrong guess, then Return" drawsBackground="YES" id="Cat-tf-wrc">
+                                                <font key="font" metaFont="system" size="16"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                            <connections>
+                                                <action selector="addWrongGuess:" target="Ctp-nl-obj" id="Cat-tf-wra"/>
+                                            </connections>
+                                        </textField>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-bt-wrg">
+                                            <rect key="frame" x="236" y="200" width="84" height="28"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Wrong ✗" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Cat-bt-wrg-c">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="addWrongGuess:" target="Ctp-nl-obj" id="Cat-bt-wrg-a"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-bt-rev">
+                                            <rect key="frame" x="20" y="128" width="300" height="56"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Reveal Missed Answers" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Cat-bt-rev-c">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                                <font key="font" metaFont="system" size="18"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="revealToggled:" target="Ctp-nl-obj" id="Cat-bt-rev-a"/>
+                                            </connections>
+                                        </button>
+                                        <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-bt-clr">
+                                            <rect key="frame" x="20" y="56" width="300" height="56"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="bevel" title="Clear Buzzes" bezelStyle="regularSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Cat-bt-clr-c">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system" size="18"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="clearBuzzes:" target="Ctp-nl-obj" id="Cat-bt-clr-a"/>
+                                            </connections>
+                                        </button>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-tf-sta">
+                                            <rect key="frame" x="18" y="14" width="304" height="34"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="charWrapping" sendsActionOnEndEditing="YES" id="Cat-tf-stc">
+                                                <font key="font" metaFont="cellTitle"/>
+                                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cat-sv-s00">
+                                            <rect key="frame" x="336" y="14" width="546" height="260"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <clipView key="contentView" drawsBackground="NO" id="Cat-cv-c00">
+                                                <rect key="frame" x="1" y="1" width="544" height="258"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <subviews>
+                                                    <customView id="Cat-dc-v00" customClass="FlippedView" customModule="Quiz_Server" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="544" height="258"/>
+                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                                    </customView>
+                                                </subviews>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Cat-hs-s00">
+                                                <rect key="frame" x="-100" y="-100" width="544" height="16"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="Cat-vs-s00">
+                                                <rect key="frame" x="529" y="1" width="16" height="258"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
