@@ -52,6 +52,16 @@ final class Settings {
 	/// taking that screen exclusively fullscreen
 	var quizScreen: NSScreen?
 	var windowedMode = true
+
+	// MARK: Lights
+	// Set from the Quiz Admin panel. Kept for as long as the app runs, not saved.
+
+	/// Played on the LED string by every idle scene
+	var idleStringAnimation = QuizWebSocket.StringAnimation.megamas
+	/// Played on the desk trees by every idle scene
+	var idleTreeAnimation = QuizWebSocket.TreeAnimation.megamasTrees
+	/// Global brightness of every tree, 0-255, in every round. The firmware starts at 128.
+	var treeBrightness = 128
 }
 
 // MARK: - Global enums
@@ -90,6 +100,14 @@ enum RoundType {
 	case multichoice
 	case wikirace
 	case onlyConnect
+
+	/// The idle rounds all light up as the Quiz Admin panel says
+	var isIdle: Bool {
+		switch self {
+		case .idle, .idleCeefax, .idleSnow: return true
+		default: return false
+		}
+	}
 
 	/// Which view the teams' phones should show while this round is live.
 	/// Sent as the argument of the "vi" command, so it must match a view name the client knows.

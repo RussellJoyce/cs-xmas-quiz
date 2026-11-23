@@ -7,31 +7,55 @@ const { quizScenarios, until } = require('./rig');
 
 quizScenarios('host rounds', { teams: 3 }, scenario => {
 
-    scenario('snow: the LED animation chosen is played, and again on coming back', async quiz => {
+    scenario('quiz admin: the idle animations chosen are played, now and on coming back', async quiz => {
         const lastAnimation = () => quiz.leds.filter(m => m.startsWith('a')).pop();
-        const chosen = () => quiz.host.read('quizDisplay.snowIdleScene.ledAnimation');
+        const lastTrees = () => quiz.wire.filter(w => w.dir === 'host→srv' && w.msg.startsWith('lta')).map(w => w.msg).pop();
+        const setting = name => quiz.host.read('quizAdminPanel.settings.' + name);
 
         let before = quiz.leds.length;
         await quiz.round('idleSnow');
         await until('Megamas on the LEDs', () => quiz.leds.slice(before).includes('a01'));
-        assert.strictEqual(await chosen(), 'megamas', 'Megamas is the default');
+        assert.strictEqual(await setting('idleStringAnimation'), 'megamas', 'Megamas is the default');
+        await until('Megamas Trees on the trees', () => lastTrees() === 'lta07');
 
-        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#4');
+        //Live while an idle round is up. Opening the tab leaves the round on show.
+        await quiz.host.click('tabitemQuizAdmin');
+        await quiz.host.click('quizAdminPanel.stringAnimationChosen:#4');
         await until('Embers on the LEDs', () => lastAnimation() === 'a04');
-        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#5');
-        await until('Old Lights on the LEDs', () => lastAnimation() === 'a05');
+        await quiz.host.click('quizAdminPanel.treeAnimationChosen:#3');
+        await until('Candle on the trees', () => lastTrees() === 'lta03');
 
+        //Every idle round plays them, not just the snow
+        await quiz.round('idle');
+        await until('Embers on the LEDs', () => lastAnimation() === 'a04');
+        await until('Candle on the trees', () => lastTrees() === 'lta03');
+
+        //Changed outside an idle round, they wait for the next one
         await quiz.round('buzzers');
+        await quiz.host.click('tabitemQuizAdmin');
+        await quiz.host.click('quizAdminPanel.stringAnimationChosen:#5');
+        await quiz.host.settled();
+        assert.strictEqual(lastAnimation(), 'a00', 'the buzzers keep the LEDs off');
         before = quiz.leds.length;
         await quiz.round('idleSnow');
-        await until('Old Lights again', () => quiz.leds.slice(before).includes('a05'));
-        assert.strictEqual(await chosen(), 'oldLights');
+        await until('Old Lights', () => quiz.leds.slice(before).includes('a05'));
+        assert.strictEqual(await setting('idleStringAnimation'), 'oldLights');
     });
 
-    scenario('snow: the LED animation survives coming back from the music round', async quiz => {
+    scenario('quiz admin: the tree brightness is sent on connecting and as it moves', async quiz => {
+        const lastBrightness = () => quiz.wire.filter(w => w.dir === 'host→srv' && w.msg.startsWith('ltg')).map(w => w.msg).pop();
+        await until('the default brightness on connecting', () => lastBrightness() === 'ltg128');
+        await quiz.host.click('tabitemQuizAdmin');
+        await quiz.host.set('quizAdminPanel.treeBrightnessSlider', 40);
+        await until('the new brightness', () => lastBrightness() === 'ltg040');
+        assert.strictEqual(await quiz.host.read('quizAdminPanel.settings.treeBrightness'), 40);
+    });
+
+    scenario('quiz admin: the idle animation survives coming back from the music round', async quiz => {
         const lastAnimation = () => quiz.leds.filter(m => m.startsWith('a')).pop();
         await quiz.round('idleSnow');
-        await quiz.host.click('snowIdlePanel.ledAnimationChosen:#1');
+        await quiz.host.click('tabitemQuizAdmin');
+        await quiz.host.click('quizAdminPanel.stringAnimationChosen:#1');
         await quiz.round('music');
         //Let its transition finish, or going back cuts it short and tears down at once
         await new Promise(resolve => setTimeout(resolve, 1500));

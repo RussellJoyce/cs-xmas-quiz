@@ -136,7 +136,7 @@ class IdleCeefaxScene: QuizScene {
 
 
 	override func reset() {
-		QuizWebSocket.shared?.megamas()
+		QuizWebSocket.shared?.idleLights()
 		newsflashRemaining = 0
 		teletext?.setOverlay(nil, atRow: newsflashRow)
 		tuningRemaining = 0

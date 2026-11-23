@@ -64,35 +64,6 @@ class SnowIdleScene: QuizScene {
 	/// Whether a buzz shakes the snow off the team's letters
 	var shakeLetters = true
 
-	/// The LED animations to choose from while the snow is up, numbered as the LED protocol has them
-	enum LEDAnimation: Int {
-		case megamas = 1
-		case embers = 4
-		case oldLights = 5
-
-		/// The nearest thing the desk trees have
-		var tree: QuizWebSocket.TreeAnimation {
-			switch self {
-			case .megamas: return .megamasTrees
-			case .embers: return .candle
-			case .oldLights: return .twinkle
-			}
-		}
-	}
-
-	private func sendLEDAnimation() {
-		QuizWebSocket.shared?.animation(ledAnimation.rawValue)
-		QuizWebSocket.shared?.treeAnimation(ledAnimation.tree)
-	}
-
-	/// Played on the LEDs whenever the round is entered or reset, and as soon as it is changed
-	/// while on screen. Kept for as long as the app runs, not saved.
-	var ledAnimation = LEDAnimation.megamas {
-		didSet {
-			if view != nil { sendLEDAnimation() }
-		}
-	}
-
 	/// Whether to draw at 60 frames per second, rather than 30 to save power. The rate
 	/// belongs to the view, so the scene sets it while it is on screen and puts back
 	/// whatever the view had before when it leaves.
@@ -347,7 +318,7 @@ class SnowIdleScene: QuizScene {
 	//MARK: - Running
 
 	override func reset() {
-		sendLEDAnimation()
+		QuizWebSocket.shared?.idleLights()
 		teamStrip.reset()
 		clearSnow()
 		//Open on a scene that has already been snowed on, as the pictures are
@@ -1416,15 +1387,6 @@ class SnowIdlePanel: NSObject, RoundPanel {
 		teamStripCheck.state = scene.showTeamStrip ? .on : .off
 		shakeCheck.state = scene.shakeLetters ? .on : .off
 		frameRateCheck.state = scene.fullFrameRate ? .on : .off
-		for radio in settingsView.subviews.compactMap({ $0 as? NSButton }) where radio.action == #selector(ledAnimationChosen(_:)) {
-			radio.state = radio.tag == scene.ledAnimation.rawValue ? .on : .off
-		}
-	}
-
-	/// The radio buttons' tags are the animations' numbers
-	@IBAction func ledAnimationChosen(_ sender: NSButton) {
-		guard let animation = SnowIdleScene.LEDAnimation(rawValue: sender.tag) else { return }
-		scene.ledAnimation = animation
 	}
 
 	@IBAction func frameRateToggled(_ sender: NSButton) {

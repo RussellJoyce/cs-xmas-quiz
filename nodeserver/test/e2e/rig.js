@@ -324,6 +324,7 @@ class Phone {
 //Everything the rounds need in order to be entered and recognised, named as RoundType is
 const ROUNDS = {
     idleSnow:    { tab: 'tabitemIdleSnow',    scene: 'SnowIdleScene',    view: 'buzzer' },
+    idle:        { tab: 'tabitemIdle',        scene: 'Idle2Scene',       view: 'buzzer' },
     buzzers:     { tab: 'tabitemBuzzers',     scene: 'BuzzerScene',      view: 'buzzer' },
     music:       { tab: 'tabitemMusic',       scene: 'MusicScene',       view: 'buzzer' },
     text:        { tab: 'tabitemText',        scene: 'TextScene',        view: 'text' },

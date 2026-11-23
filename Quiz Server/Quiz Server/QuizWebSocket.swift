@@ -259,11 +259,20 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lea05")
 	}
 
-	/// One of the canned animations, by its number in the LED protocol (see quizleds/src/string/web.cpp)
-	func animation(_ number: Int) {
-		if number >= 0 && number < 100 {
-			send("lea" + String(format: "%02d", number))
-		}
+	/// The string's canned animations, numbered as the LED protocol has them (see quizleds/src/string/web.cpp)
+	enum StringAnimation: Int {
+		case off = 0, megamas, timerTwinkle, swell, embers, oldLights
+	}
+
+	/// One of the canned animations on the string only
+	func stringAnimation(_ animation: StringAnimation) {
+		send("lea" + String(format: "%02d", animation.rawValue))
+	}
+
+	/// The idle animations chosen on the Quiz Admin panel, on both the string and the trees
+	func idleLights() {
+		stringAnimation(Settings.shared.idleStringAnimation)
+		treeAnimation(Settings.shared.idleTreeAnimation)
 	}
 
 	/// Trigger a random buzzer animation for team (0-based)
@@ -354,6 +363,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		}
 	}
 
+	/// The trees' ambient animations, numbered as their protocol has them (see quizleds/src/tree/tree_main.cpp)
 	enum TreeAnimation: Int {
 		case off = 0, twinkle, rainbow, candle, roomWave, chase, megamasBlocks, megamasTrees
 	}

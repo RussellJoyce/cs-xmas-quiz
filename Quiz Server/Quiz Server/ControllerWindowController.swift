@@ -111,6 +111,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet weak var tabitemWavelength: NSTabViewItem!
 	@IBOutlet weak var tabitemMultiChoice: NSTabViewItem!
 	@IBOutlet weak var tabitemDisconnect: NSTabViewItem!
+	@IBOutlet weak var tabitemQuizAdmin: NSTabViewItem!
 	@IBOutlet weak var tabitemWikiRace: NSTabViewItem!
 	@IBOutlet weak var tabitemOnlyConnect: NSTabViewItem!
 	
@@ -140,6 +141,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	@IBOutlet var pointlessPanel: PointlessPanel!
 	@IBOutlet var scoresPanel: ScoresPanel!
 	@IBOutlet var onlyConnectPanel: OnlyConnectPanel!
+	@IBOutlet var quizAdminPanel: QuizAdminPanel!
 	private var panels = [RoundType: RoundPanel]()
 	
 	private var ceefaxPageControl: CeefaxPageControl?
@@ -180,6 +182,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		ceefaxPageControl = CeefaxPageControl(in: tabitemIdleCeefax?.view, scene: quizDisplay.idleCeefaxScene)
 
 		allPanels.forEach { $0.setUp() }
+		quizAdminPanel.host = self
+		quizAdminPanel.setUp()
 
 		configureSidebar()
 
@@ -435,6 +439,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 			.round(tabitemIdleSnow, .idleSnow, "❄️ Idle (Snow)"),
 			.round(tabitemScores, .scores, "📋 Scores"),
 			.round(tabitemDisconnect, nil, "🔧 Client Admin"),
+			.round(tabitemQuizAdmin, nil, "⚙️ Quiz Admin"),
 			
 			.group("Rounds"),
 			.round(tabitemBuzzers, .buzzers, "🔊 Buzzers"),
@@ -627,10 +632,13 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 	func webSocketDidConnect() {
 		window?.title = "Quiz Control - connected"
 		socket.setTeamCount(Settings.shared.numTeams)
+		//The server or the trees may have restarted since
+		socket.treeBrightness(Settings.shared.treeBrightness)
 		resyncEverything()
-		// Very first time we connect, activate Megamas
+		// Very first time we connect, the opening idle round's lights were sent before
+		// there was anyone to hear them
 		if !Settings.shared.websocketHasPreviouslyConnected {
-			socket.megamas()
+			socket.idleLights()
 			Settings.shared.websocketHasPreviouslyConnected = true
 		}
 	}

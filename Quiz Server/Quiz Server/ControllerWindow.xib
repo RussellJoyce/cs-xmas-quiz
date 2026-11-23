@@ -37,6 +37,7 @@
                 <outlet property="onlyConnectPanel" destination="Onp-nl-obj" id="Onp-nl-ref"/>
                 <outlet property="pointlessPanel" destination="Ptp-nl-obj" id="Ptp-nl-ref"/>
                 <outlet property="quieterBuzzes" destination="EOs-rc-2CU" id="OZm-0m-IfW"/>
+                <outlet property="quizAdminPanel" destination="Qap-nl-obj" id="Qap-nl-ref"/>
                 <outlet property="repairWarningLabel" destination="Vsw-nV-o5k" id="Rpr-wn-out"/>
                 <outlet property="resyncModeBtn" destination="Rsy-md-btn" id="Rsy-md-out"/>
                 <outlet property="scoresPanel" destination="Scp-nl-obj" id="Scp-nl-ref"/>
@@ -69,6 +70,7 @@
                 <outlet property="tabitemNumbers" destination="CS6-c3-Fen" id="eSy-LI-0LA"/>
                 <outlet property="tabitemOnlyConnect" destination="Onc-tb-i00" id="Onc-ou-t00"/>
                 <outlet property="tabitemPointless" destination="HUz-ZP-yhI" id="N5L-rD-zEy"/>
+                <outlet property="tabitemQuizAdmin" destination="Qad-td-100" id="Qad-ou-100"/>
                 <outlet property="tabitemScores" destination="pOk-mg-25e" id="7Uy-t2-pyy"/>
                 <outlet property="tabitemText" destination="QsW-tO-3AJ" id="mer-ty-Abj"/>
                 <outlet property="tabitemTimer" destination="jWj-s8-V1l" id="SGq-NW-KzQ"/>
@@ -129,6 +131,13 @@
             <connections>
                 <outlet property="output" destination="mxH-b9-Xel" id="EPU-wf-phZ"/>
                 <outlet property="scoreText" destination="nUs-YF-jmA" id="MjU-mf-Kk6"/>
+            </connections>
+        </customObject>
+        <customObject id="Qap-nl-obj" userLabel="Quiz Admin Panel" customClass="QuizAdminPanel" customModule="Quiz_Server" customModuleProvider="target">
+            <connections>
+                <outlet property="settingsView" destination="Qad-vw-100" id="Qap-nl-out"/>
+                <outlet property="treeBrightnessLabel" destination="Qab-02-lbl" id="Qap-o2-out"/>
+                <outlet property="treeBrightnessSlider" destination="Qab-01-sld" id="Qap-o1-out"/>
             </connections>
         </customObject>
         <customObject id="Snp-nl-obj" userLabel="Snow Idle Panel" customClass="SnowIdlePanel" customModule="Quiz_Server" customModuleProvider="target">
@@ -218,7 +227,7 @@
         <window title="Quiz Control" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <rect key="contentRect" x="0.0" y="0.0" width="1134" height="432"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="948"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1800" height="1129"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1134" height="432"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -851,48 +860,6 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
-                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Snl-00-lbl">
-                                            <rect key="frame" x="470" y="240" width="200" height="16"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="LED animation" id="Snl-00-cel">
-                                                <font key="font" metaFont="systemBold"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <button tag="1" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Snl-01-btn">
-                                            <rect key="frame" x="470" y="210" width="200" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="radio" title="🎄 Megamas" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="Snl-01-cel">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system" size="15"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="ledAnimationChosen:" target="Snp-nl-obj" id="Snl-01-act"/>
-                                            </connections>
-                                        </button>
-                                        <button tag="5" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Snl-02-btn">
-                                            <rect key="frame" x="470" y="180" width="200" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="radio" title="🚦 Old Lights" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Snl-02-cel">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system" size="15"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="ledAnimationChosen:" target="Snp-nl-obj" id="Snl-02-act"/>
-                                            </connections>
-                                        </button>
-                                        <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Snl-03-btn">
-                                            <rect key="frame" x="470" y="150" width="200" height="20"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="radio" title="🔥 Embers" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Snl-03-cel">
-                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                <font key="font" metaFont="system" size="15"/>
-                                            </buttonCell>
-                                            <connections>
-                                                <action selector="ledAnimationChosen:" target="Snp-nl-obj" id="Snl-03-act"/>
-                                            </connections>
-                                        </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sn2-73-x73">
                                             <rect key="frame" x="20" y="12" width="130" height="28"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -2469,6 +2436,157 @@ Answers</string>
                                                 <action selector="disconnectAllPress:" target="-2" id="Dc1-Al-act"/>
                                             </connections>
                                         </button>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Quiz Admin" identifier="" id="Qad-td-100">
+                                <view key="view" id="Qad-vw-100">
+                                    <rect key="frame" x="10" y="7" width="896" height="284"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qas-00-lbl">
+                                            <rect key="frame" x="20" y="240" width="200" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="LED idle anim" id="Qas-00-cel">
+                                                <font key="font" metaFont="systemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button tag="1" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qas-01-btn">
+                                            <rect key="frame" x="20" y="210" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🎄 Megamas" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qas-01-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="stringAnimationChosen:" target="Qap-nl-obj" id="Qas-01-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="5" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qas-02-btn">
+                                            <rect key="frame" x="20" y="180" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🚦 Old Lights" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qas-02-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="stringAnimationChosen:" target="Qap-nl-obj" id="Qas-02-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qas-03-btn">
+                                            <rect key="frame" x="20" y="150" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🔥 Embers" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qas-03-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="stringAnimationChosen:" target="Qap-nl-obj" id="Qas-03-act"/>
+                                            </connections>
+                                        </button>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-00-lbl">
+                                            <rect key="frame" x="240" y="240" width="200" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Trees idle anim" id="Qat-00-cel">
+                                                <font key="font" metaFont="systemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button tag="7" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-01-btn">
+                                            <rect key="frame" x="240" y="210" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🎄 Megamas Trees" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-01-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-01-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="6" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-02-btn">
+                                            <rect key="frame" x="240" y="180" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🧱 Megamas Blocks" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-02-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-02-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="1" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-03-btn">
+                                            <rect key="frame" x="240" y="150" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="✨ Twinkle" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-03-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-03-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="3" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-04-btn">
+                                            <rect key="frame" x="240" y="120" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🕯️ Candle" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-04-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-04-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="2" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-05-btn">
+                                            <rect key="frame" x="240" y="90" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🌈 Rainbow" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-05-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-05-act"/>
+                                            </connections>
+                                        </button>
+                                        <button tag="4" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-06-btn">
+                                            <rect key="frame" x="240" y="60" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🌊 Room Wave" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-06-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-06-act"/>
+                                            </connections>
+                                        </button>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qab-00-lbl">
+                                            <rect key="frame" x="460" y="240" width="200" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="left" title="Tree brightness" id="Qab-00-cel">
+                                                <font key="font" metaFont="systemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <slider verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qab-01-sld">
+                                            <rect key="frame" x="460" y="210" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="255" doubleValue="128" tickMarkPosition="above" sliderType="linear" id="Qab-01-cel"/>
+                                            <connections>
+                                                <action selector="treeBrightnessMoved:" target="Qap-nl-obj" id="Qab-01-act"/>
+                                            </connections>
+                                        </slider>
+                                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qab-02-lbl">
+                                            <rect key="frame" x="665" y="212" width="50" height="16"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="128" id="Qab-02-cel">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                 </view>
                             </tabViewItem>

@@ -13,6 +13,7 @@
 		3C819AA3309B404600FFD5D7 /* TestProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C819AA2309B404600FFD5D7 /* TestProbe.swift */; };
 		3CD1A0022F1B000100A38676 /* QuizProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1A0012F1B000100A38676 /* QuizProtocol.swift */; };
 		3CD1A0042F1B000100A38676 /* TeamRoster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1A0032F1B000100A38676 /* TeamRoster.swift */; };
+		3CD1A0062F1B000100A38676 /* QuizAdminPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD1A0052F1B000100A38676 /* QuizAdminPanel.swift */; };
 		3CD1DF631A3069CC003DEA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */; };
 		3CF749212EABE57F00A38676 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF749202EABE57800A38676 /* Settings.swift */; };
 		46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46056EB91A19624E00C37628 /* AppDelegate.swift */; };
@@ -54,6 +55,7 @@
 		3C819AA2309B404600FFD5D7 /* TestProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProbe.swift; sourceTree = "<group>"; };
 		3CD1A0012F1B000100A38676 /* QuizProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizProtocol.swift; sourceTree = "<group>"; };
 		3CD1A0032F1B000100A38676 /* TeamRoster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamRoster.swift; sourceTree = "<group>"; };
+		3CD1A0052F1B000100A38676 /* QuizAdminPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizAdminPanel.swift; sourceTree = "<group>"; };
 		3CD1DF621A3069CC003DEA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		3CF749202EABE57800A38676 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		46056EB41A19624E00C37628 /* Quiz Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Quiz Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,6 +128,7 @@
 				3C2543252B123E7D008A3FDB /* QuizWebSocket.swift */,
 				3CD1A0012F1B000100A38676 /* QuizProtocol.swift */,
 				3CD1A0032F1B000100A38676 /* TeamRoster.swift */,
+				3CD1A0052F1B000100A38676 /* QuizAdminPanel.swift */,
 				3CF749202EABE57800A38676 /* Settings.swift */,
 				46056ED51A1974A800C37628 /* StartupView.swift */,
 				3C819AA2309B404600FFD5D7 /* TestProbe.swift */,
@@ -254,6 +257,7 @@
 				3C2543262B123E7D008A3FDB /* QuizWebSocket.swift in Sources */,
 				3CD1A0022F1B000100A38676 /* QuizProtocol.swift in Sources */,
 				3CD1A0042F1B000100A38676 /* TeamRoster.swift in Sources */,
+				3CD1A0062F1B000100A38676 /* QuizAdminPanel.swift in Sources */,
 				46B025BA1A1C0FE10088294B /* ControllerWindowController.swift in Sources */,
 				3C819AA3309B404600FFD5D7 /* TestProbe.swift in Sources */,
 				46056EBA1A19624E00C37628 /* AppDelegate.swift in Sources */,

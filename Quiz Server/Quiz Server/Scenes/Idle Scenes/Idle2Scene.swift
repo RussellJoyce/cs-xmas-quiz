@@ -325,7 +325,7 @@ class Idle2Scene: QuizScene {
 	}
 	
 	override func reset() {
-		QuizWebSocket.shared?.megamas()
+		QuizWebSocket.shared?.idleLights()
 		for node in snowmojis {
 			node.particleBirthRate = 0
 		}
