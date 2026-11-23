@@ -226,17 +226,22 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	}
 
 	// MARK: - LED Commands
+	// Some commands also send their equivalent to the trees, some do not.
 
 	func ledsOff() {
 		send("lea00")
+		treeAnimation(.off)
 	}
 
 	func megamas() {
 		send("lea01")
+		treeAnimation(.megamasTrees)
 	}
 
+	/// Only used while a question runs with no timer; the trees chase instead
 	func timertwinkle() {
 		send("lea02")
+		treeAnimation(.chase)
 	}
 
 	/// A slow, dim amber wave travelling along the strip
@@ -266,6 +271,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		if team >= 0 && team < 50 {
 			send("leb" + String(format: "%02d", team))
 		}
+		treeBuzz(team: team)
 	}
 
 	/// Set leds to an R G B colour (0-255)
@@ -285,24 +291,30 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		if team >= 0 && team < 50 {
 			send("let" + String(format: "%02d", team))
 		}
+		treeTeamColour(team)
 	}
 
+	/// Megamas on the string drifts towards the team's colour; the trees pulse it over their own Megamas
 	func setTargetTeam(_ team: Int) {
 		if team >= 0 && team < 50 {
 			send("lee" + String(format: "%02d", team))
 		}
+		treePulseTeamColour(team)
 	}
 
 	func pulseWhite() {
 		send("lep00")
+		treePulseWhite()
 	}
 
 	func pulseRed() {
 		send("lep01")
+		treePulseRed()
 	}
 
 	func pulseGreen() {
 		send("lep02")
+		treePulseGreen()
 	}
 
 	/// Pulse leds the colour of a specified team (0-based)
@@ -310,6 +322,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		if team >= 0 && team < 50 {
 			send("leq" + String(format: "%02d", team))
 		}
+		treePulseTeamColour(team)
 	}
 
 	/// Pulse leds the colour of a specified team (0-based) quickly
@@ -317,6 +330,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		if team >= 0 && team < 50 {
 			send("leq" + String(format: "%02d", team + 50))
 		}
+		treePulseTeamColour(team, quick: true)
 	}
 
 	/// Set music levels on LEDs
@@ -324,9 +338,20 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 		send("lem" + String(format: "%03d", leftAvg) + String(format: "%03d", leftPeak) + String(format: "%03d", rightAvg) + String(format: "%03d", rightPeak))
 	}
 
-	/// Set the leds to a value from 0 to NUM_LEDS.
+	/// Set the leds to a value from 0 to NUM_LEDS. String only: the wavelength sweep uses this
+	/// as a bar filling up, which is no countdown. See `countdown(_:)`.
 	func setCounterValue(_ val: Int) {
 		send("ler" + String(format: "%03d", val))
+	}
+
+	/// A countdown on both
+	func countdown(_ val: Int) {
+		setCounterValue(val)
+		if val > 0 {
+			treeCountdown(percent: max(1, val / 2))
+		} else {
+			treeAnimation(.off)
+		}
 	}
 
 	enum TreeAnimation: Int {

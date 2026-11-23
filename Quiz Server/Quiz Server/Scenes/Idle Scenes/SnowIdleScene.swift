@@ -69,13 +69,27 @@ class SnowIdleScene: QuizScene {
 		case megamas = 1
 		case embers = 4
 		case oldLights = 5
+
+		/// The nearest thing the desk trees have
+		var tree: QuizWebSocket.TreeAnimation {
+			switch self {
+			case .megamas: return .megamasTrees
+			case .embers: return .candle
+			case .oldLights: return .twinkle
+			}
+		}
+	}
+
+	private func sendLEDAnimation() {
+		QuizWebSocket.shared?.animation(ledAnimation.rawValue)
+		QuizWebSocket.shared?.treeAnimation(ledAnimation.tree)
 	}
 
 	/// Played on the LEDs whenever the round is entered or reset, and as soon as it is changed
 	/// while on screen. Kept for as long as the app runs, not saved.
 	var ledAnimation = LEDAnimation.megamas {
 		didSet {
-			if view != nil { QuizWebSocket.shared?.animation(ledAnimation.rawValue) }
+			if view != nil { sendLEDAnimation() }
 		}
 	}
 
@@ -333,7 +347,7 @@ class SnowIdleScene: QuizScene {
 	//MARK: - Running
 
 	override func reset() {
-		QuizWebSocket.shared?.animation(ledAnimation.rawValue)
+		sendLEDAnimation()
 		teamStrip.reset()
 		clearSnow()
 		//Open on a scene that has already been snowed on, as the pictures are

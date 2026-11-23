@@ -163,6 +163,9 @@ class ScoresScene: QuizScene {
 			
 			//LEDs expect zero based team ids
 			QuizWebSocket.shared?.buzz(team: scores[displayIndex].1 - 1)
+			if displayIndex == scores.count - 1 {
+				QuizWebSocket.shared?.treeWave()
+			}
 			
 			//Shuffle down any existing boxes
 			if displayIndex > 0 {

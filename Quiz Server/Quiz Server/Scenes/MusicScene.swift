@@ -365,6 +365,9 @@ class MusicScene: QuizScene {
 			}
 			player.play()
 		}
+		if isLoaded {
+			QuizWebSocket.shared?.treeAnimation(.rainbow)
+		}
 	}
 
 	func pause() {

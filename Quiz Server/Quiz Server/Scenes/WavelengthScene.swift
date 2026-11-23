@@ -343,6 +343,7 @@ class WavelengthScene: QuizScene {
 		positionSweep(at: CGFloat(WavelengthScene.minValue))
 		counterPlayer?.currentTime = 0
 		counterPlayer?.play()
+		QuizWebSocket.shared?.treeAnimation(.chase)
 
 		//Which markers the sweep has already gone past, so each one pops exactly once
 		var passed = Set<Int>()
@@ -397,6 +398,7 @@ class WavelengthScene: QuizScene {
 		counterPlayer?.currentTime = 0
 		self.run(landSound)
 		QuizWebSocket.shared?.pulseWhite()
+		QuizWebSocket.shared?.treeWave()
 
 		positionSweep(at: CGFloat(target))
 		let x = xFor(value: target)

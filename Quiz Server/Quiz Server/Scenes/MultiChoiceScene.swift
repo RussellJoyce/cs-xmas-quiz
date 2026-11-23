@@ -223,7 +223,7 @@ class MultiChoiceScene: QuizScene {
 			shape.fillColor = MultiChoiceScene.barColour(fraction: fraction)
 		})
 
-		QuizWebSocket.shared?.setCounterValue(200)
+		QuizWebSocket.shared?.countdown(200)
 
 		if sounds {
 			self.run(self.tickSound)
@@ -240,7 +240,7 @@ class MultiChoiceScene: QuizScene {
 	@objc func tick() {
 		self.run(SKAction.run({ () -> Void in
 			self.time -= 0.5
-			QuizWebSocket.shared?.setCounterValue(Int(200.0 * Float(self.time) / Float(self.timeout)))
+			QuizWebSocket.shared?.countdown(Int(200.0 * Float(self.time) / Float(self.timeout)))
 
 			if self.time > 0 {
 				self.sparkAtBarEnd()
@@ -272,7 +272,7 @@ class MultiChoiceScene: QuizScene {
 			self.run(self.tickEnd)
 		}
 		QuizWebSocket.shared?.pulseWhite()
-		QuizWebSocket.shared?.setCounterValue(0)
+		QuizWebSocket.shared?.countdown(0)
 
 		showGuesses()
 		onFinish?()

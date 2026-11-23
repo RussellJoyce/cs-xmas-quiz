@@ -146,7 +146,7 @@ class TrueFalseScene: QuizScene {
 		self.timeLabel.text = String(TrueFalseScene.TIMEOUT)
 		addParticles()
 		counting = true;
-		QuizWebSocket.shared?.setCounterValue(200)
+		QuizWebSocket.shared?.countdown(200)
 		
 		if sounds {
 			self.run(self.tickSound)
@@ -213,7 +213,7 @@ class TrueFalseScene: QuizScene {
 		self.run(SKAction.run({ () -> Void in
 			self.time -= 1
 			let lednum = Int(200.0 * Float(self.time) / Float(TrueFalseScene.TIMEOUT))
-			QuizWebSocket.shared?.setCounterValue(lednum)
+			QuizWebSocket.shared?.countdown(lednum)
 			if(self.time > 0) {
 				self.timeLabel.text = String(self.time)
 				self.addParticles()
