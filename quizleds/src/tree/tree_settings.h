@@ -25,6 +25,10 @@
 // How far apart neighbouring trees start a staggered effect such as a buzz
 #define TREE_STAGGER_MS 90
 
+// How long after boot a tree waits for a computer to say hello over USB serial before it
+// starts WiFi. The hello still takes the tree over from WiFi if it comes later.
+#define TREE_SERIAL_GRACE_MS 3000
+
 // If true, do not connect to wifi; start on the twinkle so the LEDs can be checked
 #define TREE_OFFLINE_MODE 0
 

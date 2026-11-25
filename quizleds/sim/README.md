@@ -122,6 +122,10 @@ server sees the socket close at once. **S** starts it again from boot. **Z** fre
 thaws it with SIGSTOP: its socket stays open but nothing answers, which is how a tree that
 has lost power or WiFi looks until the server gives up on it. Every other key goes to the
 firmware's debug console in `tree_main.cpp` (`0-7 b p r g k w = - i n x`).
+`>` starts a command line, ended by Enter, as a computer sends them over USB serial:
+`>b03` buzzes for team 3, and `>h` is the hello, which turns the tree's WiFi off, so the
+server sees its socket close. Each tree waits 3 s after it starts before it opens its
+websocket, in case a hello comes.
 
 ### Colours
 

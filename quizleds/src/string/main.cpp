@@ -2,6 +2,7 @@
 #include <settings.h>
 #include <animation.h>
 #include <web.h>
+#include <net.h>
 
 void setup() {
 	Serial.begin(115200);
@@ -30,9 +31,9 @@ void single_led(int num) {
 void loop() {
 	static volatile unsigned long next_frame_time = 0;
 
-	//Tick the current animation
+	//Tick the current animation, but hold it still until WiFi is joined, so a string that cannot reach the network is obvious
 	unsigned long current_time = millis();
-	if(current_time >= next_frame_time) {
+	if((OFFLINE_MODE || net_has_joined()) && current_time >= next_frame_time) {
 		anim_tick();
 		next_frame_time = current_time + MILLIS_PER_FRAME;
 	}

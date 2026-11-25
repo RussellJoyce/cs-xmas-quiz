@@ -1,10 +1,22 @@
 // Desk tree firmware. Built by its own PlatformIO project in quizleds/tree/. Shares only the top
 // of src/ (net.cpp and credentials.h) with the string, whose code is in src/string/.
 //
-// Protocol. The quiz software sends "lt" + command; the server strips the "lt" and sends the
-// command to every tree. All numbers are fixed-width decimal. Team ids tt are 0-based.
+// Transport. A tree takes commands by USB serial or by WiFi, never both at once.
+//   USB serial: a computer on the tree's USB port sends each command as a line, ">" +
+//     command + "\n", e.g. ">b03\n". Its first should be the hello, ">h\n", which turns
+//     WiFi off for good (until the tree restarts) and is answered with one line
+//       <tree <id> <chip> <build date and time>
+//     e.g. "<tree d62534 esp32c3 Nov 25 2026 14:02:11". The hello can be sent again at any
+//     time, as a check that the tree is there; each one is answered. Every other line the tree
+//     writes is debug output, and none of it starts with "<". Characters outside a ">" line
+//     are the debug keys (below), so a serial monitor works as before.
+//   WiFi: the quiz software sends "lt" + command; the node server strips the "lt" and sends
+//     the command to every tree over its websocket. A tree only starts WiFi if no hello has
+//     come TREE_SERIAL_GRACE_MS after boot, so one on a USB charger still joins the quiz.
 //
-// Identity (sent by the server, not the quiz software)
+// Protocol. All numbers are fixed-width decimal. Team ids tt are 0-based.
+//
+// Identity (sent by the node server over WiFi, or by the computer over serial)
 //   iNNCC     - this tree is number NN of CC connected. Staggered effects start NN steps
 //               late, and ambient animations are offset by NN/CC so that they roll across
 //               the room. Resent to every tree when one joins or leaves.
@@ -38,12 +50,13 @@
 // Wave
 //   wsss      - white flash, tree NN firing NN * sss ms after the command: a ripple across
 //               the trees in order
-// Firmware update (the quiz software sends "ltu"; the server adds its firmware port)
+// Firmware update, WiFi only (the quiz software sends "ltu"; the server adds its firmware port)
 //   uPPPPP    - fetch http://<server>:PPPPP/firmware/tree-<chip>.bin, where <server> is the
 //               host this tree's websocket connects to and <chip> is e.g. esp32c3. The ring
 //               fills blue during the download, then the tree reboots into the new image.
 //               If it is already running that image it pulses green; if the update fails,
-//               red, and it carries on with the old one.
+//               red, and it carries on with the old one. Over serial there is no WiFi, so it
+//               pulses red; flash it by USB instead (pio run -t upload).
 
 #include <Arduino.h>
 #include <esp_mac.h>
@@ -56,6 +69,7 @@
 static char tree_id[7];          // last three bytes of the MAC, e.g. "d62534"
 static char hostname[20];        // "quiztree-d62534"
 static char query[16];           // "tree=d62534"
+static bool serial_host = false; // a computer has said hello over USB; WiFi is off
 
 // A fixed-width decimal field, or -1 if it is short or not all digits
 static int field(const char *data, int length, int start, int width) {
@@ -135,6 +149,11 @@ static void handle_command(char *dat, int len) {
 			break;
 		}
 		case 'u': {
+			if(!net_running()) {
+				Serial.println("No WiFi, so no update");
+				tree_pulse_colour(1);
+				break;
+			}
 			int port = field(dat, len, 1, 5);
 			char host[64];
 			if(port <= 0 || port > 65535 || !net_server_host(host, sizeof(host))) break;
@@ -165,20 +184,34 @@ void setup() {
 	make_identity();
 	Serial.printf("Tree %s, built %s %s\n", tree_id, __DATE__, __TIME__);
 
-	// Show something while WiFi comes up, so a dead tree is obvious
+	// One frame of the twinkle, held still until WiFi is joined or a computer says hello
+	// (loop()), so a tree that is on but connected to nothing is obvious
 	tree_ambient(1);
 	tree_tick(millis());
+	// WiFi waits for TREE_SERIAL_GRACE_MS, in loop(), in case a computer says hello
+}
 
-	if(!TREE_OFFLINE_MODE) net_begin(hostname, query);
+// The hello: a computer has this tree on USB, so it takes the tree over from WiFi
+static void serial_hello() {
+	if(!serial_host) {
+		serial_host = true;
+		net_end();
+		Serial.println("Serial host");
+	}
+	Serial.printf("<tree %s %s %s %s\n", tree_id, CONFIG_IDF_TARGET, __DATE__, __TIME__);
+}
+
+static void serial_line(char *dat, int len) {
+	if(len == 0) return;
+	if(dat[0] == 'h') serial_hello();
+	else handle_command(dat, len);
 }
 
 // Serial debug keys: 0-7 ambient, b buzz (next team each press), p/r/g pulse, k countdown
 // step, w wave, -/= single LED, i identity, n network details, x drop WiFi (to test
-// reconnecting)
-static void serial_keys() {
+// rejoining)
+static void debug_key(char c) {
 	static int team = 0, single = 0, count = 100;
-	if(!Serial.available()) return;
-	char c = Serial.read();
 	if(c >= '0' && c <= '7') { tree_ambient(c - '0'); return; }
 	switch(c) {
 		case 'b': tree_buzz(team); team = (team + 1) % 14; break;
@@ -196,13 +229,46 @@ static void serial_keys() {
 	}
 }
 
+// Everything that has arrived over serial: ">" lines are commands, anything else a debug key.
+// A line longer than a websocket command (COMMAND_MAX_LEN in net.cpp) is dropped whole.
+static void serial_input() {
+	static char line[64];
+	static int line_len = -1;        // -1 outside a ">" line
+	static bool overflow = false;
+	while(Serial.available()) {
+		int c = Serial.read();
+		if(c < 0) break;
+		if(line_len >= 0) {
+			if(c == '\n' || c == '\r') {
+				if(overflow) Serial.println("Serial line too long, dropped");
+				else serial_line(line, line_len);
+				line_len = -1;
+			} else if(line_len < (int)sizeof(line)) {
+				line[line_len++] = c;
+			} else {
+				overflow = true;
+			}
+		} else if(c == '>') {
+			line_len = 0;
+			overflow = false;
+		} else if(c != '\n' && c != '\r') {
+			debug_key(c);
+		}
+	}
+}
+
 void loop() {
 	static uint32_t next_frame = 0;
 	uint32_t now = millis();
-	if((int32_t)(now - next_frame) >= 0) {
+	bool live = TREE_OFFLINE_MODE || serial_host || net_has_joined();
+	if(live && (int32_t)(now - next_frame) >= 0) {
 		tree_tick(now);
 		next_frame = now + TREE_MILLIS_PER_FRAME;
 	}
-	serial_keys();
-	if(!TREE_OFFLINE_MODE) net_tick(handle_command);
+	serial_input();
+	if(!TREE_OFFLINE_MODE && !serial_host && !net_running() && now >= TREE_SERIAL_GRACE_MS) {
+		net_begin(hostname, query);
+	}
+	// Also drains anything the websocket queued before a hello turned WiFi off
+	net_tick(handle_command);
 }

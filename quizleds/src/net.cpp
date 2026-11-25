@@ -60,44 +60,46 @@ void net_print_details() {
 	Serial.println(uri_buf);
 }
 
-static void connect_wifi() {
-	WiFi.setHostname(net_hostname);
-	Serial.println("Begin wifi...");
+//Joining is a state machine stepped by net_tick(), so loop() and the animation never wait
+//for WiFi. Each network in credentials.h gets JOIN_TIMEOUT_MS to answer before the next.
+#define JOIN_TIMEOUT_MS 8000
 
-	int i = 0;
-	while(1) {
-		String wifi_ssid = wifi_ssids[i];
-		String wifi_pass = wifi_passes[i];
+typedef enum { NET_OFF, NET_JOINING, NET_CONNECTED } net_state;
 
-		Serial.printf("Attempting SSID: %s\n", wifi_ssid.c_str());
-		WiFi.begin(wifi_ssid, wifi_pass);
+static net_state state = NET_OFF;
+static int cred = 0;                //The network being tried, or joined
+static unsigned long join_start = 0;
+static bool joined = false;
+
+static void start_join(int i) {
+	cred = i;
+	Serial.printf("Attempting SSID: %s\n", wifi_ssids[cred]);
+	WiFi.begin(wifi_ssids[cred], wifi_passes[cred]);
 #ifdef NET_TX_POWER
-		//The C3 SuperMini's antenna is poor, and it is widely reported to connect more
-		//reliably at reduced transmit power
-		WiFi.setTxPower(NET_TX_POWER);
+	//The C3 SuperMini's antenna is poor, and it is widely reported to connect more
+	//reliably at reduced transmit power
+	WiFi.setTxPower(NET_TX_POWER);
 #endif
-		unsigned long start = millis();
+	join_start = millis();
+	state = NET_JOINING;
+}
 
-		while (WiFi.status() != WL_CONNECTED && millis() - start < 8000) {
-			delay(200);
-			Serial.print(".");
-		}
-
-		if (WiFi.status() == WL_CONNECTED) {
-			build_uri(websocket_uris[i]);
-			net_print_details();
-			Serial.println("Wifi started");
-			break;
-		}
-
-		//Abandon this attempt before the next. Core 3 (the trees) refuses WiFi.begin() while the
-		//station is still trying to connect.
-		WiFi.disconnect();
-		i++;
-		if(i >= NUM_CREDS) i = 0;
+static void step_join() {
+	if(WiFi.status() == WL_CONNECTED) {
+		build_uri(websocket_uris[cred]);
+		net_print_details();
+		Serial.println("Wifi started");
+		state = NET_CONNECTED;
+		joined = true;
+		connect_websocket();
+		return;
 	}
+	if(millis() - join_start < JOIN_TIMEOUT_MS) return;
 
-	connect_websocket();
+	//Abandon this attempt before the next. Core 3 (the trees) refuses WiFi.begin() while the
+	//station is still trying to connect.
+	WiFi.disconnect();
+	start_join((cred + 1) % NUM_CREDS);
 }
 
 void net_begin(const char *hostname, const char *query) {
@@ -106,7 +108,30 @@ void net_begin(const char *hostname, const char *query) {
 	}
 	net_hostname = hostname;
 	net_query = query;
-	connect_wifi();
+	WiFi.setHostname(net_hostname);
+	Serial.println("Begin wifi...");
+	start_join(0);
+}
+
+void net_end() {
+	if(websocket_client != NULL) {
+		esp_websocket_client_destroy(websocket_client);
+		websocket_client = NULL;
+	}
+	if(state != NET_OFF) {
+		WiFi.disconnect();
+		WiFi.mode(WIFI_OFF);
+		Serial.println("Wifi stopped");
+	}
+	state = NET_OFF;
+}
+
+bool net_running() {
+	return state != NET_OFF;
+}
+
+bool net_has_joined() {
+	return joined;
 }
 
 static void websocket_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
@@ -166,10 +191,20 @@ static void connect_websocket() {
 }
 
 void net_tick(net_command_handler handler) {
-	//Check if we need to reconnect
-	if(WiFi.status() != WL_CONNECTED) {
-		WiFi.disconnect();
-		connect_wifi();
+	switch(state) {
+		case NET_OFF:
+			break;
+		case NET_JOINING:
+			step_join();
+			break;
+		case NET_CONNECTED:
+			//Dropped: start again from the first network, as at boot
+			if(WiFi.status() != WL_CONNECTED) {
+				Serial.println("Wifi lost");
+				WiFi.disconnect();
+				start_join(0);
+			}
+			break;
 	}
 
 	//Handle every command that has arrived since the last tick
