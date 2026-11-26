@@ -180,6 +180,13 @@ void setup() {
 	// No while(!Serial): on the C3's native USB that waits for a computer, and a tree on a
 	// USB charger would never boot
 	Serial.begin(115200);
+#if ARDUINO_USB_MODE && ARDUINO_USB_CDC_ON_BOOT
+	// Never wait to send serial output. By default each write may wait ~2 s (20 x 100 ms)
+	// for the host to take it, so a USB link that stops draining, which has been seen after
+	// a replug, all but stops loop(), and with it the animation. A line that cannot go out
+	// at once is dropped instead.
+	Serial.setTxTimeoutMs(0);
+#endif
 	tree_init();
 	make_identity();
 	Serial.printf("Tree %s, built %s %s\n", tree_id, __DATE__, __TIME__);

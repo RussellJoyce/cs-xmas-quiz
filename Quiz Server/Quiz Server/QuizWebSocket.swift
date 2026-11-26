@@ -37,6 +37,10 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 
 	var isConnected: Bool { state == .connected && task != nil }
 
+	/// The trees on USB. Every tree command goes to them as well as to the node server (for
+	/// trees on WiFi), and to them even while the node server is not connected.
+	let trees = TreeLink()
+
 	init(url: URL) {
 		self.url = url
 		super.init()
@@ -78,12 +82,25 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 	/// Private, so every outbound message has to go through `QuizCommand` or one of the
 	/// LED helpers below rather than being spelled out at the call site.
 	private func send(_ text: String) {
+		sendToUSBTrees(text)
 		guard state == .connected, let current = task else { return }
 		current.send(.string(text)) { [weak self] error in
 			guard let self = self, let error = error else { return }
 			print("WebSocket send error: \(error.localizedDescription)")
 			guard self.isCurrent(current) else { return }
 			self.handleConnectionLost()
+		}
+	}
+
+	/// The tree commands, "lt" + command, and the team count, "len", which the node server
+	/// also forwards to the trees. Not "ltu", the firmware update over WiFi: a tree on USB has
+	/// its WiFi off, and is flashed by USB instead.
+	private func sendToUSBTrees(_ text: String) {
+		if text.hasPrefix("lt") {
+			let command = String(text.dropFirst(2))
+			if command != "u" { trees.send(command) }
+		} else if text.hasPrefix("len") {
+			trees.send(String(text.dropFirst(2)))
 		}
 	}
 

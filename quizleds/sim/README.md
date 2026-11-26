@@ -139,6 +139,20 @@ Options: `-n <trees>` (default 4, at most 32), `--uri`, `--wire`, `--plain`, `--
 `--render-hz`, as for ledsim. With `--seed` each tree gets the seed plus its number, so the
 run is reproducible but the trees still twinkle independently.
 
+### Trees on USB serial
+
+`--pty-list <file>` gives each tree a pseudo-terminal standing in for its USB serial port,
+and writes their device paths to `<file>`, one per line. Quiz Server opens them as it would a
+real tree's `/dev/cu.usbmodem*` when they are listed in `QUIZ_TREE_PORTS`, separated by commas.
+It still finds real trees as well, except in the end-to-end tests (`QUIZ_TEST_PROBE` set), where
+it opens only the listed ports and leaves the Mac's USB trees alone.
+treesim holds both ends of each pty for as long as it runs, so a tree's path stays the same
+when it is restarted with **X** and **S**, as a board's port does when it resets.
+
+Each command a tree is sent on its pty is noted in the serial pane as `» command`, so you can
+see what came over USB. With `--plain`, keys are still read from stdin, which is how
+`nodeserver/test/e2e/usb-trees.e2e.js` restarts a tree.
+
 The serial pane shows the websocket URI from `credentials.h`, because that is what the
 firmware prints. The shim connects to `--uri` instead, keeping the firmware's `?tree=` query.
 

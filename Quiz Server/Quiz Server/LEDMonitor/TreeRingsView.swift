@@ -30,7 +30,8 @@ class TreeRingsView: NSView, SimulatorMonitor {
 	/// all the time, so in practice this is every frame while treesim runs.
 	func poll() -> Bool {
 		let (live, trees) = reader.poll()
-		let status = TreeRingsView.statusText(live: live, trees: trees)
+		let status = TreeRingsView.statusText(live: live, trees: trees) +
+			TreeRingsView.usbText(QuizWebSocket.shared?.trees.claimed ?? [])
 		if live != self.live || status != self.status || trees != self.trees {
 			needsDisplay = true
 		}
@@ -46,6 +47,11 @@ class TreeRingsView: NSView, SimulatorMonitor {
 		var text = "Tree simulator — \(connected.count) of \(trees.count) connected"
 		if let last = connected.first?.last, !last.isEmpty { text += " — last '\(last)'" }
 		return text
+	}
+
+	/// The trees the app has on USB, which are not drawn: they do not send back what they show
+	private static func usbText(_ claimed: [String]) -> String {
+		claimed.isEmpty ? " — no USB trees" : " — USB trees: \(claimed.count) (\(claimed.joined(separator: " ")))"
 	}
 
 	//MARK: - Colour

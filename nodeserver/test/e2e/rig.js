@@ -30,6 +30,8 @@ const { writeFixtures } = require('./fixtures');
 const REPO = path.resolve(__dirname, '../../..');
 const DERIVED = path.join(REPO, 'nodeserver/.e2e-build');
 const APP_BINARY = path.join(DERIVED, 'Build/Products/Debug/Quiz Server.app/Contents/MacOS/Quiz Server');
+const SIM_DIR = path.join(REPO, 'quizleds/sim');
+const TREESIM = path.join(SIM_DIR, 'build/treesim');
 const POLL_MS = 50;
 
 function newestChange(dir) {
@@ -59,6 +61,16 @@ function buildApp() {
         throw new Error('xcodebuild failed:\n' + String(err.stdout).slice(-4000) + String(err.stderr).slice(-4000));
     }
     fs.writeFileSync(stamp, '');
+}
+
+//treesim, for the trees on USB. make only rebuilds what has changed. It needs NeoPixelBus,
+//which a checkout gets from 'pio pkg install -e main' in quizleds/.
+function buildTreesim() {
+    try {
+        execFileSync('make', ['-C', SIM_DIR, '-s'], { stdio: ['ignore', 'pipe', 'pipe'] });
+    } catch(err) {
+        throw new Error('building treesim failed:\n' + String(err.stdout) + String(err.stderr));
+    }
 }
 
 //Polls until `check` returns something truthy, and returns that. Scenarios wait with this
@@ -413,6 +425,52 @@ async function startQuiz(options) {
         await new Promise(resolve => web.server.listening ? resolve() : web.server.once('listening', resolve));
 
 
+        //--- Desk trees on USB, if asked for: treesim gives each one a pty for its serial port,
+        //    and the app is told their paths, as it would find real ones. Their websocket goes
+        //    nowhere, so anything they are sent came over USB. Each line a tree prints is kept
+        //    in `usb.log`, including a "» command" line for each command it is sent.
+        let usb = null;
+        if(options.usbTrees) {
+            buildTreesim();
+            const ptyList = path.join(root, 'ptys');
+            const sim = spawn(TREESIM, ['-n', String(options.usbTrees), '--plain', '--no-frame-file',
+                                        '--uri', 'ws://127.0.0.1:1/', '--pty-list', ptyList],
+                              { stdio: ['pipe', 'pipe', 'pipe'] });
+            const simExited = new Promise(resolve => sim.once('exit', resolve));
+            cleanups.push(() => { sim.kill('SIGTERM'); return simExited; });
+            const log = [];
+            let partial = '';
+            sim.stdout.on('data', d => {
+                const lines = (partial + d.toString()).split('\n');
+                partial = lines.pop();
+                //"%2d %s": the tree's number, then what it printed
+                for(const line of lines) {
+                    const m = /^\s*(\d+) (.*)$/.exec(line);
+                    if(m) log.push({ tree: Number(m[1]), line: m[2] });
+                }
+            });
+            sim.stderr.on('data', d => log.push({ tree: -1, line: d.toString() }));
+            await until('treesim to list its ptys', () => fs.existsSync(ptyList));
+            const ptys = fs.readFileSync(ptyList, 'utf8').split('\n').filter(Boolean);
+            const sendKeys = keys => sim.stdin.write(keys);
+            usb = {
+                log, ptys,
+                //Every command tree n has been sent over USB, oldest first, from `since` in the log
+                received(n, since) {
+                    return log.slice(since || 0).filter(e => e.tree === n && e.line.startsWith('» '))
+                        .map(e => e.line.slice(2));
+                },
+                //The firmware restarting, as after a reset: its port stays the same
+                async restart(n) {
+                    //Tab moves the keys from all trees to tree 0, 1, ... and back to all
+                    sendKeys('\t'.repeat(n + 1) + 'X');
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    sendKeys('S' + '\t'.repeat(options.usbTrees - n));
+                }
+            };
+        }
+
+
         //--- The app. It dials out to this once its controller window is up.
         const probeServer = new WebSocket.Server({ host: '127.0.0.1', port: 0 });
         cleanups.push(() => new Promise(resolve => {
@@ -434,7 +492,7 @@ async function startQuiz(options) {
                     QUIZ_ROOT: root,
                     QUIZ_TEAMS: String(appTeams),
                     QUIZ_MUTE: '1'
-                }),
+                }, usb ? { QUIZ_TREE_PORTS: usb.ptys.join(',') } : {}),
                 stdio: ['ignore', 'pipe', 'pipe']
             });
             app.stdout.on('data', d => appLog.push(d.toString()));
@@ -497,7 +555,7 @@ async function startQuiz(options) {
 
 
         const quiz = {
-            phones, page, wire, leds, appLog, pageErrors, until, close,
+            phones, page, wire, leds, appLog, pageErrors, until, close, usb,
             get host() { return host; },
 
             //Moves to a round and waits until the display and every phone have got there.
@@ -545,6 +603,12 @@ async function startQuiz(options) {
                 await stopServer();
                 if(opts && opts.losePicks) fs.rmSync(picksFile, { force: true });
                 await startServer();
+            },
+
+            //The server gone until `fn` has run, for what has to work without it
+            async withoutServer(fn) {
+                await stopServer();
+                try { await fn(); } finally { await startServer(); }
             },
 
             //A crash rather than a quit: nothing gets to say goodbye

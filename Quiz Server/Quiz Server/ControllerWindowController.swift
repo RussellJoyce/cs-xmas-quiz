@@ -158,6 +158,8 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		QuizWebSocket.shared = socket
 		socket.delegate = self
 		socket.connect()
+		//The trees on USB, which need no node server
+		socket.trees.start()
 
 		
 		// Trim number of buttons down to match number of teams

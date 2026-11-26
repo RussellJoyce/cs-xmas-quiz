@@ -12,6 +12,9 @@ The parent never runs any firmware code. It owns the terminal, and talks to each
   - a pipe the child's Serial writes to, which the parent shows in the serial pane
   - a pipe the parent writes keystrokes to, which the child's Serial reads, so the firmware's
     debug keys work. Its closing is also how a child notices that the parent has gone.
+  - with --pty-list, a pseudo-terminal per tree as well, standing in for the tree's USB serial
+    port: Serial writes go to it as well as to the serial pane, and it is read as well as the
+    keys. Quiz Server opens the other end, as it would a real tree's /dev/cu.usbmodem*.
 
 Because the parent never starts a thread, fork() is safe: each child begins as a copy of a
 single-threaded process and starts its own websocket thread from setup().
@@ -24,6 +27,11 @@ single-threaded process and starts its own websocket thread from setup().
 #include "treeshm.h"
 
 #include <sys/ioctl.h>
+#ifdef __APPLE__
+#include <util.h>
+#else
+#include <pty.h>
+#endif
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -85,6 +93,7 @@ struct Options {
 	unsigned long seed = 0;    //0 means seed from the clock
 	int renderHz = 30;
 	std::string frameFile = TREESHM_DEFAULT_PATH;  //Empty: share anonymous memory instead
+	std::string ptyList;       //Non-empty: give each tree a pty, and write their paths here
 };
 Options opts;
 
@@ -153,6 +162,7 @@ void setProcess(int i, uint32_t state) {
 Slot* me = 0;
 int child_keys = -1;
 int child_serial = -1;
+int child_pty = -1;          //This tree's end of its pty, with --pty-list
 
 void childText(const char* data, size_t len) {
 	//The same rule tree_main.cpp applies: i, then two two-digit fields
@@ -169,10 +179,11 @@ void childText(const char* data, size_t len) {
 	me->last[n] = 0;
 }
 
-[[noreturn]] void runTree(int tree, const std::vector<int>& inherited, int keys, int serial) {
+[[noreturn]] void runTree(int tree, const std::vector<int>& inherited, int keys, int serial, int pty) {
 	//Every other tree's pipes were inherited too. They must go, or a sibling would hold this
 	//tree's key pipe open and it would never see the parent exit.
-	for(int fd : inherited) if(fd != keys && fd != serial) close(fd);
+	for(int fd : inherited) if(fd != keys && fd != serial && fd != pty) close(fd);
+	child_pty = pty;
 
 	//Anything the firmware or the shims print, by any route, ends up in the serial pane. The
 	//pipe is not the terminal, so it can be made non-blocking: a parent that falls behind
@@ -220,6 +231,12 @@ struct Tree {
 	TreeState state = DEAD;
 	int keys = -1;             //Write end of the child's stdin
 	int serial = -1;           //Read end of the child's stdout
+	//With --pty-list: the tree's pty. The parent holds both ends for as long as it runs, so
+	//the path stays the same when the tree is restarted, as a board's port does when it
+	//resets, and the tree's end never sees a hangup while nothing has the port open.
+	int ptyMaster = -1;
+	int ptySlave = -1;
+	std::string ptyPath;
 	std::string partial;       //Serial output not yet ended by a newline
 	char id[8];
 };
@@ -231,6 +248,8 @@ std::vector<int> openFds() {
 	for(int i = 0; i < opts.trees; i++) {
 		if(trees[i].keys >= 0) fds.push_back(trees[i].keys);
 		if(trees[i].serial >= 0) fds.push_back(trees[i].serial);
+		if(trees[i].ptyMaster >= 0) fds.push_back(trees[i].ptyMaster);
+		if(trees[i].ptySlave >= 0) fds.push_back(trees[i].ptySlave);
 	}
 	return fds;
 }
@@ -272,7 +291,7 @@ bool spawn(int i) {
 		close(keys[0]); close(keys[1]); close(serial[0]); close(serial[1]);
 		return false;
 	}
-	if(pid == 0) runTree(i, inherited, keys[0], serial[1]);
+	if(pid == 0) runTree(i, inherited, keys[0], serial[1], t.ptyMaster);
 
 	close(keys[0]);
 	close(serial[1]);
@@ -479,8 +498,9 @@ void handleKey(char c) {
 	}
 }
 
+//In --plain mode stdin is not put in raw mode, but is still read, so a program driving treesim
+//through a pipe can send it keys
 void readKeys() {
-	if(opts.plain) return;
 	struct pollfd p;
 	p.fd = STDIN_FILENO;
 	p.events = POLLIN;
@@ -650,9 +670,21 @@ void render() {
 
 void sim_serial_out(const char* text, size_t len) {
 	if(child_serial >= 0 && write(child_serial, text, len) < 0) {} //Full pipe: dropped
+	if(child_pty >= 0 && write(child_pty, text, len) < 0) {}       //Full pty: dropped, as on USB
+}
+
+static bool ptyReadable() {
+	if(child_pty < 0) return false;
+	struct pollfd p;
+	p.fd = child_pty;
+	p.events = POLLIN;
+	//A hung-up pty also reports POLLIN, then reads nothing. The parent holds the far end
+	//open so it should not happen, but if it did the keys would never be read.
+	return poll(&p, 1, 0) > 0 && (p.revents & POLLIN) && !(p.revents & POLLHUP);
 }
 
 int sim_serial_available() {
+	if(ptyReadable()) return 1;
 	struct pollfd p;
 	p.fd = child_keys;
 	p.events = POLLIN;
@@ -663,8 +695,34 @@ int sim_serial_available() {
 	return 0;
 }
 
+//Every command line that arrives on the pty, by the firmware's own rule (a line that starts
+//with '>'), is noted in the serial pane as "» command" and kept in the slot as a websocket
+//command is, so the tests can see exactly what a tree was sent over USB
+static void notePtyChar(char c) {
+	static std::string line;
+	static bool inLine = false;
+	if(inLine) {
+		if(c == '\n' || c == '\r') {
+			inLine = false;
+			childText(line.data(), line.size());
+			std::string note = "\xc2\xbb " + line + "\n";
+			if(child_serial >= 0 && write(child_serial, note.data(), note.size()) < 0) {}
+		} else if(line.size() < 64) {
+			line += c;
+		}
+	} else if(c == '>') {
+		inLine = true;
+		line.clear();
+	}
+}
+
 int sim_serial_read() {
 	char c;
+	if(ptyReadable()) {
+		if(read(child_pty, &c, 1) != 1) return -1;
+		notePtyChar(c);
+		return (unsigned char) c;
+	}
 	ssize_t n = read(child_keys, &c, 1);
 	if(n == 1) return (unsigned char) c;
 	if(n == 0) _exit(0);
@@ -687,6 +745,33 @@ void sim_leds_show(const RgbColor* pixels, uint16_t count) {
 
 //-------------------------------------------------------------------------------------------------
 
+//Raw, so nothing the tree writes is echoed back to it as input, and written to the list only
+//once every tree has one, so a reader never sees half a list
+static bool openPtys() {
+	struct termios raw;
+	memset(&raw, 0, sizeof(raw));
+	cfmakeraw(&raw);
+	std::string list;
+	for(int i = 0; i < opts.trees; i++) {
+		Tree& t = trees[i];
+		char name[128];
+		if(openpty(&t.ptyMaster, &t.ptySlave, name, &raw, 0) != 0) {
+			fprintf(stderr, "treesim: could not open a pty for tree %d: %s\n", i, strerror(errno));
+			return false;
+		}
+		fcntl(t.ptyMaster, F_SETFL, fcntl(t.ptyMaster, F_GETFL) | O_NONBLOCK);
+		t.ptyPath = name;
+		list += t.ptyPath + "\n";
+	}
+	std::string tmp = opts.ptyList + ".tmp";
+	FILE* f = fopen(tmp.c_str(), "w");
+	if(!f || fputs(list.c_str(), f) < 0 || fclose(f) != 0 || rename(tmp.c_str(), opts.ptyList.c_str()) != 0) {
+		fprintf(stderr, "treesim: could not write %s: %s\n", opts.ptyList.c_str(), strerror(errno));
+		return false;
+	}
+	return true;
+}
+
 static void usage() {
 	fprintf(stderr,
 		"treesim - runs several desk trees' firmware on the host and draws them in the terminal\n\n"
@@ -694,12 +779,15 @@ static void usage() {
 		"  --uri <ws://host:port/>  LED websocket to connect to (default ws://127.0.0.1:8092/)\n"
 		"  --wire                   draw the bytes sent to the LEDs, rather than how bright\n"
 		"                           the LEDs look\n"
-		"  --plain                  no alternate screen or raw input; serial goes to stdout\n"
+		"  --plain                  no alternate screen or raw input; serial goes to stdout,\n"
+		"                           and keys are still read from stdin, e.g. from a pipe\n"
 		"  --seed <n>               fixed random seed, for reproducible animations\n"
 		"  --render-hz <n>          terminal redraw rate (default 30)\n"
 		"  --frame-file <path>      shared frame file for other viewers\n"
 		"                           (default " TREESHM_DEFAULT_PATH ")\n"
 		"  --no-frame-file          do not publish frames\n"
+		"  --pty-list <path>        give each tree a pseudo-terminal as its USB serial port,\n"
+		"                           and write their device paths to <path>, one per line\n"
 		"  --help\n", MAX_TREES);
 }
 
@@ -714,6 +802,7 @@ int main(int argc, char** argv) {
 		else if(a == "--render-hz" && i + 1 < argc) opts.renderHz = atoi(argv[++i]);
 		else if(a == "--frame-file" && i + 1 < argc) opts.frameFile = argv[++i];
 		else if(a == "--no-frame-file") opts.frameFile.clear();
+		else if(a == "--pty-list" && i + 1 < argc) opts.ptyList = argv[++i];
 		else { usage(); return a == "--help" ? 0 : 1; }
 	}
 	if(opts.trees < 1 || opts.trees > MAX_TREES) { usage(); return 1; }
@@ -724,6 +813,8 @@ int main(int argc, char** argv) {
 	for(int i = 0; i < opts.trees; i++) {
 		snprintf(trees[i].id, sizeof(trees[i].id), "51%04x", i + 1);  //As tree_main.cpp makes it
 	}
+
+	if(!opts.ptyList.empty() && !openPtys()) return 1;
 
 	signal(SIGINT, onSignal);
 	signal(SIGTERM, onSignal);
