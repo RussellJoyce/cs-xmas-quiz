@@ -648,7 +648,7 @@ void render() {
 		}
 		const std::string footer =
 			"\x1b[90mTab: pick tree  X kill  S start  Z freeze/thaw  "
-			"firmware keys: 0-7 b p r g k w = - i n x  ctrl-C quits\x1b[0m";
+			"firmware keys: 0-8 b p r g k w = - i n x  ctrl-C quits\x1b[0m";
 		lines.push_back(visibleLen(footer) <= (size_t) cols ? footer : "");
 	}
 

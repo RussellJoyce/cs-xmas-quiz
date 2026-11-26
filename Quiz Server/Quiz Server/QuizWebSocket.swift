@@ -382,7 +382,7 @@ class QuizWebSocket: NSObject, URLSessionWebSocketDelegate {
 
 	/// The trees' ambient animations, numbered as their protocol has them (see quizleds/src/tree/tree_main.cpp)
 	enum TreeAnimation: Int {
-		case off = 0, twinkle, rainbow, candle, roomWave, chase, megamasBlocks, megamasTrees
+		case off = 0, twinkle, rainbow, candle, roomWave, chase, megamasBlocks, megamasTrees, treeOrder
 	}
 
 	func treeAnimation(_ animation: TreeAnimation) {

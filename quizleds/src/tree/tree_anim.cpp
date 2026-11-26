@@ -160,6 +160,28 @@ static void ambient_megatree(uint32_t now, uint32_t dt) {
 	}
 }
 
+// Tree order: everything off, then each tree in turn gives one short pulse, tree 0 first in
+// green, the last tree in red and the rest white, and a long dark gap after the last one
+// before it starts again. Purely for finding which tree is which and putting them in order
+// on the desks. Timed from base_start, which every tree resets when it is told its place
+// (tree_set_identity), and identities go to every tree at once, so a tree joining or
+// leaving puts them all back in step.
+#define ORDER_GAP_MS 1500         // dark, before tree 0 and after the last tree
+#define ORDER_STEP_MS 350         // from one tree's pulse to the next
+#define ORDER_PULSE_MS 220        // each pulse, up and down; the rest of the step is dark
+
+static void ambient_order(uint32_t now) {
+	uint32_t cycle = ORDER_GAP_MS + (uint32_t)tree_count * ORDER_STEP_MS;
+	int32_t t = (int32_t)((now - base_start) % cycle) - ORDER_GAP_MS - my_index * ORDER_STEP_MS;
+	float b = t >= 0 && t < ORDER_PULSE_MS ? sinf(PI * t / ORDER_PULSE_MS) : 0;
+	// The first tree green and the last red, so you can tell where the run starts and ends;
+	// the rest white. A lone tree is green.
+	RgbColor c = my_index == 0 ? hsb(0.33f, 1, b)
+	           : my_index == tree_count - 1 ? hsb(0, 1, b)
+	           : hsb(0, 0, b);
+	for(int i = 0; i < N; i++) frame[i] = c;
+}
+
 //-------------------------------------------------------------------------------------------------
 // Buzz: a comet in the team colour spins up, flashes, and settles on a shimmering solid colour
 
@@ -277,6 +299,7 @@ void tree_tick(uint32_t now) {
 				case 5: ambient_chase(now); break;
 				case 6: ambient_megamas(now, dt); break;
 				case 7: ambient_megatree(now, dt); break;
+				case 8: ambient_order(now); break;
 				default: for(int i = 0; i < N; i++) frame[i] = RgbColor(0); break;
 			}
 			break;
@@ -307,6 +330,8 @@ void tree_set_identity(int index, int count) {
 	if(index < 0 || index >= count) index = 0;
 	my_index = index;
 	tree_count = count;
+	// Back in step with the others, which have been told their places at the same moment
+	if(base_mode == B_AMBIENT && ambient_id == 8) base_start = millis();
 }
 
 void tree_set_team_count(int n) {

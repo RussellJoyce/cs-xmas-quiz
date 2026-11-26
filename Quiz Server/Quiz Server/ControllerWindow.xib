@@ -2668,6 +2668,17 @@ Answers</string>
                                                 <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-06-act"/>
                                             </connections>
                                         </button>
+                                        <button tag="8" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qat-07-btn">
+                                            <rect key="frame" x="240" y="30" width="200" height="20"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="radio" title="🔢 Tree Order" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="Qat-07-cel">
+                                                <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                <font key="font" metaFont="system" size="15"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="treeAnimationChosen:" target="Qap-nl-obj" id="Qat-07-act"/>
+                                            </connections>
+                                        </button>
                                         <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qab-00-lbl">
                                             <rect key="frame" x="460" y="240" width="200" height="16"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
