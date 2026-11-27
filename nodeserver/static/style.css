@@ -56,7 +56,10 @@ body {
     transition: transform 0.05s ease-in-out;
 }
 
-.buttonOn:active {
+/* .pressed is set from game.js on touchstart, because Android Chrome holds :active back for a
+   touch until it is sure it is not a scroll, so a quick tap showed nothing. :active stays for
+   the mouse, and for iOS. */
+.buttonOn:active, .buttonOn.pressed {
     background:linear-gradient(to bottom, #e4985d 5%, #eb675e 100%);
     border:2px solid #74480d;
     background-color:#e4685d;
@@ -114,11 +117,11 @@ body {
     background-color:hotpink;
 }
 
-.higherLowerButton#lower.buttonOn:active {
+.higherLowerButton#lower.buttonOn:active, .higherLowerButton#lower.buttonOn.pressed {
     transform: translate(0%, 1%) !important;
 }
 
-.higherLowerButton#higher.buttonOn:active {
+.higherLowerButton#higher.buttonOn:active, .higherLowerButton#higher.buttonOn.pressed {
     transform: translate(0%, 1%) !important;
 }
 
@@ -159,7 +162,7 @@ body {
     touch-action: manipulation;
 }
 
-.multiButton:active {
+.multiButton:active, .multiButton.pressed {
     transform: translate(0%, 1%);
 }
 
@@ -233,7 +236,7 @@ body {
     touch-action: manipulation;
 }
 
-.wallTile.buttonOn:active {
+.wallTile.buttonOn:active, .wallTile.buttonOn.pressed {
     transform: translate(0%, 1%);
 }
 
@@ -290,7 +293,7 @@ body {
     justify-content: center;
 }
 
-.teamButton:active {
+.teamButton:active, .teamButton.pressed {
     background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e4685d', endColorstr='#eb675e',GradientType=0);
     background-color:#e4685d;
@@ -324,7 +327,7 @@ body {
     box-shadow: 0px 0px 24px 3px #41822f;
 }
 
-.smallButtonOn:active {
+.smallButtonOn:active, .smallButtonOn.pressed {
     background:linear-gradient(to bottom, #e4685d 5%, #eb675e 100%);
     background-color:#e4685d;
 }

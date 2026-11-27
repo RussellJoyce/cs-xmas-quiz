@@ -300,6 +300,32 @@ if ('ontouchstart' in document.documentElement) {
     eventtouse = 'mousedown';
 }
 
+/*
+ * How a press looks on a touchscreen. Android Chrome doesn't show :active for a little while
+ * Instead, the button is marked .pressed (styled with :active in style.css)
+ */
+var PRESS_SHOWN_MS = 150;
+var pressedButton = null, pressedAt = 0;
+
+document.addEventListener('touchstart', function(event) {
+    var target = event.target.closest && event.target.closest('.buttonOn, .multiButton, .teamButton, .smallButtonOn');
+    if(!target) return;
+    if(pressedButton && pressedButton !== target) pressedButton.classList.remove('pressed');
+    target.classList.add('pressed');
+    pressedButton = target;
+    pressedAt = Date.now();
+}, { capture: true, passive: true });
+
+function pressOver() {
+    var button = pressedButton;
+    if(!button) return;
+    pressedButton = null;
+    setTimeout(function() { button.classList.remove('pressed'); },
+               Math.max(0, PRESS_SHOWN_MS - (Date.now() - pressedAt)));
+}
+document.addEventListener('touchend', pressOver, { capture: true, passive: true });
+document.addEventListener('touchcancel', pressOver, { capture: true, passive: true });
+
 buzzer.addEventListener(eventtouse, function(event) {
     if(myid > 0 && myid <= 99) {
         ws.send('zz' + myid);
