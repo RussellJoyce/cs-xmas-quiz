@@ -55,6 +55,22 @@ var awaiting = false;
 //looking at a page the server does not think it is on, with every visible link refused.
 var renderSeq = 0;
 
+/*
+Where the team left each article on its route, so that Back puts them on the link they
+followed rather than at the top of a page they had scrolled a long way down.
+
+Indexed by depth on the route, which is the server's hop count: the server keeps the route
+as a stack and Back pops it, so going back to depth n is always going back to the article
+that was left from depth n. Each entry is the article, which link was tapped (its index
+among the article's links, since several can go to the same place) and how far that link
+was from the top of the page. Coming back puts the link at the same height again. That
+survives the phone being rotated in the meantime, where the old scrollTop would not.
+
+Nothing here is trusted: an entry is only used when the server sends the team back to the
+very article it names, and otherwise the page just opens at the top.
+*/
+var leftAt = [];
+
 
 /*---------------------------------------------------------------------------------------
   Connection
@@ -117,9 +133,18 @@ function connect() {
                 //reconnect both stay honest.
                 awaiting = false;
                 var parts = data.slice(2).split(",");
-                setHops(parseInt(parts[1], 10));
+                var to = parseInt(parts[0], 10);
+                var depth = parseInt(parts[1], 10);
+
+                //Fewer hops than before can only be Back, by the button or the gesture
+                var anchor = null;
+                if(depth < hops && leftAt[depth] && leftAt[depth].id === to) anchor = leftAt[depth];
+                //Anything deeper than here has been backed out of, or is about to be replaced
+                if(depth >= 0 && leftAt.length > depth) leftAt.length = depth;
+
+                setHops(depth);
                 setAway(parseInt(parts[2], 10));
-                showArticle(parseInt(parts[0], 10));
+                showArticle(to, anchor);
                 break;
             }
 
@@ -190,8 +215,17 @@ function startRace(payload) {
     racing = true;
     awaiting = false;
 
-    //Not on a resync after a dropped connection, which carries on the race already timed
-    if(!startedAt) startedAt = Date.now();
+    //Not on a resync after a dropped connection, which carries on the race already timed.
+    //A new race is a new route, and the old one's positions mean nothing in it.
+    if(!startedAt) {
+        startedAt = Date.now();
+        forgetRoute();
+    }
+}
+
+function forgetRoute() {
+    leftAt = [];
+    currentId = -1;   //so that starting on the article the last race ended on starts at the top
 }
 
 function setHops(n) {
@@ -212,6 +246,7 @@ function ready() {
     awaiting = false;
     startedAt = 0;
     renderSeq++;   //an article still on its way belongs to the old race
+    forgetRoute();
     targetEl.textContent = "…";
     awayEl.textContent = "…";
     awayLabelEl.textContent = "hops away";
@@ -254,11 +289,13 @@ function articleUrl(id) {
     return "/wiki/a/" + Math.floor(id / shard) + "/" + id + ".json";
 }
 
-function showArticle(id) {
+//`anchor` is the leftAt entry to come back to, or null to open the page at the top
+function showArticle(id, anchor) {
     var seq = ++renderSeq;
 
+    //Somewhere already visited, so nearly always cached: Back lands without a flash of the curtain
     if(cache[id]) {
-        render(id, cache[id]);
+        render(id, cache[id], anchor);
         return;
     }
     curtain("📖", "Loading…", "");
@@ -272,7 +309,7 @@ function showArticle(id) {
             //Something newer was asked for while this was in flight. Caching it is still
             //worth doing; putting it on screen is not.
             if(seq !== renderSeq) return;
-            render(id, article);
+            render(id, article, anchor);
         })
         .catch(function(err) {
             if(seq !== renderSeq) return;
@@ -282,15 +319,46 @@ function showArticle(id) {
         });
 }
 
-function render(id, article) {
+function render(id, article, anchor) {
+    //The same article again is a resync after a dropped connection, not a move, so the
+    //team stays where it was on the page
+    var same = (id === currentId);
+    var top = pageEl.scrollTop;
+
     currentId = id;
     titleEl.textContent = article.t;
     //The HTML comes from our own build, which strips scripts, styles, event handlers and
     //everything else that is not text and links. See tools/wiki/lib/render.js.
     articleEl.innerHTML = article.h;
     hereEl.textContent = article.t;
-    pageEl.scrollTop = 0;
+
+    if(anchor) returnTo(anchor);
+    else pageEl.scrollTop = same ? top : 0;
     if(racing) hideCurtain();
+}
+
+//Scroll so that the link the team left by is back at the height it was when they tapped it
+function returnTo(anchor) {
+    pageEl.scrollTop = 0;
+    var link = articleEl.querySelectorAll("a[data-s]")[anchor.link];
+    if(!link) return;
+
+    //Kept on screen if the page has got shorter since, as it does when the phone is turned
+    var offset = Math.max(0, Math.min(anchor.offset, pageEl.clientHeight - link.offsetHeight));
+    pageEl.scrollTop = link.getBoundingClientRect().top - pageEl.getBoundingClientRect().top - offset;
+
+    //Point it out: the eye is still on the page it has just left
+    link.classList.add("cameFrom");
+}
+
+//The tapped link's place on the page, as returnTo needs it
+function noteLeaving(link) {
+    var links = articleEl.querySelectorAll("a[data-s]");
+    leftAt[hops] = {
+        id: currentId,
+        link: Array.prototype.indexOf.call(links, link),
+        offset: link.getBoundingClientRect().top - pageEl.getBoundingClientRect().top
+    };
 }
 
 
@@ -310,8 +378,10 @@ articleEl.addEventListener("click", function(event) {
     if(!(to >= 0)) return;
 
     //Nothing changes here but the fact that we are waiting. The screen and the hop
-    //count only move when the server says so.
+    //count only move when the server says so. If it refuses, the position noted here is
+    //simply overwritten by the next tap.
     awaiting = true;
+    noteLeaving(link);
     send("wl" + myid + "," + to);
 });
 
@@ -378,6 +448,24 @@ function toast(message) {
     toastTimer = setTimeout(function() { toastEl.classList.remove("show"); }, 1800);
 }
 
+
+/*---------------------------------------------------------------------------------------
+  Fitting the screen
+---------------------------------------------------------------------------------------*/
+
+//The page is sized to what is actually visible, innerHeight, which is right in a tab, as a
+//home screen app and full screen alike, and follows Chrome's address bar as it comes and
+//goes. The stylesheet's 100dvh is only the fallback: on Android, in a full screen app
+//installed from the home screen, the controls along the bottom were off the screen.
+function fitScreen() {
+    document.body.style.height = window.innerHeight + "px";
+}
+window.addEventListener("resize", fitScreen);
+window.addEventListener("orientationchange", fitScreen);
+if(window.visualViewport) window.visualViewport.addEventListener("resize", fitScreen);
+
+fitScreen();
+setTimeout(fitScreen, 500);    //in case the size at load is not yet final; cheap insurance
 
 /*---------------------------------------------------------------------------------------
   Start

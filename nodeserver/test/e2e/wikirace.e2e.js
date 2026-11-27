@@ -71,6 +71,45 @@ quizScenarios('wikirace', { teams: 3 }, scenario => {
         await follow(two, DETOUR);
     });
 
+    scenario('going back, by the button or the gesture, lands on the link the team followed', async quiz => {
+        const two = quiz.phones[2];
+        //Where a link is on the page: its distance from the top of what can be seen, and how far down the page is scrolled
+        const place = title => two.link(title).evaluate(a => {
+            const page = document.getElementById('page');
+            return { offset: Math.round(a.getBoundingClientRect().top - page.getBoundingClientRect().top),
+                     scrolled: page.scrollTop };
+        });
+
+        await two.press(two.back);
+        await onArticle(two, START);
+        //Somewhere neither the top nor where any automatic scrolling would put it
+        await two.link(DETOUR).evaluate(a => {
+            const page = document.getElementById('page');
+            page.scrollTop += a.getBoundingClientRect().top - page.getBoundingClientRect().top - page.clientHeight / 3;
+        });
+        const left = await place(DETOUR);
+        assert.ok(left.scrolled > 0, 'the start article is too short to scroll, so this proves nothing');
+
+        //The button
+        await follow(two, DETOUR);
+        assert.strictEqual((await place(MIDDLE)).scrolled, 0, 'a new article opens at the top');
+        await two.press(two.back);
+        await onArticle(two, START);
+        assert.deepStrictEqual(await place(DETOUR), left);
+        assert.ok(await two.link(DETOUR).evaluate(a => a.classList.contains('cameFrom')), 'the link is not pointed out');
+
+        //The gesture, which the page sees as the browser going back. Not history.back(): the
+        //phones are frames on one harness page sharing one history, so that would undo
+        //whichever phone pushed an entry last.
+        await follow(two, DETOUR);
+        await two.article.evaluate(() => window.dispatchEvent(new PopStateEvent('popstate', { state: { wikirace: true } })));
+        await onArticle(two, START);
+        assert.deepStrictEqual(await place(DETOUR), left);
+
+        //Where the next scenario expects phone 2 to be
+        await follow(two, DETOUR);
+    });
+
     scenario('reload: a team lands back on its article with its route intact', async quiz => {
         const two = quiz.phones[2];
         assert.strictEqual(await two.away.textContent(), '2');

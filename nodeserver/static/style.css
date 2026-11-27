@@ -7,7 +7,10 @@ html {
 body {
     /*background-image: url("images/bg2.jpg");
     background-color: #002b0d;*/
+    /* What is actually on screen, not 100vh, which on Android Chrome includes the address
+       bar and so puts the centre of the page below the centre of the screen */
     height: 100vh;
+    height: 100dvh;
     background: radial-gradient(ellipse at bottom, #2c2765 10%, #090a0f 100%);
     overflow: hidden;
     color: white;

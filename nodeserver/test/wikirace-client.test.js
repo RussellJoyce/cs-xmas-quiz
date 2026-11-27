@@ -33,6 +33,11 @@ function makeElement(id) {
         },
         addEventListener: (name, fn) => { (el.handlers[name] = el.handlers[name] || []).push(fn); },
         getAttribute: name => el.attrs[name],
+        //No layout here: positions on the page are checked end to end, in wikirace.e2e.js
+        querySelectorAll: () => [],
+        getBoundingClientRect: () => ({ top: 0, left: 0, bottom: 0, width: 0, height: 0 }),
+        clientHeight: 0,
+        offsetHeight: 0,
         attrs: {},
         //Fires a handler the way a browser would.
         fire: (name, event) => (el.handlers[name] || []).forEach(fn => fn(event || {}))
@@ -77,6 +82,8 @@ function loadClient(options) {
 
     const documentStub = {
         getElementById: id => elements[id] || makeElement(id),
+        querySelector: sel => makeElement(sel),
+        body: Object.assign(makeElement('body'), { style: {} }),
         addEventListener: () => {}
     };
 
@@ -104,6 +111,7 @@ function loadClient(options) {
         location: locationStub,
         history: historyStub,
         addEventListener: (name, fn) => { (windowHandlers[name] = windowHandlers[name] || []).push(fn); },
+        innerHeight: 800,
         WebSocket: FakeWebSocket,
         console: { log: () => {}, error: () => {} },
         setTimeout: () => 0,

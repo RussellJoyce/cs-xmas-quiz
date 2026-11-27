@@ -61,10 +61,13 @@ function writeWiki(dir) {
     graph.push(...targets);
     write(path.join(dir, 'graph.bin'), Buffer.from(Int32Array.from(graph).buffer));
 
+    //The start is long, with its links well down it, so that there is a place on the page for Back to return to
+    const filler = '<p>Nothing to follow in this paragraph, just words to scroll past on the way down.</p>'.repeat(40);
+
     titles.forEach((title, id) => {
         const body = links[id].map(to => '<a data-s="' + to + '">' + titles[to] + '</a>').join(' and ');
         write(path.join(dir, 'a', String(Math.floor(id / shard)), id + '.json'),
-              JSON.stringify({ t: title, h: '<p>' + title + ' leads to ' + body + '.</p>' }));
+              JSON.stringify({ t: title, h: (id === 0 ? filler : '') + '<p>' + title + ' leads to ' + body + '.</p>' }));
     });
 
     write(path.join(dir, 'puzzles.json'), JSON.stringify([{

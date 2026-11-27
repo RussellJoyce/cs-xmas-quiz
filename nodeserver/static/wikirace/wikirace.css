@@ -17,7 +17,11 @@ html {
 
 body {
 	margin: 0;
+	/* What is actually on screen. 100vh on Android Chrome is the height with the address bar
+	   hidden, so while it shows, the controls at the bottom were pushed off the screen.
+	   100vh stays as the fallback for browsers without dvh (before Chrome 108, Safari 15.4). */
 	height: 100vh;
+	height: 100dvh;
 	overflow: hidden;
 	background: #0d0e15;
 	color: #e9e9f2;
@@ -112,6 +116,16 @@ body {
 	border-bottom: 1px solid rgba(111, 227, 255, 0.45);
 	padding: 2px 1px;
 	cursor: pointer;
+}
+
+/* The link the team has just come back through, from Back, lit up for a moment */
+#article a[data-s].cameFrom {
+	border-radius: 3px;
+	animation: cameFrom 1.6s ease-out;
+}
+@keyframes cameFrom {
+	from { background: rgba(111, 227, 255, 0.5); }
+	to   { background: transparent; }
 }
 
 #article a[data-s]:active {
