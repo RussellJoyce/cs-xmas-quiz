@@ -630,7 +630,7 @@ class ControllerWindowController: NSWindowController, NSWindowDelegate, NSTabVie
 		//Ignore teams the host has disabled
 		guard roster.isPlaying(team.index) else { return }
 
-		panel.receive(textGuess: String(text.prefix(20)), from: team.index) //TODO Max size of 20 is too low?
+		panel.receive(textGuess: Utils.cleanTypedAnswer(text), from: team.index)
 	}
 
 

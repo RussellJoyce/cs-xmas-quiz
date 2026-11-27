@@ -6,6 +6,7 @@
 
 const assert = require('node:assert');
 const { quizScenarios, until } = require('./rig');
+const { UNIQUE } = require('./fixtures');
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 const panel = async (quiz, path) => (await quiz.host.read(path)).value;
@@ -443,6 +444,66 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
         await quiz.host.click('textPanel.showGuesses:');
         assert.ok(!(await showing(quiz, 'paris')));
     });
+
+    //--- Text: what a team can type, or send without typing
+
+    const stars = async quiz => (await quiz.host.read('quizDisplay.textScene.emitters')).length;
+
+    //The host's list is a line per team, so a line break in an answer could forge another
+    scenario("text: an answer cannot forge another team's line on the host", async quiz => {
+        await begin(quiz, 'text');
+        await quiz.rawFrom(1, 'tt1,paris\nTeam 2: rome');
+        await quiz.rawFrom(3, 'tt3,york\r\u2028\u2029\u0085Team 2: rome');
+        await quiz.host.settled();
+        const lines = (await guesses(quiz)).split(/\r\n|[\r\n\u2028\u2029\u0085]/);
+        assert.deepStrictEqual(lines.map(l => l.match(/^Team (\d+):/)?.[1]), ['1', '3'], 'lines: ' + JSON.stringify(lines));
+    });
+
+    scenario('text: invisible characters do not make a right answer wrong', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.rawFrom(1, 'tt1,york\u202E');
+        await quiz.rawFrom(2, 'tt2,r\u200Bome\u200D');
+        await quiz.rawFrom(3, 'tt3,\u2066paris\u2069');
+        await quiz.host.settled();
+        await quiz.host.click('textPanel.showGuesses:');
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual(await stars(quiz), 3);
+    });
+
+    scenario('text: the longest place name arrives whole from the phone, and is right', async quiz => {
+        await begin(quiz, 'text');
+        const longest = UNIQUE[3];
+        assert.strictEqual(await quiz.phones[1].textbox.getAttribute('maxlength'), '60',
+                           'the phone should stop a team typing more than the app will take');
+        await quiz.phones[1].answerText(longest);
+        await until('the answer', async () => (await guesses(quiz)).includes(longest));
+        await quiz.host.click('textPanel.showGuesses:');
+        await quiz.host.click('textPanel.scoreUnique:');
+        assert.strictEqual(await stars(quiz), 1);
+    });
+
+    //Each a single character as Swift counts them, however many code points it takes
+    const ZALGO = 'p' + '̶̷̸̀́̂̃̄̅̆'.repeat(30) + 'aris';
+    const WIDE = 'Ｗ'.repeat(60);
+    const FAMILIES = '🧑\u200D🧑\u200D🧒\u200D🧒'.repeat(60);
+
+    for(const [name, answers] of [['marks piled on a letter, and wide letters', [ZALGO, WIDE, FAMILIES]],
+                                  ['the longest answers allowed', [UNIQUE[3], 'W'.repeat(60), 'm'.repeat(60)]]]) {
+        for(const numbered of [false, true]) {
+            scenario('text: ' + name + ' stay in their boxes' + (numbered ? ', with the clue numbers' : ''), async quiz => {
+                await begin(quiz, 'text');
+                await quiz.host.setToggle('textPanel.showQuestionNumbers', numbered);
+                for(const [i, answer] of answers.entries()) await quiz.rawFrom(i + 1, 'tt' + (i + 1) + ',' + answer);
+                await quiz.host.click('textPanel.showGuesses:');
+                await pause(2000); //For the answers to pop up and settle
+                assert.deepStrictEqual(await quiz.host.spilling(), []);
+                assert.deepStrictEqual(await quiz.host.offScreen(), []);
+                await quiz.host.click('textPanel.scoreUnique:');
+                await pause(1000);
+                assert.deepStrictEqual(await quiz.host.spilling(), []);
+            });
+        }
+    }
 
 
     //--- Numbers

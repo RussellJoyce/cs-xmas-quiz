@@ -217,6 +217,40 @@ class Host {
         if(scene.nodes) walk(scene.nodes, 1);
         return out;
     }
+
+    //Visible text that starts inside a box and runs out of it, as "text @ x,y wxh in x,y wxh".
+    //A label belongs to the smallest visible box its centre is in; text in no box is left to
+    //offScreen. Call it once animations have finished, as a box and its text grow at different
+    //moments when a team answers.
+    async spilling() {
+        const scene = await this.scene();
+        const labels = [];
+        const boxes = [];
+        const SLACK = 2;
+        const walk = (node, alpha) => {
+            const seen = alpha * node.alpha;
+            if(node.hidden || seen <= 0.01) return;
+            if(node.text && node.frame && node.frame.width > 0) labels.push(node);
+            if(node.box && node.box.width > 0) boxes.push(node.box);
+            (node.children || []).forEach(child => walk(child, seen));
+        };
+        if(scene.nodes) walk(scene.nodes, 1);
+
+        const describe = r => [r.x, r.y].map(Math.round) + ' ' + [r.width, r.height].map(Math.round).join('x');
+        const out = [];
+        for(const label of labels) {
+            const f = label.frame;
+            const cx = f.x + f.width / 2, cy = f.y + f.height / 2;
+            const home = boxes
+                .filter(b => cx >= b.x && cx <= b.x + b.width && cy >= b.y && cy <= b.y + b.height)
+                .sort((a, b) => a.width * a.height - b.width * b.height)[0];
+            if(home && (f.x < home.x - SLACK || f.y < home.y - SLACK ||
+                        f.x + f.width > home.x + home.width + SLACK || f.y + f.height > home.y + home.height + SLACK)) {
+                out.push(label.text + ' @ ' + describe(f) + ' in ' + describe(home));
+            }
+        }
+        return out;
+    }
 }
 
 //One team's phone: the real game.js, in one of the harness's iframes

@@ -219,6 +219,45 @@ final class Utils {
 	}
 
 
+	/// The most characters a typed answer may have
+	static let longestTypedAnswer = 60
+
+	/// A typed answer as it arrives from a phone, made safe to show and to compare
+	static func cleanTypedAnswer(_ input: String) -> String {
+		var out = ""
+		var spaced = true //So that leading spaces go
+		for character in input {
+			if character.isWhitespace {
+				if !spaced { out.append(" ") }
+				spaced = true
+				continue
+			}
+			//A zero-width joiner holds an emoji sequence together, and means nothing anywhere else
+			let emoji = character.unicodeScalars.contains { $0.value > 0x7F && $0.properties.isEmoji }
+			var kept = String.UnicodeScalarView()
+			var accents = 0
+			for scalar in character.unicodeScalars {
+				switch scalar.properties.generalCategory {
+				case .control, .lineSeparator, .paragraphSeparator, .surrogate, .unassigned:
+					continue
+				case .format where !(emoji && scalar.value == 0x200D):
+					continue
+				case .nonspacingMark, .enclosingMark, .spacingMark:
+					accents += 1
+					if accents > 3 { continue }
+				default:
+					break
+				}
+				kept.append(scalar)
+			}
+			if !kept.isEmpty {
+				out.unicodeScalars.append(contentsOf: kept)
+				spaced = false
+			}
+		}
+		return String(out.prefix(longestTypedAnswer)).trimmingCharacters(in: .whitespaces)
+	}
+
 	static func sanitiseString(_ input : String) -> String {
 		var str = input.lowercased()
 		str = str.trimmingCharacters(in: .whitespacesAndNewlines)

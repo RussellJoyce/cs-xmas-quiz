@@ -128,6 +128,26 @@ class TeamAnswerNode: SKNode {
 		singleLabel.fontSize = size
 	}
 
+	/// Shrinks the answer, as drawn, until it fits inside the box. Counting characters is not
+	/// enough: a wide letter or an emoji takes several times the room of an "i".
+	func fitText() {
+		let margin: CGFloat = 12
+		for label in [guessLabel, singleLabel] where label.text?.isEmpty == false {
+			for _ in 0..<3 { //The size of text is not quite in proportion to its font size
+				//Measured at rest, in case the box is part way through popping up
+				let f = label.frame
+				let size = CGSize(width: f.width / label.xScale, height: f.height / label.yScale)
+				guard size.width > 0, size.height > 0 else { break }
+				let room = CGSize(width: CGFloat(width) / 2 - margin - label.position.x,
+								  height: 2 * min(CGFloat(height) / 2 - margin - label.position.y,
+												  label.position.y + CGFloat(height) / 2 - margin))
+				let shrink = min(room.width / size.width, room.height / size.height)
+				if shrink >= 1 { break }
+				label.fontSize = floor(label.fontSize * shrink)
+			}
+		}
+	}
+
 	func resetTextSize() {
 		guessLabel.fontSize = fontSize
 		singleLabel.fontSize = fontSize

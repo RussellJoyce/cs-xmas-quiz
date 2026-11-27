@@ -13,6 +13,10 @@ const POINTLESS = { title: 'Name a fruit', answers: { apple: 40, kiwi: 3, quince
 
 //Thirty answers, some long, as the real ones have, so that a full board has to fit. Written
 //as markdown with bullets, which the round must strip.
+//The text round's unique answers. One is a real place far longer than most answers, and is
+//the longest a team may type.
+const UNIQUE = ['paris', 'rome', 'york', 'llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch'];
+
 const CATEGORIES = {
     file: '1-countries.md',
     heading: 'European countries',
@@ -102,7 +106,7 @@ function writeFixtures(root) {
     //Shares an answer with the first question, at a different score
     write(path.join(root, 'Questions/Pointless/2-green.txt'), 'Name something green\nkiwi,5\nlime,1\n');
 
-    write(path.join(root, 'Questions/Unique/1-cities.txt'), 'paris\nrome\nyork\n');
+    write(path.join(root, 'Questions/Unique/1-cities.txt'), UNIQUE.join('\n') + '\n');
 
     write(path.join(root, 'Questions/Categories', CATEGORIES.file),
           '# ' + CATEGORIES.heading + ' - ' + CATEGORIES.subheading + '\n\n' +
@@ -131,4 +135,4 @@ function writeFixtures(root) {
     return { staticDir: served, wikiDir: path.join(served, 'wiki') };
 }
 
-module.exports = { writeFixtures, POINTLESS, CATEGORIES, WALL, WIKI };
+module.exports = { writeFixtures, UNIQUE, POINTLESS, CATEGORIES, WALL, WIKI };

@@ -149,6 +149,7 @@ class TextScene: QuizScene {
 			teamBoxes[team].guessLabel.text = ""
 			teamBoxes[team].roundLabel.text = ""
 		}
+		teamBoxes[team].fitText()
 	}
 	
 	func isTeamAnswerUnique(_ team : Int) -> Bool {

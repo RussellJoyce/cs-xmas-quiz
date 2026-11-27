@@ -323,15 +323,20 @@ final class TestProbe: NSObject, QuizWebSocketDelegate {
 			"hidden": node.isHidden
 		]
 		if let name = node.name { out["name"] = name }
+		//In scene coordinates, so that a test can tell whether a label is on the screen at all,
+		//and whether it stays inside the box it sits in. A box's frame leaves out its children,
+		//such as emitters, which are not part of the box.
+		func sceneFrame(_ f: CGRect) -> [String: Any]? {
+			guard let scene = node.scene, let parent = node.parent else { return nil }
+			let a = scene.convert(CGPoint(x: f.minX, y: f.minY), from: parent)
+			let b = scene.convert(CGPoint(x: f.maxX, y: f.maxY), from: parent)
+			return rect(CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(b.x - a.x), height: abs(b.y - a.y)))
+		}
 		if let label = node as? SKLabelNode, let text = label.text {
 			out["text"] = text
-			//In scene coordinates, so that a test can tell whether it is on the screen at all
-			if let scene = label.scene, let parent = label.parent {
-				let f = label.calculateAccumulatedFrame()
-				let a = scene.convert(CGPoint(x: f.minX, y: f.minY), from: parent)
-				let b = scene.convert(CGPoint(x: f.maxX, y: f.maxY), from: parent)
-				out["frame"] = rect(CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(b.x - a.x), height: abs(b.y - a.y)))
-			}
+			out["frame"] = sceneFrame(label.calculateAccumulatedFrame())
+		} else if let shape = node as? SKShapeNode, shape.path != nil {
+			out["box"] = sceneFrame(shape.frame)
 		}
 		if !node.children.isEmpty { out["children"] = node.children.map { describe($0) } }
 		return out

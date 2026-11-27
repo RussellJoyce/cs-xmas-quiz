@@ -7,7 +7,7 @@
 
 const assert = require('node:assert');
 const { quizScenarios, until } = require('./rig');
-const { WALL, WIKI } = require('./fixtures');
+const { WALL, WIKI, UNIQUE } = require('./fixtures');
 
 const TEAMS = 14;
 const ALL = Array.from({ length: TEAMS }, (_, i) => i + 1);
@@ -107,6 +107,20 @@ quizScenarios('fourteen teams', { teams: TEAMS }, scenario => {
 
         await quiz.host.click('textPanel.showGuesses:');
         await seenAll(quiz, 'every answer', ALL.map(n => 'city ' + n));
+        await fits(quiz, 'with the answers up');
+    });
+
+    scenario('text: fourteen of the longest answers allowed stay in their boxes', async quiz => {
+        await begin(quiz, 'text');
+        await quiz.host.click('resetRound:');
+        //The longest real place name, and sixty of the widest letter
+        for(const n of ALL) await quiz.phones[n].answerText(n % 2 ? UNIQUE[3] : 'W'.repeat(60));
+        await until('the host to see all fourteen', async () =>
+            (await panel(quiz, 'textPanel.teamGuesses')).split('\n').length === TEAMS);
+
+        await quiz.host.click('textPanel.showGuesses:');
+        await new Promise(resolve => setTimeout(resolve, 2000)); //For the answers to pop up and settle
+        assert.deepStrictEqual(await quiz.host.spilling(), []);
         await fits(quiz, 'with the answers up');
     });
 
