@@ -11,12 +11,12 @@ const STATIC = path.resolve(__dirname, '../../static');
 
 const POINTLESS = { title: 'Name a fruit', answers: { apple: 40, kiwi: 3, quince: 0 } };
 
-//Thirty answers, some long, as the real ones have, so that a full board has to fit. Written
-//as markdown with bullets, which the round must strip.
 //The text round's unique answers. One is a real place far longer than most answers, and is
 //the longest a team may type.
 const UNIQUE = ['paris', 'rome', 'york', 'llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch'];
 
+//Thirty answers, some long, as the real ones have, so that a full board has to fit. Written
+//as markdown with bullets, which the round must strip.
 const CATEGORIES = {
     file: '1-countries.md',
     heading: 'European countries',
@@ -98,7 +98,55 @@ function silentWav(seconds, rate = 8000) {
     return wav;
 }
 
+//One question for each round that reads a file, saved each of the ways a Windows editor might
+//save it. Each has accents and curly quotes, which only a file read the right way gets right.
+//`file` is the name of each version, one per encoding.
+const ENCODINGS = ['crlf-bom', 'utf16le', 'utf16be', 'cp1252'];
+const ENCODED = {
+    file: encoding => '5-' + encoding + '.txt',
+    unique: { text: 'paris\nrome\n\u201cyork\u201d\ncaf\u00e9\n', uniques: ['paris', 'rome', 'york', 'caf\u00e9'] },
+    categories: {
+        text: '# Caf\u00e9s d\u2019Europe - the ones you\u2019d visit\n\n- Caf\u00e9 \u201cCentral\u201d\n- Caff\u00e8 Florian\n',
+        heading: 'Caf\u00e9s d\u2019Europe', subheading: 'the ones you\u2019d visit',
+        answers: ['Caf\u00e9 \u201cCentral\u201d', 'Caff\u00e8 Florian']
+    },
+    pointless: { text: 'Name a caf\u00e9 drink\nlatte,10\ncaf\u00e9 au lait,3\n', title: 'Name a caf\u00e9 drink' },
+    wall: {
+        text: 'Caf\u00e9 \u201cdrinks\u201d: caf\u00e9, th\u00e9, latte, mocha\n' +
+              ['colour', 'metal', 'pet'].map(name => name + ': ' + WALL[name].join(', ')).join('\n') + '\n',
+        clues: ['caf\u00e9', 'th\u00e9', 'latte', 'mocha'], connection: 'Caf\u00e9 \u201cdrinks\u201d'
+    }
+};
+
+//The bytes a Windows editor would write for `text`, with its CRLF line endings
+function encode(text, encoding) {
+    const crlf = text.replace(/\n/g, '\r\n');
+    switch(encoding) {
+    case 'crlf-bom': return Buffer.concat([Buffer.from([0xEF, 0xBB, 0xBF]), Buffer.from(crlf, 'utf8')]);
+    case 'utf16le': return Buffer.concat([Buffer.from([0xFF, 0xFE]), Buffer.from(crlf, 'utf16le')]);
+    case 'utf16be': return Buffer.concat([Buffer.from([0xFE, 0xFF]), Buffer.from(crlf, 'utf16le').swap16()]);
+    case 'cp1252': {
+        //Latin-1, apart from the quotes and dashes Windows put where Latin-1 has controls
+        const extra = { '\u2018': 0x91, '\u2019': 0x92, '\u201c': 0x93, '\u201d': 0x94, '\u2013': 0x96, '\u2014': 0x97 };
+        return Buffer.from([...crlf].map(c => {
+            if(extra[c]) return extra[c];
+            if(c.charCodeAt(0) > 0xFF) throw new Error('not in Windows-1252: ' + c);
+            return c.charCodeAt(0);
+        }));
+    }
+    }
+    throw new Error('no such encoding: ' + encoding);
+}
+
 function writeFixtures(root) {
+    for(const encoding of ENCODINGS) {
+        const file = ENCODED.file(encoding);
+        write(path.join(root, 'Questions/Unique', file), encode(ENCODED.unique.text, encoding));
+        write(path.join(root, 'Questions/Categories', file), encode(ENCODED.categories.text, encoding));
+        write(path.join(root, 'Questions/Pointless', file), encode(ENCODED.pointless.text, encoding));
+        write(path.join(root, 'Questions/OnlyConnect', file), encode(ENCODED.wall.text, encoding));
+    }
+
     write(path.join(root, 'Questions/Pointless/1-fruit.txt'),
           POINTLESS.title + '\n' +
           Object.entries(POINTLESS.answers).map(([a, score]) => a + ',' + score).join('\n') + '\n');
@@ -135,4 +183,4 @@ function writeFixtures(root) {
     return { staticDir: served, wikiDir: path.join(served, 'wiki') };
 }
 
-module.exports = { writeFixtures, UNIQUE, POINTLESS, CATEGORIES, WALL, WIKI };
+module.exports = { writeFixtures, ENCODINGS, ENCODED, UNIQUE, POINTLESS, CATEGORIES, WALL, WIKI };

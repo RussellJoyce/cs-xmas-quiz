@@ -204,15 +204,30 @@ final class Utils {
 	}
 
 
-	/// Reads one of the question files off disk. Use UTF-8 if possible, warn if fallback is required
+	/// Reads one of the question files off disk, however it was saved.
+	/// Looks for a UTF-16 byte order mark, if it isnt seen uses UTF-8, or then falls back to Windows-1252
 	/// - Returns: the file's contents, or nil if it could not be read at all.
 	static func readQuestionFile(_ path: String) -> String? {
-		if let utf8 = try? String(contentsOfFile: path, encoding: .utf8) {
-			return utf8
+		guard let data = FileManager.default.contents(atPath: path) else {
+			print("Could not read question file '\(path)'")
+			return nil
 		}
-		if let latin1 = try? String(contentsOfFile: path, encoding: .isoLatin1) {
-			print("Question file '\(path)' is not valid UTF-8, read as Latin-1 instead")
-			return latin1
+		let marks: [(bom: [UInt8], encoding: String.Encoding)] = [
+			([0xEF, 0xBB, 0xBF], .utf8), ([0xFF, 0xFE], .utf16LittleEndian), ([0xFE, 0xFF], .utf16BigEndian)
+		]
+		for mark in marks where data.starts(with: mark.bom) {
+			if let text = String(data: data.dropFirst(mark.bom.count), encoding: mark.encoding) {
+				return text
+			}
+		}
+		if let text = String(data: data, encoding: .utf8) {
+			return text
+		}
+		for (encoding, name) in [(String.Encoding.windowsCP1252, "Windows-1252"), (.isoLatin1, "Latin-1")] {
+			if let text = String(data: data, encoding: encoding) {
+				print("Question file '\(path)' is not UTF-8, so has been read as \(name)")
+				return text
+			}
 		}
 		print("Could not read question file '\(path)'")
 		return nil
