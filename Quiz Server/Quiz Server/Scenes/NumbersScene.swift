@@ -363,12 +363,22 @@ class NumbersScene: QuizScene {
 		NSColor(calibratedRed: 0.6, green: 0.6, blue: 1.0, alpha: 0.9),
 	]
 
+	/// The largest guess, either way, that a team may make. Far beyond any real answer, and small
+	/// enough that the distance between two guesses, and the scale's arithmetic in Double, stay exact.
+	static let largestGuess = 1_000_000_000_000_000
+
+	/// How far a guess is from the answer. Saturates rather than overflowing
+	static func distance(from guess: Int, to answer: Int) -> Int {
+		let (difference, overflow) = guess.subtractingReportingOverflow(answer)
+		return overflow || difference == .min ? .max : abs(difference)
+	}
+
 	/// Ranks the teams that guessed by how close they came, closest first. `place` is 0 for the
 	/// winner(s), 1 for second place, 2 for the rest of roughly the top half, and nil for
 	/// everyone else. Shared by the reveal and the controller's live list so they always agree.
 	static func placings(guesses: [Int?], actualAnswer: Int) -> [(team: Int, guess: Int, distance: Int, place: Int?)] {
 		let sorted = guesses.enumerated()
-			.compactMap { team, guess in guess.map { (team: team, guess: $0, distance: abs($0 - actualAnswer)) } }
+			.compactMap { team, guess in guess.map { (team: team, guess: $0, distance: distance(from: $0, to: actualAnswer)) } }
 			.sorted { $0.distance < $1.distance }
 		guard let closest = sorted.first else { return [] }
 
@@ -832,9 +842,10 @@ class NumbersPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 
 	var acceptingTextAnswers: Bool { allowAnswers.state == .on }
 
-	/// Anything that is not a number is simply dropped
+	/// Anything that is not a number, or is a number beyond `largestGuess`, is simply dropped
 	func receive(textGuess: String, from team: Int) {
-		if let value = Int(textGuess) {
+		let limit = NumbersScene.largestGuess
+		if let value = Int(textGuess), (-limit...limit).contains(value) {
 			scene.teamGuess(teamid: team, guess: value)
 		}
 		updateGuesses()
@@ -879,6 +890,8 @@ class NumbersPanel: NSObject, RoundPanel, NSTextFieldDelegate {
 
 	@IBAction func showAnswers(_ sender: NSButton) {
 		allowAnswers.state = .off
-		scene.showGuesses(actualAnswer: Int(actualAnswer.intValue))
+		//The same reading as the host's list, so the two cannot disagree. Not intValue, which
+		//is an Int32 and wraps an answer beyond about two billion.
+		scene.showGuesses(actualAnswer: typedAnswer ?? 0)
 	}
 }

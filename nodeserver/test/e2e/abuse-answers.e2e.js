@@ -512,12 +512,58 @@ quizScenarios('trying to break the answer rounds', { teams: 3 }, scenario => {
     });
 
     scenario('numbers: the largest number a phone can send', async quiz => {
-        await numbers(quiz, 50, { 1: '9223372036854775807', 2: 40 });
+        await numbers(quiz, 50, { 1: '1000000000000000', 2: 40 }); //NumbersScene.largestGuess
         await reveal(quiz);
         await reveal(quiz);
         await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
         await pause(2500); //The scoring animation is where this would go wrong
         await quiz.host.scene();
+    });
+
+    //The distance from the answer is worked out in Int, and Swift stops on overflow. Guesses
+    //beyond a quadrillion either way are dropped, and the distance saturates for the host's answer.
+    scenario('numbers: a guess so negative its distance from the answer overflows', async quiz => {
+        await numbers(quiz, 50, { 2: 40 });
+        await quiz.rawFrom(1, 'tt1,-9223372036854775808');
+        assert.doesNotMatch(await panel(quiz, 'numbersPanel.teamGuesses'), /Team 1/);
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        await pause(2500);
+        await quiz.host.scene();
+    });
+
+    scenario('numbers: the largest guess against a negative answer', async quiz => {
+        await numbers(quiz, -1, { 1: '9223372036854775807', 2: 40 });
+        await quiz.host.settled();
+        assert.doesNotMatch(await panel(quiz, 'numbersPanel.teamGuesses'), /Team 1/);
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        await pause(2500);
+        await quiz.host.scene();
+    });
+
+    scenario('numbers: the largest guess allowed against an answer as negative as the host can type', async quiz => {
+        await numbers(quiz, '-9223000000000000000', { 1: '1000000000000000', 2: 40 });
+        await until('both ranked', async () => /Team 1: 1000000000000000  \(off by 9223372036854775807\)/
+            .test(await panel(quiz, 'numbersPanel.teamGuesses')));
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        await pause(2500);
+        await quiz.host.scene();
+    });
+
+    //Off the ticks, so that only the answer's own tag can show it
+    scenario('numbers: an answer beyond 32 bits is the one the display scores against', async quiz => {
+        await numbers(quiz, 3123456789, { 1: 3123456000, 2: 2000000000 });
+        await until('team 1 closest on the host', async () =>
+            /^🟢 Team 1: 3123456000/.test(await panel(quiz, 'numbersPanel.teamGuesses')));
+        await reveal(quiz);
+        await reveal(quiz);
+        await until('the round to be scored', () => quiz.host.read(NUMBERS + '.scored'));
+        await seen(quiz, '3,123,456,789');
     });
 
     scenario('numbers: not a number', async quiz => {
